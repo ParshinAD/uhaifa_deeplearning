@@ -1,0 +1,24 @@
+{
+  "exp_id": "20260621T005513Z-baseline_passthrough-connectome-s999-implement-f8cb3c",
+  "algo": "baseline_passthrough",
+  "dataset": "connectome",
+  "seed": 999,
+  "score": 34736445.0,
+  "pct": 82.87919483760088,
+  "wall_clock_s": 1918.9462151527405,
+  "git_commit": "8f0e5066211bbd3c849794983e8b478f6795aa3a+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "f8cb3ca2e075",
+  "timestamp": "2026-06-21T01:27:21Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260621T005513Z-baseline_passthrough-connectome-s999-implement-f8cb3c_positions.npy",
+  "experiment_id": "baseline_passthrough",
+  "role": "implement",
+  "hypothesis": "Unchanged baseline Rocket, wrapped as a variant (wiring smoke test)."
+}
