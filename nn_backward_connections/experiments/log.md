@@ -1053,3 +1053,58 @@ explaining why the paper's discrete Crane phase is what extends quality past Roc
 Rocket-only best remains **H02 = 82.93% connectome** (hardened) / **92.48% mouse**. Integrity held:
 frozen-guard OK every cycle, no frozen file modified, leakage audit clean, `best_solution` confined to
 `mfas.analysis`.
+
+#### Critic verdict (Phase-4)
+
+Adjudicated commits 9cc9c34, 3275f5c, 6eb8684 on `phase4-campaign`. Phase produced NO new promoted
+win (correct); it hardened H02 and reached a negative/structural conclusion (finding #3). Read-only
+re-derivation from the JSONs + grep/pytest.
+
+1. **best_solution leakage isolation — PASS.** `grep` over `src/mfas/experiments/*.py` and
+   `src/mfas/baseline/*.py`: no import of `mfas.analysis`/`gap`, no read of `data/best_solution`,
+   no reference to `reference_order`/`planted`/`drift_probe`/`make_hard_synthetic`/`_build_reference`.
+   The only matches in the optimization path are docstring assertions in H16/H19 ("never
+   best_solution"). `best_solution` is read ONLY by `src/mfas/analysis/gap.py:load_best_solution`;
+   the only importers of `gap` are `experiments/diagnostics.py` and the two `protoR_*` scripts plus
+   docs — all diagnostic drivers, none on any variant's run/loss/init. The hard-synthetic
+   `reference_order` is built in `gap.py` (`_build_reference`/`_refine_reference_order`, may consult
+   the oracle) and is returned for diagnostic comparison only — H19 calls `make_hard_synthetic_graph`
+   only via the proto scripts, never inside `H19.run` (which takes a plain `GraphData`). Drift-probe /
+   best-seeing outputs go to `experiments/outputs/` only; `grep` of `results/` shows no
+   drift/best/proto artifact and no proto script writes to `results/` (verified: "NO writes").
+2. **Frozen integrity — PASS.** `git diff --stat 5615dff..HEAD` touches none of `metrics.py`,
+   `harness.py`, `aggregate.py`, `test_metrics.py`; working tree clean for those four;
+   `verify_frozen_manifest()` → FROZEN OK; `pytest tests/test_metrics.py` 8/8 green.
+3. **H02 hardening CI — PASS.** 15 matched connectome seeds present for BOTH H02 and
+   `baseline_passthrough` (identical seed set {7,42,123,999,1414,1618,1732,2236,2718,5005,6004,7003,
+   8002,9001,31415}; all `role=confirm`, config_hash 059689 / f8cb3c, git_commit f36e0284 + 9cc9c34).
+   Re-derived: H02 = 82.9297 ± 0.0011, baseline = 82.8790 ± 0.0231, **Δ = +0.0508 pp**, **Welch 95%
+   CI low = +0.0391**, paired +0.0390 (t-crit df14: +0.0379 — still >0). Matches finding #1 exactly;
+   no seed mismatch, no cherry-pick. (Note: the claimed +0.0391 is the Welch bound, NOT the screen
+   `std_base·√(2/n)` formula, which would give +0.0343 — the text correctly labels it "Welch", which
+   is the more conservative/honest choice given H02's near-zero variance.)
+4. **Compute-fairness — PASS.** H16 connectome/mouse logged `total_grad_steps`=20000/5000 =
+   baseline budget; verbatim `run_rocket` loop, only init+β-path changed; deterministic across seeds.
+   H19 mouse `total_grad_steps`=5000 = baseline budget; only the surrogate parametrisation (soft-rank)
+   differs; O(n²) connectome guard enforced. Comparators consistent (H16/H19 screened vs the 3-seed
+   implement baseline mean 92.0696 and vs H02). Equal-epoch, fair.
+5. **No overclaim — PASS (with verified hedging).** "OPTIMIZATION-GAP not misalignment" is supported
+   by the *scale-fair* static test (`optimize_spacing` optimises monotone spacing AND a free global
+   scale for best's order, so best is not under-powered vs Rocket's pos_std≈142): best out-surrogates
+   Rocket at every β (+238…+1153, diagnosis.json `static_surrogate`), corroborated by the drift probe
+   (84.61→82.75–83.03 under every schedule/scale). Not a scale artifact. "Irreducible to continuous
+   methods" is appropriately hedged: only DIRECTION O top lever (H16) and DIRECTION R top lever (H19)
+   were run; H17/H18/H20 explicitly deferred-by-evidence (not falsified); mouse has no best_solution
+   so the decisive/gap steps are connectome-only; rests on one hard synthetic (with a verified +0.80 pp
+   planted gap, so the levers failed where a gap demonstrably exists). Findings #3 states all of these
+   caveats. The H16 mouse result (+0.13 vs H02) is honestly reported and correctly does NOT override
+   the connectome KILL. No claim exceeds the evidence.
+6. **Reproducibility — PASS.** Cited files exist and re-derive: `experiments/outputs/diagnosis.json`
+   (all #3 probe numbers match), 15+15 H02/baseline confirm JSONs, H16 (3+3) and H19 (3) JSONs with
+   matching pct/grad-steps. `python experiments/diagnostics.py --steps 0,1,2,3,4` and the
+   `eval.run_variant` commands are present and consistent with the JSON `experiment_id`/`config_hash`.
+
+**Recommendation: keep.** Phase-4 is sound: H02 hardening is correctly re-derived (Δ+0.0508,
+CI_low +0.0391 @ n=15), the negative/structural conclusion (finding #3) is scale-fair, not
+overstated, and properly scoped; integrity and leakage isolation held throughout. No new win is
+claimed, which is the honest outcome. No required fixes.
