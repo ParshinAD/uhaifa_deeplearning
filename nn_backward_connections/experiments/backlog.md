@@ -318,7 +318,22 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
   the true objective; medium confidence.
 - **Est. compute cost:** **cheap.** Loss function swap only.
 - **Measurement:** standard; arms = {smooth-hinge, tanh} vs sigmoid baseline.
-- **status: proposed**
+- **status: killed**  <!-- 2026-06-21 SCREEN FAIL on both datasets → KILL. Primary arm =
+  bounded smooth-hinge surrogate r_β(Δ)=clamp(0.5 + (β·Δ)/(2·MARGIN), 0, 1) with MARGIN=2.0,
+  replacing σ_β(Δ); LINEAR (constant non-zero gradient) across the correct-but-thin band
+  |β·Δ|≤MARGIN then flat/bounded outside (keeps gradient widening margins σ_β abandons; bounded
+  plateau + grad-clip guard divergence). Per-edge weight hat_w UNCHANGED → isolates surrogate SHAPE
+  from H06 reweighting. Everything else (N(0,1) init/Adam/clip=1.0/LR/β/budget 20k/5k) IDENTICAL
+  to baseline (run_rocket loop replicated verbatim, ONE line changed). Monotone non-decreasing in Δ
+  with β>0 ⇒ argmax preserved (still maximizes feedforward weight); leakage-safe (positions + input
+  weights + β only, never the discrete oracle, no dataset special-case). connectome Δ=−0.0387 pp
+  (mean 82.8571 ± 0.0235, n=3, REGRESSION); mouse Δ=+0.1264 pp (mean 92.1960 ± 0.2643, n=3, positive
+  but ~4× under the 0.52 pp gate and within own seed noise) — both below the 2σ gate. Own std ≈
+  baseline noise floor on both + connectome Δ negative → correctly-specified screen, NOT an H02-style
+  low-variance escalation. UN-RUN arm: tanh (rejected — affine reparam of sigmoid, saturates
+  identically, doesn't test the mechanism). Knock-on: H15 was gated on an objective lever
+  (H06 OR H11) screening positive; BOTH have now failed → H15 reduces to H02 and should be dropped.
+  See experiments/log.md 2026-06-21 H11 cycle. -->
 
 ## H12 — Polyak / EMA averaging of positions
 - **Hypothesis:** Maintaining an exponential moving average of the position vector and scoring the
@@ -427,9 +442,11 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
 - **Measurement:** exact feedforward % via the frozen oracle, **both** datasets, ≥3 seeds SCREEN /
   5+20 CONFIRM, all vs H02@matched-seeds. Pure Rocket score (no post-processing). Oracle used only
   for best-by-oracle tracking.
-- **status: proposed**
-
----
+- **status: dropped**  <!-- 2026-06-21 DROPPED without a cycle. H15 was explicitly gated on H06 OR
+  H11 screening positive standalone; BOTH failed (H06 Δ=−0.0380/−0.0794, H11 Δ=−0.0387/+0.1264, both
+  sub-threshold, connectome regressing). With no objective lever that beats the random baseline, H15
+  reduces to H02 (no additional mechanism to stack), so it is dropped per its own gate. Compute
+  conserved. See the H06 and H11 cycles in experiments/log.md. -->
 
 ### Ranking rationale (EV / cost)
 H01–H02 first: cheapest, best-evidenced upside (exploit known ordering variance + a refinement

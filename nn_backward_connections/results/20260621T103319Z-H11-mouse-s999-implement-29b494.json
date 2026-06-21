@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T103319Z-H11-mouse-s999-implement-29b494",
+  "algo": "H11",
+  "dataset": "mouse",
+  "seed": 999,
+  "score": 8.460841200669321,
+  "pct": 92.37698200808927,
+  "wall_clock_s": 2.243638038635254,
+  "git_commit": "258bcbd07c05cc11d051e7fbe8560efa988f4553+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "29b49412674f",
+  "timestamp": "2026-06-21T10:33:21Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260621T103319Z-H11-mouse-s999-implement-29b494_positions.npy",
+  "experiment_id": "H11",
+  "role": "implement",
+  "hypothesis": "Replacing the saturating sigmoid surrogate sigma_beta(Delta) with a bounded SMOOTH-HINGE reward r_beta(Delta)=clamp(0.5 + (beta*Delta)/(2*MARGIN), 0, 1) -- LINEAR (constant non-zero gradient) across the correct-but-thin-margin band |beta*Delta|<=MARGIN, then flat/bounded outside -- keeps the optimizer WIDENING margins that sigma_beta abandons once saturated, yielding higher exact feedforward weight. Monotone non-decreasing in Delta (argmax-preserving: still maximizes feedforward weight); beta keeps its baseline role as the margin/temperature scale; per-edge weight hat_w UNCHANGED (isolates surrogate SHAPE from H06 reweighting). Leakage-safe: a function of positions + input weights + beta only, never the discrete oracle; bounded plateau + grad-clip guard against divergence. Primary arm = smooth-hinge; tanh arm un-run (saturates like sigmoid).",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}

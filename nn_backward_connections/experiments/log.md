@@ -17,7 +17,7 @@ Append-only lab notebook. Each entry: date, hypothesis, command, result (traced 
 <!-- The table below is auto-generated; do not edit by hand. -->
 
 <!-- BEGIN AGGREGATED RESULTS (auto-generated) -->
-_Generated 2026-06-21T10:28:12Z from 112 run(s)._
+_Generated 2026-06-21T10:38:50Z from 118 run(s)._
 
 | algo | dataset | n_seeds | pct mean±std | score mean±std | wall_clock_s (mean) | seeds | config_hash | git_commit |
 |---|---|---|---|---|---|---|---|---|
@@ -33,6 +33,8 @@ _Generated 2026-06-21T10:28:12Z from 112 run(s)._
 | H06 | mouse | 4 | 92.0437 ± 0.1937 | 8.4303 ± 0.0177 | 1.9 | [42, 42, 123, 999] | ae6060 | 85097398c64 |
 | H09 | connectome | 3 | 82.8948 ± 0.0187 | 34,742,975 ± 7,818 | 77.4 | [42, 123, 999] | 8e9a0f | 90073cf2d95 |
 | H09 | mouse | 4 | 92.1425 ± 0.2591 | 8.4394 ± 0.0237 | 1.9 | [42, 42, 123, 999] | ace4f2 | 90073cf2d95 |
+| H11 | connectome | 3 | 82.8571 ± 0.0235 | 34,727,188 ± 9,856 | 94.5 | [42, 123, 999] | ec5418 | 258bcbd07c0 |
+| H11 | mouse | 3 | 92.1960 ± 0.2643 | 8.4443 ± 0.0242 | 2.4 | [42, 123, 999] | 29b494 | 258bcbd07c0 |
 | baseline_multistart | connectome | 3 | 82.0507 ± 0.0293 | 34,389,211 ± 12,284 | 77.2 | [42, 123, 999] | 330c58 | 704221ab778 |
 | baseline_multistart | mouse | 3 | 92.1625 ± 0.0242 | 8.4412 ± 0.0022 | 1.9 | [42, 123, 999] | c6938b | 704221ab778 |
 | baseline_passthrough | connectome | 8 | 82.8887 ± 0.0223 | 34,740,422 ± 9,345 | 918.5 | [7, 42, 42, 123, 123, 999, 999, 31415] | f8cb3c | 8f0e5066211, f36e02847a9 |
@@ -633,3 +635,90 @@ weighting does not raise exact feedforward weight at equal budget. Backlog statu
 **Knock-on for H15:** H15 (H02 basin × best objective lever {H06,H11}) is gated on an objective
 lever screening positive standalone; H06 did not, so if H11 also fails to screen, H15 reduces to
 H02 and should be dropped.
+
+---
+
+## 2026-06-21 — H11: Surrogate swap — margin-shaped (smooth-hinge) reward vs saturating sigmoid
+- Hypothesis: Replacing the saturating sigmoid surrogate σ_β(Δ) with a margin-shaped surrogate
+  (smooth-hinge / tanh) that KEEPS producing gradient for already-correct-but-small-margin edges
+  yields higher exact feedforward weight than σ_β. Rationale: σ_β saturates — once an edge is
+  comfortably feedforward its gradient → 0, so the optimizer stops WIDENING margins that protect the
+  discrete order against later cyclic-β reshuffling.
+
+#### Implementer (screen)
+- **Variant** (`src/mfas/experiments/H11.py`): replicates the `run_rocket` main loop VERBATIM
+  (same N(0,1) init, Adam, grad-clip=1.0, constant→exponential LR schedule, cyclic β schedule, CPU
+  discrete scoring, best-by-oracle tracking, history, time-limit) and changes ONLY the per-edge
+  surrogate SHAPE. `run_rocket` exposes no surrogate hook, so the loop is copied and exactly ONE line
+  changed: `sig = sigmoid(β·delta)` → `r = clamp(0.5 + (β·delta)/(2·MARGIN), 0, 1)`.
+- **Surrogate formula (primary arm = smooth-hinge, MARGIN = 2.0):** with `Δ = pos[v]−pos[u]` and the
+  scaled margin `z = β·Δ` (β keeps EXACTLY its baseline role — the margin/temperature scale), the
+  per-edge reward is the bounded smooth-hinge `r_β(Δ) = clamp(0.5 + z/(2·MARGIN), 0, 1)`. It is
+  LINEAR (constant non-zero gradient `1/(2·MARGIN)`) across the correct-but-thin band `|z| ≤ MARGIN`,
+  then flat at {1 feedforward, 0 feedback} outside — the decisive difference vs σ_β, whose gradient
+  `σ(1−σ)` decays to ~0 almost immediately past `z=0`. Per-edge weight `hat_w = w/max(w)` is
+  IDENTICAL to baseline (loss `= −Σ r_β·hat_w`), which isolates H11 (surrogate SHAPE) from H06
+  (per-edge reweighting). UN-RUN arm: tanh `r=(tanh z+1)/2` — rejected as primary because tanh is an
+  affine reparametrization of the sigmoid (`σ(x)=(tanh(x/2)+1)/2`) and saturates IDENTICALLY, so it
+  would NOT keep gradient on correct-but-thin edges and would not test the hypothesis's mechanism.
+- **Monotonicity / argmax-preservation:** `r(z)=clamp(0.5+z/(2M),0,1)` is non-decreasing in `z`
+  (slope `1/(2M)>0` on the band, slope 0 on the flats) and `z=β·Δ` with `β>0` is increasing in `Δ`,
+  so `r_β(Δ)` is MONOTONICALLY non-decreasing in `Δ=pos[v]−pos[u]`: making an edge more feedforward
+  never decreases its reward (strictly increases it while `|z|<M`). The per-edge gradient points
+  toward `pos[v]>pos[u]` (feedforward) inside the band and is zero (never inverted) outside — no edge
+  is ever pushed toward feedback. A `hat_w`-weighted sum of monotone-in-Δ feedforward rewards keeps
+  its optimum at "maximize feedforward weight"; the discrete oracle is tracked best-by-oracle and
+  reported, exactly as baseline.
+- **Anti-divergence guard:** a never-saturating pure hinge could drive `Δ→∞` and blow up positions;
+  the bounded plateau (reward flats beyond `±MARGIN`) removes the incentive to grow `Δ` past the
+  margin, and the unchanged grad-clip=1.0 caps step size. Smoke test (mouse s42) showed no
+  NaN/collapse (92.3182%, sane).
+- **Leakage-safe / target-blind:** `r_β` is a function of ONLY (i) model positions (via Δ) and
+  (ii) β (a loss-shape schedule), weighted by input `hat_w`. It never reads/hardcodes/folds in the
+  discrete oracle, never special-cases a dataset (same MARGIN and formula for connectome and mouse).
+  Oracle used only for the baseline's best-by-oracle tracking.
+- **Compute-matched:** standard knob-swap (surrogate SHAPE only); same epoch budget as baseline
+  (connectome 20k, mouse 5k), same optimizer-step count; `n_epochs_done`=actual steps; comparator =
+  `baseline_passthrough` / frozen baseline at matched seeds (connectome 82.8958 ± 0.0189;
+  mouse 92.0696 ± 0.2624). Pure Rocket score (no post-processing).
+- **connectome:** mean **82.8571 ± 0.0235** (n=3; H11 own std 0.0235), Δ = **−0.0387 pp** vs baseline
+  82.8958 → below the +0.04 pp 2σ gate (a slight REGRESSION). **SCREEN FAIL.**
+  (seeds: 42 → 82.8837, 123 → 82.8487, 999 → 82.8389.)
+- **mouse:** mean **92.1960 ± 0.2643** (n=3; H11 own std 0.2643), Δ = **+0.1264 pp** vs baseline
+  92.0696 → POSITIVE but below the +0.52 pp 2σ gate. **SCREEN FAIL.**
+  (seeds: 42 → 92.3182, 123 → 91.8927, 999 → 92.3770.)
+- **CONFIRM-escalation check:** NOT a low-variance H02-style case. Connectome Δ is NEGATIVE (a
+  regression, not a positive sub-threshold gain), and H11's own std (connectome 0.0235, mouse 0.2643)
+  ≈ the baseline noise floor on both datasets (0.0189 / 0.2624) → the 2σ gate is correctly specified;
+  no escalation to CONFIRM. (The mouse +0.1264 pp is positive but ~4× under threshold and sits
+  squarely inside H11's own ±0.26 pp seed scatter — not a low-variance signal.)
+- **Commands:**
+  ```
+  PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+  for DS in connectome mouse; do for S in 42 123 999; do
+    $PY -m eval.run_variant --exp H11 --dataset $DS --seed $S --out results/ --role implement
+  done; done
+  $PY -m eval.aggregate --glob "results/*.json" --out experiments/log.md
+  ```
+- **Result file ids:** connectome —
+  `20260621T103328Z-H11-connectome-s42-implement-ec5418`,
+  `20260621T103512Z-H11-connectome-s123-implement-ec5418`,
+  `20260621T103658Z-H11-connectome-s999-implement-ec5418`;
+  mouse —
+  `20260621T103303Z-H11-mouse-s42-implement-29b494`,
+  `20260621T103316Z-H11-mouse-s123-implement-29b494`,
+  `20260621T103319Z-H11-mouse-s999-implement-29b494`.
+- **SCREEN verdict: FAIL on BOTH datasets** (correctly-specified gate; no CONFIRM escalation).
+  Keeping gradient on correct-but-thin edges via a linear-band smooth-hinge did not raise exact
+  feedforward weight: connectome regressed slightly and mouse rose only ~¼ of its 2σ gate within
+  seed noise. Consistent with the campaign's objective-axis pattern (H06 also failed): reshaping the
+  per-edge surrogate around the faithful Eq.-7 objective does not move the discrete metric up at
+  equal budget — the smooth-hinge's wider gradient band trades the sigmoid's faithful S-curve for a
+  shape that drifts slightly off the true metric on connectome.
+
+#### Decision: **kill.** H11 SCREEN-FAILED on both datasets (connectome Δ=−0.0387 pp regression;
+mouse Δ=+0.1264 pp, ~4× under the 0.52 pp gate and within own seed noise), correctly-specified gate
+(own std ≈ noise floor on both) → no CONFIRM escalation. Monotone/argmax-preserving and leakage-safe
+by construction (positions + input weights + β only). **Knock-on for H15:** H15 was gated on an
+objective lever (H06 or H11) screening positive standalone; BOTH H06 and H11 have now failed, so H15
+reduces to H02 and should be dropped per the ideator's own gate.
