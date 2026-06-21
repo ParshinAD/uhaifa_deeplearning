@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T102120Z-H06-mouse-s42-implement-ae6060",
+  "algo": "H06",
+  "dataset": "mouse",
+  "seed": 42,
+  "score": 8.44500960140932,
+  "pct": 92.20412976735878,
+  "wall_clock_s": 1.8878278732299805,
+  "git_commit": "85097398c644b1c8b9b0f47cd21e67ab32dd813d+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "ae6060435f76",
+  "timestamp": "2026-06-21T10:21:22Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260621T102120Z-H06-mouse-s42-implement-ae6060_positions.npy",
+  "experiment_id": "H06",
+  "role": "implement",
+  "hypothesis": "Reweighting the surrogate per-edge term by a strictly-positive, bounded, detached emphasis factor m_e = 1 + ALPHA * hat_w * (4*sigma*(1-sigma)) -- which boosts gradient on edges that are both HEAVY (hat_w) and BORDERLINE (sigmoid near 0.5) while never reducing any edge below its baseline hat_w -- retains more high-weight feedforward arcs than the flat hat_w baseline. Direction-preserving (m_e > 0 detached => per-edge gradient sign unchanged) and leakage-safe (uses only input weights + the model's own surrogate state, never the discrete oracle).",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}

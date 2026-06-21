@@ -213,7 +213,23 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
   from Eq. 7 biases the surrogate away from the true metric.
 - **Est. compute cost:** **cheap.** Elementwise reweighting of existing terms; per-step cost ≈ same.
 - **Measurement:** standard; ablate (a) heavy-edge emphasis, (b) borderline (|Δ| small) emphasis.
-- **status: proposed**
+- **status: killed**  <!-- 2026-06-21 SCREEN FAIL on both datasets → KILL. Primary arm =
+  detached, strictly-positive, bounded per-edge emphasis m_e = 1 + ALPHA·hat_w·(4·σ(1−σ)) with
+  ALPHA=4 (a clean combination of (a) heavy hat_w and (b) borderline |σ−0.5| emphasis), applied to
+  the baseline σ_β·hat_w term; everything else (init/Adam/clip/LR/β/budget 20k/5k) IDENTICAL to
+  baseline (run_rocket loop replicated verbatim, only two lines changed). Direction-preserving:
+  b_e detached ⇒ per-edge gradient = baseline·m_e with m_e≥1>0, so no edge's pull is inverted or
+  silenced, only relative magnitudes reshaped; still a monotone feedforward reward → argmax stays
+  "maximize feedforward weight". Leakage-safe: m_e uses only input weights (hat_w) + the model's own
+  surrogate state σ_β, never the discrete oracle, never dataset-special-cased. connectome Δ=−0.0380
+  pp (mean 82.8578 ± 0.0288, n=3, REGRESSION); mouse Δ=−0.0794 pp (mean 91.9902 ± 0.1978, n=3,
+  REGRESSION) — both below the 2σ gate. Both Δ negative + H06 own std ≈ baseline noise floor on both
+  → correctly-specified screen, NOT an H02-style low-variance escalation. The emphasis biased the
+  surrogate slightly off the faithful Eq.-7 weighting (the listed risk). UN-RUN arms: heavy-only
+  power (hat_w)^(γ−1), borderline-only 1+ALPHA·b_e, ALPHA sweep. See experiments/log.md 2026-06-21
+  H06 cycle. -->
+  <!-- Knock-on: H15 (H02 basin × best objective lever) is gated on an objective lever screening
+  positive; H06 did not. If H11 also fails, H15 reduces to H02 and should be dropped. -->
 
 ## H07 — Cosine/one-cycle LR with warmup instead of constant→exponential
 - **Hypothesis:** Replacing the ConstantLR(50%)→ExponentialLR(→10%) schedule with a warmup +

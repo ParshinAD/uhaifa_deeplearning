@@ -17,7 +17,7 @@ Append-only lab notebook. Each entry: date, hypothesis, command, result (traced 
 <!-- The table below is auto-generated; do not edit by hand. -->
 
 <!-- BEGIN AGGREGATED RESULTS (auto-generated) -->
-_Generated 2026-06-21T10:14:44Z from 105 run(s)._
+_Generated 2026-06-21T10:28:12Z from 112 run(s)._
 
 | algo | dataset | n_seeds | pct mean±std | score mean±std | wall_clock_s (mean) | seeds | config_hash | git_commit |
 |---|---|---|---|---|---|---|---|---|
@@ -29,6 +29,8 @@ _Generated 2026-06-21T10:14:44Z from 105 run(s)._
 | H03 | mouse | 3 | 92.0810 ± 0.2730 | 8.4337 ± 0.0250 | 2.0 | [42, 123, 999] | 0b23c4 | 858e000ec21 |
 | H04 | connectome | 3 | 82.8958 ± 0.0183 | 34,743,389 ± 7,664 | 80.6 | [42, 123, 999] | 430afe | 4b5ba1674e4 |
 | H04 | mouse | 3 | 92.0696 ± 0.2624 | 8.4327 ± 0.0240 | 1.9 | [42, 123, 999] | fa47bd | 4b5ba1674e4 |
+| H06 | connectome | 3 | 82.8578 ± 0.0288 | 34,727,496 ± 12,053 | 119.4 | [42, 123, 999] | e07005 | 85097398c64 |
+| H06 | mouse | 4 | 92.0437 ± 0.1937 | 8.4303 ± 0.0177 | 1.9 | [42, 42, 123, 999] | ae6060 | 85097398c64 |
 | H09 | connectome | 3 | 82.8948 ± 0.0187 | 34,742,975 ± 7,818 | 77.4 | [42, 123, 999] | 8e9a0f | 90073cf2d95 |
 | H09 | mouse | 4 | 92.1425 ± 0.2591 | 8.4394 ± 0.0237 | 1.9 | [42, 42, 123, 999] | ace4f2 | 90073cf2d95 |
 | baseline_multistart | connectome | 3 | 82.0507 ± 0.0293 | 34,389,211 ± 12,284 | 77.2 | [42, 123, 999] | 330c58 | 704221ab778 |
@@ -553,3 +555,81 @@ Leakage-safe, no collapse. Backlog status → killed.
 **Knock-on:** this also moots **H14** (anti-tie jitter stacked on the H02 basin) — H02's positions
 are equally Adam-spread, so the same null result applies; H14 is marked killed-by-implication
 without a separate cycle (documented in backlog) to conserve compute.
+
+
+## 2026-06-21 — H06: Weight-aware loss reweighting (heavy-&-borderline edge emphasis)
+- Hypothesis: Reweighting the surrogate so that high-weight AND currently-borderline edges receive
+  proportionally more gradient (vs the flat max-normalized hat-w) increases retained high-weight
+  feedforward arcs. The skewed edge-weight distribution means a few heavy edges are diluted late in
+  training; emphasizing heavy/uncertain edges aligns gradient effort with the metric's own weighting.
+
+#### Implementer (screen)
+- **Variant** (`src/mfas/experiments/H06.py`): replicates the `run_rocket` main loop VERBATIM
+  (same N(0,1) init, Adam, grad-clip=1.0, constant→exponential LR schedule, cyclic β schedule,
+  CPU discrete scoring, best-by-oracle tracking, history, time-limit) and changes ONLY the per-edge
+  loss weighting. `run_rocket` exposes no loss hook, so the loop is copied and only two lines added.
+- **Reweighting formula (primary arm, ALPHA = 4.0):** each baseline per-edge term `σ_β(Δ)·hat_w`
+  (`hat_w = w/max(w) ∈ (0,1]`, `Δ = pos[v]−pos[u]`) is multiplied by a strictly-positive, bounded,
+  DETACHED emphasis factor
+  `m_e = 1 + ALPHA · hat_w · b_e`, with `b_e = 4·σ_β·(1−σ_β) ∈ [0,1]`.
+  `b_e` is the normalized sigmoid sensitivity: 1 exactly at the borderline (`σ=0.5`,
+  i.e. `|σ−0.5|=0`), → 0 as the edge saturates feedforward OR feedback. The product `hat_w·b_e`
+  routes EXTRA gradient to edges that are HEAVY and UNDECIDED. Bounded `1 ≤ m_e ≤ 1+ALPHA = 5`.
+  This is a clean COMBINATION of the backlog's two ablations ((a) heavy `hat_w`, (b) borderline
+  `|σ−0.5|`); chosen because the hypothesis is specifically about heavy-AND-uncertain edges
+  (a heavy already-feedforward edge needs no push; a borderline tiny edge barely moves the metric).
+  UN-RUN arms: heavy-only `(hat_w)^(γ−1)`, borderline-only `1+ALPHA·b_e`, ALPHA sweep.
+- **Direction-preservation (argmax preserved):** `b_e` is computed under `torch.no_grad()` and
+  detached, so the gradient w.r.t. positions is, per edge, `−m_e·hat_w·∂σ_β/∂pos` — EXACTLY the
+  baseline per-edge gradient scaled by `m_e > 0`. Every edge still pushes toward `pos[v]>pos[u]`
+  (feedforward); no edge's contribution sign is inverted — only relative magnitudes change. The
+  floor `m_e ≥ 1` (ALPHA, hat_w, b_e all ≥ 0) guarantees H06 NEVER reduces an edge below its
+  baseline `hat_w`, only adds bounded emphasis. The objective stays a monotone reward for
+  feedforward orientation; the discrete oracle (total feedforward weight) is what is tracked/reported.
+- **Leakage-safe / target-blind:** `m_e` uses ONLY (i) input edge weights via `hat_w` and (ii) the
+  model's OWN surrogate state `σ_β(Δ)` (a borderline edge = `σ_β` near 0.5). It never reads,
+  hardcodes, or folds in the discrete oracle score, and never special-cases a dataset (identical
+  formula for connectome and mouse). Oracle used only for the baseline's best-by-oracle tracking.
+- **Compute-matched:** standard knob-swap (loss reweighting only); same epoch budget as baseline
+  (connectome 20k, mouse 5k), same optimizer-step count; `n_epochs_done`=actual steps; comparator =
+  `baseline_passthrough` / frozen baseline at matched seeds (connectome 82.8958 ± 0.0189;
+  mouse 92.0696 ± 0.2624). Pure Rocket score (no post-processing).
+- **connectome:** mean **82.8578 ± 0.0288** (n=3; H06 own std 0.0288), Δ = **−0.0380 pp** vs baseline
+  82.8958 → below the +0.04 pp 2σ gate (a slight REGRESSION). **SCREEN FAIL.**
+- **mouse:** mean **91.9902 ± 0.1978** (n=3; H06 own std 0.1978), Δ = **−0.0794 pp** vs baseline
+  92.0696 → below the +0.52 pp 2σ gate (a slight REGRESSION). **SCREEN FAIL.**
+- **CONFIRM-escalation check:** NOT a low-variance H02-style case. Both Δ are NEGATIVE (not positive
+  sub-threshold), and H06's own std (connectome 0.0288, mouse 0.1978) ≈ the baseline noise floor on
+  both datasets (0.0189 / 0.2624) → the 2σ gate is correctly specified; no escalation to CONFIRM.
+- **Commands:**
+  ```
+  PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+  for DS in connectome mouse; do for S in 42 123 999; do
+    $PY -m eval.run_variant --exp H06 --dataset $DS --seed $S --out results/ --role implement
+  done; done
+  $PY -m eval.aggregate --glob "results/*.json" --out experiments/log.md
+  ```
+- **Result file ids:** connectome —
+  `20260621T102136Z-H06-connectome-s42-implement-e07005`,
+  `20260621T102341Z-H06-connectome-s123-implement-e07005`,
+  `20260621T102557Z-H06-connectome-s999-implement-e07005`;
+  mouse —
+  `20260621T102120Z-H06-mouse-s42-implement-ae6060`,
+  `20260621T102123Z-H06-mouse-s123-implement-ae6060`,
+  `20260621T102125Z-H06-mouse-s999-implement-ae6060`
+  (smoke `20260621T102110Z-H06-mouse-s42-implement-ae6060` excluded as a duplicate of s42).
+- **SCREEN verdict: FAIL on BOTH datasets** (correctly-specified gate; no CONFIRM escalation).
+  The heavy-&-borderline emphasis biased the surrogate slightly away from the faithful Eq.-7
+  objective (the backlog's stated risk: "changing the loss too far from Eq. 7 biases the surrogate
+  away from the true metric"), nudging the metric just below baseline on both datasets rather than
+  improving it. Objective/landscape reshaping via per-edge emphasis did not move the metric up.
+
+#### Decision: **kill.** H06 SCREEN-FAILED on both datasets (connectome Δ=−0.0380 pp, mouse
+Δ=−0.0794 pp), both below the 2σ gate and in fact small regressions. Correctly-specified gate
+(own std ≈ noise floor on both) → no CONFIRM escalation. Direction-preserving and leakage-safe by
+construction (detached `m_e>1`, only input weights + own surrogate state), so the null is a genuine
+objective-axis result: re-emphasizing heavy/borderline edges around the faithful max-normalized
+weighting does not raise exact feedforward weight at equal budget. Backlog status → screened.
+**Knock-on for H15:** H15 (H02 basin × best objective lever {H06,H11}) is gated on an objective
+lever screening positive standalone; H06 did not, so if H11 also fails to screen, H15 reduces to
+H02 and should be dropped.
