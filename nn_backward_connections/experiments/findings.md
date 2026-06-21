@@ -39,3 +39,48 @@ via the more-rigorous CONFIRM test (justified: the screen gate assumes variant v
 noise, but H02's init is nearly deterministic; see the log's orchestrator escalation note).
 Generality beyond connectome+mouse is asserted from the mechanism (a graph-derived warm start lands
 Rocket in a better basin), not proven — only two real graphs are available.
+
+## #2 — Rocket's plateau is set by the starting basin, not the optimization dynamics (structural)
+
+**Claim.** Across a 9-hypothesis screen (8 distinct mechanisms), the **only** lever that improved the
+exact feedforward metric was the one that changed **where optimization starts** (H02's warm-start).
+Every intervention on the optimization **dynamics / trajectory** re-converged to — or fell below —
+Rocket's plateau, and both **objective/loss-landscape** reshapings slightly **regressed** the
+connectome. This is a reproducible structural property of Rocket on these connectomes: *how* it
+descends barely matters; *where* it begins does.
+
+**Evidence (each row = one screened variant; n=3 seeds 42/123/999; Δ = variant − baseline on the
+exact metric; all numbers from logged `results/*.json`, one git commit per experiment):**
+
+| variant | mechanism / axis | Δ connectome | Δ mouse | result |
+|---|---|---|---|---|
+| **H02** | **starting basin** (greedy-FAS warm-start) | **+0.0448** | **+0.2064** | **CONFIRMED win** |
+| H01 | restarts (dynamics) | +0.0003 | +0.0000 | kill |
+| H03 | β schedule (dynamics) | −0.0376 | +0.0114 | kill |
+| H04 | in-loop refinement (dynamics) | −0.0000 | +0.0000 | kill |
+| H13 | edge-subsample noise (dynamics) | −0.8356 | −0.0325 | kill |
+| H05 | optimizer → AdamW (dynamics, **falsifier**) | +0.0018 | +0.0000 | kill |
+| H06 | weight-aware loss reweight (objective) | −0.0380 | −0.0794 | kill |
+| H11 | margin/hinge surrogate (objective) | −0.0387 | +0.1264 | kill |
+| H09 | anti-tie jitter (free-edge) | −0.0010 | +0.0000 | kill (0 ties exist) |
+
+Two corroborating sub-results: (a) **free-edge recovery is empty** — the continuous optimizer leaves
+**0 exact position ties**, so the strict-`>` oracle drops nothing recoverable (H09 sized this before
+running). (b) **The faithful surrogate is already near-optimal for the dynamics** — reshaping the
+objective magnitude (H06) or surrogate shape (H11) *lowered* connectome, and injecting gradient noise
+(H13) lowered it sharply (−0.84 pp). The H05 optimizer falsifier (the dynamics knob most able to
+reach a different basin) re-converging to the plateau is the strongest single piece of evidence.
+
+**Why it matters.** It explains *why* the paper's Crane phase (discrete MIP refinement from a good
+order) is what extends quality past Rocket's plateau, and predicts that future gains lie in **better
+initial orderings / basins** (stronger discrete FAS heuristics, multi-basin search) rather than in
+optimizer/LR/β/loss tuning. It also says reproductions need not chase Rocket's exact training
+trajectory — the plateau is basin-determined, not schedule-determined.
+
+**Honest scope.** Negative results over two real connectomes and one screened arm per hypothesis;
+some un-screened arms remain (β_max∈{2,8} for H03, FRAC=0.25 for H13, Lion for H05, etc.) and four
+LOW-EV dynamics knobs (H07/H08/H10/H12) were **deferred, not falsified**, when the campaign hit its
+`EARLY_EXIT` stop (7 consecutive non-improving cycles, no promising items left). The inference was
+pressure-tested (the ideator kept H05 as a falsifier rather than assuming the conclusion), but it is
+an inductive conclusion, not a proof. Full per-cycle evidence + commands: `experiments/log.md`
+(H01–H13 cycles + the 2026-06-21 campaign-stop note).
