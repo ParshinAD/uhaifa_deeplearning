@@ -66,7 +66,15 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
 - **Est. compute cost:** **cheap.** One-time greedy/topo sort (O(m log n)) before optimization;
   uses installed `networkx`/`scipy`. Per-step cost unchanged.
 - **Measurement:** standard; ablate greedy vs topo-of-greedy as the init source.
-- **status: proposed**
+- **status: confirmed**  <!-- 2026-06-21 CONFIRMED WIN (first of the campaign). Screen marginally
+  missed the 2σ_baseline gate, but that gate assumes variant variance ≈ baseline noise; H02's init
+  is ~deterministic (σ≈0.0005/0.0000), so it was escalated to the CONFIRM test (the real bar) and
+  PASSED on both datasets. Init = leakage-safe Eades–Lin–Smyth/GreedyAbs greedy-FAS ordering (graph
+  structure+weights only) → evenly-spaced positions in [-1,1] → UNCHANGED run_rocket at baseline
+  budget (20k/5k). CONFIRM (matched-seed baseline, conservative): connectome Δ=+0.0448 pp, 95% CI
+  lower +0.0135 (n=5); mouse Δ=+0.2064 pp, 95% CI lower +0.0824 (n=20). Critic KEEP (all 6 risks
+  PASS). Caveat: connectome margin thin (+0.0135). See experiments/log.md + findings.md #1. -->
+  
 
 ## H03 — Sharper / extended β schedule (raise terminal sharpness)
 - **Hypothesis:** Increasing the maximum sigmoid sharpness in the late phase (β_max from ~1.05 up

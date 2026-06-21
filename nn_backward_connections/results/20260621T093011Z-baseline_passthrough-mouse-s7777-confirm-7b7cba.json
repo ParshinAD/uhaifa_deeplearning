@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T093011Z-baseline_passthrough-mouse-s7777-confirm-7b7cba",
+  "algo": "baseline_passthrough",
+  "dataset": "mouse",
+  "seed": 7777,
+  "score": 8.455901485426592,
+  "pct": 92.32304931094012,
+  "wall_clock_s": 1.8190968036651611,
+  "git_commit": "f36e02847a986682af3ad1560912e9025d2908ad+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "7b7cbadfa19c",
+  "timestamp": "2026-06-21T09:30:13Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260621T093011Z-baseline_passthrough-mouse-s7777-confirm-7b7cba_positions.npy",
+  "experiment_id": "baseline_passthrough",
+  "role": "confirm",
+  "hypothesis": "Unchanged baseline Rocket, wrapped as a variant (wiring smoke test).",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}
