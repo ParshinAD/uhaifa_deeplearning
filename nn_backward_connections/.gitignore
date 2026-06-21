@@ -24,3 +24,6 @@ venv/
 
 # OS
 .DS_Store
+
+# Local Claude settings (contains CLAUDE_CODE_OAUTH_TOKEN — never commit)
+.claude/settings.local.json

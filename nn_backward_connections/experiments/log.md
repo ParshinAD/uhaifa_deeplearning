@@ -66,3 +66,25 @@ loop reproduces the frozen baseline within the noise floor on both datasets.**
 
 > Note: some `wall_clock_s` values in the auto table are inflated because these runs executed as
 > a throttled background batch; `pct`/`score` numbers are unaffected.
+
+---
+
+## 2026-06-21 — Cleanup: discard contaminated H01 (subagent-registration bug)
+- **Issue:** A prior session ran H01 while the custom subagents were not registered, so the loop
+  silently fell back to the **general-purpose** agent (full tool access). This collapses the
+  integrity design (read-only verifier; implementer ≠ verifier), so any H01 output from it is
+  **UNVERIFIED** and must not be trusted or promoted.
+- **Discarded** (partial, fallback-produced, `git_commit = …+dirty`, only 1 of 6 screen runs):
+  - `results/20260621T082219Z-H01-mouse-s42-implement-434027.json`
+  - `results/20260621T082219Z-H01-mouse-s42-implement-434027_positions.npy`
+  (For the record, that run reported mouse 92.135% — within the 0.52 pp mouse noise floor — but it
+  is discarded on **provenance** grounds regardless of its value.)
+- **Retained:** `src/mfas/experiments/H01.py` — reviewed and correct (K=4 restarts from distinct
+  sub-seeds `seed + j*7919`; best-of-K by the existing oracle tracker → leakage-safe;
+  `n_epochs_done` = total steps → compute-matched to `baseline_multistart` K=4). It will be re-run
+  **from scratch** through the real subagents (implementer → verifier → critic) so every H01 number
+  is produced under the intended tool scopes. The comparator `baseline_multistart` has no logged
+  runs yet and will be generated during the clean H01 cycle.
+- **Pre-flight:** `tests/test_metrics.py` green (8 passed); `eval/frozen.sha256` matches all four
+  frozen files. Infra fixes that restored correct subagent registration (`.claude/settings.json`,
+  `.gitignore`) committed separately as a cleanup commit (not an experiment).
