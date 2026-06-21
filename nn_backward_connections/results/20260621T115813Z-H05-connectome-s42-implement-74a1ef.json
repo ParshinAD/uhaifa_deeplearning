@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T115813Z-H05-connectome-s42-implement-74a1ef",
+  "algo": "H05",
+  "dataset": "connectome",
+  "seed": 42,
+  "score": 34753315.0,
+  "pct": 82.91944570428889,
+  "wall_clock_s": 76.0593478679657,
+  "git_commit": "85066a96fa4f4193f512fd3d0982b9a8879dc849+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "74a1ef6f7e71",
+  "timestamp": "2026-06-21T11:59:37Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260621T115813Z-H05-connectome-s42-implement-74a1ef_positions.npy",
+  "experiment_id": "H05",
+  "role": "implement",
+  "hypothesis": "Replacing Adam with AdamW (decoupled weight decay = 1e-4, a small SCALE prior that keeps the unconstrained positions bounded so sigma_beta does not saturate at large magnitudes) changes the basin the optimizer reaches and improves the final exact feedforward weight. The ONLY change vs baseline is the optimizer constructor optim.Adam -> optim.AdamW(weight_decay=1e-4); init, the (0.9,0.999) moment coefficients (AdamW defaults == baseline Adam's), LR base=0.05, the ConstantLR->ExponentialLR schedule, grad-clip=1.0, the cyclic-beta surrogate schedule and the 20k/5k epoch budget are IDENTICAL to baseline. Decoupled decay reads only the positions, never the oracle or input weights -> target-blind / leakage-safe. FALSIFIER arm: tests whether the optimizer (a dynamics knob) can reach a different basin than Adam, against the campaign's basin-not-dynamics inference. Primary arm = AdamW 1e-4; un-run arms = AdamW 1e-2 and Lion (Lion not installed).",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

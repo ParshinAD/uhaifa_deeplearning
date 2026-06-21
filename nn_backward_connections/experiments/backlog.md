@@ -196,7 +196,21 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
 - **Est. compute cost:** **cheap.** Drop-in optimizer change (AdamW in torch; Lion if available
   else hand-coded sign update). Per-step cost ≈ identical.
 - **Measurement:** standard; AdamW (decay∈{1e-4,1e-2}) and Lion as two screened arms.
-- **status: proposed**
+- **status: killed**  <!-- 2026-06-21 SCREEN FAIL on both datasets → KILL (deliberate falsifier
+  cycle; clean negative). Primary arm = AdamW with DECOUPLED weight_decay=1e-4 (small position-scale
+  prior; AdamW (β1,β2,eps) defaults == Adam's, so weight_decay is the ONLY behavioural difference;
+  wd=0 reduces exactly to baseline). run_rocket loop replicated VERBATIM, ONLY the optimizer
+  constructor optim.Adam → optim.AdamW(weight_decay=1e-4) changed; N(0,1) init / grad-clip=1.0 /
+  ConstantLR→ExponentialLR / cyclic-β / budget 20k/5k IDENTICAL to baseline. Leakage-safe: decoupled
+  decay reads only the positions, never the oracle/input weights, not dataset-special-cased.
+  connectome Δ=+0.0018 pp (mean 82.8976 ± 0.0205, n=3); mouse Δ=+0.0000 pp (mean 92.0696 ± 0.2624,
+  n=3, bit-for-bit the baseline mean±std) — both far below the 2σ gate. H05 own std ≈ baseline noise
+  floor on both (connectome 0.0205 vs 0.0189; mouse 0.2624 vs 0.2624) → correctly-specified screen,
+  NOT an H02-style low-variance escalation. UN-RUN arms: AdamW weight_decay=1e-2, Lion (Lion not
+  installed; no dependency added). Confirms the campaign's basin-not-dynamics inference: the optimizer
+  — the dynamics knob most able to reach a different basin — did not move the exact metric. See
+  experiments/log.md 2026-06-21 H05 cycle. -->
+
 
 ## H06 — Degree/weight-aware loss reweighting (focus gradient on high-weight edges)
 - **Hypothesis:** Reweighting the surrogate so that high-weight and currently-borderline edges
@@ -243,7 +257,12 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
 - **Expected effect:** connectome ±0.02–0.06 pp; mouse ±0.2–0.5 pp. Likely small; cheap to test.
 - **Est. compute cost:** **cheap.** Scheduler swap only.
 - **Measurement:** standard; one-cycle (warmup 5–10%, cosine to 1–10% of base) vs baseline.
-- **status: proposed**
+- **status: deferred (campaign stop)**  <!-- 2026-06-21 NOT RUN. Campaign hit its stop criterion
+  (EARLY_EXIT: 7 consecutive non-improving cycles after the H02 win, no remaining promising items).
+  This is a LOW-EV pure-dynamics knob; the basin-not-dynamics evidence — 5 dynamics-axis kills
+  H01/H03/H04/H13 plus the H05 optimizer falsifier (AdamW re-converged to the plateau) — predicts it
+  re-converges too. Deferred, not falsified: re-open if the central inference is later overturned.
+  See findings.md and the 2026-06-21 campaign-stop note in experiments/log.md. -->
 
 ## H08 — β-phase-synced LR + longer/asymmetric β cycles
 - **Hypothesis:** Co-scheduling LR and β (high LR during smooth/low-β explore phases, low LR during
@@ -259,7 +278,12 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
   parts of H03/H07 so run after them.
 - **Est. compute cost:** **cheap.** Two coupled schedule arrays; per-step cost identical.
 - **Measurement:** standard; sweep n_cycles∈{2,3,5} with phase-locked LR.
-- **status: proposed**
+- **status: deferred (campaign stop)**  <!-- 2026-06-21 NOT RUN. Campaign hit its stop criterion
+  (EARLY_EXIT: 7 consecutive non-improving cycles after the H02 win, no remaining promising items).
+  This is a LOW-EV pure-dynamics knob; the basin-not-dynamics evidence — 5 dynamics-axis kills
+  H01/H03/H04/H13 plus the H05 optimizer falsifier (AdamW re-converged to the plateau) — predicts it
+  re-converges too. Deferred, not falsified: re-open if the central inference is later overturned.
+  See findings.md and the 2026-06-21 campaign-stop note in experiments/log.md. -->
 
 ## H09 — Tie-breaking jitter on near-equal positions (anti-collapse)
 - **Hypothesis:** Adding tiny deterministic per-node position jitter / discouraging exact position
@@ -301,7 +325,12 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
   cheap to falsify.
 - **Est. compute cost:** **cheap.** Replace `clip_grad_norm_` with clip-by-value / none.
 - **Measurement:** standard; arms = {clip-value 0.1, no-clip, baseline norm-clip}.
-- **status: proposed**
+- **status: deferred (campaign stop)**  <!-- 2026-06-21 NOT RUN. Campaign hit its stop criterion
+  (EARLY_EXIT: 7 consecutive non-improving cycles after the H02 win, no remaining promising items).
+  This is a LOW-EV pure-dynamics knob; the basin-not-dynamics evidence — 5 dynamics-axis kills
+  H01/H03/H04/H13 plus the H05 optimizer falsifier (AdamW re-converged to the plateau) — predicts it
+  re-converges too. Deferred, not falsified: re-open if the central inference is later overturned.
+  See findings.md and the 2026-06-21 campaign-stop note in experiments/log.md. -->
 
 ## H11 — Surrogate swap: tanh / smooth-hinge / temperature-annealed softmax-rank
 - **Hypothesis:** Replacing the sigmoid surrogate with a margin-shaped one (smooth hinge / tanh)
@@ -348,7 +377,12 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
   honest chance of being within noise.
 - **Est. compute cost:** **cheap.** One extra O(n) EMA update per step + a few extra oracle scores.
 - **Measurement:** standard; sweep EMA decay ∈ {0.99, 0.999}.
-- **status: proposed**
+- **status: deferred (campaign stop)**  <!-- 2026-06-21 NOT RUN. Campaign hit its stop criterion
+  (EARLY_EXIT: 7 consecutive non-improving cycles after the H02 win, no remaining promising items).
+  This is a LOW-EV pure-dynamics knob; the basin-not-dynamics evidence — 5 dynamics-axis kills
+  H01/H03/H04/H13 plus the H05 optimizer falsifier (AdamW re-converged to the plateau) — predicts it
+  re-converges too. Deferred, not falsified: re-open if the central inference is later overturned.
+  See findings.md and the 2026-06-21 campaign-stop note in experiments/log.md. -->
 
 ## H13 — Mini-batch / stochastic edge subsampling per step
 - **Hypothesis:** Computing the surrogate loss on a random subset of edges each step (SGD-style)

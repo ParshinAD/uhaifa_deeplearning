@@ -17,7 +17,7 @@ Append-only lab notebook. Each entry: date, hypothesis, command, result (traced 
 <!-- The table below is auto-generated; do not edit by hand. -->
 
 <!-- BEGIN AGGREGATED RESULTS (auto-generated) -->
-_Generated 2026-06-21T11:53:01Z from 124 run(s)._
+_Generated 2026-06-21T12:03:18Z from 130 run(s)._
 
 | algo | dataset | n_seeds | pct mean±std | score mean±std | wall_clock_s (mean) | seeds | config_hash | git_commit |
 |---|---|---|---|---|---|---|---|---|
@@ -29,6 +29,8 @@ _Generated 2026-06-21T11:53:01Z from 124 run(s)._
 | H03 | mouse | 3 | 92.0810 ± 0.2730 | 8.4337 ± 0.0250 | 2.0 | [42, 123, 999] | 0b23c4 | 858e000ec21 |
 | H04 | connectome | 3 | 82.8958 ± 0.0183 | 34,743,389 ± 7,664 | 80.6 | [42, 123, 999] | 430afe | 4b5ba1674e4 |
 | H04 | mouse | 3 | 92.0696 ± 0.2624 | 8.4327 ± 0.0240 | 1.9 | [42, 123, 999] | fa47bd | 4b5ba1674e4 |
+| H05 | connectome | 3 | 82.8976 ± 0.0205 | 34,744,166 ± 8,583 | 75.9 | [42, 123, 999] | 74a1ef | 85066a96fa4 |
+| H05 | mouse | 3 | 92.0696 ± 0.2624 | 8.4327 ± 0.0240 | 1.9 | [42, 123, 999] | 4254d9 | 85066a96fa4 |
 | H06 | connectome | 3 | 82.8578 ± 0.0288 | 34,727,496 ± 12,053 | 119.4 | [42, 123, 999] | e07005 | 85097398c64 |
 | H06 | mouse | 4 | 92.0437 ± 0.1937 | 8.4303 ± 0.0177 | 1.9 | [42, 42, 123, 999] | ae6060 | 85097398c64 |
 | H09 | connectome | 3 | 82.8948 ± 0.0187 | 34,742,975 ± 7,818 | 77.4 | [42, 123, 999] | 8e9a0f | 90073cf2d95 |
@@ -817,3 +819,127 @@ Unbiased + leakage-safe/target-blind by construction (uniform over input edge in
 run-seed-derived RNG; oracle only for best-by-oracle tracking). Adds another dynamics-axis negative to
 the campaign's evidence base (full-batch deterministic descent beats its stochastic estimator at equal
 steps on these graphs).
+
+
+---
+
+## 2026-06-21 — H05: Optimizer swap — AdamW (decoupled weight decay) vs Adam (FALSIFIER cycle)
+- Hypothesis: Replacing Adam with AdamW (a small DECOUPLED weight decay to keep the unconstrained
+  positions bounded / scale-regularized) — or a sign-based optimizer (Lion) — changes the BASIN the
+  optimizer reaches and improves the final exact feedforward weight. Rationale: positions are
+  unconstrained and can drift to large magnitudes where σ_β saturates and the surrogate gradient
+  vanishes; mild decoupled decay regularizes position scale (a scale-invariance argument the paper
+  makes for *weight* normalization, §3.1.1). Optimizer choice is target-blind → leakage-safe.
+- **Falsifier framing:** the campaign's evidence (H02 win = basin change; H01/H03/H04/H13 kills =
+  late-dynamics / trajectory interventions all re-converge to or below Rocket's plateau) implies the
+  optimizer *trajectory* does not set the plateau — the starting *basin* does. H05 swaps the single
+  dynamics knob most able to reach a DIFFERENT basin (the optimizer itself + its decoupled decay). An
+  honest negative strengthens that finding; a positive would overturn it.
+
+#### Implementer (screen)
+- **Variant** (`src/mfas/experiments/H05.py`): replicates the `run_rocket` main loop VERBATIM (same
+  N(0,1) init + RNG seeding, grad-clip=1.0, ConstantLR(50%)→ExponentialLR(→10%) `SequentialLR`
+  schedule, cyclic-β surrogate schedule `make_beta_schedule(epochs, 5)`, CPU int64/float64 discrete
+  scoring, best-by-oracle tracking, history, time-limit) and changes ONLY the optimizer constructor:
+  `optim.Adam([positions], lr=cfg.lr)` → `optim.AdamW([positions], lr=cfg.lr, weight_decay=1e-4)`.
+  `run_rocket` exposes no optimizer hook, so the loop is copied and only that one line changed. The
+  surrogate `σ_β` and per-edge weight `hat_w = w/max(w)` are UNCHANGED.
+- **Optimizer arm (primary, this screen):** AdamW, `weight_decay = 1e-4`. AdamW's (β1,β2)=(0.9,0.999)
+  and eps=1e-8 defaults are BIT-IDENTICAL to torch's Adam defaults, so weight_decay is the ONLY
+  behavioural difference (with `weight_decay=0` AdamW reduces EXACTLY to the baseline Adam run). The
+  decoupled pull per coordinate is `lr·wd = 0.05·1e-4 = 5e-6` — a gentle scale prior relative to the
+  ~O(1) surrogate gradient under grad-clip=1.0. (Note: "β" here = the cyclic SURROGATE-sharpness
+  schedule the paper calls β, NOT the Adam moment coefficients, which are left at defaults.)
+- **Leakage-safe / target-blind:** decoupled weight decay applies `θ ← θ − lr·wd·θ` (an L2 pull of the
+  positions toward 0, separate from the adaptive gradient step). It reads ONLY the positions
+  themselves — never the discrete oracle, never the input weights — and is NOT dataset-special-cased
+  (same `weight_decay` for connectome and mouse). The frozen oracle is consulted ONLY for the
+  baseline's existing best-by-oracle tracking.
+- **Compute-matched (PROTOCOL basis = total_grad_steps):** standard knob-swap (optimizer only) at the
+  SAME epoch budget as baseline (connectome 20k, mouse 5k); `n_epochs_done` = 20000/5000 EXACTLY
+  matches the baseline single run → comparator = `baseline_passthrough` / frozen baseline at matched
+  seeds (connectome 82.8958 ± 0.0189; mouse 92.0696 ± 0.2624). PURE Rocket score (no post-processing).
+- **Smoke test** (mouse s42): valid RocketResult, no NaN/collapse, 92.3610% (sane, near baseline).
+- **connectome:** mean **82.8976 ± 0.0205** (n=3; H05 own std 0.0205), Δ = **+0.0018 pp** vs baseline
+  82.8958 → far below the +0.04 pp 2σ gate. **SCREEN FAIL.**
+  (seeds: 42 → 82.9194, 123 → 82.8946, 999 → 82.8788.)
+- **mouse:** mean **92.0696 ± 0.2624** (n=3; H05 own std 0.2624), Δ = **+0.0000 pp** vs baseline
+  92.0696 → far below the +0.52 pp 2σ gate (bit-for-bit the baseline mean ± std). **SCREEN FAIL.**
+  (seeds: 42 → 92.3610, 123 → 91.8520, 999 → 91.9959.)
+- **CONFIRM-escalation check:** NOT a low-variance H02-style case. H05's own std ≈ the baseline noise
+  floor on BOTH datasets (connectome 0.0205 vs 0.0189; mouse 0.2624 vs 0.2624 — identical), so the 2σ
+  gate is CORRECTLY SPECIFIED and there is no mis-specification to escalate. Δ is essentially zero on
+  both (connectome +0.0018 pp ≈ 0.1σ; mouse +0.0000 pp), not a positive-but-marginal sub-threshold
+  signal. No escalation to CONFIRM.
+- **Commands:**
+  ```
+  PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+  for DS in connectome mouse; do for S in 42 123 999; do
+    $PY -m eval.run_variant --exp H05 --dataset $DS --seed $S --out results/ --role implement
+  done; done
+  $PY -m eval.aggregate --glob "results/*.json" --out experiments/log.md
+  ```
+- **Result file ids:** connectome —
+  `20260621T115813Z-H05-connectome-s42-implement-74a1ef`,
+  `20260621T115938Z-H05-connectome-s123-implement-74a1ef`,
+  `20260621T120103Z-H05-connectome-s999-implement-74a1ef`;
+  mouse —
+  `20260621T120229Z-H05-mouse-s42-implement-4254d9`,
+  `20260621T120231Z-H05-mouse-s123-implement-4254d9`,
+  `20260621T120234Z-H05-mouse-s999-implement-4254d9`.
+  (The duplicate smoke-test JSON `20260621T115802Z-H05-mouse-s42-…` — bit-identical to the canonical
+  seed-42 run — was removed so the results dir holds exactly the 3 canonical seeds per dataset.)
+- **UN-RUN arms (noted, not run this screen):** AdamW `weight_decay = 1e-2` (a 100× stronger scale
+  prior); **Lion** (sign-based) — NOT available in this environment (`torch.optim` has no Lion and no
+  Lion package is installed); per the hard constraint no dependency was added, and a hand-rolled Lion
+  is left as an explicitly-labelled optional follow-up, not run here.
+- **SCREEN verdict: FAIL on BOTH datasets** (correctly-specified gate; no CONFIRM escalation). The
+  AdamW scale prior re-converges to Rocket's exact-metric plateau (connectome +0.0018 pp, mouse
+  +0.0000 pp), squarely confirming the campaign's basin-not-dynamics inference: the optimizer — the
+  dynamics knob with the strongest a-priori case to reach a different basin — did not move the discrete
+  metric. The honest negative STRENGTHENS the finding that the starting basin (H02), not the optimizer
+  trajectory, sets the plateau.
+
+#### Decision: **kill.** H05 SCREEN-FAILED on both datasets (connectome Δ=+0.0018 pp, mouse Δ=+0.0000
+pp, both far below the 2σ gate), own std ≈ baseline noise floor on both → correctly-specified gate, no
+CONFIRM escalation. Leakage-safe/target-blind by construction (decoupled decay reads only the
+positions; oracle only for best-by-oracle tracking). As a deliberate falsifier of "dynamics never
+matters," H05 returns a clean negative that strengthens, rather than overturns, the basin-not-dynamics
+conclusion. AdamW 1e-2 and Lion remain un-run, but the primary arm is decisively unpromising.
+
+---
+
+## 2026-06-21 — CAMPAIGN STOP (Phase-3 Rocket-improvement loop)
+
+**Stop criterion fired (PROTOCOL §Budget & stop-criteria):** `EARLY_EXIT_K` — **7 consecutive
+non-improving cycles** after the lone H02 win (H03, H04, H09, H06, H11, H13, H05), **with no
+remaining promising backlog items**. The only un-run items (H07 LR schedule, H08 β+LR joint, H10
+grad-clip, H12 EMA) are all LOW-EV pure-dynamics knobs; the H05 optimizer falsifier — the strongest
+member of that bucket — re-converged to the plateau, so they are predicted non-improving and are
+**deferred, not falsified**. Other budgets were not binding: **9 / 30** experiments used (`MAX_EXPERIMENTS`),
+well under the **12 h** `MAX_WALLCLOCK`.
+
+**Cycles run (9), all numbers traced to `results/*.json`, one git commit each:**
+| id | mechanism / axis | screen Δ (conn / mouse) | outcome |
+|---|---|---|---|
+| H01 | multi-start best-of-K restarts | +0.0003 / +0.0000 pp (vs multistart) | KILL |
+| **H02** | **greedy-FAS warm-start init (basin)** | **+0.0448 / +0.2064 pp (CONFIRMED)** | **KEEP (win #1)** |
+| H03 | sharper terminal β ramp | −0.0376 / +0.0114 pp | KILL |
+| H04 | in-loop barycenter refinement | −0.0000 / +0.0000 pp (0 accepts) | KILL |
+| H09 | anti-tie jitter (free-edge) | −0.0010 / +0.0000 pp (0 ties) | KILL |
+| H06 | weight-aware loss reweighting | −0.0380 / −0.0794 pp | KILL |
+| H11 | margin/smooth-hinge surrogate | −0.0387 / +0.1264 pp | KILL |
+| H13 | stochastic edge subsampling | −0.8356 / −0.0325 pp | KILL |
+| H05 | optimizer swap → AdamW (falsifier) | +0.0018 / +0.0000 pp | KILL |
+- Mooted/dropped without a cycle: **H14** (jitter-on-H02 — killed by implication, H09 found 0 ties),
+  **H15** (H02×objective — dropped, both H06 and H11 failed its gate). Deferred: **H07, H08, H10, H12**.
+
+**Central finding (see findings.md #2):** across 9 cycles the ONLY lever that improved the exact
+feedforward metric was H02, which changes the *starting basin* (a greedy-FAS warm-start). Every
+intervention on the optimization *dynamics / trajectory* — restarts (H01), β schedule (H03), in-loop
+refinement (H04), edge-subsampling noise (H13), optimizer (H05) — re-converged to (or below) Rocket's
+plateau; and both *objective/landscape* reshapings (H06 reweighting, H11 surrogate shape) slightly
+**regressed** connectome, indicating the faithful sigmoid surrogate at the random basin is already
+near-optimal for the dynamics. Rocket's plateau is set by **where optimization starts, not how it
+moves**. Integrity held throughout: `eval/frozen.sha256` matched on every cycle; no frozen file ever
+modified; every variant leakage-checked (oracle used only for best-by-oracle tracking).
