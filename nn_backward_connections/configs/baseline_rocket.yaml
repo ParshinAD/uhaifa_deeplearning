@@ -1,0 +1,31 @@
+# Baseline Rocket configuration.
+# The harness merges: defaults.rocket  <-  dataset_overrides[<dataset>].rocket  <-  CLI flags.
+# `dataset` and `seed` are supplied on the CLI; `seed` and `device` are EXCLUDED from
+# config_hash so multiple seeds of one setup share a hash (for mean±std aggregation).
+
+algo: baseline_rocket
+
+defaults:
+  rocket:
+    epochs: 20000
+    cycles: 5
+    lr: 0.05
+    grad_clip: 1.0
+    lr_decay_start: 0.5      # begin LR decay at 50% of training
+    lr_end_factor: 0.1       # final LR = 10% of initial
+    log_interval: 100
+    init_mode: random        # random | uniform | degree_diff | degree_abs
+  seeds: [42, 123, 999, 7, 31415]
+  global_seed: 42
+
+device: auto                 # auto | mps | cuda | cpu
+
+# Per-dataset epoch budgets. The mouse graph is tiny (148 nodes); a smaller budget
+# is sufficient. This changes ONLY the epoch count, never the algorithm.
+dataset_overrides:
+  connectome:
+    rocket:
+      epochs: 20000
+  mouse:
+    rocket:
+      epochs: 5000

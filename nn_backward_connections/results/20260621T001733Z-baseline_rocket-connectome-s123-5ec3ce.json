@@ -1,0 +1,21 @@
+{
+  "exp_id": "20260621T001733Z-baseline_rocket-connectome-s123-5ec3ce",
+  "algo": "baseline_rocket",
+  "dataset": "connectome",
+  "seed": 123,
+  "score": 34742472.0,
+  "pct": 82.89357491901929,
+  "wall_clock_s": 75.9758780002594,
+  "git_commit": "7a77547dee98ced8b9f81aa2303b705261172e54+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "5ec3ce555ce6",
+  "timestamp": "2026-06-21T00:18:57Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260621T001733Z-baseline_rocket-connectome-s123-5ec3ce_positions.npy"
+}

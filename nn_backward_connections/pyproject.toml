@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mfas-rocket-thesis"
+version = "0.1.0"
+description = "Infrastructure & evaluation oracle for improving the Rocket MFAS sub-algorithm (Bader et al. 2025)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Parshin A. D." }]
+dependencies = [
+    "torch==2.8.0",
+    "numpy==1.23.5",
+    "scipy==1.10.1",
+    "networkx==3.2.1",
+    "pandas==1.5.3",
+    "PyYAML==6.0.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7,<9"]
+notebook = ["nbformat==5.10.4", "matplotlib==3.9.4"]
+
+[project.scripts]
+mfas-eval = "eval.harness:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+markers = ["slow: tests that run Rocket training (skip with -m 'not slow')"]
+testpaths = ["tests"]

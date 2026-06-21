@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Project caches / large generated artifacts
+data/processed/
+
+# Per-run position vectors (large); the JSON records are kept in git.
+results/*_positions.npy
+
+# Keep the reference parity artifact (small, needed by the parity test).
+!results/rocket_best_positions.npy
+
+# Environments
+.venv/
+venv/
+.env
+
+# OS
+.DS_Store

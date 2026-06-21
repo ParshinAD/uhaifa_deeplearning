@@ -1,0 +1,21 @@
+{
+  "exp_id": "20260621T002023Z-baseline_rocket-mouse-s42-5cf05a",
+  "algo": "baseline_rocket",
+  "dataset": "mouse",
+  "seed": 42,
+  "score": 8.459373884509496,
+  "pct": 92.36096158703637,
+  "wall_clock_s": 1.8396048545837402,
+  "git_commit": "7a77547dee98ced8b9f81aa2303b705261172e54+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "5cf05a50b9bf",
+  "timestamp": "2026-06-21T00:20:25Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260621T002023Z-baseline_rocket-mouse-s42-5cf05a_positions.npy"
+}

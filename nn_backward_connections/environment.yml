@@ -1,0 +1,21 @@
+# Focused conda environment for the MFAS Rocket thesis infrastructure.
+# The reproduction numbers were produced in an existing broad conda env named
+# `allen` (Python 3.9.23). This file pins the minimal set actually used here.
+# Note: torch is installed via pip (no suitable conda-forge wheel was used in the
+# original env); everything else is from conda-forge.
+name: mfas-rocket
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9.23
+  - numpy=1.23.5
+  - scipy=1.10.1
+  - pandas=1.5.3
+  - networkx=3.2.1
+  - pyyaml=6.0.2
+  - matplotlib=3.9.4
+  - nbformat=5.10.4
+  - pytest>=7,<9
+  - pip
+  - pip:
+      - torch==2.8.0
