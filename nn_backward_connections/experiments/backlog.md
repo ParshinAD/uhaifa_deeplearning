@@ -7,6 +7,62 @@ noise on the exact feedforward metric.
 
 ---
 
+## Re-prioritization (2026-06-21, post-H04)
+
+**Evidence base (4 cycles, all logged):** H02 (warm-start from greedy-FAS ordering) is the only
+CONFIRMED win — connectome +0.0448 pp, mouse +0.2064 pp at equal compute. H01 (multi-start),
+H03 (sharper terminal β), H04 (in-loop barycenter refinement) all KILLED.
+
+**Central inference (the lever that matters):** interventions on the *late optimization
+trajectory / dynamics* did NOT move the metric, because Rocket robustly re-converges to its
+plateau (~82.9% / ~92.1%) regardless of the schedule it took to get there. H01 (restarts under
+the same dynamics), H03 (β tail) and H04 (in-loop nudges) all landed back on the plateau within
+noise. The single lever that helped — H02 — changed **where optimization starts** (the basin),
+not how it moves. **Pressure-test, do not blindly accept:** this is a 1-positive / 3-negative
+inference over only 4 cycles; it could instead be that the three killed knobs were each
+*individually too weak* (β tail too short, barycenter too weak, restarts under-trained) rather
+than that "dynamics never matters." The re-ranking below treats dynamics-only knobs as low-EV
+**but keeps two of them alive as cheap falsifiers**, and explicitly favours the three remaining
+non-dynamics levers (objective/loss landscape, free-edge recovery, exploration noise on the
+loss itself) plus levers that compound with the H02 basin.
+
+**Three EV buckets:**
+- **LOW-EV (likely plateau re-converge)** — pure late-dynamics knobs that, like H01/H03/H04, only
+  change the path to the same basin: **H05** (optimizer swap), **H07** (LR schedule), **H08** (β+LR
+  joint), **H10** (grad-clip), **H12** (EMA averaging). These should be screened cheaply or
+  deprioritized; expect plateau re-convergence.
+- **HIGHER-EV (basin / objective / free-edge)** — change the loss landscape or recover discrete
+  edges the surrogate leaves on the table, i.e. mechanisms *distinct* from the ones that already
+  re-converged: **H06** (weight-aware loss reweighting — reshapes the objective), **H09**
+  (tie-break jitter — recovers strict-`>` near-tie edges for ~free), **H11** (margin/hinge
+  surrogate — keeps gradient on correct-but-thin edges, a genuine landscape change), **H13**
+  (stochastic edge subsampling — injects exploration noise into the *loss*, not the schedule).
+- **COMPOUNDS WITH H02 (new SOTA)** — **H14, H15** below, which start from the H02 basin and add a
+  non-dynamics lever, so their comparator is **H02 at matched seeds**, not the random-init baseline.
+
+**Re-ranked OPEN order (highest EV/cost first), with one-line justification:**
+
+| rank | id | bucket | one-line EV justification |
+|---|---|---|---|
+| 1 | **H09** | free-edge | Cheapest non-dynamics lever; the strict-`>` oracle silently drops near-tie edges, so anti-tie jitter recovers metric for free *without* changing the basin — orthogonal to everything killed. Size the opportunity (fraction of `|Δ|<ε` edges) first; if ~0 it self-falsifies fast. |
+| 2 | **H14** (new) | H02-basin × free-edge | Stack the cheapest free-edge lever (jitter) **on the confirmed H02 win** to push past the *new* SOTA at near-zero cost; comparator = H02@matched-seeds. |
+| 3 | **H06** | objective | Reshapes *what* the loss optimizes (heavy/borderline-edge emphasis) — a landscape change, not a path change; aligns gradient effort with the metric's own weighting. Distinct mechanism from all 3 kills. |
+| 4 | **H11** | objective/landscape | Margin/hinge surrogate keeps gradient on correct-but-thin-margin edges that σ_β abandons — directly targets *why* Rocket plateaus (saturated gradients), a real landscape change, still cheap. |
+| 5 | **H15** (new) | H02-basin × landscape | H02 warm-start + best of {H06,H11} objective lever (whichever screens better) — compounding two non-dynamics mechanisms; comparator = H02@matched-seeds. |
+| 6 | **H13** | exploration-noise | Stochastic edge subsampling injects noise into the *loss itself* (unlike H01's naive restarts under the same full-batch dynamics) — a genuinely different escape mechanism, cheap; honest medium uncertainty. |
+| 7 | **H05** | LOW (dynamics) | Optimizer swap (AdamW/Lion) — cheap to falsify but expected to re-converge to plateau like H01/H03/H04; keep as a fast falsifier of the "dynamics never matters" inference. |
+| 8 | **H10** | LOW (dynamics) | Grad-clip/per-node clip — plausible hub argument but it is still a path-not-basin change; cheap, share machinery with H05, expect plateau. |
+| 9 | **H12** | LOW (dynamics) | EMA/Polyak averaging — near-free extra candidate, but only smooths the *same* trajectory; high chance within noise. |
+| 10 | **H07** | LOW (dynamics) | LR schedule swap — pure path change; H01/H03 evidence says the basin, not the schedule, sets the plateau. Deprioritize. |
+| 11 | **H08** | LOW (dynamics) | β+LR joint annealing — subsumes H03 (killed) + H07 (low-EV); lowest EV of the dynamics knobs. Run last, only if H07 surprises. |
+
+**Recommended NEXT:** **H09** — it is the cheapest open lever, tests a mechanism (strict-`>`
+near-tie loss) that none of the 4 prior cycles touched, and self-falsifies immediately if the
+`|Δ|<ε` edge fraction is ~0. If H09 shows any signal, **H14** (H09-on-H02) is the immediate
+follow-up to chase the new SOTA. H06 is the strongest objective-axis bet behind it.
+
+---
+
 ## How to read this backlog
 
 Ranked by **expected value / cost**. Each variant is an isolated module
@@ -267,6 +323,79 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
 - **Est. compute cost:** **cheap–medium.** Cheaper per step but may need more steps; net wall-clock
   roughly comparable. Adds sampling overhead.
 - **Measurement:** standard; batch fraction ∈ {0.25, 0.5} vs full-batch, at matched wall-clock.
+- **status: proposed**
+
+## H14 — H02 warm-start + anti-tie jitter (free-edge recovery on the new SOTA basin)
+- **Hypothesis:** Adding anti-tie position separation (H09's jitter / repulsion, or symmetric
+  scoring-time jitter that breaks `pos[tgt]==pos[src]` near-ties) **on top of the confirmed H02
+  greedy-FAS warm-start** recovers additional strict-`>` feedforward edges and beats H02 alone on
+  the exact metric.
+- **Rationale:** H02 is the new SOTA (connectome 82.93% / mouse 92.48%) but it is still a *pure
+  Rocket* score — the oracle counts `pos[tgt] > pos[src]` strictly, so any near-tie it leaves
+  contributes nothing even when the intended order is correct. H02's warm-start is nearly
+  deterministic (σ≈0.0005 / 0.0000), so any genuine free-edge recovery shows up cleanly above its
+  own tiny variance. Crucially this is an **orthogonal, non-dynamics** lever (it changed neither
+  the schedule nor the basin in the way the killed H01/H03/H04 did): it stacks a free-edge
+  mechanism onto a basin mechanism, the two combinations most likely to compound. The evenly-spaced
+  greedy init may itself create exact rank ties that the random init never had, so jitter could
+  matter *more* here than on the random baseline.
+- **Design axis:** initialization (H02 basin) + gradient handling / position regularization
+  (anti-tie). Implemented as `src/mfas/experiments/H14.py`: greedy-FAS init (reuse H02's
+  `greedy_fas_order`), then either (a) a small repulsion term added to the Rocket loop, or (b)
+  deterministic symmetric jitter on the positions before each oracle scoring — both target-blind.
+- **Expected effect (reasoned estimate, NOT measured):** connectome +0.005–0.04 pp over H02 (likely
+  near noise — honest chance of a no-op if there are few near-ties); mouse +0.05–0.4 pp over H02
+  (float weights → more genuine near-ties to recover). Upside is bounded by the size of the
+  `|Δ|<ε` edge set, so measure that fraction first to size the ceiling.
+- **Est. compute cost:** **cheap.** One-time greedy order (already O(m log n) in H02) + an O(n)
+  repulsion term or O(n) scoring-time jitter; per-step cost ≈ baseline. Same epoch budget as
+  baseline (connectome 20k, mouse 5k).
+- **Comparator (PROTOCOL §Compute-matched — IMPORTANT):** standard knob-swap (init + position
+  regularization, same gradient budget), but the fair baseline to beat is **H02 at matched seeds**,
+  NOT the random-init `baseline_passthrough`. Run H02 and H14 on the *same* seed set and compute
+  Δ = mean(H14) − mean(H02) per dataset. Because H02 (and likely H14) are near-deterministic, use
+  the H02-style CONFIRM escalation: if the 2σ_baseline screen is mis-specified for a low-variance
+  variant, escalate to the 95% CI-lower-bound CONFIRM against H02@matched-seeds. (A secondary,
+  informational comparison vs the random baseline shows total stacked gain, but the *promotion*
+  test is vs H02.)
+- **Measurement:** exact feedforward % via the frozen oracle, **both** datasets, ≥3 seeds for
+  SCREEN (vs H02@matched-seeds), CONFIRM at 5 (connectome) / 20 (mouse) seeds with 95% CI lower
+  bound > 0 vs H02. Report the pure H02 score and the H14 score side by side. Oracle used only for
+  best-by-oracle tracking (as baseline) — jitter is target-blind, never folded into the loss.
+- **status: proposed**
+
+## H15 — H02 warm-start + weight-aware / margin objective (compounding basin × landscape)
+- **Hypothesis:** Combining the confirmed H02 greedy-FAS warm-start with the best-screening
+  *objective-axis* lever — heavy/borderline-edge loss reweighting (H06) **or** a margin/hinge
+  surrogate (H11), whichever wins its own screen — beats H02 alone, because a better basin plus a
+  better-shaped objective compound rather than redundantly re-converging.
+- **Rationale:** The killed cycles (H01/H03/H04) all changed *dynamics* and re-hit the plateau;
+  H02 changed the *basin*; H06/H11 change the *objective/landscape* (a third, distinct mechanism).
+  Two mechanisms that move the metric for different reasons are the most promising thing to stack.
+  Starting Rocket in the H02 basin and then keeping gradient on the heavy / correct-but-thin-margin
+  edges (which σ_β abandons once they are weakly feedforward) directly attacks *why* the H02 run
+  still plateaus. This is gated on H06/H11 first screening positive standalone — if neither beats
+  the random baseline, H15 reduces to H02 and should be dropped (cheap to decide).
+- **Design axis:** initialization (H02 basin) + loss / surrogate (H06 reweighting or H11 margin).
+  Implemented as `src/mfas/experiments/H15.py`: reuse H02's `greedy_fas_order` init, then replicate
+  the Rocket loop with the chosen objective lever (reweighted ŵ or hinge/tanh surrogate). Objective
+  stays a monotone reward for feedforward orientation (still maximizing feedforward weight) —
+  leakage-safe, uses only input edge weights, never the discrete oracle in the loss.
+- **Expected effect (reasoned estimate, NOT measured):** connectome +0.01–0.08 pp over H02; mouse
+  +0.1–0.6 pp over H02. Honest risk: the objective lever's gain may not be additive with the basin
+  gain (both could be exploiting the same slack), so the combined Δ vs H02 could be smaller than
+  the standalone H06/H11 Δ vs baseline.
+- **Est. compute cost:** **cheap.** Greedy order (as H02) + elementwise reweighting / a swapped
+  loss function; per-step cost ≈ baseline. Same epoch budget (connectome 20k, mouse 5k).
+- **Comparator (PROTOCOL §Compute-matched — IMPORTANT):** standard knob-swap at matched gradient
+  budget; the fair baseline to beat is **H02 at matched seeds**, NOT the random-init baseline.
+  Compute Δ = mean(H15) − mean(H02) per dataset on the same seed set; SCREEN vs H02, then CONFIRM
+  (5 connectome / 20 mouse seeds, 95% CI lower bound > 0 vs H02). If H15's variance collapses like
+  H02's (deterministic init), apply the same low-variance CONFIRM escalation. Also report the
+  standalone H06/H11 Δ vs baseline so the additivity of basin × objective is auditable.
+- **Measurement:** exact feedforward % via the frozen oracle, **both** datasets, ≥3 seeds SCREEN /
+  5+20 CONFIRM, all vs H02@matched-seeds. Pure Rocket score (no post-processing). Oracle used only
+  for best-by-oracle tracking.
 - **status: proposed**
 
 ---
