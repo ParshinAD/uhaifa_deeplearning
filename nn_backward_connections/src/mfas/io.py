@@ -32,6 +32,7 @@ __all__ = [
     "load_dataset",
     "load_connectome",
     "load_mouse",
+    "load_microns",
     "remap_node_ids",
     "save_processed",
     "load_processed",
@@ -108,6 +109,22 @@ DATASETS = {
         expected_n=148,
         expected_m=583,
         expected_total_weight=None,  # no paper reference for the mouse graph
+    ),
+    # MICrONS minnie65 (mouse visual cortex) — a SECOND large real connectome.
+    # Built token-free from the pinned v117 static release by
+    # experiments/build_microns.py and cached as data/processed/microns.npz.
+    # weight = synapse count per directed (pre, post) neuron pair (int64).
+    # expected_* are filled from the actual build (see data/processed/microns_BUILD.md);
+    # they pin the canonical graph so any silent rebuild change is caught by _validate.
+    "microns": dict(
+        filename="processed/microns.npz",
+        loader="load_microns",
+        weight_dtype="int64",
+        # From the v117 build (experiments/build_microns.py; data/processed/microns_BUILD.md).
+        # total_weight == kept neuron-neuron synapse count (weight = synapse count).
+        expected_n=67_534,
+        expected_m=10_436_569,
+        expected_total_weight=15_400_557,
     ),
 }
 
@@ -220,6 +237,31 @@ def load_mouse(path: Optional[Path | str] = None, validate: bool = True
                   node_ids=node_ids, name="mouse")
     if validate:
         _validate(g, "mouse")
+    return g
+
+
+def load_microns(path: Optional[Path | str] = None, validate: bool = True
+                 ) -> GraphData:
+    """Load the MICrONS minnie65 connectome from its processed ``.npz`` cache.
+
+    Unlike the other datasets, MICrONS is NOT parsed from raw on every load — its raw
+    synapse table is ~51 GB. ``experiments/build_microns.py`` does the one-time
+    token-free v117 build and writes ``data/processed/microns.npz``; this loader simply
+    reads that canonical cache (re-stamping ``name="microns"``). Weights are int64
+    synapse counts per directed (pre, post) neuron pair.
+    """
+    if path is None:
+        path = data_dir() / "processed" / "microns.npz"
+    path = Path(path)
+    if not path.exists():
+        raise FileNotFoundError(
+            f"MICrONS cache not found: {path}. Build it first with "
+            "`python -m experiments.build_microns` (see data/processed/microns_BUILD.md).")
+    cached = load_processed(path)
+    g = GraphData(src=cached.src, tgt=cached.tgt, weight=cached.weight,
+                  node_ids=cached.node_ids, name="microns")
+    if validate:
+        _validate(g, "microns")
     return g
 
 

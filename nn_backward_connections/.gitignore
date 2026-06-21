@@ -8,8 +8,11 @@ dist/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# Project caches / large generated artifacts
+# Project caches / large generated artifacts (rebuildable; see experiments/build_microns.py)
 data/processed/
+# Keep the small MICrONS build documentation (recipe + stats JSON) — NOT the 55MB npz
+!data/processed/microns_BUILD.md
+!data/processed/microns_stats.json
 
 # Per-run position vectors (large); the JSON records are kept in git.
 results/*_positions.npy

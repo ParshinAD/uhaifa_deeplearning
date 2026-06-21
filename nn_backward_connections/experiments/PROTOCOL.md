@@ -127,3 +127,75 @@ excludes seed/device so seeds of one (variant, dataset) share a hash for aggrega
 ## Run the campaign
 For each ranked hypothesis: `/run-experiment <backlog-id>` (e.g. `/run-experiment H01`).
 Stop when a budget/stop-criterion above is hit.
+
+---
+
+## Phase-5 update: 3-dataset rule (added 2026-06-22)
+
+Phase 5 adds the **MICrONS minnie65** mouse-visual-cortex connectome as a THIRD dataset and a
+SECOND large real connectome (~67,534 nodes, 10.4M edges). The evaluation rule is updated by
+character of dataset:
+
+### Dataset character classification
+| dataset | character | role in verdict |
+|---|---|---|
+| `connectome` | FlyWire fly, 136k nodes, 5.66M edges — LARGE, hard cyclic core | **PRIMARY** |
+| `microns` | MICrONS minnie65, 67,534 nodes, 10.4M edges — LARGE, 97% in giant SCC | **PRIMARY** |
+| `mouse` | tiny 148-node graph, σ≈0.26 pp (14× noisier) — near-saturated | **SUPPORTING / non-inferiority only** |
+
+### Updated noise floor and budget table (≥3 seeds, 42/123/999)
+| dataset | baseline mean (pct) | σ (std) | 2σ screen threshold | epoch budget | wall/run |
+|---|---|---|---|---|---|
+| connectome | 82.8958% | 0.0189 pp | 0.04 pp | 20,000 | ~90s |
+| mouse | 92.0696% | 0.2624 pp | 0.52 pp | 5,000 | ~1s |
+| microns | **83.1172%** | **0.0006 pp** | **0.002 pp** | **80,000** | ~550s |
+
+> MICrONS is **29× tighter than connectome** and **408× tighter than mouse** — exceptional
+> discriminating power; even a 0.002 pp gain is reliably detectable.
+> **Plateau verification:** 20k=83.024%, 40k=83.100%, 80k=83.117%, 120k=83.118% (+0.001 pp);
+> within-run trajectory flatlines at ~90k iter inside 120k schedule → 80k is at plateau.
+> **Baseline runs (80k):** s42=83.1169%, s123=83.1167%, s999=83.1179% (mean 83.1172%, σ=0.0006 pp).
+
+### Updated CONFIRMED-improvement rule (3 datasets)
+
+A variant is a CONFIRMED improvement only if it passes BOTH stages across ALL datasets
+in the following way:
+
+**Stage 1 — SCREEN** (cheap gate, 3 seeds 42/123/999):
+- Pass iff `Δmean > 2σ` on BOTH PRIMARY datasets (`connectome` AND `microns`).
+- Mouse check: `Δmean > −σ_mouse` (non-inferior; a large mouse regression can still kill).
+- The screen on `microns` uses its own per-dataset noise floor.
+
+**Stage 2 — CONFIRM** (only for screened variants; more seeds):
+- PRIMARY datasets: 95% Welch CI lower bound `> 0` on BOTH (`connectome` and `microns`).
+  Seeds: connectome = 5 (42,123,999,7,31415); microns = 5 (same seeds, budget-matched at 80k).
+- SUPPORTING non-inferiority: mouse 95% CI lower bound `> −σ_mouse` (i.e. > −0.26 pp).
+- **CONFIRMED GENERAL WIN** iff all three conditions pass.
+
+### New verdict class: GRAPH-DEPENDENT
+A variant that **confirms on ONE primary connectome but not the other** is classified as:
+
+**GRAPH-DEPENDENT** (= "recovered lost theory") — a real effect scoped to one connectome's
+structure. Report with explicit scope: e.g. "gains on microns+mouse, not fly connectome —
+connectome-specific suppression." Neither promoted to GENERAL WIN nor dismissed as noise.
+
+Full decision table:
+| microns CI>0? | connectome CI>0? | mouse non-inf? | verdict |
+|---|---|---|---|
+| ✓ | ✓ | ✓ | **GENERAL WIN** → findings.md |
+| ✓ | ✗ | ✓ | **GRAPH-DEPENDENT** (microns+mouse, not fly) → log + scope |
+| ✗ | ✓ | ✓ | **GRAPH-DEPENDENT** (fly+mouse, not microns) → log + scope |
+| ✓ | ✓ | ✗ | **GENERAL WIN with mouse caveat** → findings.md + caveats |
+| ✗ | ✗ | — | STILL NULL (or SMALL-GRAPH ARTIFACT if mouse was positive) |
+| ✗ or ✓ | ✗ or ✓ | — (any) | SMALL-GRAPH ARTIFACT if ONLY mouse is positive |
+
+### Compute-matched rule (unchanged, extended to microns)
+`budget_basis = "total_grad_steps"`. Variants on `microns` run at 80k epochs (= `_EPOCHS["microns"]`
+in `baseline_passthrough.py` and `dataset_overrides.microns.rocket.epochs` in
+`configs/baseline_rocket.yaml`). Comparator for knob-swap variants on microns = `baseline_passthrough`
+at matched seeds and 80k epochs. Multi-start variants → `baseline_multistart` at matched total steps.
+
+### Frozen oracle (unchanged)
+`eval/frozen_guard.verify_frozen_manifest()` called before every scored run. `src/mfas/io.py` is
+writable (adding `microns` needed no change to any frozen file). MICrONS is leakage-clean (no
+known MFAS solution; `data/best_solution` does not apply).

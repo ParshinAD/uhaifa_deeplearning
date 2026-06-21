@@ -1136,3 +1136,100 @@ claimed, which is the honest outcome. No required fixes.
   residual is irreducible not only to continuous methods but to *bounded-local* discrete refinement —
   it is a global reordering that requires global discrete optimization (the paper's Crane MIP).
   Reproduce: `python experiments/size_localsearch.py`.
+
+---
+
+## 2026-06-22 — Phase 5: MICrONS dataset build + baseline (Parts A & B)
+
+### Part A — MICrONS v117 build (infrastructure, not a variant)
+
+**Goal:** Add a SECOND large real connectome (`microns`, MICrONS minnie65 mouse visual cortex) as a
+new leakage-clean dataset, enabling 3-dataset hypothesis evaluation and re-testing of "lost theory"
+hypotheses killed only by the single-large-graph require-both rule.
+
+**Build method:** Token-free static v117 release (public BossDB/GCS, no CAVE account required):
+```
+nucleus:    https://bossdb-open-data.s3.amazonaws.com/iarpa_microns/minnie/minnie65/nucleus_neuron_classification/nucleus_neuron_svm.csv
+synapses:   https://bossdb-open-data.s3.amazonaws.com/iarpa_microns/minnie/minnie65/synapse_graph/synapses_pni_2.csv
+proofread:  https://bossdb-open-data.s3.amazonaws.com/iarpa_microns/minnie/proofreading_status/proofreading_status_public_release.csv
+```
+All three pinned to **segmentation version v117**. Reproduced by `python -m experiments.build_microns`
+(full recipe + sha256 in `data/processed/microns_BUILD.md`). Build stats:
+- 337,312,429 synapse rows total; 15,400,557 neuron-neuron non-self synapses (4.57% kept)
+- 72,789 neuron root_ids in the SVM; pre-synaptic membership only 6.6% (many axon fragments
+  lack soma/nucleus in v117 — expected; cross-SVM-boundary pairs excluded correctly)
+
+**Canonical graph stats** (`data/processed/microns_stats.json`):
+| property | canonical (all neurons) | proofread subset |
+|---|---|---|
+| n_nodes | **67,534** | 245 |
+| n_edges | **10,436,569** | 2,424 |
+| total_weight | **15,400,557** | 5,466 |
+| giant SCC | 65,543 (97.1%) | 186 (76%) |
+| n_SCC | 1,970 | 60 |
+| density | 0.0023 | 0.041 |
+| out-degree (med/p99/max) | 61 / 1708 / 12246 | 6 / 46 / 58 |
+| weight (med/max) | 1 / 1551 | 1 / 37 |
+
+MICrONS has **more edges than the fly connectome** (10.4M vs 5.66M) and a dominant recurrent core
+(97.1% in one SCC). Heavy-tailed degree + weight distributions confirm it is a real connectome.
+
+**Harness integration (frozen manifest clean):**
+- `src/mfas/io.py`: added `load_microns` + `DATASETS["microns"]` entry (writable file; no frozen
+  file touched). Validation anchors: `expected_n=67534, expected_m=10436569, expected_total_weight=15400557`.
+- `configs/baseline_rocket.yaml`: added `dataset_overrides.microns.rocket.epochs: 80000`.
+- `src/mfas/experiments/baseline_passthrough.py`: added `"microns": 80_000` to `_EPOCHS`.
+- `eval/frozen_guard.verify_frozen_manifest()` = **PASS** (oracle intact; graph-agnostic by design).
+- Smoke test: `python -m eval.run_variant --exp baseline_passthrough --dataset microns --seed 42 …`
+  → score=12,786,144, pct=83.0239%, epochs=20000, wrote `results/*.json`. End-to-end wiring confirmed.
+
+**Reproduce:**
+```bash
+python -m experiments.build_microns          # produces data/processed/microns.npz  (~25 min)
+python -m eval.run_variant --exp baseline_passthrough --dataset microns --seed 42 --out results/ --role implement
+```
+
+### Part B — MICrONS baseline + plateau verification + 3-dataset rule
+
+**Plateau probe** (budget sweep, seed 42):
+| epochs | pct | Δ from prev |
+|---|---|---|
+| 20,000 | 83.0239% | — |
+| 40,000 | 83.0997% | +0.076 pp |
+| 80,000 | 83.1165% | +0.017 pp |
+| 120,000 | 83.1175% | **+0.001 pp** ← plateau |
+| within-run traj 90k/105k/120k | 83.1175% / 83.1175% / 83.1175% | ← flat |
+
+**Plateau = 80k epochs** (80k→120k gain = 0.001 pp = ~1.7σ of the measured noise, negligible; budget
+set to 80k for the campaign: ~550s/run on Apple MPS).
+
+**Baseline noise floor at 80k epochs** (3 seeds 42/123/999; `baseline_passthrough` runs):
+```
+results/20260621T232155Z-baseline_passthrough-microns-s42-implement-c2f06f.json   pct=83.1169%
+results/20260621T233111Z-baseline_passthrough-microns-s123-implement-c2f06f.json  pct=83.1167%
+results/20260621T234021Z-baseline_passthrough-microns-s999-implement-c2f06f.json  pct=83.1179%
+```
+**mean = 83.1172%,  σ = 0.0006 pp,  2σ = 0.0013 pp  (screen threshold: 0.002 pp)**
+
+MICrONS is **29× tighter than connectome** (σ=0.019 pp) and **408× tighter than mouse** (σ=0.26 pp).
+Its extremely tight noise floor gives near-perfect discrimination power for the re-test campaign —
+a "lost theory" effect of even +0.01 pp would be unambiguous, where mouse's σ=0.26 would completely
+drown it.
+
+**Reproduce:**
+```bash
+# plateau probe
+python experiments/microns_plateau_probe.py
+# baseline noise floor
+python -m eval.run_variant --exp baseline_passthrough --dataset microns --seed 42 --out results/ --role implement
+python -m eval.run_variant --exp baseline_passthrough --dataset microns --seed 123 --out results/ --role implement
+python -m eval.run_variant --exp baseline_passthrough --dataset microns --seed 999 --out results/ --role implement
+```
+
+**3-dataset rule:** updated `experiments/PROTOCOL.md` (Phase-5 section appended 2026-06-22).
+PRIMARY = connectome + microns; SUPPORTING = mouse. GENERAL WIN = CI>0 on both PRIMARY + mouse
+non-inferior. New verdict class GRAPH-DEPENDENT = confirms on one PRIMARY only (real but scoped).
+Screen thresholds: connectome 0.04 pp / microns 0.002 pp / mouse 0.52 pp (non-inferiority only).
+
+#### Decision: **INFRASTRUCTURE COMPLETE.** MICrONS is a valid, integrated, leakage-clean second
+large connectome ready for the Phase-5 re-test campaign. Proceed to Part D after user review.

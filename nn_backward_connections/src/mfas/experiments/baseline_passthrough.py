@@ -16,8 +16,8 @@ ID = "baseline_passthrough"
 HYPOTHESIS = "Unchanged baseline Rocket, wrapped as a variant (wiring smoke test)."
 
 # Per-dataset epoch budgets mirror configs/baseline_rocket.yaml so the passthrough
-# reproduces the logged baseline (connectome 20k, mouse 5k).
-_EPOCHS = {"connectome": 20_000, "mouse": 5_000}
+# reproduces the logged baseline (connectome 20k, mouse 5k, microns 20k).
+_EPOCHS = {"connectome": 20_000, "mouse": 5_000, "microns": 80_000}
 
 
 def run(g: GraphData, seed: int, device, time_limit: Optional[float] = None

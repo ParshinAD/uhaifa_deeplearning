@@ -1,0 +1,77 @@
+{
+  "canonical": {
+    "name": "microns",
+    "n_nodes": 67534,
+    "n_edges": 10436569,
+    "density": 0.002288333047195474,
+    "total_weight": 15400557.0,
+    "weight_dtype": "int64",
+    "n_scc": 1970,
+    "giant_scc": 65543,
+    "giant_scc_frac": 0.9705185536174371,
+    "out_degree_min_med_p99_max_mean": [
+      0.0,
+      61.0,
+      1708.0099999999948,
+      12246.0,
+      154.53799567625197
+    ],
+    "in_degree_min_med_p99_max_mean": [
+      0.0,
+      125.0,
+      697.0,
+      6866.0,
+      154.53799567625197
+    ],
+    "weight_min_med_p99_max_mean": [
+      1.0,
+      1.0,
+      7.0,
+      1551.0,
+      1.4756340900922515
+    ],
+    "n_isolated_sinks": 1205,
+    "n_isolated_sources": 664
+  },
+  "proofread_subset": {
+    "name": "microns_proofread",
+    "n_nodes": 245,
+    "n_edges": 2424,
+    "density": 0.04054867848778856,
+    "total_weight": 5466.0,
+    "weight_dtype": "int64",
+    "n_scc": 60,
+    "giant_scc": 186,
+    "giant_scc_frac": 0.7591836734693878,
+    "out_degree_min_med_p99_max_mean": [
+      0.0,
+      6.0,
+      45.56,
+      58.0,
+      9.893877551020408
+    ],
+    "in_degree_min_med_p99_max_mean": [
+      0.0,
+      5.0,
+      40.56,
+      48.0,
+      9.893877551020408
+    ],
+    "weight_min_med_p99_max_mean": [
+      1.0,
+      1.0,
+      11.0,
+      37.0,
+      2.254950495049505
+    ],
+    "n_isolated_sinks": 32,
+    "n_isolated_sources": 12
+  },
+  "build": {
+    "seg_version": "v117",
+    "total_synapse_rows": 337312429,
+    "kept_neuron_neuron_synapses": 15400557,
+    "neuron_root_ids": 72789,
+    "proofread_axon_root_ids": 249
+  }
+}

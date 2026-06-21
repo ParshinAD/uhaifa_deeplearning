@@ -1,0 +1,21 @@
+{
+  "exp_id": "20260621T225031Z-baseline_rocket-microns-s42-4727ce",
+  "algo": "baseline_rocket",
+  "dataset": "microns",
+  "seed": 42,
+  "score": 12797820.0,
+  "pct": 83.09972165292463,
+  "wall_clock_s": 278.1508438587189,
+  "git_commit": "97b951056ae3ad459ebb3fedf87cdac39bb764bd+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "4727ceb2afae",
+  "timestamp": "2026-06-21T22:55:09Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 40000,
+  "best_positions_path": "results/20260621T225031Z-baseline_rocket-microns-s42-4727ce_positions.npy"
+}

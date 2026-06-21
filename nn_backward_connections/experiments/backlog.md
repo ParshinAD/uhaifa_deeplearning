@@ -917,3 +917,346 @@ impls [google-research/fast-soft-sort](https://github.com/google-research/fast-s
 [torchsort](https://github.com/teddykoker/torchsort). Sinkhorn/Gumbel-Sinkhorn permutation relaxation
 (H20) — same differentiable-sorting line (optimal-transport view of ranking, Cuturi et al. 2019,
 referenced in the Blondel paper).
+
+---
+
+# Phase-5 re-test backlog (MICrONS)
+
+**Why this section exists.** Phase 3–4 ran on exactly TWO real graphs — the fly `connectome`
+(136k nodes, large, *hard* cyclic structure with a verified 1.69 pp optimization-gap) and the tiny
+`mouse` (148 nodes, ~14× noisier). The require-improvement-on-BOTH promotion rule (PROTOCOL §Stage-1)
+killed several hypotheses that GAINED on `mouse` purely because they REGRESSED the single large
+graph we had. With one large graph, "regresses connectome" is indistinguishable from "regresses
+large graphs in general." **MICrONS** (minnie65 mouse visual cortex, ~72,789 neuron nodes) is a
+SECOND large real connectome and a leakage-clean discriminator: it has **no known MFAS solution**
+(`data/best_solution`-style privilege concerns do not apply), so any variant runs the unchanged
+harness with no oracle-value to peek at.
+
+**The three outcomes MICrONS can produce for a mouse-gain / connectome-regression hypothesis:**
+- **GENERAL WIN** — gains on MICrONS too (and ideally re-examined on mouse): the connectome
+  regression was the idiosyncrasy, not the gain. Strongest possible Phase-5 result.
+- **RECOVERED / GRAPH-DEPENDENT** — gains on MICrONS + mouse but still regresses connectome: a REAL
+  effect on "ordinary" large connectomes that the fly graph's hard cyclic core specifically
+  suppresses. A genuine "lost theory," scoped to graph structure.
+- **SMALL-GRAPH ARTIFACT** — null/regresses on MICrONS like it did on connectome: the mouse gain was
+  a 148-node small-sample artifact (mouse σ≈0.26 pp is huge). Confirms the original KILL, now with
+  TWO large graphs of evidence.
+- **STILL NULL** — within noise everywhere: corroborates finding #2 (basin-not-dynamics).
+
+**Evidence rule (unchanged).** Every prior number below is cited to the `experiments/log.md` cycle or
+`experiments/findings.md` row it came from; I re-verified each against those files. Estimates of what
+MICrONS will show are reasoned, NOT measured. All re-tests use the **unchanged frozen oracle/harness**,
+exact feedforward %, **all three datasets** (connectome / mouse / **microns**), ≥3 seeds SCREEN →
+CONFIRM per the (3-dataset-updated) PROTOCOL. **MICrONS noise floor is unknown until a baseline run
+exists** — establishing `baseline_passthrough` mean±std on MICrONS (≥3 seeds, ideally 5) is the
+implicit prerequisite for every entry and should be the very first MICrONS run (call it **P00**).
+
+**Comparators.** Standard knob-swaps screen vs `baseline_passthrough` per dataset; H02-stacking
+variants promote vs **H02 @ matched seeds**; multi-start/tempering variants vs `baseline_multistart`.
+Same leakage rule as all prior phases: oracle used ONLY for best-by-oracle tracking of whole-vector
+candidates, NEVER folded into loss/init/perturbation, never dataset-special-cased.
+
+## Ranked summary table
+
+| rank | id | hypothesis (one line) | prior conn Δ | prior mouse Δ | why fly-suppressed | EV/cost |
+|---|---|---|---|---|---|---|
+| 0 | **P00** | establish MICrONS baseline mean±std (not a variant; gates all below) | — | — | — | must-do / cheap |
+| 1 | **H11r** | margin/smooth-hinge surrogate keeps gradient on correct-but-thin edges | **−0.0387** (log L688) | **+0.1264** (log L691) | fly's wide-margin saturated basin already near-optimal; hinge's wider gradient band only helps graphs where σ_β under-separates | **HIGH** / cheap |
+| 2 | **H16r** | monotone β-continuation from H02 warm-start (no cyclic re-melt) | −0.2688 vs base / **−0.3031 vs H02** (log L994) | **+0.5435 vs base** / +0.1337 vs H02 (log L996) | fly's deep 82.9% attractor melts the warm-start; mouse CLEARED its 0.52 screen vs baseline → 2nd large graph decides if monotone-β is a large-graph win or fly-melt | **HIGH** / cheap |
+| 3 | **H02r** | greedy-FAS warm-start (CONFIRMED win) — test GENERALITY to a 2nd large connectome | **+0.0508** (find #1, n=15) | **+0.2064** (find #1) | n/a (already a win) — MICrONS tests whether the basin lever generalizes beyond the fly graph | **HIGH** / cheap |
+| 4 | **H03r** | sharper/extended terminal β ramp (raise late surrogate sharpness) | **−0.0376** (log L354) | **+0.0114** (log L357) | fly's tuned cyclic schedule is near-optimal for its hard structure; terminal sharpening may help an easier large graph | **MED** / cheap |
+| 5 | **H17r** | basin-hopping / parallel-tempering from H02 basin | deferred: "lean kill on connectome" (backlog L666) | deferred: "possible keep on mouse" (backlog L666) | deferral was fly-specific (drift probe: every init flows back to fly's 82.9% basin); MICrONS basin may be shallower/multi-modal | **MED** / medium |
+| 6 | **H18r** | straight-through estimator: exact discrete forward, surrogate backward | deferred (not run, log L1042) | deferred (not run) | deferral assumed fly's STE backward ≈ baseline trajectory; on a graph with a different surrogate↔discrete tail the exact forward may pin late steps | **MED-LOW** / cheap-prototype |
+| 7 | **H06r** | weight-aware (heavy & borderline) loss reweighting | **−0.0380** (log L603) | **−0.0794** (log L606) | regressed BOTH → weak "lost theory"; but MICrONS weight-skew differs from fly, so re-size on its distribution | **LOW** / cheap |
+| 8 | **NEW H22** | block/SCC-macro warm-start (condense SCCs → order DAG of blocks → expand) — a STRONGER discrete-FAS init than H02 | — (new) | — (new) | fly's dense cyclic core makes greedy-FAS (H02) near-best already; a 2nd large graph with looser SCC structure may have headroom a coarser block order captures | **MED** / cheap-medium |
+| 9 | **NEW H23** | degree/strength-stratified init scale (source/sink-aware spread) motivated by MICrONS hub structure | — (new) | — (new) | fly source instability (Jaccard@1000 0.33–0.40, CLAUDE.md) caps init gains; a graph with more stable sources may reward a structure-aware spread | **LOW-MED** / cheap |
+| 10 | **H07r/H08r/H10r/H12r** | LOW-EV pure-dynamics knobs (LR sched / β+LR joint / grad-clip / EMA) | deferred (never run) | deferred (never run) | finding #2 predicts null; kept for completeness only | **LOWEST** / cheap |
+
+---
+
+## P00 — Establish the MICrONS baseline noise floor (prerequisite, not a Rocket variant)
+- **Operational task:** run `baseline_passthrough` (unchanged Rocket) on MICrONS, ≥3 seeds
+  (42/123/999), ideally 5, to record `baseline mean ± std` and derive the 2σ SCREEN threshold for
+  the new dataset. Also run `H02` on MICrONS at the same seeds (H02 is the SOTA init and the
+  comparator for every stacking variant).
+- **Why first:** the PROTOCOL screen gate is `Δ > 2σ_baseline` per dataset; MICrONS σ is unknown.
+  Every entry below is un-screenable until this exists. Mouse taught us σ matters (0.26 pp swamped
+  several "gains"); MICrONS at ~73k nodes should be far tighter (closer to connectome's 0.02 pp than
+  mouse's 0.26 pp), which is itself informative about whether mouse-only gains survive a low-noise
+  large graph.
+- **What it REVEALS:** the discriminating power of MICrONS. If σ_MICrONS ≈ connectome's ~0.02 pp,
+  then a true +0.1 pp mouse-style effect would be unambiguous here — exactly the resolution mouse
+  lacked.
+- **Cost:** cheap (3–5 baseline runs + 3–5 H02 runs; ~MICrONS-scale Rocket wall-clock, between mouse
+  and connectome). **Falsifiable check:** baseline reproduces a stable plateau with σ ≪ mouse.
+- **status: proposed**
+
+## H11r — Margin / smooth-hinge surrogate (re-test; prime "lost theory")
+- **One-line hypothesis:** replacing σ_β with a bounded smooth-hinge surrogate
+  `r=clamp(0.5+(β·Δ)/(2·MARGIN),0,1)` (constant gradient across the correct-but-thin band, then flat)
+  raises exact feedforward weight on MICrONS as it did on mouse.
+- **Prior per-dataset result (verified):** connectome **Δ=−0.0387 pp** (mean 82.8571±0.0235, n=3;
+  log.md L688–690), mouse **Δ=+0.1264 pp** (mean 92.1960±0.2643, n=3; log.md L691–693), findings.md
+  #2 row "H11 | margin/hinge surrogate (objective) | −0.0387 | +0.1264 | kill." Killed ONLY by the
+  require-both rule: a clean connectome regression vs a positive (sub-threshold) mouse gain. No
+  synthetic/Phase-4 run (objective-axis levers were not re-tested in Phase 4).
+- **Mechanism for REAL-but-fly-suppressed:** finding #3 established the fly graph's gap is a
+  *distributed reordering* with a deep 82.9% attractor where the faithful sigmoid is already
+  near-optimal — its converged positions blow up (std≈142, diagnosis), so edges are *already* far
+  past the σ_β saturation knee and a wider-gradient hinge adds nothing but drift, hence the −0.04 pp
+  regression. The hinge's mechanism (keep gradient on correct-but-thin-margin edges) only pays off on
+  graphs where many edges sit NEAR the margin at convergence. The fly graph's hard cyclic core may be
+  the *exception* that saturates margins; an ordinary large connectome (MICrONS) may keep many edges
+  thin, where the hinge's sustained gradient genuinely widens protective margins. The mouse +0.1264
+  hints at this but mouse σ (0.26) is too large to trust at n=3.
+- **What MICrONS REVEALS:**
+  - GENERAL WIN if MICrONS Δ > 2σ_MICrONS positive (then re-confirm; the fly regression was the
+    idiosyncrasy).
+  - RECOVERED/GRAPH-DEPENDENT if MICrONS + mouse positive but connectome still negative (a real
+    objective-axis effect that fly's saturated basin suppresses).
+  - SMALL-GRAPH ARTIFACT if MICrONS ≈ 0 or negative like connectome (the mouse +0.13 was 148-node
+    noise; the strongest single test, since MICrONS σ should be tiny).
+- **Falsifiable KILL/keep prediction:** lean **kill** (finding #2/#3 predict the faithful surrogate is
+  near-optimal at the basin on any large graph) — but this is the single most likely "lost theory"
+  because it gained on the one small graph and its mechanism is structure-contingent. KILL if
+  MICrONS Δ ≤ 0 beyond noise; KEEP-as-recovered if MICrONS Δ > 2σ positive.
+- **Cost:** cheap (one-line surrogate swap in a verbatim `run_rocket` loop; `src/mfas/experiments/H11.py`
+  already exists — re-run on MICrONS only; equal budget). Re-test the `tanh` arm only if hinge shows signal.
+- **status: proposed**
+
+## H16r — Monotone β-continuation from the H02 warm-start (re-test; mouse cleared its screen)
+- **One-line hypothesis:** replacing the cyclic β schedule (which re-melts β→0.05) with a single
+  monotone β rise [0.05,1.05], started from H02's greedy-FAS init, holds a better basin on MICrONS
+  as it did on mouse.
+- **Prior per-dataset result (verified):** connectome H16=82.6269 (deterministic) → **Δ=−0.2688 vs
+  baseline / −0.3031 vs H02** (log.md L994); mouse H16=92.6131 → **Δ=+0.5435 vs baseline** /
+  +0.1337 vs H02 (log.md L996). **Crucially the mouse +0.5435 vs baseline CLEARED the 0.52 pp mouse
+  SCREEN threshold** — H16 was killed purely on the connectome regression, the textbook Phase-5
+  "lost theory" pattern. Falsifier outcome recorded: "monotone β re-converged BELOW plateau on
+  connectome → 82.9% attractor is intrinsic to the optimizer" (backlog L625).
+- **Mechanism for REAL-but-fly-suppressed:** the drift probe (finding #3) showed the fly graph's
+  cyclic re-melt actively destroys good orders BUT also that even constant-β collapses to ~82.9% —
+  i.e. the fly attractor is so deep that a low-β monotone *start* MELTS the warm-start before it can
+  sharpen (H16 connectome ran 82.63%, BELOW even random baseline). On a 2nd large graph whose basin
+  is shallower or whose warm-start sits in a wider valley, a monotone never-re-melting schedule
+  should *preserve* the H02 init instead of melting it — exactly the mechanism that helped mouse
+  (+0.54). MICrONS is the decisive test of whether "no re-melt holds the warm-start" is a real
+  large-graph effect or a fly-only melt.
+- **What MICrONS REVEALS:**
+  - GENERAL WIN if MICrONS Δ-vs-H02 > 0 beyond noise (monotone-β-from-warm-start is a real
+    large-graph improvement; the fly melt was the idiosyncrasy).
+  - GRAPH-DEPENDENT if MICrONS improves vs baseline but melts vs H02 like connectome did.
+  - ARTIFACT/STILL-NULL if MICrONS melts the warm-start too (fly attractor depth is generic to large
+    hard graphs) → strongly corroborates finding #3.
+  - **Sweep the start-β:** also try a monotone rise that STARTS at the H02 basin's effective β (skip
+    the low-β melt phase), since the connectome failure was specifically the low-β start.
+- **Falsifiable KILL/keep prediction:** lean **uncertain → possible recover**; the mouse screen-clear
+  makes this the highest-information re-test after H11r. KILL if MICrONS melts the warm-start
+  (Δ-vs-H02 < 0); KEEP-as-general if Δ-vs-H02 > 2σ on MICrONS.
+- **Cost:** cheap (`src/mfas/experiments/H16.py` exists; schedule-array swap + H02 init; equal budget;
+  add one start-β-skip arm). Promote vs H02@matched-seeds on each dataset.
+- **status: proposed**
+
+## H02r — Greedy-FAS warm-start: test GENERALITY of the confirmed win to a 2nd large connectome
+- **One-line hypothesis:** the H02 greedy-FAS warm-start (the ONLY confirmed Phase-3 win) also beats
+  random-N(0,1) init on MICrONS at equal compute.
+- **Prior per-dataset result (verified):** connectome **Δ=+0.0508 pp** (82.9298±0.0011 vs 82.8790±0.0231,
+  n=15, Welch CI lower +0.0391; findings.md #1 hardened row), mouse **Δ=+0.2064 pp** (92.4793±0.0000 vs
+  92.2729±0.2000, n=20, CI lower +0.0824; findings.md #1). CONFIRMED on both, survived critic red-team.
+- **Mechanism / why MICrONS matters:** finding #1's honest caveat is explicit — "generality beyond
+  connectome+mouse is asserted from the mechanism (a graph-derived warm start lands Rocket in a
+  better basin), not proven — only two real graphs are available." MICrONS is the FIRST chance to
+  test that assertion on a third (and second large) graph. The greedy-FAS order alone scores 68.91%
+  (connectome) / 90.13% (mouse) before optimization; its standalone quality on MICrONS, and whether
+  the post-Rocket gain survives, directly tests generality of the basin-not-dynamics finding (#2).
+- **What MICrONS REVEALS:**
+  - GENERAL WIN if MICrONS Δ > 2σ positive → H02 promoted from "win on 2 graphs" to "win on 3,
+    including 2 large" — materially strengthens the thesis's only positive result.
+  - GRAPH-DEPENDENT (unexpected) if MICrONS shows no gain → would force a caveat that the warm-start
+    benefit depends on graph structure (e.g. fly's particular cyclic core), and re-open whether the
+    connectome win generalizes.
+- **Falsifiable KILL/keep prediction:** lean **strong keep / general win** (a warm-start from a good
+  discrete order is the most mechanism-robust, dataset-agnostic lever found). Falsified-as-general if
+  MICrONS Δ ≤ 0 beyond noise.
+- **Cost:** cheap (`src/mfas/experiments/H02.py` exists; one-time greedy-FAS order O(m log n) + unchanged
+  `run_rocket`; equal budget). This run is also produced as part of P00 (H02 is the stacking comparator).
+- **status: proposed**
+
+## H03r — Sharper / extended terminal β ramp (re-test)
+- **One-line hypothesis:** appending a monotone terminal β-sharpening ramp (β_max up to ~4) tightens
+  the surrogate→discrete gap on MICrONS.
+- **Prior per-dataset result (verified):** connectome **Δ=−0.0376 pp** (82.8582±0.0181, n=3; log.md
+  L354), mouse **Δ=+0.0114 pp** (92.0810±0.2730, n=3; log.md L357). Killed; findings.md #2 row
+  "H03 | β schedule (dynamics) | −0.0376 | +0.0114 | kill." Mouse gain is tiny (well within mouse
+  noise) — weaker "lost theory" than H11r/H16r, hence lower rank.
+- **Mechanism for REAL-but-fly-suppressed:** at β≈1 a unit position gap maps to σ≈0.74, so "weakly
+  correct" edges contribute little gradient. The fly graph's converged positions blow up (std≈142),
+  so most edges are ALREADY effectively saturated and a terminal β bump only perturbs them
+  (−0.04 pp). A 2nd large graph whose positions converge to a *smaller* scale would have more edges
+  near the σ knee, where late sharpening genuinely converts surrogate margin to discrete weight.
+  MICrONS's converged `pos_std` (log it) is the diagnostic.
+- **What MICrONS REVEALS:** GENERAL WIN if Δ>2σ positive; ARTIFACT if ≈0/negative like connectome.
+  Distinguishes "terminal sharpening helps" from "fly is already saturated." Un-run arms β_max∈{2,8}
+  and RAMP_FRAC sweep become worth one screen if the primary arm shows signal on MICrONS.
+- **Falsifiable KILL/keep prediction:** lean **kill** (dynamics knob; finding #2). KEEP-as-recovered
+  only if MICrONS + mouse both > 2σ positive.
+- **Cost:** cheap (`src/mfas/experiments/H03.py` exists; β-array swap; equal budget).
+- **status: proposed**
+
+## H17r — Continuous basin-hopping / parallel tempering from the H02 basin (re-test deferred lever)
+- **One-line hypothesis:** perturb→re-optimize→keep-best-by-oracle (basin-hopping), or a few
+  β-temperature replicas with swaps, from the H02 basin, beats single-run H02 on MICrONS at equal
+  total gradient budget.
+- **Prior per-dataset result (verified):** **NOT RUN** — deferred-by-evidence. Backlog L666:
+  "lean **kill on connectome, possible keep on mouse**." Phase-4 stop note (log.md L1039–1041)
+  deferred it because "the drift probe showed re-optimization flows back to the ~82.9% basin from ANY
+  init … naive restarts already KILLED in Phase-3 (H01, +0.0003)." Related prior: H01 multi-start
+  connectome +0.0003 / mouse +0.0000 (findings.md #2).
+- **Mechanism for REAL-but-fly-suppressed:** the deferral reasoning was explicitly the **fly drift
+  probe** — every perturbation falls back into fly's single dominant deep 82.9% attractor. That
+  argument is fly-structure-specific: a 2nd large graph with a *shallower or multi-modal* basin
+  landscape (which MICrONS, lacking the fly's dense reciprocal cyclic core, plausibly has) would let
+  hopping harvest a right tail that the fly graph forbids. The "possible keep on mouse" half of the
+  deferral was never tested at low noise; MICrONS supplies a low-σ large-graph version of that test.
+- **What MICrONS REVEALS:** GENERAL WIN if best-of-hops > H02 beyond noise on MICrONS (the fly basin
+  was uniquely dominant); STILL NULL if hops fall back to the MICrONS plateau (confirms the deep-basin
+  property generalizes to large hard graphs). **Cheap-prototype-first:** size σ_pert / R on mouse +
+  (re-run) the hard synthetic before any MICrONS compute.
+- **Falsifiable KILL/keep prediction:** lean **kill** (deep-basin generality) but the deferral's
+  fly-specificity makes it worth ONE prototype-gated screen. KILL if MICrONS best-of-hops ≤ H02
+  beyond noise.
+- **Cost:** medium (R re-optimizations + R oracle scores; equal total grad steps; `H17.py` not yet
+  built). Prototype on mouse first; only spend MICrONS compute if mouse/synthetic show a hop gain.
+- **status: proposed**
+
+## H18r — Straight-through estimator: exact discrete forward, surrogate backward (re-test deferred lever)
+- **One-line hypothesis:** scoring the exact discrete `1[Δ>0]` in the forward pass while back-propping
+  the σ_β gradient (STE) pins the objective to the true metric and beats surrogate-only Rocket on
+  MICrONS.
+- **Prior per-dataset result (verified):** **NOT RUN** — deferred-by-evidence. Phase-4 stop note
+  (log.md L1042): "STE's backward IS the sigmoid-surrogate gradient, so its trajectory ≈ baseline
+  Rocket (which already best-by-oracle tracks the discrete score) → ~no change."
+- **Mechanism for REAL-but-fly-suppressed:** the deferral assumed STE's descent direction ≈ baseline
+  because the backward is identical. But the FORWARD change (exact discrete) reweights *which* edges
+  carry reward and specifically zeroes reward for late surrogate progress that does NOT raise the
+  discrete score — directly attacking the fly graph's "surrogate descends, discrete flat" step-3
+  pathology (diagnosis). That pathology was characterized ONLY on the fly graph; a 2nd large graph
+  with a *different* surrogate↔discrete tail (which MICrONS will have) is where the exact forward
+  could actually bite. The deferral's "≈baseline" claim is a fly-specific extrapolation.
+- **What MICrONS REVEALS:** GENERAL WIN if STE > H02 beyond noise on MICrONS; STILL NULL if it tracks
+  baseline (confirms the deferral). Prototype-gate on mouse + the (re-run) hard synthetic first; log
+  whether the discrete-tail slope improves.
+- **Falsifiable KILL/keep prediction:** lean **kill** (backward unchanged) but prototype decides; the
+  forward-pinning mechanism is graph-tail-specific. KILL if no gain over surrogate-only Rocket on the
+  hard synthetic.
+- **Cost:** cheap-medium (O(m) extra compare/detach per step; `H18.py` not yet built; prototype-gated
+  so most cost is mouse + synthetic, not MICrONS).
+- **status: proposed**
+
+## H06r — Weight-aware (heavy & borderline) loss reweighting (re-test; weak candidate)
+- **One-line hypothesis:** emphasizing heavy-AND-borderline edges in the surrogate
+  (`m_e=1+α·ŵ·4σ(1−σ)`) raises retained high-weight feedforward arcs on MICrONS.
+- **Prior per-dataset result (verified):** connectome **Δ=−0.0380 pp** (82.8578±0.0288, n=3; log.md
+  L603), mouse **Δ=−0.0794 pp** (91.9902±0.1978, n=3; log.md L606). **Regressed BOTH** → a *weak*
+  "lost theory" (no dataset gained), hence low rank. findings.md #2 row "H06 | … | −0.0380 | −0.0794 |
+  kill."
+- **Mechanism for REAL-but-fly-suppressed:** the emphasis is keyed to the edge-weight distribution
+  (`ŵ=w/max(w)`). Both prior graphs have extreme weight skew (fly max 2,405); max-normalization means
+  one heavy edge dominates `ŵ` and the emphasis biased the surrogate off the faithful Eq.-7 weighting
+  on BOTH. MICrONS's synapse-count weight distribution differs (different max/skew), so the *same*
+  formula maps to a different emphasis profile — the reweighting could land differently. **Re-size the
+  weight distribution on MICrONS first** and tune α to its skew before screening (target-blind: uses
+  only input weights).
+- **What MICrONS REVEALS:** since it regressed both prior graphs, a MICrONS gain would be a surprising
+  RECOVERED result tied to weight structure; a regression confirms the objective-axis null (finding #2).
+- **Falsifiable KILL/keep prediction:** lean **kill** (regressed both already; weakest re-test). Only
+  KEEP-as-recovered if MICrONS Δ > 2σ positive AND the distribution argument is borne out.
+- **Cost:** cheap (`src/mfas/experiments/H06.py` exists; two-line reweight; equal budget).
+- **status: proposed**
+
+## NEW H22 — Block / SCC-macro warm-start (stronger discrete-FAS init than H02)
+- **One-line hypothesis:** a warm-start from a *coarser* discrete order — condense strongly-connected
+  components into super-nodes, order the resulting near-DAG of blocks (topologically / by greedy-FAS),
+  then place nodes block-by-block (greedy-FAS *within* each block) — gives Rocket a better basin than
+  H02's flat greedy-FAS order on a large graph whose SCC structure is looser than the fly's.
+- **Prior result:** NONE (genuinely new). Motivated by Phase-4 finding #3 (fly gap = distributed
+  reordering, Kendall-τ 0.61) and the H21 hard-synthetic construction (the gap appears only with dense
+  cyclic cores / nested SCCs), and by H02 finding #1 (warm-start = the one lever that works).
+- **Mechanism for why a 2nd large graph has headroom H02 lacks:** on the fly graph H02's greedy-FAS
+  order is already near the best continuous-reachable basin (finding #3: better-init-alone has a
+  ≤0.06 pp ceiling; init→plateau is flat). That flatness may be BECAUSE the fly's single dense cyclic
+  core leaves a greedy peel little room to differ from a block order — they nearly coincide. A large
+  connectome with *many smaller SCCs* (plausible for cortical-column-structured MICrONS) gives a
+  block-macro order genuine structure that flat greedy-FAS scrambles, so the coarse-to-fine init could
+  out-perform H02 specifically where H02 saturates. This is the "structure-aware lever motivated by
+  how MICrONS differs from the fly" the brief asks for.
+- **What MICrONS REVEALS:** GENERAL WIN if H22 > H02 beyond noise on MICrONS (block structure is a
+  real init lever the fly's monolithic core hid); STILL NULL if H22 ≈ H02 (greedy-FAS already captures
+  the basin on large graphs too). Always also run on connectome + mouse for the both-datasets rule;
+  expect H22 ≈ H02 on the fly graph (its core is monolithic) and small/noisy on 148-node mouse.
+- **Falsifiable KILL/keep prediction:** lean **uncertain → modest keep on MICrONS if its SCC structure
+  is fragmented**; KILL if H22 ≤ H02 on MICrONS (the fly's flat-init ceiling generalizes). **Compute
+  SCC count / size distribution on MICrONS first** to predict headroom before building the variant.
+- **Cost:** cheap-medium (Tarjan SCC O(m+n) + per-block greedy-FAS, both leakage-safe input-only;
+  `H22.py` to be built; one-time init, per-step cost = baseline). Compares vs H02@matched-seeds.
+- **status: proposed**
+
+## NEW H23 — Degree/strength-stratified init spread (structure-aware position scale)
+- **One-line hypothesis:** seeding initial positions with a spread that reflects each node's
+  out-strength−in-strength (sources spread toward the front, sinks toward the back, magnitude scaled
+  by strength imbalance) — rather than H02's evenly-spaced ranks or N(0,1) — gives Rocket a basin that
+  better respects hub placement on a graph with stable hubs.
+- **Prior result:** NONE (new). Related evidence: the seed-stability analysis (CLAUDE.md / experiments)
+  found sinks far more stable than sources on the fly graph (Jaccard@1000 ≈ 0.65–0.74 sinks vs
+  0.33–0.40 sources); finding #3 found the fly gap is on *median-degree, not hub* endpoints.
+- **Mechanism for why a 2nd large graph could reward it:** on the fly graph, sources are unstable and
+  the gap is NOT at hubs, so any hub/strength-aware init has little to grab — explaining why
+  degree-based inits were weak proxies (backlog H02 rationale L118). If MICrONS has *more stable
+  sources / a cleaner strength gradient* (a structure-aware hypothesis to verify on its degree
+  distribution), a strength-stratified spread could place hubs better than a flat rank-spread,
+  capturing init headroom the fly graph denies.
+- **What MICrONS REVEALS:** GENERAL WIN if H23 > H02 beyond noise on MICrONS; STILL NULL if it tracks
+  H02 (strength imbalance adds nothing over the greedy-FAS rank order). Diagnostic: compare source/sink
+  Jaccard stability on MICrONS vs the fly graph to see if the precondition holds.
+- **Falsifiable KILL/keep prediction:** lean **kill / low-EV** (degree proxies were already weak on
+  the fly graph) — kept as a cheap structure-aware probe. KILL if H23 ≤ H02 on MICrONS.
+- **Cost:** cheap (O(m) strength tally + a deterministic init map; `H23.py` to be built; per-step cost
+  = baseline). Compares vs H02@matched-seeds.
+- **status: proposed**
+
+## H07r / H08r / H10r / H12r — LOW-EV pure-dynamics knobs (completeness only)
+- **One-line hypotheses:** H07 cosine/one-cycle LR; H08 β-phase-synced LR + longer cycles; H10
+  per-node / clip-by-value (or no) grad-clip; H12 Polyak/EMA position averaging.
+- **Prior per-dataset result (verified):** **NONE run** — all four deferred at the Phase-3 campaign
+  stop (backlog L260–286, L328–333, L380–385; log.md L917–919 "LOW-EV pure-dynamics knobs … predicted
+  non-improving … deferred, not falsified").
+- **Mechanism for REAL-but-fly-suppressed:** weak. Finding #2 ("plateau set by the starting basin, not
+  the optimization dynamics") is the *generalization* these would test, but it was inferred from the
+  fly + mouse graphs. There is no specific reason any of these path-not-basin knobs would behave
+  differently on MICrONS — the H05 optimizer falsifier (the strongest dynamics knob) re-converged to
+  the plateau. They exist here ONLY so finding #2 can be re-tested on a 3rd graph for completeness.
+- **What MICrONS REVEALS:** almost certainly STILL NULL on all four → corroborates finding #2 on a 2nd
+  large graph. A surprise gain on MICrONS would be a genuine (and important) overturn of the central
+  inference — which is the only reason to keep them on the list at all.
+- **Falsifiable KILL/keep prediction:** lean **kill all four** (finding #2). Run only if budget remains
+  after H11r/H16r/H02r/H03r and the higher-EV new variants; pick at most ONE (H12 EMA, near-free) as a
+  cheap finding-#2 re-confirmation on MICrONS.
+- **Cost:** cheap each (schedule/optimizer/averaging swaps; variants not yet built). Lowest EV/cost in
+  the section.
+- **status: proposed**
+
+### Phase-5 ranking rationale (EV / cost)
+**P00 first** (un-screenable without the MICrONS noise floor + the H02 comparator). Then the two prime
+"lost theories" whose mouse gains were killed only by a fly regression: **H11r** (objective-axis,
+mouse +0.1264, mechanism is structure-contingent so a 2nd large graph is the ideal discriminator) and
+**H16r** (the ONLY killed lever whose mouse gain *cleared its full screen*, +0.5435 vs baseline — the
+strongest single "killed only by connectome" case). **H02r** next — cheap, and generalizing the one
+confirmed win to a 2nd large connectome is high thesis value. **H03r** (weaker mouse signal) follows.
+Then the fly-specific deferrals **H17r/H18r** whose deferral reasoning was tied to the fly drift probe
+/ fly surrogate tail — prototype-gated so cheap to falsify. The two NEW structure-aware inits **H22**
+(SCC-macro) and **H23** (strength-stratified) probe headroom the fly's monolithic cyclic core may hide
+— H22 ranked above H23 because finding #3 directly implicates SCC/cyclic structure as the gap's cause.
+**H06r** is a weak re-test (regressed both prior graphs). The four LOW-EV dynamics knobs are last,
+kept only to re-confirm finding #2 on a 2nd large graph. Every entry honors the require-improvement-on-
+ALL-THREE rule for promotion; a MICrONS+mouse gain with a persistent connectome regression is reported
+as a GRAPH-DEPENDENT "recovered theory," not a general win.

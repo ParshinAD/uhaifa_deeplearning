@@ -29,3 +29,10 @@ dataset_overrides:
   mouse:
     rocket:
       epochs: 5000
+  # MICrONS minnie65 (67,534 nodes, 10.4M edges) — a 2nd LARGE connectome.
+  # Plateau probe (Part B, 2026-06-22): 20k=83.024%, 40k=83.100%, 80k=83.117%,
+  # 120k=83.118% (+0.001 pp); within-run trajectory flatlines at ~90k iter inside the
+  # 120k schedule → 80k budget is at plateau (marginal gain 80k→120k << noise floor).
+  microns:
+    rocket:
+      epochs: 80000

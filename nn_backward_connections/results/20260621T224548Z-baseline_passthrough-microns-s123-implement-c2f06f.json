@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T224548Z-baseline_passthrough-microns-s123-implement-c2f06f",
+  "algo": "baseline_passthrough",
+  "dataset": "microns",
+  "seed": 123,
+  "score": 12786173.0,
+  "pct": 83.02409451813983,
+  "wall_clock_s": 140.116797208786,
+  "git_commit": "97b951056ae3ad459ebb3fedf87cdac39bb764bd+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "c2f06fd1728a",
+  "timestamp": "2026-06-21T22:48:09Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260621T224548Z-baseline_passthrough-microns-s123-implement-c2f06f_positions.npy",
+  "experiment_id": "baseline_passthrough",
+  "role": "implement",
+  "hypothesis": "Unchanged baseline Rocket, wrapped as a variant (wiring smoke test).",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}
