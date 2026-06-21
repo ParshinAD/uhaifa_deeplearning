@@ -365,7 +365,23 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
 - **Est. compute cost:** **cheap–medium.** Cheaper per step but may need more steps; net wall-clock
   roughly comparable. Adds sampling overhead.
 - **Measurement:** standard; batch fraction ∈ {0.25, 0.5} vs full-batch, at matched wall-clock.
-- **status: proposed**
+- **status: killed**  <!-- 2026-06-21 SCREEN FAIL on both datasets → KILL. Primary arm =
+  per-step UNIFORM without-replacement edge subset, FRAC=0.5, loss scaled by |E|/m so the subset
+  gradient is an UNBIASED estimator of the full-batch gradient (|E|/m keeps gradient magnitude on the
+  baseline scale → grad-clip/LR/β keep their meaning; only injected effect is SGD noise). Everything
+  else (N(0,1) init/Adam/clip=1.0/LR/β/budget 20k/5k) IDENTICAL to baseline (run_rocket loop replicated
+  verbatim; ONLY the per-step edge SET added). Target-blind/leakage-safe: subset drawn uniformly over
+  input edge indices via a dedicated RandomState(seed+104729), never reads the oracle, never
+  dataset-special-cased; discrete score is the EXACT full-graph oracle (best-by-oracle tracking only).
+  Compute-matched on total_grad_steps per PROTOCOL (n_epochs_done=20k/5k = baseline). connectome Δ=
+  −0.8356 pp (mean 82.0602 ± 0.0045, n=3, LARGE REGRESSION); mouse Δ=−0.0325 pp (mean 92.0371 ± 0.2110,
+  n=3, within noise) — both fail the 2σ gate. Δ negative on BOTH → correctly-specified screen, NOT an
+  H02-style low-variance escalation (connectome own std 0.0045 < baseline floor but the −0.84 pp gap is
+  ~185× the std, decisively a regression). Full-batch deterministic descent reaches a markedly better
+  basin than its noisy estimator at equal step count. NOTE: wall-clock is higher per run on connectome
+  (~1332 s) because the per-step replace=False draw over 5.6M edges dominates — but the comparison basis
+  is gradient steps, not wall-clock. UN-RUN arms: FRAC=0.25, weight-proportional sampling, an
+  extra-steps arm (would break the grad-step match). See experiments/log.md 2026-06-21 H13 cycle. -->
 
 ## H14 — H02 warm-start + anti-tie jitter (free-edge recovery on the new SOTA basin)
 - **Hypothesis:** Adding anti-tie position separation (H09's jitter / repulsion, or symmetric

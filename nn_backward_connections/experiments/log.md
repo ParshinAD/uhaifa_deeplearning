@@ -17,7 +17,7 @@ Append-only lab notebook. Each entry: date, hypothesis, command, result (traced 
 <!-- The table below is auto-generated; do not edit by hand. -->
 
 <!-- BEGIN AGGREGATED RESULTS (auto-generated) -->
-_Generated 2026-06-21T10:38:50Z from 118 run(s)._
+_Generated 2026-06-21T11:53:01Z from 124 run(s)._
 
 | algo | dataset | n_seeds | pct mean±std | score mean±std | wall_clock_s (mean) | seeds | config_hash | git_commit |
 |---|---|---|---|---|---|---|---|---|
@@ -35,6 +35,8 @@ _Generated 2026-06-21T10:38:50Z from 118 run(s)._
 | H09 | mouse | 4 | 92.1425 ± 0.2591 | 8.4394 ± 0.0237 | 1.9 | [42, 42, 123, 999] | ace4f2 | 90073cf2d95 |
 | H11 | connectome | 3 | 82.8571 ± 0.0235 | 34,727,188 ± 9,856 | 94.5 | [42, 123, 999] | ec5418 | 258bcbd07c0 |
 | H11 | mouse | 3 | 92.1960 ± 0.2643 | 8.4443 ± 0.0242 | 2.4 | [42, 123, 999] | 29b494 | 258bcbd07c0 |
+| H13 | connectome | 3 | 82.0602 ± 0.0045 | 34,393,204 ± 1,875 | 1332.1 | [42, 123, 999] | 52314a | 07b26a8edcc |
+| H13 | mouse | 3 | 92.0371 ± 0.2110 | 8.4297 ± 0.0193 | 3.9 | [42, 123, 999] | c42396 | 07b26a8edcc |
 | baseline_multistart | connectome | 3 | 82.0507 ± 0.0293 | 34,389,211 ± 12,284 | 77.2 | [42, 123, 999] | 330c58 | 704221ab778 |
 | baseline_multistart | mouse | 3 | 92.1625 ± 0.0242 | 8.4412 ± 0.0022 | 1.9 | [42, 123, 999] | c6938b | 704221ab778 |
 | baseline_passthrough | connectome | 8 | 82.8887 ± 0.0223 | 34,740,422 ± 9,345 | 918.5 | [7, 42, 42, 123, 123, 999, 999, 31415] | f8cb3c | 8f0e5066211, f36e02847a9 |
@@ -722,3 +724,96 @@ mouse Δ=+0.1264 pp, ~4× under the 0.52 pp gate and within own seed noise), cor
 by construction (positions + input weights + β only). **Knock-on for H15:** H15 was gated on an
 objective lever (H06 or H11) screening positive standalone; BOTH H06 and H11 have now failed, so H15
 reduces to H02 and should be dropped per the ideator's own gate.
+
+---
+
+## 2026-06-21 — H13: Mini-batch / stochastic edge subsampling per step (SGD-style Rocket)
+- Hypothesis: Computing the surrogate loss on a RANDOM SUBSET of edges each step (SGD-style) injects
+  useful gradient noise that escapes the surrogate plateau, matching or beating full-batch Rocket.
+  Rationale: baseline Rocket is FULL-BATCH (all edges summed every step) — deterministic descent into
+  the nearest basin, consistent with the observed ~82.9% / ~92.1% plateau; stochastic edge sampling is
+  the textbook way to add exploration noise.
+
+#### Implementer (screen)
+- **Variant** (`src/mfas/experiments/H13.py`): replicates the `run_rocket` main loop VERBATIM (same
+  N(0,1) init, Adam, grad-clip=1.0, constant→exponential LR schedule, cyclic β schedule, CPU int64/
+  float64 discrete scoring, best-by-oracle tracking, history, time-limit) and adds ONLY (i) a dedicated
+  batch RNG and (ii) per-step uniform edge subsampling with an unbiased rescale. `run_rocket` exposes no
+  edge-set hook, so the loop is copied and only these additions made; the surrogate `σ_β` and per-edge
+  weight `hat_w = w/max(w)` are UNCHANGED.
+- **Sampling scheme (primary arm FRAC = 0.5):** each optimizer step, draw a UNIFORM
+  without-replacement subset `S_i ⊆ E` of fixed size `m = round(FRAC·|E|)` of edge indices and form
+  `loss_i = −(|E|/m)·Σ_{e∈S_i} σ_β(Δ)·hat_w`. Only the edge SET per step changes; init/Adam/grad-clip/
+  LR/β/hat_w/σ_β are baseline.
+- **Unbiasedness (unbiased descent direction):** for a uniform fixed-size-`m` subset, each edge is
+  included with probability `m/|E|`, so the Horvitz-Thompson scaled-sum `(|E|/m)·Σ_S f(e)` is an
+  UNBIASED estimator of the full-batch sum `Σ_E f(e)` (`E[(|E|/m)Σ_S f] = (|E|/m)·Σ_E (m/|E|)f = Σ_E f`).
+  This holds termwise for the gradient (a finite linear combination of per-edge gradients), so the
+  expected subset gradient EQUALS the full-batch gradient — an unbiased stochastic-descent direction
+  with added zero-mean noise. The `|E|/m` scale (not the mean `1/m`) keeps the gradient MAGNITUDE on the
+  baseline scale, so grad-clip=1.0, the LR schedule and β retain their baseline meaning and the only
+  injected effect is the SGD noise.
+- **Target-blindness / leakage-safe:** the subset is drawn UNIFORMLY over input edge indices `[0,|E|)`
+  using a dedicated `numpy.random.RandomState(seed + 104729)` (a fixed offset so the batch stream is
+  reproducible from the run seed yet independent of the init RNG). Sampling never consults the discrete
+  oracle, never uses edge orientation / current positions / the target metric, and is NOT
+  dataset-special-cased (same FRAC and scheme for connectome and mouse). The discrete score scored every
+  `log_interval` is the EXACT full-graph oracle (never the subset); oracle used only for the baseline's
+  best-by-oracle tracking.
+- **Compute-matched (PROTOCOL basis = total_grad_steps):** H13 runs the SAME number of optimizer steps
+  as baseline (connectome 20k, mouse 5k), each on a random subset, so `n_epochs_done` = 20000/5000
+  EXACTLY matches the baseline single run → comparator = `baseline_passthrough` / frozen baseline at
+  matched seeds (connectome 82.8958 ± 0.0189; mouse 92.0696 ± 0.2624). **Wall-clock note:** the
+  forward/backward touches HALF the edges, so per-step gradient compute is lower, BUT the per-step
+  uniform-without-replacement draw over 5.6M connectome edges (`rng.choice(replace=False)`, ~72 ms/step)
+  dominates and pushes connectome wall-clock UP (~1332 s/run vs ~78 s baseline) — wall-clock is logged
+  but per PROTOCOL is NOT the comparison basis (gradient steps are). NO extra "spend the saved
+  wall-clock" steps were added (that would break the grad-step match).
+- **Smoke test** (mouse s42): valid RocketResult, no NaN/collapse, 92.2791% (sane, near baseline).
+- **connectome:** mean **82.0602 ± 0.0045** (n=3; H13 own std 0.0045), Δ = **−0.8356 pp** vs baseline
+  82.8958 → far below the +0.04 pp 2σ gate (a large REGRESSION). **SCREEN FAIL.**
+  (seeds: 42 → 82.0572, 123 → 82.0582, 999 → 82.0654.)
+- **mouse:** mean **92.0371 ± 0.2110** (n=3; H13 own std 0.2110), Δ = **−0.0325 pp** vs baseline
+  92.0696 → below the +0.52 pp 2σ gate (within seed noise). **SCREEN FAIL.**
+  (seeds: 42 → 92.2791, 123 → 91.9411, 999 → 91.8911.)
+- **CONFIRM-escalation check:** NOT a low-variance H02-style case. Δ is NEGATIVE on BOTH datasets (a
+  regression, not a positive sub-threshold gain). On connectome H13's own std (0.0045) is actually
+  BELOW the baseline noise floor (0.0189) — but the −0.84 pp gap is ~185× the std and decisively a
+  regression, so there is nothing to escalate. On mouse own std (0.2110) ≈ baseline floor (0.2624) and
+  Δ is negative. The screen is correctly specified; no escalation to CONFIRM. (As anticipated in the
+  brief, subsampling did NOT collapse mouse variance, and on the large connectome the injected noise
+  decisively hurt the discrete score rather than helping it escape the plateau.)
+- **Commands:**
+  ```
+  PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+  for DS in connectome mouse; do for S in 42 123 999; do
+    $PY -m eval.run_variant --exp H13 --dataset $DS --seed $S --out results/ --role implement
+  done; done
+  $PY -m eval.aggregate --glob "results/*.json" --out experiments/log.md
+  ```
+- **Result file ids:** connectome —
+  `20260621T104432Z-H13-connectome-s42-implement-52314a`,
+  `20260621T110657Z-H13-connectome-s123-implement-52314a`,
+  `20260621T112912Z-H13-connectome-s999-implement-52314a`;
+  mouse —
+  `20260621T115137Z-H13-mouse-s42-implement-c42396`,
+  `20260621T115141Z-H13-mouse-s123-implement-c42396`,
+  `20260621T115146Z-H13-mouse-s999-implement-c42396`.
+- **UN-RUN arms (noted, not run this screen):** FRAC = 0.25 (stronger noise, higher variance);
+  weight-proportional sampling (still target-blind — uses only input `w`); an extra-steps arm spending
+  the per-step wall-clock saving on more gradient steps (would break the grad-step match — out of scope
+  for an equal-budget screen).
+- **SCREEN verdict: FAIL on BOTH datasets** (correctly-specified gate; no CONFIRM escalation).
+  Unbiased mini-batch SGD did not help Rocket escape its plateau at equal gradient steps: on connectome
+  the injected noise drove a large −0.84 pp regression (the full-batch deterministic descent reaches a
+  markedly better basin than its noisy estimator at the same step count), and on mouse it landed −0.03
+  pp within seed noise. Consistent with the campaign's dynamics-knob pattern (H01/H03/H04): changing the
+  descent dynamics — here adding stochastic gradient noise — does not lift the discrete metric; if
+  anything, on the large graph it under-fits the surrogate at the fixed step budget.
+
+#### Decision: **kill.** H13 SCREEN-FAILED on both datasets (connectome Δ=−0.8356 pp large regression;
+mouse Δ=−0.0325 pp within noise), Δ negative on both → correctly-specified gate, no CONFIRM escalation.
+Unbiased + leakage-safe/target-blind by construction (uniform over input edge indices via a
+run-seed-derived RNG; oracle only for best-by-oracle tracking). Adds another dynamics-axis negative to
+the campaign's evidence base (full-batch deterministic descent beats its stochastic estimator at equal
+steps on these graphs).

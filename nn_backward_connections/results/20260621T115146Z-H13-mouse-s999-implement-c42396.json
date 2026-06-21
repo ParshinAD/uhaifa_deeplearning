@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T115146Z-H13-mouse-s999-implement-c42396",
+  "algo": "H13",
+  "dataset": "mouse",
+  "seed": 999,
+  "score": 8.416339642742766,
+  "pct": 91.89110601557115,
+  "wall_clock_s": 3.9037392139434814,
+  "git_commit": "07b26a8edcce75f5eea08c58f8ad7104d059a14e+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "c42396a6184d",
+  "timestamp": "2026-06-21T11:51:50Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260621T115146Z-H13-mouse-s999-implement-c42396_positions.npy",
+  "experiment_id": "H13",
+  "role": "implement",
+  "hypothesis": "Computing the surrogate loss on a UNIFORM random subset of edges each step (mini-batch SGD, FRAC=0.5, scaled by |E|/m so the subset gradient is an UNBIASED estimator of the full-batch gradient) injects exploration noise that escapes the surrogate plateau, matching or beating full-batch Rocket at EQUAL gradient steps (connectome 20k, mouse 5k). Only the edge SET per step changes; init/Adam/grad-clip=1.0/LR/beta/hat_w/sigma_beta are baseline. Target-blind (uniform over input edge indices via a run-seed-derived RNG; never reads the oracle, never dataset-special-cased). Compute-matched on total_grad_steps per PROTOCOL; wall-clock is lower per step but NOT the comparison basis. Primary arm FRAC=0.5; FRAC=0.25, weight-proportional and extra-steps arms un-run.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}
