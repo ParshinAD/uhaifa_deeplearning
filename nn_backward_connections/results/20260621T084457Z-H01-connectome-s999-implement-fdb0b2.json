@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T084457Z-H01-connectome-s999-implement-fdb0b2",
+  "algo": "H01",
+  "dataset": "connectome",
+  "seed": 999,
+  "score": 34403340.0,
+  "pct": 82.08442513113324,
+  "wall_clock_s": 81.97496175765991,
+  "git_commit": "704221ab7786f7b46f08d4ddde9ff512edc6291a+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "fdb0b2ebd725",
+  "timestamp": "2026-06-21T08:46:27Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260621T084457Z-H01-connectome-s999-implement-fdb0b2_positions.npy",
+  "experiment_id": "H01",
+  "role": "implement",
+  "hypothesis": "Multi-start: K=4 independent short Rocket runs from different random inits, best-of-K by oracle, at equal total compute, beats one long run.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

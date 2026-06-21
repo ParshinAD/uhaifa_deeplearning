@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T084704Z-baseline_multistart-connectome-s42-implement-330c58",
+  "algo": "baseline_multistart",
+  "dataset": "connectome",
+  "seed": 42,
+  "score": 34382256.0,
+  "pct": 82.03411989857545,
+  "wall_clock_s": 77.06578302383423,
+  "git_commit": "704221ab7786f7b46f08d4ddde9ff512edc6291a+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "330c58332d66",
+  "timestamp": "2026-06-21T08:48:29Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260621T084704Z-baseline_multistart-connectome-s42-implement-330c58_positions.npy",
+  "experiment_id": "baseline_multistart",
+  "role": "implement",
+  "hypothesis": "Equal-budget comparator: plain baseline Rocket, K naive restarts, best-of-K.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

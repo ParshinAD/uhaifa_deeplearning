@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T084701Z-baseline_multistart-mouse-s999-implement-c6938b",
+  "algo": "baseline_multistart",
+  "dataset": "mouse",
+  "seed": 999,
+  "score": 8.441871934025105,
+  "pct": 92.1698721519959,
+  "wall_clock_s": 1.854511022567749,
+  "git_commit": "704221ab7786f7b46f08d4ddde9ff512edc6291a+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "c6938b5bb00e",
+  "timestamp": "2026-06-21T08:47:03Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260621T084701Z-baseline_multistart-mouse-s999-implement-c6938b_positions.npy",
+  "experiment_id": "baseline_multistart",
+  "role": "implement",
+  "hypothesis": "Equal-budget comparator: plain baseline Rocket, K naive restarts, best-of-K.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}

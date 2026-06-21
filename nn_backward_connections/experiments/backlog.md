@@ -44,7 +44,12 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
 - **Est. compute cost:** **cheap–medium.** Equal total epoch budget split into K=4–6 runs; no
   per-step overhead. Slightly more oracle scoring calls (one extra per restart).
 - **Measurement:** standard. Compare K∈{4,8} at fixed total epochs vs 1× baseline epochs.
-- **status: proposed**
+- **status: killed**  <!-- 2026-06-21 screen FAIL on both datasets → KILL. Δ vs equal-budget
+  comparator baseline_multistart(K=4) = +0.0003 pp (connectome) / +0.0000 pp (mouse), both far
+  below 2σ. H01's restart scheme is algorithmically identical to naive restarts (same sub-seeds),
+  and splitting budget into 4×(total/K) under-trains each restart (connectome −0.84 pp vs single
+  long run). Hypothesis falsified. See experiments/log.md 2026-06-21 H01 cycle. -->
+
 
 ## H02 — Warm-start from a topological / greedy ordering (TopoShuffle-style init)
 - **Hypothesis:** Initializing positions from a degree/greedy-based DAG ordering (Kahn-style
