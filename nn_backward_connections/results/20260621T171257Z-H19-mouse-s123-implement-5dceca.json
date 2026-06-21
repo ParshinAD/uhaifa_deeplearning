@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T171257Z-H19-mouse-s123-implement-5dceca",
+  "algo": "H19",
+  "dataset": "mouse",
+  "seed": 123,
+  "score": 8.254700232956138,
+  "pct": 90.12629794323948,
+  "wall_clock_s": 2.3329551219940186,
+  "git_commit": "3275f5cce2dadb5d4ad906f46349051c5c9f5dcf+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "5dceca04331c",
+  "timestamp": "2026-06-21T17:13:00Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260621T171257Z-H19-mouse-s123-implement-5dceca_positions.npy",
+  "experiment_id": "H19",
+  "role": "implement",
+  "hypothesis": "Optimizing the Rocket feedforward surrogate in differentiable soft-RANK space (bounded, scale-free r_i = \u03a3_j \u03c3(\u03b1\u00b7(p_j\u2212p_i)), then loss on rank gaps) instead of raw-position space prevents the scale blow-up that saturates the sigmoid, keeps gradients alive on borderline edges, and reaches/holds a better basin than raw-position Rocket. Prototype-scale (mouse + hard synthetic); O(n^2) soft-rank.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}

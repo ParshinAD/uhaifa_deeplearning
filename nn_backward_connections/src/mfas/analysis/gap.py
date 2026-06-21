@@ -40,6 +40,7 @@ __all__ = [
     "optimize_spacing",
     "drift_probe",
     "make_synthetic_graph",
+    "make_hard_synthetic_graph",
 ]
 
 
@@ -312,3 +313,326 @@ def make_synthetic_graph(n: int = 400, avg_out: int = 8, feedback_frac: float = 
     planted_order = np.arange(n, dtype=np.int64)
     sc = score_from_positions(planted_order, src, tgt, weight)
     return g, planted_order, pct(sc, g.total_weight)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# HARD synthetic fixture — reproduces a Rocket↔reference OPTIMIZATION-GAP (H21)
+# ──────────────────────────────────────────────────────────────────────────────
+def _greedy_fas_reference_order(g: GraphData) -> np.ndarray:
+    """Eades-Lin-Smyth / GreedyAbs greedy-FAS ordering (leakage-safe, graph-only).
+
+    Thin re-implementation of ``mfas.experiments.H02.greedy_fas_order`` kept LOCAL to
+    the analysis module so the hard-synthetic *reference comparator* never imports the
+    optimization path (and vice-versa). Returns ``order`` with ``order[u] = rank`` in
+    ``[0, n)`` (smaller = earlier = source side). Used ONLY as the diagnostic reference
+    (the synthetic analogue of ``best_solution``); NEVER inside any variant.
+    """
+    import heapq
+
+    n = g.n_nodes
+    src = np.asarray(g.src, dtype=np.int64)
+    tgt = np.asarray(g.tgt, dtype=np.int64)
+    w = np.asarray(g.weight, dtype=np.float64)
+
+    out_w = np.zeros(n, dtype=np.float64)
+    in_w = np.zeros(n, dtype=np.float64)
+    np.add.at(out_w, src, w)
+    np.add.at(in_w, tgt, w)
+
+    out_order = np.argsort(src, kind="stable")
+    out_start = np.searchsorted(src[out_order], np.arange(n + 1))
+    out_nbr = tgt[out_order]
+    out_wt = w[out_order]
+    in_order = np.argsort(tgt, kind="stable")
+    in_start = np.searchsorted(tgt[in_order], np.arange(n + 1))
+    in_nbr = src[in_order]
+    in_wt = w[in_order]
+
+    active = np.ones(n, dtype=bool)
+    order = np.empty(n, dtype=np.int64)
+    front = 0
+    back = n - 1
+    EPS = 1e-12
+
+    sinks = [u for u in range(n) if out_w[u] <= EPS]
+    sources = [u for u in range(n) if in_w[u] <= EPS and out_w[u] > EPS]
+    heap = [(-(out_w[u] - in_w[u]), u) for u in range(n)
+            if out_w[u] > EPS and in_w[u] > EPS]
+    heapq.heapify(heap)
+    heap_val = (out_w - in_w).copy()
+
+    def remove(u: int, to_front: bool) -> None:
+        nonlocal front, back
+        active[u] = False
+        if to_front:
+            order[u] = front
+            front += 1
+        else:
+            order[u] = back
+            back -= 1
+        for k in range(out_start[u], out_start[u + 1]):
+            v = int(out_nbr[k])
+            if active[v]:
+                in_w[v] -= out_wt[k]
+                if in_w[v] <= EPS and out_w[v] > EPS:
+                    sources.append(v)
+                else:
+                    heap_val[v] = out_w[v] - in_w[v]
+                    heapq.heappush(heap, (-(heap_val[v]), v))
+        for k in range(in_start[u], in_start[u + 1]):
+            v = int(in_nbr[k])
+            if active[v]:
+                out_w[v] -= in_wt[k]
+                if out_w[v] <= EPS:
+                    sinks.append(v)
+                else:
+                    heap_val[v] = out_w[v] - in_w[v]
+                    heapq.heappush(heap, (-(heap_val[v]), v))
+
+    placed = 0
+    while placed < n:
+        progressed = False
+        while sinks:
+            u = sinks.pop()
+            if active[u] and out_w[u] <= EPS:
+                remove(u, to_front=False)
+                placed += 1
+                progressed = True
+        while sources:
+            u = sources.pop()
+            if active[u] and in_w[u] <= EPS and out_w[u] > EPS:
+                remove(u, to_front=True)
+                placed += 1
+                progressed = True
+        if placed >= n:
+            break
+        if progressed:
+            continue
+        u = -1
+        while heap:
+            neg, cand = heapq.heappop(heap)
+            if not active[cand]:
+                continue
+            if -neg != heap_val[cand]:
+                continue
+            u = cand
+            break
+        if u == -1:
+            remaining = np.nonzero(active)[0]
+            diff = out_w[remaining] - in_w[remaining]
+            u = int(remaining[int(np.argmax(diff))])
+        remove(u, to_front=True)
+        placed += 1
+
+    return order
+
+
+def _refine_reference_order(g: GraphData, init_orders, n_passes: int = 60,
+                            seed: int = 0) -> Tuple[np.ndarray, float]:
+    """Strong DIAGNOSTIC 'best-known' order via oracle-guided sift local search.
+
+    Builds a near-optimal reference for the hard synthetic — its analogue of the
+    connectome's downloaded ``best_solution``. It MAY consult the oracle (exactly as
+    ``best_solution`` is an oracle-optimised artefact); it is used ONLY as a diagnostic
+    comparator and is NEVER read inside any variant's optimisation path. Cheap at n≤600.
+
+    Procedure: take the best (by oracle) of several cheap init orders, then repeatedly
+    rebuild the order by sorting nodes on a *weighted barycenter* of their neighbours'
+    current ranks (out-neighbours pull a node earlier, in-neighbours later) and keep any
+    order that improves the exact feedforward weight. Greedy hill-climb on the oracle, so
+    the returned order is a strong upper estimate of what is reachable on this graph.
+    """
+    src = np.asarray(g.src, dtype=np.int64)
+    tgt = np.asarray(g.tgt, dtype=np.int64)
+    w = np.asarray(g.weight, dtype=np.float64)
+    n = g.n_nodes
+    rng = np.random.RandomState(seed)
+
+    def order_to_rank(order):
+        return order.astype(np.int64)
+
+    def score(order):
+        return score_from_positions(order, src, tgt, g.weight)
+
+    # Seed with the best cheap init.
+    best_order = None
+    best_sc = -np.inf
+    for o in init_orders:
+        o = np.asarray(o, dtype=np.int64)
+        s = score(o)
+        if s > best_sc:
+            best_sc, best_order = s, o.copy()
+
+    rank = best_order.copy()                       # rank[node] = position
+    for _ in range(n_passes):
+        # Barycenter: a node wants to sit AFTER its in-neighbours and BEFORE its
+        # out-neighbours. bary = (Σ_in w·rank_src + Σ_out w·(rank_tgt)) weighted pull.
+        bary = rank.astype(np.float64).copy()
+        num = np.zeros(n, dtype=np.float64)
+        den = np.zeros(n, dtype=np.float64)
+        # out-edges (u->v): u should be earlier than v -> pull u toward rank[v]-1
+        np.add.at(num, src, w * (rank[tgt].astype(np.float64) - 1.0))
+        np.add.at(den, src, w)
+        # in-edges (u->v): v should be later than u -> pull v toward rank[u]+1
+        np.add.at(num, tgt, w * (rank[src].astype(np.float64) + 1.0))
+        np.add.at(den, tgt, w)
+        mask = den > 0
+        bary[mask] = num[mask] / den[mask]
+        bary += rng.uniform(-1e-3, 1e-3, size=n)   # break ties
+        new_order = np.argsort(np.argsort(bary, kind="stable"), kind="stable").astype(np.int64)
+        s = score(new_order)
+        if s > best_sc:
+            best_sc, best_order = s, new_order.copy()
+            rank = new_order.copy()
+        else:
+            # mild restart from current best with jitter to escape cycles
+            jitter = best_order.astype(np.float64) + rng.uniform(-2.0, 2.0, size=n)
+            rank = np.argsort(np.argsort(jitter, kind="stable"), kind="stable").astype(np.int64)
+    return best_order, best_sc
+
+
+def make_hard_synthetic_graph(n: int = 400, avg_out: int = 10,
+                              feedback_frac: float = 0.65, weight_hi: int = 50,
+                              n_clusters: int = 8, intra_cycle_frac: float = 0.55,
+                              weight_alpha: float = 2.0, seed: int = 0,
+                              name: str = "hard_synthetic"
+                              ) -> Tuple[GraphData, np.ndarray, float]:
+    """Build a HARD directed weighted graph that reproduces a Rocket↔reference GAP.
+
+    Unlike :func:`make_synthetic_graph` (near-acyclic, on which Rocket already beats its
+    planted order so there is NO optimization gap), this generator injects:
+
+    * **high feedback fraction** — backward edges carry near-parity weight with the
+      forward edges (``feedback_frac`` ≈ 0.4–0.9), so a global linear order is far from
+      perfect (large irreducible feedback, like the connectome's ~17%);
+    * **dense cyclic cores / nested SCCs** — nodes are partitioned into ``n_clusters``
+      contiguous blocks; within each block a large fraction (``intra_cycle_frac``) of
+      edges are bidirectional / cyclic, so the optimal *within-block* order is a
+      distributed reordering rather than a near-DAG (mimics the connectome's moderate
+      Kendall-τ structure);
+    * **heavy-tailed weights** — edge weights ``∝ U^(−weight_alpha)`` (Pareto-like), so
+      the weight distribution is skewed like the connectome, while the *disagreement*
+      stays spread across blocks rather than on a few heavy edges.
+
+    Leakage invariant (identical to :func:`make_synthetic_graph` and ``best_solution``):
+    the returned ``reference_order`` is the synthetic analogue of the near-optimal
+    submission — a strong 'best-known' order built by :func:`_refine_reference_order`
+    (best of greedy-FAS / block-macro inits, refined by an oracle-guided sift local
+    search, exactly as ``best_solution`` is an oracle-optimised artefact). It is returned
+    for DIAGNOSTIC comparison ONLY and must NEVER be read inside any variant's
+    init / loss / perturbation — it carries the same privilege boundary as ``best_solution``.
+
+    Returns
+    -------
+    g : GraphData
+        The hard synthetic graph (int64 weights, contiguous ``[0, n)`` indices).
+    reference_order : int64 array, shape (n,)
+        ``reference_order[u]`` = rank of node ``u`` under the greedy-FAS reference.
+    reference_pct : float
+        Exact feedforward % of ``reference_order`` under the frozen oracle.
+    """
+    rng = np.random.RandomState(seed)
+
+    def _heavy_weights(k: int) -> np.ndarray:
+        """Heavy-tailed positive integer weights in ``[1, weight_hi]`` (Pareto-like)."""
+        u = rng.uniform(0.0, 1.0, size=k)
+        raw = (1.0 - u) ** (-1.0 / weight_alpha)          # Pareto tail
+        raw = raw / raw.max()                              # → (0, 1]
+        wt = 1 + np.floor(raw * (weight_hi - 1)).astype(np.int64)
+        return wt
+
+    # Block (cluster) assignment: contiguous blocks define a coarse "macro" order.
+    bounds = np.linspace(0, n, n_clusters + 1).astype(np.int64)
+    block_of = np.empty(n, dtype=np.int64)
+    for b in range(n_clusters):
+        block_of[bounds[b]:bounds[b + 1]] = b
+
+    src, tgt, w = [], [], []
+
+    # ── 1. Inter-block forward backbone (the macro signal Rocket *can* recover) ──
+    # Edges from an earlier block to a later block (low->high), carrying weight.
+    n_fwd = n * avg_out
+    a = rng.randint(0, n, size=n_fwd)
+    b = rng.randint(0, n, size=n_fwd)
+    # orient so the lower-block endpoint is the source (forward wrt the macro order)
+    swap = block_of[a] > block_of[b]
+    s_lo = np.where(swap, b, a)
+    t_hi = np.where(swap, a, b)
+    keep = block_of[s_lo] != block_of[t_hi]               # strictly inter-block
+    s_lo, t_hi = s_lo[keep], t_hi[keep]
+    src.append(s_lo); tgt.append(t_hi)
+    w.append(_heavy_weights(s_lo.shape[0]))
+
+    # ── 2. Inter-block feedback (high->low): near-parity weight => large gap source ──
+    n_fb = int(feedback_frac * s_lo.shape[0])
+    a = rng.randint(0, n, size=n_fb)
+    b = rng.randint(0, n, size=n_fb)
+    swap = block_of[a] < block_of[b]
+    hi_s = np.where(swap, b, a)
+    lo_t = np.where(swap, a, b)
+    keep = block_of[hi_s] != block_of[lo_t]
+    hi_s, lo_t = hi_s[keep], lo_t[keep]
+    src.append(hi_s); tgt.append(lo_t)                    # high-block -> low-block = feedback
+    w.append(_heavy_weights(hi_s.shape[0]))
+
+    # ── 3. Dense cyclic cores INSIDE each block (nested SCC structure) ──
+    # Within a block, add many edges in BOTH directions among nearby nodes, so the
+    # within-block optimum is a hard, distributed reordering (no clean local order).
+    for blk in range(n_clusters):
+        lo, hi = int(bounds[blk]), int(bounds[blk + 1])
+        sz = hi - lo
+        if sz < 3:
+            continue
+        n_intra = int(intra_cycle_frac * sz * avg_out)
+        u = rng.randint(lo, hi, size=n_intra)
+        v = rng.randint(lo, hi, size=n_intra)
+        good = u != v
+        u, v = u[good], v[good]
+        src.append(u); tgt.append(v)                      # arbitrary direction -> cycles
+        w.append(_heavy_weights(u.shape[0]))
+
+    src = np.concatenate(src).astype(np.int32)
+    tgt = np.concatenate(tgt).astype(np.int32)
+    weight = np.concatenate(w).astype(np.int64)
+    node_ids = np.arange(n, dtype=np.int64)
+    g = GraphData(src=src, tgt=tgt, weight=weight, node_ids=node_ids, name=name)
+
+    # Diagnostic 'best-known' reference (analogue of best_solution): a HIGH-EFFORT,
+    # oracle-optimised order. We assemble candidates from cheap heuristics AND a small
+    # ensemble of long, multi-restart Rocket runs, then refine the lot with an
+    # oracle-guided sift local search and keep the best by the exact metric. This makes
+    # the reference a genuine *upper estimate* of what is reachable, so a gap to the
+    # standard single-run Rocket (if any) is a real optimisation gap, not a weak baseline.
+    reference_order, ref_sc = _build_reference(g, seed=seed)
+    return g, reference_order, pct(ref_sc, g.total_weight)
+
+
+def _build_reference(g: GraphData, seed: int = 0,
+                     n_rocket: int = 6, rocket_epochs: int = 12_000
+                     ) -> Tuple[np.ndarray, float]:
+    """High-effort oracle-optimised 'best-known' order (analogue of best_solution).
+
+    Candidates: greedy-FAS, block-macro identity, and ``n_rocket`` long Rocket runs at
+    different seeds (high-effort continuous optimisation). All are passed through the
+    oracle-guided sift refinement; the best by the exact feedforward weight is returned.
+    DIAGNOSTIC ONLY — never read inside any variant's optimisation path.
+    """
+    import torch
+
+    from ..baseline.rocket import RocketConfig, run_rocket
+
+    src, tgt = np.asarray(g.src), np.asarray(g.tgt)
+    n = g.n_nodes
+    inits = [
+        _greedy_fas_reference_order(g),
+        np.arange(n, dtype=np.int64),
+    ]
+    dev = torch.device("cpu")
+    for k in range(n_rocket):
+        cfg = RocketConfig(epochs=rocket_epochs)
+        res = run_rocket(g, cfg, seed=seed * 1000 + 17 * k + 1, device=dev)
+        # positions -> rank order
+        order = np.argsort(np.argsort(res.best_positions, kind="stable"),
+                           kind="stable").astype(np.int64)
+        inits.append(order)
+    return _refine_reference_order(g, init_orders=inits, n_passes=80, seed=seed)

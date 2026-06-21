@@ -999,3 +999,57 @@ is hardened. Result JSONs: `results/*H02-connectome-s*-confirm-*.json` (15),
 #### Decision: **KILL** (connectome regression). Mechanism corroborates the diagnosis: the low-β start
   melts the warm-start (drift-probe mechanism) and the well-tuned cyclic baseline beats a monotone
   schedule on connectome — *how* it descends is dominated by the tuned baseline; basin still rules.
+
+## 2026-06-21 — H19: soft-rank (DIRECTION R) — EARLY_EXIT (prototype FAIL on mouse + hard synthetic)
+- Hypothesis (DIRECTION R): optimizing in RANK space (bounded, scale-free) instead of raw positions
+  fixes the scale blow-up (pos std≈142 saturates σ) and reaches a better basin. Prototype-first gate:
+  mouse + a HARD synthetic ONLY (O(n²) all-pairs soft rank `r_i = Σ_j σ(α(p_j−p_i))`, connectome-guarded).
+- **Hard synthetic fixture (backlog H21) BUILT** (`gap.make_hard_synthetic_graph`, reference_order is
+  diagnostic-only): verified optimization gap **+0.80 ± 0.21 pp** (reference 74.07% vs baseline-Rocket
+  73.28%, 3 seeds) — a valid prototype proxy (the easy synthetic had no gap).
+#### Implementer (prototype screen, equal compute)
+  - mouse (3 seeds): H19 = 90.1263 ± 0.0000 vs baseline 92.0696 → **Δ −1.94 pp (regression)**.
+  - hard synthetic (3 seeds): H19 = 68.6175 ± 0.96 vs baseline 73.2768 ± 1.19 → **Δ −4.66 pp**; soft-rank
+    stalls EXACTLY at the greedy warm-start (68.6175) for ALL α∈{2,4,8,16,32} — normalized rank gaps are
+    O(1/n) so σ(β·gap) gradients are too flat to move positions; the optimizer never improves the init.
+  - Variant `src/mfas/experiments/H19.py`; repro scripts `experiments/protoR_{tune_hardsynth,softrank_synth}.py`;
+    mouse JSONs `results/*H19-mouse-s{42,123,999}-implement-*.json`.
+#### Decision: **EARLY_EXIT DIRECTION R**. Soft-rank (the highest-ceiling R lever, aimed at the named
+  scale-saturation mechanism) is a large robust regression at prototype scale → earns no connectome
+  compute and falsifies the rank-space hypothesis: scale-saturation is not a bottleneck a rank
+  reparametrization fixes.
+
+---
+
+## 2026-06-21 — STAGE B CAMPAIGN STOP (Phase-4 continuous-only push)
+
+**Stop criterion fired (PROTOCOL §Budget):** `EARLY_EXIT` — both pre-registered directions' highest-EV
+levers failed, with the diagnosis predicting the remainder non-improving.
+
+**Cycles run (Phase 4):**
+| id | direction / mechanism | scale | result |
+|---|---|---|---|
+| (diagnosis) | decisive surrogate + gap structure | connectome+mouse+synth | OPTIMIZATION-GAP verdict |
+| H02-harden | re-confirm warm-start at n=15 | connectome | Δ+0.0508, CI_low +0.0391 (holds) |
+| H16 | O: monotone β-continuation from warm-start | connectome+mouse | KILL (conn −0.27 vs base) |
+| H21 | hard-synthetic gap fixture | synthetic | BUILT (+0.80 pp gap) |
+| H19 | R: soft-rank (rank-space) | mouse+hard-synth | EARLY_EXIT (regress both) |
+
+**Deferred-by-evidence (NOT run), with reasoning:**
+- **H17 (O, basin-hopping / parallel tempering):** predicted non-improving — the drift probe showed
+  re-optimization flows back to the ~82.9% basin from ANY init (incl. the 84.6% optimum), and naive
+  restarts already KILLED in Phase-3 (H01, +0.0003). Hopping samples ~82.9% basins.
+- **H18 (R, straight-through estimator):** STE's backward IS the sigmoid-surrogate gradient, so its
+  trajectory ≈ baseline Rocket (which already best-by-oracle tracks the discrete score) → ~no change.
+- **H20 (R, Gumbel-Sinkhorn):** O(n²), note-only; soft-rank (a cheaper member of the same relaxation
+  class) already failed at prototype scale.
+
+**Central Phase-4 conclusion (see findings.md #3):** the Rocket↔best gap is a genuine OPTIMIZATION-GAP
+(the surrogate correctly ranks the near-optimal order higher) but is **not closable by the Rocket class
+of continuous optimization**: better init washes out (flat init→plateau; a perfect init collapses under
+gradient flow), schedule changes regress (H16), and rank-space reparametrization stalls (H19). The
+~1.69 pp is a distributed reordering with no tie-slack → **largely irreducible to continuous methods**,
+explaining why the paper's discrete Crane phase is what extends quality past Rocket's plateau. The
+Rocket-only best remains **H02 = 82.93% connectome** (hardened) / **92.48% mouse**. Integrity held:
+frozen-guard OK every cycle, no frozen file modified, leakage audit clean, `best_solution` confined to
+`mfas.analysis`.

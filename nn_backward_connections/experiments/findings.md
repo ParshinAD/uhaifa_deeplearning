@@ -15,8 +15,14 @@ metric — at **equal compute** (same epoch budget / `total_grad_steps`) and on 
 
 | dataset | H02 mean±std (n) | baseline mean±std (n) | Δ | 95% CI lower | verdict |
 |---|---|---|---|---|---|
-| connectome | 82.9292 ± 0.0015 (5) | 82.8844 ± 0.0253 (5) | **+0.0448 pp** | **+0.0135** | CI>0 ✓ |
+| connectome (n=5) | 82.9292 ± 0.0015 (5) | 82.8844 ± 0.0253 (5) | +0.0448 pp | +0.0135 | CI>0 ✓ |
+| **connectome (n=15, hardened)** | **82.9298 ± 0.0011 (15)** | **82.8790 ± 0.0231 (15)** | **+0.0508 pp** | **+0.0391** | **CI>0 ✓✓** |
 | mouse | 92.4793 ± 0.0000 (20) | 92.2729 ± 0.2000 (20) | **+0.2064 pp** | **+0.0824** | CI>0 ✓ |
+
+> **Phase-4 hardening (2026-06-21).** Re-confirmed on **15 matched connectome seeds** (5 original +
+> 10 new) vs `baseline_passthrough` at the same seeds: **Δ = +0.0508 pp, Welch 95% CI lower bound
+> = +0.0391** (paired +0.0390) — far more robust than the original thin +0.0135 at n=5. H02's
+> warm-start is near-deterministic (std 0.001). The earlier fragility caveat is resolved.
 
 Variant: `src/mfas/experiments/H02.py`. Pure Rocket score (no post-processing). The greedy order
 alone scores 68.91% (connectome) / 90.13% (mouse) before any optimization.
@@ -32,9 +38,10 @@ baseline `results/*-baseline_passthrough-*-{f8cb3c,7b7cba}.json`. Verified indep
 verifier (read-only) and red-teamed by the critic (frozen-integrity, leakage, reproducibility,
 significance, both-dataset robustness — all PASS).
 
-**Honest caveats.** The win is **modest**: mouse +0.21 pp is solid; connectome +0.045 pp clears the
-CI bar by a thin **+0.0135 pp** — fragile to a few baseline seeds, so widen the connectome confirm
-seed count before leaning on it. H02 **missed the lenient 2σ_baseline screen** and was promoted only
+**Honest caveats.** The win is **modest**: mouse +0.21 pp is solid; connectome +0.045 pp originally
+cleared the CI bar by a thin +0.0135 pp at n=5 — **now hardened to +0.0508 pp with CI lower +0.0391
+at n=15** (see the hardening note above), so the earlier fragility is resolved. H02 **missed the
+lenient 2σ_baseline screen** and was promoted only
 via the more-rigorous CONFIRM test (justified: the screen gate assumes variant variance ≈ baseline
 noise, but H02's init is nearly deterministic; see the log's orchestrator escalation note).
 Generality beyond connectome+mouse is asserted from the mechanism (a graph-derived warm start lands
@@ -84,3 +91,42 @@ LOW-EV dynamics knobs (H07/H08/H10/H12) were **deferred, not falsified**, when t
 pressure-tested (the ideator kept H05 as a falsifier rather than assuming the conclusion), but it is
 an inductive conclusion, not a proof. Full per-cycle evidence + commands: `experiments/log.md`
 (H01–H13 cycles + the 2026-06-21 campaign-stop note).
+
+## #3 — The Rocket↔best gap is an OPTIMIZATION-GAP that continuous methods alone cannot close (Phase 4)
+
+**Claim.** Against a downloaded near-optimal ordering (`data/best_solution`, **84.6147%**, vs Rocket-only
+**82.93%** → gap **≈1.69 pp**), the gap is a true **optimization-gap, not a surrogate-misalignment**: the
+sigmoid surrogate *correctly ranks the near-optimal order higher than Rocket's converged solution at every
+β*. Yet the gap is **not recoverable by the Rocket class of continuous/gradient optimization** — across the
+diagnosis and two pre-registered Stage-B directions, no continuous lever closes it; it is a distributed
+reordering with no discretization slack, and is therefore largely **irreducible to continuous methods**
+(explaining why the paper's discrete Crane phase is required to go further).
+
+**Evidence (all from `experiments/outputs/diagnosis.json` + `results/*.json`; reproduce via
+`experiments/diagnostics.py` and the Stage-B repro commands in `log.md`):**
+
+| probe | result | implication |
+|---|---|---|
+| decisive surrogate (scale-fair) | best's order out-surrogates Rocket at **every** β (+238 … +1153) | surrogate aligned → **optimization-gap**, not misalignment |
+| drift probe (init AT best) | Rocket collapses 84.61% → 82.75–83.03% under every schedule/scale | best is **unreachable/unholdable** by Adam-on-σ |
+| init→plateau (connectome) | **flat** 82.87–82.93% across inits 36–69% | better-init-alone ceiling ≤0.06 pp (DIRECTION I down) |
+| gap structure | 7.5% of weight flips; Kendall-τ 0.61; **0 ties**, near-ties 0.03% | distributed reordering, **no discretization slack** |
+| H16 (DIRECTION O: monotone β) | connectome **−0.27 pp** vs baseline (KILL) | β-schedule change can't beat the tuned cyclic baseline |
+| H19 (DIRECTION R: soft-rank) | mouse −1.94, hard-synth −4.66 pp (EARLY_EXIT) | rank-space stalls (O(1/n) gaps); scale isn't the lever |
+
+The Stage-B negative results were obtained on a **purpose-built hard synthetic** carrying a verified
++0.80 pp optimization gap (`gap.make_hard_synthetic_graph`) plus mouse — i.e. the levers failed even where
+a gap demonstrably exists. The Rocket-only best remains **H02 = 82.93% connectome (hardened, CI lower
++0.0391 @ n=15) / 92.48% mouse**.
+
+**Why it matters.** It quantifies the continuous/discrete boundary for Rocket: of the ~1.69 pp Crane gap,
+continuous optimization recovers **≈0** beyond H02's warm-start (~0.05 pp). The surrogate is faithful; the
+barrier is the non-convex landscape — a near-optimal ordering is not a reachable or even *stable* attractor
+of Adam-on-σ, and rank/scale/schedule reparametrizations don't change that. This is the mechanistic reason
+the paper needs a discrete MIP (Crane) to surpass Rocket.
+
+**Honest scope.** best_solution exists only for connectome (mouse has none) so the decisive surrogate/gap
+steps are connectome-only; conclusions about R rest on mouse + one hard synthetic. H17 (basin-hopping),
+H18 (STE), H20 (Gumbel-Sinkhorn) were **deferred-by-evidence** (predicted non-improving by H01's prior kill,
+the drift probe, and H19's failure — see log.md), not exhaustively falsified. Full evidence + commands:
+`experiments/diagnosis.md`, `experiments/log.md` (Phase-4 section), `experiments/outputs/diagnosis.json`.

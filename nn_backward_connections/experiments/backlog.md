@@ -747,7 +747,23 @@ regress mouse. This conserves the ~80 s/run/seed connectome budget for variants 
 - **KILL/keep prediction:** lean **most promising R lever, but uncertain**. **Falsified if** rank-space
   surrogate does not exceed raw-position Rocket on the hard synthetic beyond noise across ε (then
   scale-saturation is not the operative bottleneck) → no connectome compute.
-- **Status: proposed**
+- **Status: screened (prototype) — FALSIFIED; recommend EARLY_EXIT DIRECTION R**
+  <!-- 2026-06-21 (Phase 4 Stage-B, DIRECTION R prototype). torchsort/fast-soft-sort NOT installed →
+  implemented an O(n^2) all-pairs soft rank r_i=Σ_j σ(α·(p_j−p_i)), normalized to [0,1], loss on rank
+  gaps; H02 warm-start, equal compute (mouse 5k, synthetic 4k), connectome guarded/refused
+  (src/mfas/experiments/H19.py). PROTOTYPE RESULTS (frozen scorer):
+    • mouse (n=3 seeds 42/123/999): H19 = 90.1263 ± 0.0000 vs baseline 92.0696 → Δ = −1.94 pp (REGRESSION).
+    • hard synthetic H21 cfg0 (n=3): H19 = 68.6175 ± 0.9638 vs baseline 73.2768 ± 1.1858
+      → Δ = −4.66 ± 0.39 pp (large REGRESSION); reference best-known 74.0733 (gap to baseline +0.80 pp).
+  Soft-rank lands EXACTLY at the greedy-FAS warm-start value (68.6175) and never improves it; this is
+  ROBUST across α∈{2,4,8,16,32} (all 68.6175 ± 0.9638). Normalized rank gaps are O(1/n) → σ(β·gap)
+  gradient is too flat to move positions at the baseline LR; the optimizer stalls and best-by-oracle
+  keeps the init. Falsified per the KILL prediction (does not exceed raw-position Rocket on the hard
+  synthetic, across α) → NO connectome compute. Reproduce:
+    python experiments/protoR_softrank_synth.py   (synthetic + reference)
+    python -m eval.run_variant --exp H19 --dataset mouse --seed {42,123,999} --out results/ --role implement
+  Result files: results/*-H19-mouse-s{42,123,999}-implement-*.json. -->
+
 
 ## H20 — Gumbel-Sinkhorn permutation relaxation (NOTE ONLY — O(n²), prototype-restricted)
 - **Hypothesis:** A full doubly-stochastic permutation relaxation (Sinkhorn / Gumbel-Sinkhorn) over a
@@ -815,7 +831,21 @@ regress mouse. This conserves the ~80 s/run/seed connectome budget for variants 
   which would itself be a finding (the gap is intrinsically large-scale / connectome-structure-specific,
   and prototype screening of relaxations is not possible → run H18/H19 directly on mouse, accept higher
   connectome risk).
-- **Status: proposed**
+- **Status: built / USABLE** <!-- 2026-06-21 (Phase 4 Stage-B). Added
+  `mfas.analysis.gap.make_hard_synthetic_graph(...)` (privileged analysis module; its
+  `reference_order` is diagnostic-only, same privilege boundary as best_solution — NEVER read by any
+  variant). Construction: inter-block forward backbone + high-feedback inter-block backward edges
+  (feedback_frac=0.65) + dense bidirectional cyclic cores inside each of n_clusters blocks
+  (intra_cycle_frac=0.55) + heavy-tailed (Pareto, α=2.0) integer weights. Reference = high-effort
+  oracle-optimised 'best-known' (best of greedy-FAS / block-macro + 6×12k Rocket runs, refined by an
+  oracle-guided barycenter sift). LOCKED config (cfg0): n=400, avg_out=10, feedback_frac=0.65,
+  n_clusters=8, intra_cycle_frac=0.55, weight_alpha=2.0 (defaults). VERIFIED GAP (n=3 seeds 42/123/999,
+  4000-epoch baseline Rocket): reference 74.0733 ± 1.21 vs baseline-Rocket 73.2768 ± 1.19 →
+  gap = +0.80 ± 0.21 pp (PASSES the ≥0.5 pp gate; STABLE). Note: a cheap greedy-FAS order alone is
+  ~5 pp BELOW Rocket here, so the gap is only real against the high-effort reference — the gate
+  required a strong best-known, not a weak heuristic. Reproduce:
+    python experiments/protoR_tune_hardsynth.py   (sweep; cfg0 is the chosen fixture)
+  Unblocks H18–H20 prototype screening. First R consumer (H19 soft-rank) FALSIFIED on it (see H19). -->
 
 ### Phase-4 ranking rationale (EV / cost)
 **H16 first** — cheapest, most directly implicated by the diagnosis (cyclic re-melting collapses good
