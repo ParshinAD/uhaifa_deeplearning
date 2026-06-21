@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T095430Z-H04-connectome-s999-implement-430afe",
+  "algo": "H04",
+  "dataset": "connectome",
+  "seed": 999,
+  "score": 34736304.0,
+  "pct": 82.87885841956869,
+  "wall_clock_s": 83.32550001144409,
+  "git_commit": "4b5ba1674e4b6fb9d41ad6a17f41c2e875359c50+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "430afecd7b50",
+  "timestamp": "2026-06-21T09:56:02Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260621T095430Z-H04-connectome-s999-implement-430afe_positions.npy",
+  "experiment_id": "H04",
+  "role": "implement",
+  "hypothesis": "Periodically refining the current ordering with a cheap leakage-safe weighted-barycenter local search (decided by input edge weights + current ranks only) and re-seeding positions from any oracle-improving candidate lets Rocket escape the surrogate plateau and raises the exact feedforward weight, at the baseline gradient budget (post-refinement >= pure Rocket).",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

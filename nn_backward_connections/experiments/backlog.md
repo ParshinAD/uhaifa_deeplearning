@@ -115,7 +115,16 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
 - **Est. compute cost:** **medium–expensive.** Local search every N epochs adds O(m) per refine;
   must cap refine frequency. Risk of large wall-clock on 5.6M-edge connectome.
 - **Measurement:** standard; report *pre-refinement Rocket score* separately (CLAUDE.md rule).
-- **status: proposed**
+- **status: killed**  <!-- 2026-06-21 SCREEN FAIL on both datasets → KILL. Move =
+  cheap leakage-safe weighted-barycenter rank reposition (input edge weights + current ranks only;
+  oracle used only for best-by-oracle adoption, so post-refinement ≥ pure Rocket by construction),
+  ≤8 O(m) passes in the second half. Compute-matched comparator = baseline_passthrough at equal
+  total_grad_steps (20k/5k); added non-gradient cost = 8 passes/run (~0.002 s mouse, ~3.0 s ≈3.8%
+  connectome). 0 refine candidates accepted across all 6 runs (barycenter too weak vs Rocket's
+  plateau) → post == pure on every run. connectome 82.8958 ± 0.0183, Δ = −0.0000 pp; mouse
+  92.0696 ± 0.2624, Δ = +0.0000 pp — both ≈ zero, far below the 2σ gate. H04 own std ≈ baseline
+  noise floor on both → correctly-specified screen, no CONFIRM escalation. Leakage-safe, no
+  collapse/NaN. See experiments/log.md 2026-06-21 H04 cycle. -->.
 
 ## H05 — Optimizer swap: AdamW / decoupled weight decay or Lion vs Adam
 - **Hypothesis:** Replacing Adam with AdamW (small decoupled decay to keep positions bounded) or a

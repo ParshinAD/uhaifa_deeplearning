@@ -17,7 +17,7 @@ Append-only lab notebook. Each entry: date, hypothesis, command, result (traced 
 <!-- The table below is auto-generated; do not edit by hand. -->
 
 <!-- BEGIN AGGREGATED RESULTS (auto-generated) -->
-_Generated 2026-06-21T09:44:48Z from 92 run(s)._
+_Generated 2026-06-21T10:00:49Z from 98 run(s)._
 
 | algo | dataset | n_seeds | pct mean±std | score mean±std | wall_clock_s (mean) | seeds | config_hash | git_commit |
 |---|---|---|---|---|---|---|---|---|
@@ -27,6 +27,8 @@ _Generated 2026-06-21T09:44:48Z from 92 run(s)._
 | H02 | mouse | 26 | 92.4793 ± 0.0000 | 8.4702 ± 0.0000 | 1.8 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 1111, 1234, 1414, 1618, 1732, 2222, 2236, 2718, 3333, 4444, 5555, 6666, 7777, 8888, 9999, 31415] | a8bbc0 | f36e02847a9 |
 | H03 | connectome | 3 | 82.8582 ± 0.0181 | 34,727,627 ± 7,582 | 78.2 | [42, 123, 999] | 082864 | 858e000ec21 |
 | H03 | mouse | 3 | 92.0810 ± 0.2730 | 8.4337 ± 0.0250 | 2.0 | [42, 123, 999] | 0b23c4 | 858e000ec21 |
+| H04 | connectome | 3 | 82.8958 ± 0.0183 | 34,743,389 ± 7,664 | 80.6 | [42, 123, 999] | 430afe | 4b5ba1674e4 |
+| H04 | mouse | 3 | 92.0696 ± 0.2624 | 8.4327 ± 0.0240 | 1.9 | [42, 123, 999] | fa47bd | 4b5ba1674e4 |
 | baseline_multistart | connectome | 3 | 82.0507 ± 0.0293 | 34,389,211 ± 12,284 | 77.2 | [42, 123, 999] | 330c58 | 704221ab778 |
 | baseline_multistart | mouse | 3 | 92.1625 ± 0.0242 | 8.4412 ± 0.0022 | 1.9 | [42, 123, 999] | c6938b | 704221ab778 |
 | baseline_passthrough | connectome | 8 | 82.8887 ± 0.0223 | 34,740,422 ± 9,345 | 918.5 | [7, 42, 42, 123, 123, 999, 999, 31415] | f8cb3c | 8f0e5066211, f36e02847a9 |
@@ -383,3 +385,96 @@ escalation is warranted. Orchestrator integrity spot-check: frozen manifest matc
 frozen file modified; H03 alters only the β array (loss-shape) → no leakage; all 6 numbers trace to
 logged `results/*.json` at matched `total_grad_steps`. Hypothesis (primary arm) not supported;
 β_max∈{2,8} left un-run as low-priority sweep arms. Backlog status → killed.
+
+---
+
+## 2026-06-21 — H04: In-the-loop discrete refinement (continuous Rocket + periodic local swaps)
+- Hypothesis: periodically nudging positions toward a locally-improved ordering (a cheap greedy
+  local search on the CURRENT order, then re-seed positions from the improved ranks) lets Rocket
+  escape the surrogate plateau and raises the exact feedforward weight. Crane's premise is that
+  local refinement extends quality beyond Rocket's plateau (paper §4.4, 82.87%→84.60%); H04 imports
+  that idea with a cheap, in-variant local search (no Gurobi / no MIP).
+
+#### Implementer (screen)
+- **Local-search move (leakage-safe):** a **weighted-barycenter rank reposition** (the classic
+  barycenter heuristic for 1-D vertex arrangement), `src/mfas/experiments/H04.py`. From the CURRENT
+  ordering (stable argsort of the live positions → integer ranks in `[0,n)`), each node is pulled
+  toward the weighted mean rank of its incident neighbours,
+  `target[u] = (Σ_out w·rank[v] + Σ_in w·rank[t]) / incident_w[u]`, and the candidate ordering is
+  the stable argsort of `target`. Decided **purely by input edge weights + current ranks** (uses
+  only `g.src`/`g.tgt`/`g.weight`); the oracle is NEVER consulted to choose the move. Each pass is
+  two `np.add.at` scatter-adds (O(m)) + one O(n log n) argsort.
+- **Refinement schedule:** at most **MAX_REFINES = 8** passes total, spread over the SECOND HALF of
+  training (`REFINE_START_FRAC = 0.5`, after the ordering has formed) at scoring points only — NOT
+  every step.
+- **Ranks→positions re-seeding (anti-collapse):** an accepted candidate's integer ranks map to
+  evenly-spaced positions in `[-1,1]` (rank 0 → −1, strictly increasing, never ties/NaN) and are
+  written into the LIVE optimizer parameter so Rocket continues from the improved point. `target` is
+  sanitized (NaN/Inf/isolated → current rank) before argsort.
+- **Oracle usage / leakage-safety:** the frozen oracle is used EXACTLY as the baseline uses it —
+  best-by-oracle tracking. A refined candidate is ADOPTED only when the oracle says it strictly
+  beats the current best, so **post-refinement ≥ pure Rocket by construction** (refinement can never
+  lower the tracked best). The discrete score is never folded into the loss, hardcoded, or used to
+  special-case a dataset.
+- **Implementation note:** `run_rocket` exposes no in-loop hook, so H04 REPLICATES the `run_rocket`
+  main loop VERBATIM (N(0,1) init, Adam, grad-clip=1.0, const→exp LR, cyclic-cosine β via
+  `make_beta_schedule`, CPU int64/float64 discrete scoring, best-by-oracle tracking, history,
+  time-limit) and adds ONLY the periodic barycenter refinement. Everything else is identical to
+  baseline.
+- **Compute accounting (auditable):** H04 runs the FULL single-run gradient budget (connectome 20k,
+  mouse 5k) — NO restarts — so `n_epochs_done = total_grad_steps = 20000 / 5000`, matched to the
+  frozen baseline / `baseline_passthrough` at the same seeds. Added NON-gradient compute = the
+  refinement: **8 passes/run** (measured), refine wall-clock **≈0.002 s/run on mouse** (negligible)
+  and **≈3.0 s/run on connectome** (≈3.8% of the ~78 s run; non-negligible but small, and gradient
+  steps are unchanged, so the equal-grad-step comparator stays valid). Extra op cost ≈ 8×O(m) on top
+  of the gradient budget. **Refinement acceptances across all 6 runs = 0** (the barycenter candidate
+  never beat Rocket's plateau), so post == pure on every run.
+- **PRE-refinement (pure Rocket) vs POST-refinement:** identical on every run (0 accepted refines):
+  - connectome PRE = POST (n=3): **82.8958 ± 0.0183** (per-seed POST from JSON: 82.9152 / 82.8933 /
+    82.8789).
+  - mouse PRE = POST (n=3): **92.0696 ± 0.2624** (per-seed POST from JSON: 92.3610 / 91.8520 /
+    91.9959).
+- **Δ vs baseline (POST):**
+  - connectome: baseline 82.8958; Δ = **−0.0000 pp** (H04 own std 0.0183); 2σ gate 0.04 → **screen FAIL**.
+  - mouse: baseline 92.0696; Δ = **+0.0000 pp** (H04 own std 0.2624); 2σ gate 0.52 → **screen FAIL**.
+- **Overall: SCREEN FAIL on both datasets.** This is NOT an H02-style low-variance escalation case:
+  H04's own per-seed std matches the baseline noise floor on BOTH datasets (connectome 0.0183≈0.0189;
+  mouse 0.2624≈0.2624 — identical, because post==pure==raw Rocket), so the 2σ_baseline gate is
+  correctly specified. Honest non-improvement: the weighted-barycenter local search is too weak to
+  escape Rocket's plateau. (Diagnostic: on a random ordering one barycenter pass lifts mouse from
+  ~48% to ~53% then plateaus far below Rocket's ~92%, so once Rocket has converged a single pass on
+  the already-good ordering cannot beat it → 0 accepts.) A stronger (but more expensive) local search
+  — e.g. iterated sink/source relocation or adjacent-block sifting to convergence — would be the
+  natural follow-up if H04 is revisited, but the cheap barycenter primary arm is not promising.
+- **Commands** (Python `/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python`):
+  ```
+  for DS in connectome mouse; do for S in 42 123 999; do
+    python -m eval.run_variant --exp H04 --dataset $DS --seed $S --out results/ --role implement
+  done; done
+  python -m eval.aggregate --glob "results/*.json" --out experiments/log.md
+  ```
+- **Result file exp_ids:**
+  - connectome: `20260621T095133Z-H04-connectome-s42-implement-430afe`,
+    `20260621T095302Z-H04-connectome-s123-implement-430afe`,
+    `20260621T095430Z-H04-connectome-s999-implement-430afe`
+  - mouse: `20260621T095117Z-H04-mouse-s42-implement-fa47bd`,
+    `20260621T095120Z-H04-mouse-s123-implement-fa47bd`,
+    `20260621T095123Z-H04-mouse-s999-implement-fa47bd`
+  (Note: logged JSON values are authoritative; a recompute differs by ≤0.0002 pp due to MPS
+  nondeterminism.)
+
+#### Verifier (confirm)
+_(not run by the implementer — SCREEN FAILED on both datasets, and H04's per-seed variance matches
+the baseline noise floor on both (post==pure==raw Rocket), so this is NOT the H02-style low-variance
+escalation case. CONFIRM stage reserved for the orchestrator/verifier.)_
+
+#### Critic verdict
+_(reserved for CONFIRMED findings; not run on a screen-fail.)_
+
+#### Decision: **kill (screen).** The cheap weighted-barycenter in-loop refinement does NOT beat
+baseline — Δ = −0.0000 pp (connectome) / +0.0000 pp (mouse), both ≈ zero and far below the 2σ gate,
+with 0 refinement candidates accepted across all 6 runs (post == pure on every run). Correctly-
+specified screen fail (H04 own std ≈ baseline noise floor on both datasets), so no CONFIRM escalation.
+The refinement is leakage-safe (input-only barycenter move; oracle used only for best-tracking),
+never collapses positions (all unique, no NaN), and never lowers the tracked best — it is simply too
+weak to escape Rocket's plateau. Backlog status → screened.

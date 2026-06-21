@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T095120Z-H04-mouse-s123-implement-fa47bd",
+  "algo": "H04",
+  "dataset": "mouse",
+  "seed": 123,
+  "score": 8.412760480170235,
+  "pct": 91.85202807654298,
+  "wall_clock_s": 1.8006439208984375,
+  "git_commit": "4b5ba1674e4b6fb9d41ad6a17f41c2e875359c50+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "fa47bd781b89",
+  "timestamp": "2026-06-21T09:51:22Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260621T095120Z-H04-mouse-s123-implement-fa47bd_positions.npy",
+  "experiment_id": "H04",
+  "role": "implement",
+  "hypothesis": "Periodically refining the current ordering with a cheap leakage-safe weighted-barycenter local search (decided by input edge weights + current ranks only) and re-seeding positions from any oracle-improving candidate lets Rocket escape the surrogate plateau and raises the exact feedforward weight, at the baseline gradient budget (post-refinement >= pure Rocket).",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}
