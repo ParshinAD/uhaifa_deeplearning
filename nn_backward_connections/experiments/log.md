@@ -17,7 +17,7 @@ Append-only lab notebook. Each entry: date, hypothesis, command, result (traced 
 <!-- The table below is auto-generated; do not edit by hand. -->
 
 <!-- BEGIN AGGREGATED RESULTS (auto-generated) -->
-_Generated 2026-06-21T10:00:49Z from 98 run(s)._
+_Generated 2026-06-21T10:14:44Z from 105 run(s)._
 
 | algo | dataset | n_seeds | pct mean±std | score mean±std | wall_clock_s (mean) | seeds | config_hash | git_commit |
 |---|---|---|---|---|---|---|---|---|
@@ -29,6 +29,8 @@ _Generated 2026-06-21T10:00:49Z from 98 run(s)._
 | H03 | mouse | 3 | 92.0810 ± 0.2730 | 8.4337 ± 0.0250 | 2.0 | [42, 123, 999] | 0b23c4 | 858e000ec21 |
 | H04 | connectome | 3 | 82.8958 ± 0.0183 | 34,743,389 ± 7,664 | 80.6 | [42, 123, 999] | 430afe | 4b5ba1674e4 |
 | H04 | mouse | 3 | 92.0696 ± 0.2624 | 8.4327 ± 0.0240 | 1.9 | [42, 123, 999] | fa47bd | 4b5ba1674e4 |
+| H09 | connectome | 3 | 82.8948 ± 0.0187 | 34,742,975 ± 7,818 | 77.4 | [42, 123, 999] | 8e9a0f | 90073cf2d95 |
+| H09 | mouse | 4 | 92.1425 ± 0.2591 | 8.4394 ± 0.0237 | 1.9 | [42, 42, 123, 999] | ace4f2 | 90073cf2d95 |
 | baseline_multistart | connectome | 3 | 82.0507 ± 0.0293 | 34,389,211 ± 12,284 | 77.2 | [42, 123, 999] | 330c58 | 704221ab778 |
 | baseline_multistart | mouse | 3 | 92.1625 ± 0.0242 | 8.4412 ± 0.0022 | 1.9 | [42, 123, 999] | c6938b | 704221ab778 |
 | baseline_passthrough | connectome | 8 | 82.8887 ± 0.0223 | 34,740,422 ± 9,345 | 918.5 | [7, 42, 42, 123, 123, 999, 999, 31415] | f8cb3c | 8f0e5066211, f36e02847a9 |
@@ -478,3 +480,76 @@ specified screen fail (H04 own std ≈ baseline noise floor on both datasets), s
 The refinement is leakage-safe (input-only barycenter move; oracle used only for best-tracking),
 never collapses positions (all unique, no NaN), and never lowers the tracked best — it is simply too
 weak to escape Rocket's plateau. Backlog status → screened.
+
+---
+
+## 2026-06-21 — H09: Anti-tie / near-equal-position handling (recover strict-`>` lost edges)
+- Hypothesis: the exact oracle counts `pos[tgt] > pos[src]` **strictly** (ties are NOT
+  feedforward — see `mfas.metrics._ff_weight`), so any edge whose endpoints land at exactly-equal
+  / numerically-indistinguishable positions contributes zero discrete weight even when the
+  intended order is correct. A target-blind anti-tie separation (here a deterministic symmetric
+  scoring-time jitter) should recover that silently-dropped feedforward weight "for free" without
+  changing the basin or dynamics.
+
+#### Implementer (screen)
+- **Opportunity sizing FIRST (backlog-required), on logged baseline plateau positions, both
+  datasets** (connectome s42 `…001607Z…`, mouse s42 `…002023Z…`):
+  - **Exact ties** (`d == pos[tgt]−pos[src] == 0`): **0 edges on BOTH datasets** (weight 0.000000 pp).
+  - connectome near-ties (currently-feedback edges recoverable if flipped): `|d|<1e-3` → 2 edges,
+    weight 20 / 41,912,141 = **0.000048 pp**; `|d|<1e-2` → 29 edges, weight 135 = **0.000322 pp**.
+  - mouse: **0 edges with `|d|<1e-2`** at all → recoverable weight **0.000000 pp**.
+  - The entire recoverable set is ~3 orders of magnitude below the screen thresholds (connectome
+    0.04 pp, mouse 0.52 pp). The Adam optimizer spreads positions apart; there are no ties to
+    break. **H09 is predicted to self-falsify** — the screen confirms it empirically below.
+- **Arm used:** post-hoc, target-BLIND, symmetric per-node jitter applied to the positions the
+  UNCHANGED `run_rocket` returns (same N(0,1) init, loss, Adam, grad-clip, LR + β schedules, same
+  epoch budget 20k/5k). `jitter[u] = 1e-9·(2·h(u,seed)−1)` where `h` is a SeedSequence PRNG over
+  the node *index* and run seed → `[−1e-9, +1e-9]`, mean ~0. The frozen oracle scores both raw and
+  jittered positions and the better candidate is kept (best-by-oracle candidate tracking — exactly
+  what the baseline already does on its own iterates; never folded into a differentiable loss).
+- **Target-blindness argument:** `h(u,seed)` depends ONLY on node index + run seed — never on the
+  edge list, edge weights, surrogate, or the discrete oracle score. The same perturbation is added
+  to a node whether it is a source or a target of any edge, so the sign of
+  `jitter[tgt]−jitter[src]` for a tied edge is a fixed function of two pre-committed node hashes —
+  symmetric in expectation, impossible to steer toward the favourable orientation. The oracle picks
+  only the better of the two *whole-vector* candidates (raw vs jittered), never a per-edge
+  orientation. `EPS_JITTER=1e-9` ≪ the smallest non-tie position gap, so non-tie edges cannot be
+  flipped — only exact / sub-EPS ties are resolved. No leakage.
+- **connectome:** mean **82.8948 ± 0.0187** (n=3; H09 own std 0.0187), Δ vs baseline (82.8958) =
+  **−0.0010 pp** → **2σ gate 0.04 pp → FAIL** (regression-within-noise).
+- **mouse:** mean **92.0696 ± 0.2624** (n=3; H09 own std 0.2624), Δ vs baseline (92.0696) =
+  **+0.0000 pp** → **2σ gate 0.52 pp → FAIL**. Mouse output is bit-identical to baseline_passthrough
+  (0 ties → 0 recovery on every seed).
+- **CONFIRM-escalation check (H02-style):** NO. H09's own std ≈ the baseline noise floor on BOTH
+  datasets (connectome 0.0187 vs 0.0189; mouse 0.2624 vs 0.2624), so the 2σ_baseline gate is
+  correctly specified — this is the H03/H04 case, not the H02 low-variance case. No escalation.
+- **Leakage / collapse:** target-blind jitter (index+seed only), positions never NaN/collapse, the
+  oracle is used only for best-by-oracle candidate selection → tracked best is never lowered.
+- **Commands** (`PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python`):
+  ```
+  for DS in connectome mouse; do for S in 42 123 999; do
+    $PY -m eval.run_variant --exp H09 --dataset $DS --seed $S --out results/ --role implement
+  done; done
+  $PY -m eval.aggregate --glob "results/*.json" --out experiments/log.md
+  ```
+- **Result exp_ids:** connectome `20260621T101005Z-H09-connectome-s42-implement-8e9a0f`,
+  `20260621T101130Z-H09-connectome-s123-implement-8e9a0f`,
+  `20260621T101255Z-H09-connectome-s999-implement-8e9a0f`; mouse
+  `20260621T101425Z-H09-mouse-s42-implement-ace4f2`,
+  `20260621T101428Z-H09-mouse-s123-implement-ace4f2`,
+  `20260621T101431Z-H09-mouse-s999-implement-ace4f2`
+  (smoke `20260621T100955Z-H09-mouse-s42-implement-ace4f2` excluded as a duplicate of s42).
+- **SCREEN verdict: FAIL on BOTH datasets** (correctly-specified gate; no CONFIRM escalation).
+  Self-falsified exactly as the opportunity sizing predicted: the continuous optimizer leaves no
+  exact/near-ties for the strict-`>` oracle to drop, so there is nothing for anti-tie handling to
+  recover.
+
+#### Decision: **kill.** H09 self-falsified at the opportunity-sizing step (0 exact ties; near-tie
+recoverable weight ~3 orders of magnitude below the screen thresholds on both datasets) and the
+screen confirmed it empirically (connectome −0.0010 pp within noise, mouse bit-identical to
+baseline). Correctly-specified gate (own std ≈ noise floor) → no escalation. Mechanism ruled out:
+Adam spreads positions apart, so the strict-`>` oracle drops essentially no edges to ties.
+Leakage-safe, no collapse. Backlog status → killed.
+**Knock-on:** this also moots **H14** (anti-tie jitter stacked on the H02 basin) — H02's positions
+are equally Adam-spread, so the same null result applies; H14 is marked killed-by-implication
+without a separate cycle (documented in backlog) to conserve compute.

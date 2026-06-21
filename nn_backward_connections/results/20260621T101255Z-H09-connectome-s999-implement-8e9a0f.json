@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T101255Z-H09-connectome-s999-implement-8e9a0f",
+  "algo": "H09",
+  "dataset": "connectome",
+  "seed": 999,
+  "score": 34735900.0,
+  "pct": 82.87789449839845,
+  "wall_clock_s": 80.64559698104858,
+  "git_commit": "90073cf2d951aba5b734678bf8c6eb1b0037e20a+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "8e9a0f6281b5",
+  "timestamp": "2026-06-21T10:14:24Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260621T101255Z-H09-connectome-s999-implement-8e9a0f_positions.npy",
+  "experiment_id": "H09",
+  "role": "implement",
+  "hypothesis": "A target-blind, deterministic, symmetric per-node tie-break jitter applied to the baseline Rocket positions before the strict-`>` oracle scores them recovers feedforward weight from exact/near-tie edges 'for free', without changing the optimization basin.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

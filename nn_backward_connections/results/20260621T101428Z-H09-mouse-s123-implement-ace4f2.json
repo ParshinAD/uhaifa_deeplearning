@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T101428Z-H09-mouse-s123-implement-ace4f2",
+  "algo": "H09",
+  "dataset": "mouse",
+  "seed": 123,
+  "score": 8.412760480170235,
+  "pct": 91.85202807654298,
+  "wall_clock_s": 1.80672287940979,
+  "git_commit": "90073cf2d951aba5b734678bf8c6eb1b0037e20a+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "ace4f2e6ba47",
+  "timestamp": "2026-06-21T10:14:30Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260621T101428Z-H09-mouse-s123-implement-ace4f2_positions.npy",
+  "experiment_id": "H09",
+  "role": "implement",
+  "hypothesis": "A target-blind, deterministic, symmetric per-node tie-break jitter applied to the baseline Rocket positions before the strict-`>` oracle scores them recovers feedforward weight from exact/near-tie edges 'for free', without changing the optimization basin.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}

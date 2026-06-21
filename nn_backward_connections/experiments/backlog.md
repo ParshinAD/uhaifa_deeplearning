@@ -259,7 +259,18 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
   mouse +0.05–0.4 pp (float weights → more genuine near-ties). Honest: may be a no-op.
 - **Est. compute cost:** **cheap.** Optional repulsion term O(n) or scoring-time jitter only.
 - **Measurement:** standard; measure fraction of edges at |Δ|<ε to size the opportunity first.
-- **status: proposed**
+- **status: killed**  <!-- 2026-06-21 SCREEN FAIL on both datasets → KILL, self-falsified as the
+  opportunity sizing predicted. Sizing on logged baseline plateau positions: 0 exact ties on BOTH
+  datasets; connectome recoverable near-tie feedback weight 0.000048 pp (|d|<1e-3) / 0.000322 pp
+  (|d|<1e-2); mouse has 0 edges with |d|<1e-2 — entire recoverable set ~3 orders of magnitude below
+  the screen thresholds. Arm = target-blind deterministic symmetric scoring-time jitter
+  (1e-9·hash(node_index,seed), mean ~0) on UNCHANGED run_rocket output, oracle picks the better of
+  {raw, jittered} whole-vector candidate (best-by-oracle; never per-edge orientation → no leakage),
+  equal budget 20k/5k. connectome 82.8948 ± 0.0187, Δ=−0.0010 pp; mouse 92.0696 ± 0.2624 (bit-identical
+  to baseline_passthrough), Δ=+0.0000 pp — both far below the 2σ gate. H09 own std ≈ baseline noise
+  floor on both → correctly-specified screen, NOT an H02-style low-variance escalation. The continuous
+  Adam optimizer leaves no ties for the strict-`>` oracle to drop. See experiments/log.md 2026-06-21
+  H09 cycle. -->
 
 ## H10 — Per-node adaptive gradient / no-global-clip (clip-by-value or none)
 - **Hypothesis:** The global grad-norm clip at 1.0 throttles updates for the heavy-tailed
@@ -362,9 +373,13 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
   SCREEN (vs H02@matched-seeds), CONFIRM at 5 (connectome) / 20 (mouse) seeds with 95% CI lower
   bound > 0 vs H02. Report the pure H02 score and the H14 score side by side. Oracle used only for
   best-by-oracle tracking (as baseline) — jitter is target-blind, never folded into the loss.
-- **status: proposed**
-
-## H15 — H02 warm-start + weight-aware / margin objective (compounding basin × landscape)
+- **status: killed (by implication)**  <!-- 2026-06-21 KILLED without a separate cycle. H14 stacks
+  H09's anti-tie jitter on the H02 basin, but H09 self-falsified at opportunity sizing: 0 exact ties
+  and near-tie recoverable weight ~3 orders of magnitude below threshold, because Adam spreads
+  positions apart. H02's positions are produced by the same Adam optimizer and are equally spread,
+  so the identical null result applies — there are no ties for jitter to recover on the H02 basin
+  either. The ideator gated H14 on H09 showing signal; it showed none. Compute conserved. See the
+  H09 cycle in experiments/log.md. -->
 - **Hypothesis:** Combining the confirmed H02 greedy-FAS warm-start with the best-screening
   *objective-axis* lever — heavy/borderline-edge loss reweighting (H06) **or** a margin/hinge
   surrogate (H11), whichever wins its own screen — beats H02 alone, because a better basin plus a
