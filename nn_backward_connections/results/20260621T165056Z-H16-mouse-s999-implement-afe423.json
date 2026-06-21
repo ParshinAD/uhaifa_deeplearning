@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T165056Z-H16-mouse-s999-implement-afe423",
+  "algo": "H16",
+  "dataset": "mouse",
+  "seed": 999,
+  "score": 8.482464442608116,
+  "pct": 92.61306844254197,
+  "wall_clock_s": 1.7936599254608154,
+  "git_commit": "9cc9c34eb98480e0b0cb73d44f221b72d8f70441+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "afe423dd6782",
+  "timestamp": "2026-06-21T16:50:58Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260621T165056Z-H16-mouse-s999-implement-afe423_positions.npy",
+  "experiment_id": "H16",
+  "role": "implement",
+  "hypothesis": "Replacing Rocket's cyclic beta schedule (which re-melts beta->0.05 and destroys good orders) with a single MONOTONE beta rise over [0.05,1.05], started from the H02 greedy warm-start, lets the optimizer commit to and sharpen a better basin and beats H02 on the exact feedforward metric at equal compute.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}

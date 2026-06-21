@@ -943,3 +943,59 @@ plateau; and both *objective/landscape* reshapings (H06 reweighting, H11 surroga
 near-optimal for the dynamics. Rocket's plateau is set by **where optimization starts, not how it
 moves**. Integrity held throughout: `eval/frozen.sha256` matched on every cycle; no frozen file ever
 modified; every variant leakage-checked (oracle used only for best-by-oracle tracking).
+
+---
+
+# PHASE 4 — diagnose the Rocket↔best gap & push Rocket-only quality (continuous-only)
+
+## 2026-06-21 — Stage A diagnosis (decisive surrogate verdict + gap structure)
+
+Full writeup: `experiments/diagnosis.md`; all numbers in `experiments/outputs/diagnosis.json`
+(reproduce: `python experiments/diagnostics.py --steps 0,1,2,3,4`). New isolated analysis module
+`src/mfas/analysis/gap.py` is the ONLY reader of `data/best_solution` (leakage audit clean;
+frozen-guard OK; pytest 11/11).
+
+- **Anchor.** best_solution scores **84.6147%** (35,463,823) under the frozen oracle; exact
+  node-set coverage verified. Rocket-only best (H02) = 82.927%; gap ≈ **1.69 pp**.
+- **VERDICT = OPTIMIZATION-GAP, not surrogate-misalignment.** Scale-fair static test
+  (`gap.optimize_spacing`): best's order out-surrogates Rocket's converged solution at EVERY β
+  (+238 at β=1.05 … +1153 at β=0.05). The surrogate correctly ranks best higher; the optimizer
+  fails to reach it. Drift probe: started AT 84.61%, Rocket collapses to 82.94% (cyclic), 83.03%
+  (constant β=1.05), 82.75% (constB+low-LR), dipping to 76–79% — i.e. **best is not a reachable or
+  holdable attractor of Adam-on-sigmoid under any schedule/scale**. Deep landscape problem.
+- **DIRECTION I down-ranked.** init→plateau is FLAT on connectome (82.87–82.93% across inits
+  36–69%); a perfect init collapses (drift probe). Better-init-alone has a ≤0.06 pp ceiling; H02
+  captured it. Mouse mildly init-sensitive (greedy best 92.48%).
+- **Gap structure.** Distributed reordering: 8.5% of edges / 7.5% of weight flip direction
+  (+4.60 vs −2.91 = net +1.69 pp), uniform across weight buckets, on median-degree not hub
+  endpoints; Kendall-τ 0.61 (moderate). 0 exact ties; near-ties negligible (0.03% within |Δ|<1)
+  → genuine misordering, not discretization. Surrogate still descending at stop but discrete
+  plateau slope ≈ 0.
+- **Synthetic check.** Easy planted graph: Rocket 96.56% > planted 96.10% → no gap; the connectome
+  gap is a property of its hard cyclic structure (a Stage-B R-prototype needs a HARDER synthetic).
+- **Selected directions (rule-based):** PRIMARY O (monotone β-continuation / basin-hopping),
+  SECONDARY R (straight-through / soft-rank), DOWN-RANKED I.
+
+## 2026-06-21 — H02 hardening (re-confirm at n=15, Welch CI)
+Re-confirmed the H02 connectome win on 15 matched seeds (5 original + 10 new) vs
+`baseline_passthrough` at the same seeds. **H02 = 82.92975 ± 0.00106; baseline = 82.87898 ± 0.02305;
+Δ = +0.0508 pp; Welch 95% CI lower bound = +0.0391** (paired +0.0390). Far more robust than the
+original n=5 thin +0.0135; H02's warm-start is near-deterministic (std 0.001). Finding #1 stands and
+is hardened. Result JSONs: `results/*H02-connectome-s*-confirm-*.json` (15),
+`results/*baseline_passthrough-connectome-s*-confirm-*.json` (15).
+
+## 2026-06-21 — H16: monotone β-continuation from H02 warm-start — KILL (screen FAIL connectome)
+- Hypothesis: replacing the cyclic schedule (which re-melts β→0.05 and destroys good orders, per the
+  drift probe) with a single MONOTONE β rise over [0.05,1.05], from H02's greedy warm-start, lets the
+  optimizer commit to/sharpen a better basin. Variant `src/mfas/experiments/H16.py` (verbatim
+  run_rocket loop; only init + β-path changed). Distinct from killed H03 (random init, kept cycling,
+  raised β_max).
+#### Implementer (screen, n=3 seeds 42/123/999, equal budget)
+  - connectome: H16 = **82.6269** (deterministic) vs H02 82.9300 (**Δ −0.3031 pp**) vs baseline
+    82.8958 (**Δ −0.2688 pp**) → **screen FAIL** (regresses; worse than even random-init baseline).
+  - mouse: H16 = 92.6131 vs H02 92.4793 (+0.1337) vs baseline 92.0696 (+0.5435) → improves.
+  - Result JSONs: `results/*H16-{connectome,mouse}-s{42,123,999}-implement-*.json`.
+  - Command: `python -m eval.run_variant --exp H16 --dataset {connectome,mouse} --seed S --role implement`.
+#### Decision: **KILL** (connectome regression). Mechanism corroborates the diagnosis: the low-β start
+  melts the warm-start (drift-probe mechanism) and the well-tuned cyclic baseline beats a monotone
+  schedule on connectome — *how* it descends is dominated by the tuned baseline; basin still rules.

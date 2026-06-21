@@ -505,3 +505,342 @@ under-tuned. H04 has the highest ceiling but the most cost/risk, so it sits behi
 cheap wins. H09–H13 are lower-EV or higher-variance ideas kept for diversity across axes
 (near-tie recovery, gradient handling, surrogate shape, averaging, stochasticity). Run H03/H07
 before H08, and H05 before H10 (shared optimizer machinery).
+
+---
+
+# Phase-4 hypotheses (H16+) — driven by the Stage-A diagnosis
+
+**Read `experiments/diagnosis.md` first.** The Phase-3 backlog above (H01–H15) is closed:
+H02 is the confirmed win; H01/H03/H04/H05/H06/H09/H11/H13 are KILLED; H07/H08/H10/H12 deferred;
+H14/H15 dropped/killed-by-implication. **Do NOT re-propose any of them.** Phase-4 starts from a
+sharper diagnosis than Phase-3's "basin not dynamics" inference:
+
+**Established facts (do not relitigate, all from `experiments/outputs/diagnosis.json`):**
+1. **OPTIMIZATION-GAP, not surrogate-misalignment.** best's fixed order out-surrogates Rocket's
+   converged solution at *every* β (Δsurrogate +238 to +1,153). The sigmoid surrogate correctly
+   ranks the better order above Rocket's — the optimizer fails to reach/hold it.
+2. **best is not a holdable attractor.** Initialising Rocket *at* the 84.61% order and running it
+   collapses to ~82.9% under cyclic AND constant β, dipping through 76–79% first. The **cyclic
+   schedule that re-melts β→0.05** demonstrably destroys good orders.
+3. **init→plateau is flat on connectome** (82.87–82.93% over inits spanning 36–69%): better-init-alone
+   (DIRECTION I) has a ~0.06 pp ceiling — H02 already captured it. Stronger init is only worth
+   pursuing *in combination* with an O/R lever that can hold the basin.
+4. The gap is a **distributed reordering** (Kendall-τ 0.61, 8.47% of edges flip, uniform across
+   weight buckets, on median-degree not hub endpoints). **0 exact ties**; near-tie recoverable weight
+   ~0.0003% ≪ the 1.69% gap → genuine misordering, no free-edge slack (kills any tie/jitter idea).
+5. **Synthetic (n=400, near-acyclic) shows NO gap** (Rocket 96.56% > planted 96.10%). The gap is a
+   property of the connectome's *hard cyclic structure* — a prototype graph must inject far more
+   feedback / strong-connectivity to reproduce it (motivates H21).
+
+**Two axes for Phase-4 (per diagnosis §Selected directions):**
+- **DIRECTION O (optimization)** — reach/hold a better basin via stronger continuous optimization
+  (schedule, multi-start/tempering). Highest priority: the diagnosis directly implicates the cyclic
+  re-melting schedule and the single 82.9% attractor.
+- **DIRECTION R (relaxation)** — stop the optimizer from collapsing good orders by changing what is
+  differentiated (straight-through discrete forward, rank-space normalization). Secondary: targets
+  *why* gradient flow drifts off best (scale blow-up saturating σ, surrogate≠discrete in the forward).
+
+**Honest ceiling read (applies to all H16+).** Because even a perfect init collapses under gradient
+flow and the gap is a distributed reordering with no tie-slack, **a large share of the 1.69 pp may be
+irreducible to continuous optimization** and genuinely require discrete refinement (the paper's Crane
+MIP). Each entry below states honestly *why it might still beat 82.93%* and roughly *how much* —
+estimates are reasoned, NOT measured. Many are bets to recover a *fraction* of the gap, not all of it.
+
+**Comparators (PROTOCOL §Compute-matched).** Standard knob-swaps (schedule/loss/relaxation at the
+same gradient budget) screen vs **`baseline_passthrough`**, and — since they build on H02's init —
+the *promotion* comparison is **vs H02 at matched seeds** (report both: Δ vs random baseline = total
+stacked gain, Δ vs H02 = the new lever's marginal gain; promote on Δ-vs-H02). Multi-start / tempering
+variants screen vs **`baseline_multistart`** (K naive restarts × total/K epochs, best-of-K,
+`n_epochs_done = total`) so the comparison isolates algorithmic merit from extra sampling.
+
+**Leakage rule (every entry).** The discrete oracle may be used ONLY as the baseline already uses it
+— best-by-oracle tracking of whole-vector candidates *after* the algorithm produces positions. It
+must NEVER enter the differentiable loss, the init, the perturbation choice, or a dataset special-case.
+**No variant may read `data/best_solution`** (that path is privileged to `mfas.analysis.gap`,
+diagnostics only). STE/soft-rank variants differentiate a function of *positions and input weights*
+only; the exact-feedforward forward in an STE uses the strict-`>` order of the *current* positions
+(not any known target).
+
+**Prototype-first gate (heavy/novel relaxations, H18–H20).** Before any connectome compute, run on
+**mouse + the hard synthetic (H21)**. The hard synthetic must first be shown to *reproduce a Rocket↔best
+gap* (Rocket < a strong reference order on it) — otherwise it cannot screen a gap-closer. A relaxation
+earns connectome compute only if it closes ≥ ~0.1 pp of the gap on the hard synthetic AND does not
+regress mouse. This conserves the ~80 s/run/seed connectome budget for variants with prototype signal.
+
+**Re-ranked Phase-4 order (highest EV/cost first):**
+
+| rank | id | axis | one-line EV justification |
+|---|---|---|---|
+| 1 | **H16** | O — β schedule | Cheapest, most-directly-implicated lever: replace cyclic re-melting with a single monotone β rise from the H02 basin. Pure schedule-array swap, equal budget. Distinct from killed H03 (random init + kept cycles + only raised β_max). |
+| 2 | **H21** | infra (fixture) | Not a Rocket variant — builds the HARD synthetic gap-proxy that gates every heavy relaxation (H18–H20). Cheap, prototype-scale, unblocks the secondary direction. Run early. |
+| 3 | **H17** | O — multi-start / tempering | Basin-hopping / parallel tempering on the surrogate from the H02 basin (perturb→re-optimize, keep best-by-oracle). Compute-matched vs `baseline_multistart`. Directly attacks the single 82.9% attractor; medium cost. |
+| 4 | **H19** | R — soft-rank | Position→soft-rank (Blondel O(n log n)) normalizes the scale blow-up that saturates σ — the mechanism behind the drift collapse. Scales to connectome; prototype-gated. |
+| 5 | **H18** | R — straight-through | Exact discrete feedforward forward + surrogate gradient backward, O(m). Removes the forward surrogate≠discrete error so the optimizer optimizes the true metric directly. Prototype-gated; bias risk. |
+| 6 | **H20** | R — Sinkhorn (note only) | Gumbel-Sinkhorn permutation relaxation. O(n²) → **mouse + hard-synthetic ONLY, never connectome.** Lowest EV/cost here; included for axis-completeness and as the strongest-relaxation upper-bound probe. |
+
+---
+
+## H16 — Monotone / graduated β-continuation from the H02 warm-start
+- **Hypothesis:** Replacing the cyclic β schedule (which repeatedly re-melts β→0.05 and demonstrably
+  destroys good orders) with a **single slow monotone β rise** (small/convex → large/sharp), started
+  from the H02 greedy-FAS init, lets Rocket *hold* a better basin and yields a higher exact
+  feedforward weight than H02 (cyclic) at equal gradient budget. Expected direction: **positive**.
+- **Exact mechanism (what changes):** swap `make_beta_schedule` for a monotone increasing schedule
+  over all `epochs`, e.g. `β = β_min + (β_max−β_min)·(i/(T−1))**p` with primary arm
+  `β_min=0.05, β_max=1.05, p=1` (linear; identical endpoints to baseline, only the *path* differs —
+  no re-melting), and an arm `β_max∈{1.5,2}` to test holding margins. Everything else
+  (Adam/clip=1.0/LR const→exp/budget 20k/5k) and the **H02 greedy-FAS init** unchanged. Implemented
+  as `src/mfas/experiments/H16.py`: reuse `H02.greedy_fas_order` + `_init_positions_from_order`, build
+  the monotone β array, replicate the `run_rocket` loop with `betas = monotone(...)`.
+- **Axis:** DIRECTION O (β-schedule / graduated optimization — the textbook continuation method:
+  solve the smooth low-β problem first, use its solution to seed the sharper one).
+- **Compute-matching:** standard knob-swap @ same epochs. Screen vs `baseline_passthrough`; **promote
+  vs H02 @ matched seeds** (report both Δs).
+- **Leakage-safety:** β is a loss-shape scalar; schedule depends only on the step index. No oracle in
+  the loss, no `best_solution`, no dataset special-case.
+- **Distinct from killed H03:** H03 ran from *random* init, *kept the cyclic schedule* for 75% of
+  training, and only appended a sharper terminal ramp to a higher β_max — it tested "sharper tail",
+  not "no re-melting from a good basin". H16 removes cycling *entirely* and pairs it with H02's init,
+  which is the configuration the drift probe implicates (cyclic re-melting collapses good orders).
+- **Expected effect (reasoned, NOT measured):** connectome +0.0–0.15 pp over H02; mouse +0.0–0.6 pp.
+  **Why it might beat 82.93%:** the drift probe shows the cyclic schedule actively *drops* a good
+  order through 76–79% on every re-melt; a monotone schedule never re-melts, so a good basin entered
+  early (H02 starts at 68.9%) is more likely to be held as β sharpens. **Why it might not:** the
+  *constant-β* drift probe ALSO collapsed (83.03%), so the dominant 82.9% attractor is not solely a
+  re-melting artefact — monotone β may simply re-converge there too. Honest: this is the single most
+  likely O-lever to move the metric, but could still be a small/within-noise gain.
+- **Est. compute cost:** **cheap** (schedule array only; per-step cost identical; same budget).
+- **Measurement:** exact ff% both datasets, ≥3 seeds SCREEN vs H02@matched-seeds, CONFIRM 5/20 with
+  95% CI lower bound >0 vs H02. H02's init is near-deterministic → apply the H02-style low-variance
+  CONFIRM escalation if the 2σ screen is mis-specified.
+- **KILL/keep prediction:** lean **keep-ish but uncertain** (best single O bet). **Falsified if**
+  Δ-vs-H02 ≤ 0 on connectome across p∈{1} and β_max∈{1.05,1.5,2}, i.e. monotone β re-converges to
+  the same plateau — which would corroborate that the 82.9% attractor is intrinsic to Adam-on-σ, not
+  the cyclic schedule, and would up-weight DIRECTION R.
+- **status: killed**  <!-- 2026-06-21 (Phase 4) SCREEN FAIL connectome. H16=82.6269 vs baseline
+  82.8958 (Δ −0.2688) and vs H02 82.9300 (Δ −0.3031); mouse +0.134 vs H02. The monotone low-β start
+  MELTS the warm-start (drift-probe mechanism) and the tuned cyclic baseline beats it on connectome.
+  This is exactly the falsifier above → corroborates the 82.9% attractor is intrinsic to Adam-on-σ,
+  up-weighting DIRECTION R. See log.md 2026-06-21 H16. -->
+- **Falsifier outcome (realized):** monotone β re-converged BELOW plateau on connectome → 82.9%
+  attractor is intrinsic to the optimizer, not the cyclic schedule. Up-weights DIRECTION R (rank-space)
+  and DOWN-weights further β/LR/schedule (DIRECTION O dynamics) tweaks — consistent with Phase-3 #2.
+
+## H17 — Continuous basin-hopping / parallel tempering on the surrogate, from the H02 basin
+- **Hypothesis:** Iterating *perturb → re-optimize → keep-best-by-oracle* (basin-hopping), or running
+  a few replicas at different β "temperatures" with occasional swaps (parallel tempering), starting
+  from the H02 basin, escapes the dominant 82.9% attractor and beats single-run H02 at **equal total
+  gradient budget**. Expected direction: **positive (small)**.
+- **Exact mechanism:** outer loop of `R` rounds, each = (a) perturb current best positions by
+  target-blind Gaussian noise `σ_pert` (or a partial re-melt: short low-β phase), (b) re-optimize with
+  a short monotone β sub-run of `epochs/R` steps, (c) score with the oracle and keep the whole-vector
+  best. Parallel-tempering arm: `M` replicas with fixed βs spanning [0.05,1.05], periodic
+  metropolis-free "keep-better-by-surrogate" replica swaps, oracle-score all, keep global best. First
+  init = H02 greedy-FAS order. `src/mfas/experiments/H17.py`. `n_epochs_done` = total optimizer steps
+  summed across rounds/replicas (= baseline 20k/5k).
+- **Axis:** DIRECTION O (multi-start / annealing — simulated-annealing-style perturbation is the
+  sibling of graduated optimization per the continuation-method literature).
+- **Compute-matching:** **multi-start → compare vs `baseline_multistart`** with `MFAS_MULTISTART_K`
+  set so total steps match; ALSO report Δ vs H02@matched-seeds (H02 is one round with no perturbation,
+  so H17 must beat it to justify the machinery).
+- **Leakage-safety:** perturbations are target-blind Gaussian / β re-melts; the oracle is used ONLY to
+  select among whole-vector candidates (exactly baseline best-tracking). No `best_solution`, no
+  per-edge oracle signal, no dataset special-case.
+- **Distinct from killed H01:** H01 was *naive independent restarts from fresh random inits* under the
+  unchanged cyclic dynamics (re-converged within +0.0003 pp). H17 (a) starts every round from the
+  *current best* (hopping, not independent), (b) uses the monotone/short sub-runs from H16, and (c)
+  perturbs an already-good order rather than restarting from scratch — a genuinely different escape
+  mechanism (exploit the τ=0.61 partial-basin overlap by hopping within it).
+- **Expected effect (reasoned, NOT measured):** connectome +0.0–0.1 pp over H02; mouse +0.1–0.7 pp
+  (mouse's 14× larger σ → more tail to harvest, as in the H01 rationale). **Why it might beat
+  82.93%:** the drift probe shows neighbouring orders span 76–84.6% — there *is* structure to hop
+  between; best-of-K over re-optimized perturbations harvests the right tail without needing to
+  *hold* best. **Why it might not:** the diagnosis says the 82.9% basin is dominant and deep; small
+  perturbations likely fall back into it (H01 evidence), and splitting the budget under-trains each
+  round (H01 lost −0.84 pp from under-training). Net EV is genuinely uncertain — most plausible on mouse.
+- **Est. compute cost:** **medium** (R re-optimizations + R extra oracle scores; same total grad
+  steps but more scoring overhead; tempering's M replicas add memory but parallelize on device).
+- **Measurement:** exact ff% both datasets, ≥3 seeds SCREEN vs `baseline_multistart` AND vs
+  H02@matched-seeds; CONFIRM 5/20 with 95% CI lower bound >0 vs H02. Report pure best-of score; size
+  `σ_pert` / R on mouse first (cheap) before connectome.
+- **KILL/keep prediction:** lean **kill on connectome, possible keep on mouse**. **Falsified if**
+  best-of-K over perturbed re-optimizations does not exceed H02 beyond noise on either dataset
+  (would confirm the basin is too dominant for cheap continuous hopping → only discrete refinement
+  recovers the gap).
+- **Status: proposed**
+
+## H18 — Straight-through estimator: exact discrete feedforward forward, surrogate gradient backward
+- **Hypothesis:** Making the forward pass score the **exact discrete** feedforward indicator
+  `1[pos[v] > pos[u]]` while routing gradients through the sigmoid surrogate in the backward pass
+  (a straight-through estimator) removes the forward surrogate≠discrete mismatch, so the optimizer
+  optimizes the *true* metric directly and reaches a higher exact feedforward weight than the
+  surrogate-only Rocket. Expected direction: **positive on a graph that has a gap (prototype-gated)**.
+- **Exact mechanism:** per edge define `hard = (Δ > 0).float()` and
+  `ste = hard + (sig − sig.detach())` where `sig = σ(β·Δ)`; loss `= −(ste · ŵ).sum()`. Forward value
+  = exact discrete weight; backward gradient = the baseline sigmoid gradient (identity-through the
+  hard step). Keep H02 init + monotone β (H16) so the *backward* surrogate still sharpens.
+  `src/mfas/experiments/H18.py`, `run_rocket` loop replicated with this loss. O(m) per step (one extra
+  elementwise compare + detach) — scales to connectome.
+- **Axis:** DIRECTION R (relaxation / gradient estimator). Standard STE construction
+  (`forward exact, backward smooth`), biased-but-useful gradient per the STE literature.
+- **Compute-matching:** standard knob-swap @ same epochs. Screen vs `baseline_passthrough`; promote
+  vs H02@matched-seeds.
+- **Leakage-safety:** the "discrete forward" uses ONLY the current positions' own strict order — it is
+  literally what the oracle would compute on the *current* iterate, not a known target. No
+  `best_solution`, no folding the oracle's *value* into the loss, no dataset special-case. (Subtle but
+  clean: STE differentiates the surrogate; the hard term is detached, so no target value leaks into
+  gradients.)
+- **Prototype-first plan:** mouse + hard synthetic (H21) BEFORE connectome. The near-acyclic synthetic
+  has no gap, so H18 must be shown on H21's hard graph; earn connectome compute only on ≥~0.1 pp gap
+  closure there + no mouse regression.
+- **Expected effect (reasoned, NOT measured):** prototype-dependent; if it helps, connectome
+  +0.0–0.2 pp over H02. **Why it might beat 82.93%:** the diagnosis says the surrogate is *aligned*
+  but the optimizer's late surrogate progress no longer converts to discrete gain (flat discrete tail
+  slope at step 3); an exact forward keeps the objective *pinned to the metric* so late steps that
+  raise the surrogate without raising the discrete score get no reward — directly attacking the
+  step-3 "surrogate descends, discrete flat" finding. **Why it might not:** STE gradient = the same
+  saturated sigmoid gradient that already plateaus; the forward change reweights *which* edges count
+  but the descent direction is unchanged near a tie, so it may re-converge. Honest medium-high risk.
+- **Est. compute cost:** **cheap–medium** (O(m) extra compare/detach per step; prototype-gated so most
+  cost is mouse+synthetic, not connectome).
+- **Measurement:** exact ff% on mouse + H21 hard-synthetic for the gate; if passed, both datasets ≥3
+  seeds SCREEN vs H02, CONFIRM 5/20. Report whether the discrete-tail slope (the step-3 pathology)
+  improves.
+- **KILL/keep prediction:** lean **uncertain, prototype decides**. **Falsified if** on the hard
+  synthetic H18 does not exceed surrogate-only Rocket beyond noise (then the STE forward adds no
+  signal the aligned surrogate lacked) → do not spend connectome compute.
+- **Status: proposed**
+
+## H19 — Position→soft-rank differentiable ranking (rank-space surrogate, O(n log n))
+- **Hypothesis:** Computing the surrogate in **rank space** — replace raw positions with a
+  differentiable soft-rank (Blondel et al. 2020, O(n log n)) before forming Δ — normalizes the
+  unbounded position-scale blow-up that saturates σ (Rocket's converged `pos_std ≈ 142`), keeping
+  gradients alive on borderline edges and letting the optimizer hold a better order; expected to
+  beat surrogate-on-raw-positions Rocket. Expected direction: **positive (prototype-gated)**.
+- **Exact mechanism:** `r = soft_rank(positions, regularization_strength=ε)` (torchsort /
+  fast-soft-sort, O(n log n)); use `Δ = r[tgt] − r[src]` (optionally normalized to [-1,1]) in the
+  existing `loss = −(σ(β·Δ)·ŵ).sum()`. Soft-rank is bounded in [1,n] and monotone in positions, so
+  scale cannot blow up and σ cannot globally saturate. H02 init + monotone β. `src/mfas/experiments/H19.py`.
+  If torchsort/fast-soft-sort is not installed, no new heavy dependency on connectome path without
+  confirming availability first (check env; the diagnosis env is `allen`).
+- **Axis:** DIRECTION R (relaxation — rank-space reparametrization; directly targets the scale-blowup
+  saturation mechanism implicated by the drift collapse).
+- **Compute-matching:** standard knob-swap @ same epochs (extra O(n log n) sort per step, n=136k is
+  cheap vs the 5.6M-edge gather). Screen vs `baseline_passthrough`; promote vs H02@matched-seeds.
+- **Leakage-safety:** soft-rank is a function of positions only; no oracle, no `best_solution`, no
+  special-case. Bounded, monotone → still maximizes feedforward orientation (argmax-preserving).
+- **Prototype-first plan:** mouse + hard synthetic (H21) before connectome (novel relaxation + a new
+  op). Earn connectome compute on gap closure there.
+- **Expected effect (reasoned, NOT measured):** if it helps, connectome +0.0–0.25 pp over H02 (the
+  highest-ceiling R lever, because it attacks the *named* mechanism). **Why it might beat 82.93%:**
+  the diagnosis Step-1 shows best out-surrogates Rocket and Rocket's positions blow up to std≈142
+  where a unit reorder barely moves σ — rank space makes adjacent swaps always carry O(1/n) gradient,
+  so the optimizer can keep refining the order instead of inflating scale. This is the cleanest
+  hypothesis for *why* gradient flow drifts off best. **Why it might not:** the regularization ε trades
+  rank fidelity for smoothness; too-smooth soft-ranks blur exactly the borderline edges we need
+  sharp, and the O(n log n) op adds per-step cost. Could also just re-converge if the basin (not the
+  parametrization) is the true bottleneck.
+- **Est. compute cost:** **medium** (one O(n log n) soft-rank/step; prototype-gated; needs a sorting
+  lib — verify install before committing connectome time).
+- **Measurement:** exact ff% on mouse + H21 gate; if passed, both datasets ≥3 seeds SCREEN vs H02,
+  CONFIRM 5/20. Sweep ε ∈ {small, medium}; log converged `pos`/`rank` std to confirm the scale fix.
+- **KILL/keep prediction:** lean **most promising R lever, but uncertain**. **Falsified if** rank-space
+  surrogate does not exceed raw-position Rocket on the hard synthetic beyond noise across ε (then
+  scale-saturation is not the operative bottleneck) → no connectome compute.
+- **Status: proposed**
+
+## H20 — Gumbel-Sinkhorn permutation relaxation (NOTE ONLY — O(n²), prototype-restricted)
+- **Hypothesis:** A full doubly-stochastic permutation relaxation (Sinkhorn / Gumbel-Sinkhorn) over a
+  learned score matrix optimizes the ordering more globally than per-node positions and closes more
+  of the gap on a graph that *has* one. Expected direction: **possibly positive, but cost-prohibitive
+  at scale.**
+- **Exact mechanism:** learn node scores → build an n×n cost, Sinkhorn-normalize to a soft permutation
+  P, score `Σ_{(u,v)} P-implied-order weight`, anneal Sinkhorn temperature; round to a hard
+  permutation for the oracle. `src/mfas/experiments/H20.py`.
+- **Axis:** DIRECTION R (strongest relaxation — global permutation rather than 1-D embedding).
+- **Compute-matching:** standard knob-swap @ same prototype budget vs `baseline_passthrough` **on
+  mouse + hard-synthetic ONLY**.
+- **Leakage-safety:** scores/cost from positions + input weights only; oracle only rounds-and-scores
+  the final P. No `best_solution`, no special-case.
+- **Prototype-first plan (HARD CONSTRAINT):** **mouse + hard synthetic (H21) ONLY. NEVER connectome.**
+  Gumbel-Sinkhorn is O(n²) per Sinkhorn iteration → infeasible at n=136k (≈1.9e10 entries). It exists
+  in the backlog purely as an *upper-bound probe*: "does the strongest available relaxation recover
+  the synthetic gap that O(n log n) methods miss?" — a diagnostic for whether the residual gap is
+  reachable by *any* continuous method.
+- **Expected effect (reasoned, NOT measured):** synthetic/mouse only; informational. Even a positive
+  result does **not** transfer to connectome (no scalable path) — so EV/cost is low; ranked last.
+- **Est. compute cost:** **expensive** per step (O(n²)); strictly prototype-scale.
+- **Measurement:** exact ff% on mouse + H21 hard-synthetic only, ≥3 seeds; report as a relaxation
+  *upper bound*, not a connectome candidate.
+- **KILL/keep prediction:** lean **diagnostic-only; will not become a connectome variant.** **Useful
+  iff** it closes substantially more synthetic gap than H18/H19 (→ evidence the residual gap is
+  continuous-reachable but needs a global relaxation, motivating a scalable approximation); **null
+  result** corroborates the diagnosis that the residual is discrete-refinement territory.
+- **Status: proposed**
+
+## H21 — Build the HARD synthetic gap-proxy fixture (infrastructure, prototype gate)
+- **Hypothesis (operational, not a Rocket variant):** A synthetic generator with **high feedback /
+  strong-connectivity** (unlike the existing near-acyclic `make_synthetic_graph`, on which Rocket
+  96.56% > planted 96.10%, i.e. NO gap) can reproduce a **Rocket↔reference gap** at prototype scale
+  (n≈1–5k), giving a cheap proxy on which to screen the relaxation hypotheses H18–H20 before spending
+  connectome compute.
+- **Exact mechanism (what to build):** extend `mfas.analysis.gap.make_synthetic_graph` (or add a sibling
+  `make_hard_synthetic_graph`) that injects far more feedback and strong-connectivity:
+  - raise `feedback_frac` toward parity with forward weight (e.g. 0.4–0.9) so the planted order is
+    only modestly above chance;
+  - add **dense cyclic cores / nested SCCs** (clusters with many bidirectional or cycle edges) so the
+    optimal order is a *distributed reordering* (mimicking the connectome's τ≈0.61, uniform-across-
+    weight-buckets structure), not a near-DAG;
+  - heavy-tailed weights (match connectome's skew) but keep the disagreement *uniform across weight
+    buckets* and on *median-degree* endpoints, per diagnosis Step 2.
+  Return `(GraphData, reference_order, reference_pct)` where `reference_order` is a strong (e.g.
+  greedy-FAS or planted) order used **only as a diagnostic comparator**, never inside any variant.
+- **Acceptance criterion (this is the gate's gate):** the fixture is valid ONLY if **baseline Rocket
+  scores meaningfully *below* the reference order on it** (e.g. gap ≥ ~0.5 pp), reproducing the
+  connectome phenomenon at small scale. If Rocket ≥ reference (like the current easy synthetic), tune
+  feedback/SCC density up until a gap appears, or report that a gap cannot be synthesised cheaply.
+- **Axis:** infrastructure (prototype proxy for DIRECTION R screening).
+- **Compute-matching / leakage:** n/a (fixture). `reference_order` is diagnostic-only and must NEVER
+  be read by a variant's init/loss/perturbation; it is the synthetic analogue of `best_solution` and
+  carries the same privilege boundary. No connectome data involved.
+- **Expected effect:** unblocks H18/H19 (and the H20 probe) by providing a fast gap-bearing graph;
+  also a thesis artefact characterizing *what structure creates the gap* (ties into the parent
+  CLAUDE.md "real brains vs random graphs" question — how much unavoidable feedback vs structure).
+- **Est. compute cost:** **cheap** (n≈1–5k; seconds/run). One-time generator + a validation script
+  that prints baseline-Rocket-vs-reference on it.
+- **Measurement:** report `(reference_pct, baseline_rocket_pct, gap)` over ≥3 seeds; declare the
+  fixture usable iff a stable gap ≥ ~0.5 pp is reproduced. Persist the generator params.
+- **KILL/keep prediction:** lean **keep / build first** (it is the dependency for H18–H20).
+  **Falsified if** no parameter setting at prototype scale produces a stable Rocket↔reference gap —
+  which would itself be a finding (the gap is intrinsically large-scale / connectome-structure-specific,
+  and prototype screening of relaxations is not possible → run H18/H19 directly on mouse, accept higher
+  connectome risk).
+- **Status: proposed**
+
+### Phase-4 ranking rationale (EV / cost)
+**H16 first** — cheapest, most directly implicated by the diagnosis (cyclic re-melting collapses good
+orders), pure schedule swap, and the configuration the drift probe points at; if it fails it sharply
+informs whether the 82.9% attractor is schedule-induced or intrinsic. **H21 next** (build the gate)
+because H18–H20 cannot be responsibly screened without a gap-bearing prototype. **H17** (basin-hopping
+/ tempering) is the second O lever, medium cost, most promising on noisy mouse. **H19 (soft-rank)**
+ranks above **H18 (STE)** among R levers because it attacks the *named* scale-saturation mechanism with
+a scalable O(n log n) op, whereas STE's descent direction near a tie is the same saturated sigmoid
+gradient that already plateaus. **H20 (Sinkhorn)** is last — diagnostic-only, O(n²), never connectome.
+Across all: honest prior is that **much of the 1.69 pp may be irreducible to continuous optimization**;
+Phase-4 aims to recover a *fraction* and to *quantify* how much O/R can buy before conceding the
+remainder to discrete (Crane-style) refinement.
+
+**Literature grounding:** graduated optimization / continuation methods (H16) —
+[Graduated optimization (Wikipedia)](https://en.wikipedia.org/wiki/Graduated_optimization),
+[Hazan et al., On Graduated Optimization for Stochastic Non-Convex Problems](https://arxiv.org/abs/1503.03712),
+[constraint/temperature annealing for ranking (arXiv:2004.09702)](https://arxiv.org/pdf/2004.09702),
+with a noted caution that sigmoid mappings can trap variables at large magnitudes
+([Parallel Quasi-Quantum Annealing, arXiv:2409.02135](https://arxiv.org/pdf/2409.02135)) — corroborating
+the scale-blowup motivation for H19. Straight-through estimator (H18) —
+[STE overview](https://www.emergentmind.com/topics/straight-through-estimator-ste),
+[Decoupled STE (arXiv:2410.13331)](https://arxiv.org/pdf/2410.13331). Differentiable sorting/ranking
+O(n log n) (H19) — [Blondel et al., Fast Differentiable Sorting and Ranking, ICML 2020 (arXiv:2002.08871)](https://arxiv.org/abs/2002.08871),
+impls [google-research/fast-soft-sort](https://github.com/google-research/fast-soft-sort) and
+[torchsort](https://github.com/teddykoker/torchsort). Sinkhorn/Gumbel-Sinkhorn permutation relaxation
+(H20) — same differentiable-sorting line (optimal-transport view of ranking, Cuturi et al. 2019,
+referenced in the Blondel paper).

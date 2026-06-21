@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T163437Z-H02-connectome-s7003-confirm-059689",
+  "algo": "H02",
+  "dataset": "connectome",
+  "seed": 7003,
+  "score": 34757858.0,
+  "pct": 82.9302850455671,
+  "wall_clock_s": 96.03429412841797,
+  "git_commit": "9cc9c34eb98480e0b0cb73d44f221b72d8f70441+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "0596894cbc0f",
+  "timestamp": "2026-06-21T16:36:21Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260621T163437Z-H02-connectome-s7003-confirm-059689_positions.npy",
+  "experiment_id": "H02",
+  "role": "confirm",
+  "hypothesis": "Warm-starting Rocket from a GreedyAbs greedy-FAS ordering (graph-structure only, leakage-safe), mapped to evenly-spaced positions in [-1,1], gives a better basin and higher final feedforward weight than the N(0,1) default init.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}
