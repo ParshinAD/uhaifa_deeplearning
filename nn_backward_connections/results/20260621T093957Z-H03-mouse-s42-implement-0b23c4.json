@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T093957Z-H03-mouse-s42-implement-0b23c4",
+  "algo": "H03",
+  "dataset": "mouse",
+  "seed": 42,
+  "score": 8.461409408921119,
+  "pct": 92.38318580771252,
+  "wall_clock_s": 2.0780599117279053,
+  "git_commit": "858e000ec2160447f6447a970c46563ec325996a+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "0b23c4fbfb91",
+  "timestamp": "2026-06-21T09:40:00Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260621T093957Z-H03-mouse-s42-implement-0b23c4_positions.npy",
+  "experiment_id": "H03",
+  "role": "implement",
+  "hypothesis": "Appending a final monotone-sharpening beta ramp (beta_max=4 over the last 25% of epochs, baseline cyclic exploration kept for the first 75%) tightens the surrogate->discrete gap and yields higher exact feedforward weight than the baseline [0.05,1.05] cyclic schedule.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}

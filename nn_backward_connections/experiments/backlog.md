@@ -91,7 +91,15 @@ CONFIRM with 5 (connectome) / 20–30 (mouse) seeds and a 95% CI lower bound > 0
   mouse ±0.5 pp. Needs a small sweep; medium confidence.
 - **Est. compute cost:** **cheap.** Schedule array change only; per-step cost identical.
 - **Measurement:** standard; sweep β_max ∈ {1.05(base), 2, 4, 8} as the screened factor.
-- **status: proposed**
+- **status: killed**  <!-- 2026-06-21 SCREEN FAIL → KILL (correctly-specified gate: H03's own std ≈
+  baseline noise floor, so NOT an H02-style escalation case). Primary arm = baseline cyclic
+  exploration for first 75% then a final monotone linear β ramp to β_max=4 over the last 25%
+  (leakage-safe loss-shape change; standard knob-swap, equal budget 20k/5k). connectome Δ=−0.0376 pp
+  (REGRESSION, mean 82.8582 ± 0.0181, n=3); mouse Δ=+0.0114 pp (mean 92.0810 ± 0.2730, n=3) — both far
+  below the 2σ gate. NOT the H02 low-variance case: H03's own std ~= baseline noise floor on both
+  datasets, so the gate is correctly specified — no CONFIRM escalation. β_max ∈ {2,8} remain un-run
+  sweep arms but the primary arm is not promising. See experiments/log.md 2026-06-21 H03 cycle. -->
+
 
 ## H04 — In-the-loop discrete refinement (continuous + periodic local swaps)
 - **Hypothesis:** Periodically nudging positions toward a locally-improved ordering (e.g. greedy

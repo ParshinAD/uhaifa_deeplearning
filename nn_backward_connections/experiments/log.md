@@ -17,7 +17,7 @@ Append-only lab notebook. Each entry: date, hypothesis, command, result (traced 
 <!-- The table below is auto-generated; do not edit by hand. -->
 
 <!-- BEGIN AGGREGATED RESULTS (auto-generated) -->
-_Generated 2026-06-21T09:31:28Z from 86 run(s)._
+_Generated 2026-06-21T09:44:48Z from 92 run(s)._
 
 | algo | dataset | n_seeds | pct mean±std | score mean±std | wall_clock_s (mean) | seeds | config_hash | git_commit |
 |---|---|---|---|---|---|---|---|---|
@@ -25,6 +25,8 @@ _Generated 2026-06-21T09:31:28Z from 86 run(s)._
 | H01 | mouse | 3 | 92.1625 ± 0.0242 | 8.4412 ± 0.0022 | 2.0 | [42, 123, 999] | 434027 | 704221ab778 |
 | H02 | connectome | 11 | 82.9298 ± 0.0012 | 34,757,648 ± 496 | 91.9 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 31415] | 059689 | f36e02847a9 |
 | H02 | mouse | 26 | 92.4793 ± 0.0000 | 8.4702 ± 0.0000 | 1.8 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 1111, 1234, 1414, 1618, 1732, 2222, 2236, 2718, 3333, 4444, 5555, 6666, 7777, 8888, 9999, 31415] | a8bbc0 | f36e02847a9 |
+| H03 | connectome | 3 | 82.8582 ± 0.0181 | 34,727,627 ± 7,582 | 78.2 | [42, 123, 999] | 082864 | 858e000ec21 |
+| H03 | mouse | 3 | 92.0810 ± 0.2730 | 8.4337 ± 0.0250 | 2.0 | [42, 123, 999] | 0b23c4 | 858e000ec21 |
 | baseline_multistart | connectome | 3 | 82.0507 ± 0.0293 | 34,389,211 ± 12,284 | 77.2 | [42, 123, 999] | 330c58 | 704221ab778 |
 | baseline_multistart | mouse | 3 | 92.1625 ± 0.0242 | 8.4412 ± 0.0022 | 1.9 | [42, 123, 999] | c6938b | 704221ab778 |
 | baseline_passthrough | connectome | 8 | 82.8887 ± 0.0223 | 34,740,422 ± 9,345 | 918.5 | [7, 42, 42, 123, 123, 999, 999, 31415] | f8cb3c | 8f0e5066211, f36e02847a9 |
@@ -301,3 +303,83 @@ the connectome confirm seed count to harden the thin margin), not as a large gai
 #### Decision: **keep** — CONFIRMED on both datasets and survives red-team (frozen integrity, no
 leakage, reproducible, equal-compute, both-dataset CI>0). Caveat: connectome margin is thin
 (+0.0135 pp CI lower); report H02 as a small-but-genuine warm-start win, mouse-strong / connectome-marginal.
+
+---
+
+## 2026-06-21 — H03: Sharper / extended beta schedule (final monotone-sharpening ramp)
+- Hypothesis: raising the maximum sigmoid sharpness in the late phase (beta_max from ~1.05 up to
+  e.g. 2–8, and/or appending a final monotone-sharpening ramp) tightens the surrogate->discrete
+  gap and yields higher exact feedforward weight. The surrogate sigma_beta only approximates the
+  discrete indicator; at beta~1 a unit gap maps to sigma~0.74 so "weakly correct" edges and
+  near-ties contribute little gradient. Annealing beta upward at the end is standard deterministic-
+  annealing. beta is a loss-shape parameter only -> leakage-safe.
+
+#### Implementer (screen)
+- **Chosen arm (one, for a bounded screen):** keep the baseline cyclic exploration intact for the
+  first **75%** of epochs, then **append a final monotone (linear) sharpening ramp** over the last
+  **25%** (`RAMP_FRAC=0.25`) that raises beta from its end-of-cyclic value up to
+  **`BETA_MAX_TERMINAL = 4.0`**. Rationale: this preserves the paper's broad cyclic exploration
+  (which the paper credits for dodging manual tuning) and only sharpens the EXPLOITATION tail,
+  where a tighter surrogate matters and where over-sharp early gradients would freeze a poor basin.
+  beta=4 gives sigma(4)~0.982 for a unit gap (vs 0.74 at 1.05) — clearly sharper but not
+  gradient-killing (beta=8 -> sigma~0.9997 risks vanishing gradients).
+- **Exact beta schedule:** segment 1 = UNCHANGED `make_beta_schedule(n_explore=15000/3750, cycles=5)`
+  (baseline cos formula `[0.05,1.05]`, byte-for-byte baseline exploration); segment 2 =
+  `np.linspace(betas_explore[-1], 4.0, n_ramp=5000/1250)` (monotone ramp); concatenated to length T.
+- **Implementation:** `run_rocket` exposes no beta-override hook, so `H03.py` REPLICATES the
+  `run_rocket` main loop verbatim (same Adam, grad-clip=1.0, const->exp LR schedule, N(0,1) init,
+  CPU int64/float64 discrete scoring, best-by-oracle tracking, history, time-limit) and substitutes
+  ONLY the beta array (`_make_h03_beta_schedule`). The discrete oracle is read only for the
+  baseline's existing best-by-oracle tracking; never folded into the loss / hardcoded / used to
+  special-case a dataset. No post-processing -> PURE Rocket score.
+- **Compute-matched:** standard knob-swap (beta only); SAME epoch budget as baseline
+  (connectome 20k, mouse 5k); `n_epochs_done = total_grad_steps = 20000 / 5000`. Comparator =
+  frozen baseline / `baseline_passthrough` at matched seeds (connectome 82.8958 ± 0.0189;
+  mouse 92.0696 ± 0.2624).
+- **connectome** (n=3, seeds 42/123/999): per-seed 82.8752 / 82.8601 / 82.8392 →
+  **mean 82.8582 ± 0.0181** (H03's own std = 0.0181, ~= baseline noise floor 0.0189);
+  baseline 82.8958; **Δ = −0.0376 pp** (NEGATIVE — H03 sits *below* baseline); 2σ gate 0.04 →
+  **screen FAIL**.
+- **mouse** (n=3, seeds 42/123/999): per-seed 92.3832 / 91.8520 / 92.0077 →
+  **mean 92.0810 ± 0.2730** (H03's own std = 0.2730, ~= baseline noise floor 0.2624);
+  baseline 92.0696; **Δ = +0.0114 pp**; 2σ gate 0.52 → **screen FAIL** (Δ ≪ gate).
+- **Overall: SCREEN FAIL on both datasets.** This is NOT a borderline-low-variance case like H02:
+  H03's own per-seed std on BOTH datasets matches the baseline noise floor (connectome 0.0181 vs
+  0.0189; mouse 0.2730 vs 0.2624), so the 2σ_baseline gate is correctly specified for this variant
+  and the failure is not an artifact of a mis-specified gate. Δ is essentially zero on mouse
+  (+0.011 pp, well within noise) and **negative** on connectome (−0.038 pp) — the terminal beta=4
+  ramp slightly *hurt* connectome. No CONFIRM escalation warranted.
+- **Un-run sweep arms (left for follow-up only if revisited):** `BETA_MAX_TERMINAL ∈ {2, 8}` and
+  varying `RAMP_FRAC`. The primary arm (beta_max=4, ramp_frac=0.25) is not promising, so the sweep
+  is not pursued in this cycle.
+- **Commands** (Python `/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python`):
+  ```
+  for DS in connectome mouse; do for S in 42 123 999; do
+    python -m eval.run_variant --exp H03 --dataset $DS --seed $S --out results/ --role implement
+  done; done
+  python -m eval.aggregate --glob "results/*.json" --out experiments/log.md
+  ```
+- **Result file exp_ids:**
+  - connectome: `20260621T094013Z-H03-connectome-s42-implement-082864`,
+    `20260621T094139Z-H03-connectome-s123-implement-082864`,
+    `20260621T094304Z-H03-connectome-s999-implement-082864`
+  - mouse: `20260621T093957Z-H03-mouse-s42-implement-0b23c4`,
+    `20260621T094007Z-H03-mouse-s123-implement-0b23c4`,
+    `20260621T094010Z-H03-mouse-s999-implement-0b23c4`
+
+#### Verifier (confirm)
+_(not run by the implementer — SCREEN FAILED on both datasets, and H03's per-seed variance matches
+the baseline noise floor (so this is not the H02-style low-variance escalation case). CONFIRM stage
+is reserved for the orchestrator/verifier.)_
+
+#### Critic verdict
+_(reserved for CONFIRMED findings; not run on a screen-fail.)_
+
+#### Decision: **kill.** Primary arm β_max=4 terminal sharpening ramp does NOT beat baseline —
+connectome −0.0376 pp (regression), mouse +0.0114 pp (within noise), both far below the 2σ gate.
+Unlike H02, this is a **correctly-specified** screen fail: H03's own per-seed std matches the
+baseline noise floor on both datasets (connectome 0.0181≈0.0189; mouse 0.2730≈0.2624), so no CONFIRM
+escalation is warranted. Orchestrator integrity spot-check: frozen manifest matches all 4 files; no
+frozen file modified; H03 alters only the β array (loss-shape) → no leakage; all 6 numbers trace to
+logged `results/*.json` at matched `total_grad_steps`. Hypothesis (primary arm) not supported;
+β_max∈{2,8} left un-run as low-priority sweep arms. Backlog status → killed.

@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260621T094139Z-H03-connectome-s123-implement-082864",
+  "algo": "H03",
+  "dataset": "connectome",
+  "seed": 123,
+  "score": 34728424.0,
+  "pct": 82.86005718486201,
+  "wall_clock_s": 75.57646894454956,
+  "git_commit": "858e000ec2160447f6447a970c46563ec325996a+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "0828645513e5",
+  "timestamp": "2026-06-21T09:43:03Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260621T094139Z-H03-connectome-s123-implement-082864_positions.npy",
+  "experiment_id": "H03",
+  "role": "implement",
+  "hypothesis": "Appending a final monotone-sharpening beta ramp (beta_max=4 over the last 25% of epochs, baseline cyclic exploration kept for the first 75%) tightens the surrogate->discrete gap and yields higher exact feedforward weight than the baseline [0.05,1.05] cyclic schedule.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}
