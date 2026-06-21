@@ -42,6 +42,10 @@ from mfas.utils.seeding import seed_everything, select_device  # noqa: E402
 # provenance + the JSON schema.
 from eval.harness import build_record, config_hash, _repo_relpath  # noqa: E402
 
+# Integrity gate: refuse to produce/accept any score if a frozen file was tampered with
+# (closes the Bash-write bypass the PreToolUse hook cannot catch).
+from eval.frozen_guard import verify_frozen_manifest  # noqa: E402
+
 
 def load_variant(exp_id: str):
     """Import the variant module ``src/mfas/experiments/<exp_id>.py``."""
@@ -54,6 +58,13 @@ def load_variant(exp_id: str):
 def run(exp_id: str, dataset: str, seed: int, out: Path, role: str,
         time_limit: Optional[float], device: str) -> dict:
     logger = get_logger("mfas.run_variant")
+
+    # ── Frozen-oracle integrity gate (BEFORE anything is run or scored) ──────
+    # Aborts with SystemExit if metrics/harness/aggregate/tests differ from
+    # eval/frozen.sha256. A tampered oracle must never mint a score.
+    verify_frozen_manifest()
+    logger.info("frozen-oracle integrity: OK")
+
     variant = load_variant(exp_id)
     hypothesis = getattr(variant, "HYPOTHESIS", "")
 
@@ -93,6 +104,12 @@ def run(exp_id: str, dataset: str, seed: int, out: Path, role: str,
     record["experiment_id"] = exp_id
     record["role"] = role
     record["hypothesis"] = hypothesis
+    # Compute-matched comparison basis: every run records its total gradient steps
+    # (= optimizer.step() calls, summed across any restarts). A variant's "win" is only
+    # accepted vs a baseline run at the SAME total_grad_steps. Wall-clock (wall_clock_s)
+    # stays logged for reference but is NOT the comparison basis (MPS timing is non-det).
+    record["budget_basis"] = "total_grad_steps"
+    record["total_grad_steps"] = int(result.n_epochs_done)
 
     json_path = out / f"{run_id}.json"
     with open(json_path, "w") as f:

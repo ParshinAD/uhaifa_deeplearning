@@ -45,11 +45,34 @@ From the frozen baseline, 3 seeds (42/123/999):
 | mouse | 92.0696 | **0.2624 pp** | 0.5248 pp (use 0.52) |
 Mouse is ~14× noisier than connectome — hence the larger confirm seed count for mouse.
 
-## Budget & stop-criteria  (TODO — set these before launching the campaign)
-- `MAX_EXPERIMENTS` = **TODO**  (hard cap on cycles)
-- `MAX_WALLCLOCK` / `MAX_COMPUTE` = **TODO**  (e.g. hours of MPS time)
-- `EARLY_EXIT_K` = **TODO**  (stop after K consecutive non-improving cycles)
-- `CONFIRM_SEEDS_MOUSE` = **TODO in [20,30]**  (pick a value; connectome fixed at 5)
+## Budget & stop-criteria  (set for the Phase-3 campaign)
+- `MAX_EXPERIMENTS` = **30**  (hard cap on total cycles, including iterations)
+- `MAX_WALLCLOCK` = **12h**  (wall-clock ceiling for the whole campaign)
+- `EARLY_EXIT_K` = **2**  (stop iterating a single hypothesis after 2 consecutive non-improvements)
+- `CONFIRM_SEEDS_CONNECTOME` = **5**  (42, 123, 999, 7, 31415)
+- `CONFIRM_SEEDS_MOUSE` = **20**  (mouse is ~14× noisier → more seeds to tighten the CI)
+
+Stop the campaign when ANY fires: backlog exhausted / `MAX_EXPERIMENTS` reached /
+`MAX_WALLCLOCK` reached / `EARLY_EXIT_K` consecutive non-improving cycles with no remaining
+promising backlog items.
+
+## Compute-matched comparison (fairness)
+Every variant is compared to baseline under an **EQUAL compute budget**. The basis is
+**total gradient steps** = the number of `optimizer.step()` calls, **summed across any restarts**
+(chosen over wall-clock because MPS timing is non-deterministic and machine-dependent;
+gradient-steps are exact, reproducible, auditable). Wall-clock is still logged (`wall_clock_s`) but
+is not the comparison basis.
+- Every `results/*.json` records `budget_basis = "total_grad_steps"` and `total_grad_steps`
+  (= `RocketResult.n_epochs_done`). **Variants MUST set `n_epochs_done` to the total optimizer
+  steps actually performed.**
+- **Standard knob-swap variants** (init / loss / β / optimizer / LR / grad handling — H02, H03,
+  H05–H12) run at the *same* epoch budget as baseline (connectome 20k, mouse 5k); the existing
+  `baseline_passthrough` at matched seeds is therefore already the equal-budget comparator.
+- **Multi-start / restart / subsample variants** (H01, H13) and added-compute refinement (H04) are
+  compared to `src/mfas/experiments/baseline_multistart.py` — the *plain* baseline run as K naive
+  restarts × (total/K) epochs, best-of-K, with `n_epochs_done = total`. Set `MFAS_MULTISTART_K` to
+  the variant's K so total steps match. This isolates algorithmic merit from mere extra sampling.
+  The verifier computes Δ from the *specific* matched-budget result JSONs (not the global table).
 
 ## File contracts (who writes what)
 Single-writer per file; agents run sequentially within a cycle, so appends do not clobber.
@@ -69,7 +92,8 @@ Identical to the baseline harness record, plus variant provenance:
 exp_id, algo(=variant id), dataset, seed, score, pct, wall_clock_s, git_commit,
 env{python, jax_or_torch, cuda, gpu}, config_hash, timestamp,
 total_weight, n_epochs_done, best_positions_path,
-experiment_id, role(implement|verify|confirm), hypothesis
+experiment_id, role(implement|verify|confirm), hypothesis,
+budget_basis(="total_grad_steps"), total_grad_steps(=n_epochs_done)
 ```
 Produced ONLY by `eval/run_variant.py` (frozen oracle scores the positions). `config_hash`
 excludes seed/device so seeds of one (variant, dataset) share a hash for aggregation.
@@ -91,7 +115,9 @@ excludes seed/device so seeds of one (variant, dataset) share a hash for aggrega
 ```
 
 ## Invariants (see CLAUDE.md)
-- Never modify frozen files (a PreToolUse hook blocks edits to them).
+- Never modify frozen files. Three layers enforce this: a PreToolUse hook blocks Edit/Write,
+  the 4 files are chmod 0444, and `eval/frozen_guard.verify_frozen_manifest()` (called by
+  `run_variant.py` before any score) aborts if their SHA-256 differs from `eval/frozen.sha256`.
 - Always evaluate BOTH datasets; ≥3 seeds; report mean ± std.
 - Every reported number traces to a `results/*.json` + a re-runnable command — never fabricated.
 - Never hardcode/peek at the target metric inside a variant.

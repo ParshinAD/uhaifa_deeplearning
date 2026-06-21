@@ -25,6 +25,10 @@ FROZEN=(
   "eval/harness.py"
   "eval/aggregate.py"
   "tests/test_metrics.py"
+  # Integrity reference + its checker — protecting these stops a tampered oracle from
+  # being "re-blessed" by silently rewriting the manifest or disabling the gate.
+  "eval/frozen.sha256"
+  "eval/frozen_guard.py"
 )
 
 # Normalize: strip a leading "./"
