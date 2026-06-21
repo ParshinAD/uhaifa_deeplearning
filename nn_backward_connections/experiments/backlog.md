@@ -847,6 +847,49 @@ regress mouse. This conserves the ~80 s/run/seed connectome budget for variants 
     python experiments/protoR_tune_hardsynth.py   (sweep; cfg0 is the chosen fixture)
   Unblocks H18–H20 prototype screening. First R consumer (H19 soft-rank) FALSIFIED on it (see H19). -->
 
+## H22 — Bounded-window discrete local search (sifting / re-insertion) as a Rocket post-phase
+- **Axis:** DIRECTION D (discrete refinement) — NEW. Outside the continuous-only Stage-B scope that
+  was stopped; it is the corollary of finding #3 ("irreducible to *continuous*" ≠ "irreducible") and
+  is explicitly sanctioned by parent CLAUDE.md goal #1 ("stronger local search, hybrid
+  discrete+continuous, partial Crane on subgraphs").
+- **Hypothesis:** After `run_rocket` converges from the H02 greedy-FAS init, a cheap bounded-window
+  **sifting / re-insertion** local search on the order recovers a fraction of the ~1.69 pp gap that
+  the continuous optimizer cannot — because it acts directly on the discrete cyclic-core reorderings
+  the smooth surrogate gradient is blind to (finding #3). Expected direction: positive **iff the
+  gap's flips are short-range**.
+- **Exact mechanism (proposed):** for each node, move it to the rank within ±W maximizing the net
+  feedforward weight of its incident edges, by **exact incremental delta from input edge weights +
+  current ranks only** (no oracle in the loop); a few sweeps; `src/mfas/experiments/H22.py`.
+- **Distinct from killed H04:** H04 moved nodes by a **weighted barycenter** = the same coarse
+  "majority-vote" signal the gradient already follows (it accepted **0** moves). Sifting evaluates the
+  **exact discrete delta of a concrete reinsertion**, a genuinely different mechanism.
+- **Leakage-safety:** moves chosen from input weights + current ranks; the frozen oracle scores only
+  the final order (best-by-oracle). Never reads `data/best_solution`; the target value never enters a
+  move choice. Pure Rocket score reported separately from the refinement (CLAUDE.md rule).
+- **Compute-matching:** Rocket+refine vs H02 at matched seeds; disclose the added non-gradient cost.
+- **Sizing gate (run BEFORE building, like H09):** `experiments/size_localsearch.py` →
+  `experiments/outputs/localsearch_sizing.json`. Measures, on H02's converged connectome order:
+  (1) feedback weight reachable within rank-window W (leakage-safe ceiling), and (2 — privileged via
+  `mfas.analysis.gap`) the rank-distance of the Rocket↔best orientation flips. Build only if a
+  meaningful fraction of the net +1.69 pp is reachable at a tractable window.
+- **status: killed (by sizing)**  <!-- 2026-06-22 SELF-FALSIFIED at the sizing gate, exactly the H09
+  pattern (sized → ~0 reachable opportunity → kill before building; compute conserved). Cross-check
+  PASSED (validates the measurement): net gap +1.6874 pp = gain +4.5975 − lose +2.9102, reproducing
+  the Stage-A diagnosis; H02 order re-scores 82.9273% (rank-faithful, 0 ties). DECISIVE RESULT — the
+  gap is LONG-RANGE / GLOBAL, not local: the recoverable (feedback→feedforward) weight has rank-distance
+  percentiles p25=8,290 / p50=22,580 / p90=87,497 in Rocket's order (n=136,648) — the median recoverable
+  edge needs a node to travel ~22.6k ranks. Net gap recoverable within any tractable window is ≤0:
+  W=100 → net −0.0100 pp (gain only 0.24% of total gain), W=1000 → net −0.1696 pp, W=5000 → net
+  −0.4045 pp; net is positive only for W≤10 (+0.0003 pp). Measure-1 ceiling agrees: feedback pool within
+  W=100 = 0.027 pp, W=1000 = 0.41 pp. A bounded-window single-node sift therefore CANNOT close the gap
+  (and, like H04, has no improving local move — within a window the broken `lose` edges outweigh the
+  `gain`). Mouse is uninformative here (n=148, whole graph is "local", no mouse best_solution). This
+  STRENGTHENS finding #3: the residual is irreducible not only to continuous methods but to *bounded
+  local* discrete refinement — it is a global reordering requiring global discrete optimization (the
+  paper's Crane MIP). Reproduce:
+    /opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python experiments/size_localsearch.py
+  Output: experiments/outputs/localsearch_sizing.json. -->
+
 ### Phase-4 ranking rationale (EV / cost)
 **H16 first** — cheapest, most directly implicated by the diagnosis (cyclic re-melting collapses good
 orders), pure schedule swap, and the configuration the drift probe points at; if it fails it sharply

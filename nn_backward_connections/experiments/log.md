@@ -1108,3 +1108,31 @@ re-derivation from the JSONs + grep/pytest.
 CI_low +0.0391 @ n=15), the negative/structural conclusion (finding #3) is scale-fair, not
 overstated, and properly scoped; integrity and leakage isolation held throughout. No new win is
 claimed, which is the honest outcome. No required fixes.
+
+---
+
+## 2026-06-22 — H22: bounded-window discrete local search (DIRECTION D) — KILLED at sizing gate
+
+- Hypothesis (DIRECTION D, NEW): the corollary of finding #3 — since the gap is irreducible to
+  *continuous* methods (the smooth gradient is a coarse majority-vote blind to cyclic-core
+  reorderings), a cheap **discrete** bounded-window sift/re-insertion post-phase might recover a
+  fraction of the ~1.69 pp by acting directly on that discrete structure. Sanctioned by parent
+  CLAUDE.md goal #1; distinct from killed H04 (barycenter = the same coarse signal, 0 moves accepted).
+- **Sizing gate FIRST (like H09):** `experiments/size_localsearch.py` →
+  `experiments/outputs/localsearch_sizing.json`. Diagnostic-only; reads `best_solution` ONLY via the
+  privileged `mfas.analysis.gap`; writes nothing to `results/`.
+- **Cross-check PASSED (validates the measurement):** net gap **+1.6874 pp** = gain +4.5975 − lose
+  +2.9102, reproducing the Stage-A diagnosis; H02 order re-scores **82.9273%** (rank-faithful, 0 ties).
+- **DECISIVE — the gap is LONG-RANGE / GLOBAL, not local.** The recoverable
+  (feedback→feedforward) weight has rank-distance percentiles **p25=8,290 / p50=22,580 / p90=87,497**
+  in Rocket's order (n=136,648): the median recoverable edge needs a node to travel ~22.6k ranks. Net
+  gap recoverable within any tractable window is **≤0**: W=100 → net −0.0100 pp (gain only 0.24% of
+  total gain), W=1000 → −0.1696, W=5000 → −0.4045; net is positive only for W≤10 (+0.0003). Measure-1
+  ceiling agrees (feedback pool within W=100 = 0.027 pp). Within a window the broken `lose` edges
+  outweigh the `gain` → like H04, there is no improving local move. Mouse is uninformative (n=148, the
+  whole graph is "local"; no mouse best_solution).
+#### Decision: **KILL (by sizing).** A bounded-window single-node local search cannot close the gap;
+  compute conserved (no variant built), exactly the H09 pattern. **Strengthens finding #3:** the
+  residual is irreducible not only to continuous methods but to *bounded-local* discrete refinement —
+  it is a global reordering that requires global discrete optimization (the paper's Crane MIP).
+  Reproduce: `python experiments/size_localsearch.py`.

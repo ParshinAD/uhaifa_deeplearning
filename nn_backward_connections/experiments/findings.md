@@ -125,6 +125,16 @@ barrier is the non-convex landscape — a near-optimal ordering is not a reachab
 of Adam-on-σ, and rank/scale/schedule reparametrizations don't change that. This is the mechanistic reason
 the paper needs a discrete MIP (Crane) to surpass Rocket.
 
+**Corroboration — the gap is also irreducible to *bounded-local* discrete refinement (H22 sizing,
+2026-06-22).** Sizing the Rocket↔best orientation flips by rank-distance (`experiments/size_localsearch.py`
+→ `experiments/outputs/localsearch_sizing.json`; cross-check reproduces gain +4.60 / lose −2.91 / net
++1.69 pp exactly) shows the recoverable weight is **long-range / global**: rank-distance percentiles
+p25=8,290 / p50=22,580 / p90=87,497 (of n=136,648), and the net gap recoverable within *any* tractable
+window is ≤0 (W=100 → −0.010 pp, W=1000 → −0.170, W=5000 → −0.405; positive only for W≤10). So a
+bounded-window single-node local search (sifting/re-insertion, DIRECTION D) cannot close the gap and was
+**killed at the sizing gate** before building (H09 pattern). This sharpens the conclusion: closing the
+residual requires *global* discrete optimization (the paper's Crane MIP), not local discrete cleanup.
+
 **Honest scope.** best_solution exists only for connectome (mouse has none) so the decisive surrogate/gap
 steps are connectome-only; conclusions about R rest on mouse + one hard synthetic. H17 (basin-hopping),
 H18 (STE), H20 (Gumbel-Sinkhorn) were **deferred-by-evidence** (predicted non-improving by H01's prior kill,
