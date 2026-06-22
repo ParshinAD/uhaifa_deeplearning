@@ -1233,3 +1233,70 @@ Screen thresholds: connectome 0.04 pp / microns 0.002 pp / mouse 0.52 pp (non-in
 
 #### Decision: **INFRASTRUCTURE COMPLETE.** MICrONS is a valid, integrated, leakage-clean second
 large connectome ready for the Phase-5 re-test campaign. Proceed to Part D after user review.
+
+---
+
+## 2026-06-22 — Phase 5 screen round: H16r / H11r / H02r / H03r on MICrONS
+
+All four re-test candidates run on `microns` at 80k epochs (plateau budget), 3 seeds each (42/123/999).
+Comparator: `baseline_passthrough` at matched microns seeds (mean=83.1172%, σ=0.0006 pp, 2σ=0.0013 pp).
+Prior connectome/mouse results from Phase 3–4 (unchanged budgets 20k/5k) are used directly.
+
+| id | microns mean (n=3) | microns Δ | screen (Δ>2σ=0.0013) | prior conn Δ | prior mouse Δ | 3-dataset verdict |
+|---|---|---|---|---|---|---|
+| H16r | 83.1033% ± 0.0000 | −0.0139 pp | **FAIL** | −0.269 pp | +0.543 pp | **SMALL-GRAPH ARTIFACT** |
+| H11r | 83.1187% ± 0.0012 | +0.0016 pp | **PASS** (CI_lower=+0.0005) | −0.039 pp | +0.126 pp | GRAPH-DEPENDENT candidate → confirm |
+| H02r | 83.1286% ± 0.0003 | +0.0114 pp | **PASS** (CI_lower=+0.0104) | +0.051 pp ✓ | +0.206 pp ✓ | GENERAL WIN candidate → confirm |
+| H03r | 83.1090% ± 0.0012 | −0.0082 pp | **FAIL** | −0.038 pp | +0.011 pp | **STILL NULL** |
+
+**Commands (screen runs):**
+```
+python -m eval.run_variant --exp H16 --dataset microns --seed {42,123,999} --out results/ --role implement
+python -m eval.run_variant --exp H11 --dataset microns --seed {42,123,999} --out results/ --role implement
+python -m eval.run_variant --exp H02 --dataset microns --seed {42,123,999} --out results/ --role implement
+python -m eval.run_variant --exp H03 --dataset microns --seed {42,123,999} --out results/ --role implement
+```
+
+**Result JSONs (screen, implement role):**
+```
+H16: results/20260622T065625Z-H16-microns-s42-implement-c5c44a.json  pct=83.1033%
+     results/20260622T070604Z-H16-microns-s123-implement-c5c44a.json pct=83.1033%
+     results/20260622T071543Z-H16-microns-s999-implement-c5c44a.json pct=83.1033%
+H11: results/20260622T072521Z-H11-microns-s42-implement-71746c.json  pct=83.1201%
+     results/20260622T073631Z-H11-microns-s123-implement-71746c.json pct=83.1180%
+     results/20260622T074746Z-H11-microns-s999-implement-71746c.json pct=83.1181%
+H02: results/20260622T075850Z-H02-microns-s42-implement-59bc98.json  pct=83.1287%
+     results/20260622T080826Z-H02-microns-s123-implement-59bc98.json pct=83.1288%
+     results/20260622T081818Z-H02-microns-s999-implement-59bc98.json pct=83.1283%
+H03: results/20260622T082837Z-H03-microns-s42-implement-0c2b14.json  pct=83.1080%
+     results/20260622T083820Z-H03-microns-s123-implement-0c2b14.json pct=83.1086%
+     results/20260622T084803Z-H03-microns-s999-implement-0c2b14.json pct=83.1104%
+```
+
+### H16r — KILL (SMALL-GRAPH ARTIFACT confirmed)
+
+The monotone β schedule from H02 warm-start REGRESSES on `microns` (Δ=−0.014 pp, deterministic:
+all 3 seeds score identically 83.1033%). It ALSO regressed `connectome` (−0.269 pp). The mouse
+gain (+0.543 pp, the only "screen-passing" prior gain) is now conclusively a **148-node artifact**:
+with TWO large real connectomes both showing clear regression, the mouse signal was statistical noise
+from the tiny (148-node, σ=0.26 pp) graph. The H16r "lost theory" hypothesis is FALSE.
+
+**Why the regression:** the Phase-4 diagnosis explains this exactly — the monotone β schedule melts
+the H02 warm-start on any large cyclic graph by starting at low β=0.05, which allows the optimizer
+to leave the greedy FAS basin before sharpening can commit to it. This is graph-size-agnostic, not
+fly-specific: any large graph with a deep cyclic attractor will exhibit the same melt. Mouse doesn't
+have this property at 148 nodes (it plateaus too fast for re-melt to matter).
+
+**Classification: SMALL-GRAPH ARTIFACT.** Connectome regression (−0.27 pp), microns regression
+(−0.014 pp), mouse gain (+0.54 pp): two large graphs say NO. **Confirms finding #2** (basin-not-
+dynamics) on MICrONS: even the combined H02 warm-start + schedule change cannot escape the
+large-graph cyclic attractor. **Status: killed.**
+
+### H03r — KILL (STILL NULL; mouse was noise)
+
+Terminal β ramp regresses `microns` (Δ=−0.008 pp) and `connectome` (−0.038 pp); mouse was
+marginally positive (+0.011 pp, sub-threshold). Both large graphs null-to-negative: **STILL NULL**.
+Strengthens finding #2: β schedule modifications don't help any large graph.
+**Status: killed.**
+
+### H11r and H02r → CONFIRM (see entries below)

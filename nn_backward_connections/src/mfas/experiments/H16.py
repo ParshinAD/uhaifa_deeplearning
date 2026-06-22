@@ -54,7 +54,7 @@ HYPOTHESIS = (
     "exact feedforward metric at equal compute."
 )
 
-_EPOCHS = {"connectome": 20_000, "mouse": 5_000}
+_EPOCHS = {"connectome": 20_000, "mouse": 5_000, "microns": 80_000}
 BETA_MIN = 0.05
 BETA_MAX = 1.05
 

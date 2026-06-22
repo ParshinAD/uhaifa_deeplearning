@@ -114,7 +114,7 @@ HYPOTHESIS = (
 )
 
 # Per-dataset epoch budget (= baseline single-run budget; standard knob-swap).
-_EPOCHS = {"connectome": 20_000, "mouse": 5_000}
+_EPOCHS = {"connectome": 20_000, "mouse": 5_000, "microns": 80_000}
 
 # H11 primary-arm hyperparameter (the ONLY new constant vs baseline): the smooth-hinge half-width in
 # the SAME scaled-margin units beta produces (z = beta*Delta). MARGIN = 2.0 means the reward ramps

@@ -54,7 +54,7 @@ HYPOTHESIS = (
 )
 
 # Per-dataset total epoch budget (= baseline single-run budget; standard knob-swap).
-_EPOCHS = {"connectome": 20_000, "mouse": 5_000}
+_EPOCHS = {"connectome": 20_000, "mouse": 5_000, "microns": 80_000}
 
 
 def greedy_fas_order(g: GraphData) -> np.ndarray:

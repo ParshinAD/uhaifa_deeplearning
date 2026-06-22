@@ -81,7 +81,7 @@ HYPOTHESIS = (
 )
 
 # Per-dataset epoch budget (= baseline single-run budget; standard knob-swap).
-_EPOCHS = {"connectome": 20_000, "mouse": 5_000}
+_EPOCHS = {"connectome": 20_000, "mouse": 5_000, "microns": 80_000}
 
 # H03 primary-arm hyperparameters (the ONLY change vs baseline).
 BETA_MAX_TERMINAL = 4.0   # terminal sharpness at end of ramp (baseline peak ~1.05)
