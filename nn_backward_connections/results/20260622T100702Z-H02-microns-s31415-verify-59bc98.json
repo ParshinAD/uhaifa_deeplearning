@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260622T100702Z-H02-microns-s31415-verify-59bc98",
+  "algo": "H02",
+  "dataset": "microns",
+  "seed": 31415,
+  "score": 12802390.0,
+  "pct": 83.12939590431697,
+  "wall_clock_s": 592.6649839878082,
+  "git_commit": "012e9ad9c7416d73d7ee6974ae8f81c6d034e1a5+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "59bc98edaaae",
+  "timestamp": "2026-06-22T10:16:55Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 80000,
+  "best_positions_path": "results/20260622T100702Z-H02-microns-s31415-verify-59bc98_positions.npy",
+  "experiment_id": "H02",
+  "role": "verify",
+  "hypothesis": "Warm-starting Rocket from a GreedyAbs greedy-FAS ordering (graph-structure only, leakage-safe), mapped to evenly-spaced positions in [-1,1], gives a better basin and higher final feedforward weight than the N(0,1) default init.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 80000
+}
