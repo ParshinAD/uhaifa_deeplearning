@@ -17,6 +17,10 @@ from .lns import (
     back_edge_weight,
     ils_lns,
 )
+from .underrelax import (
+    sift_underrelaxed,
+    underrelaxed_rebuild,
+)
 
 __all__ = [
     "build_sift_edges",
@@ -26,4 +30,6 @@ __all__ = [
     "back_edge_weight",
     "apply_victim_reinsertions",
     "ils_lns",
+    "sift_underrelaxed",
+    "underrelaxed_rebuild",
 ]

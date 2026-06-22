@@ -60,8 +60,11 @@ HYPOTHESIS = (
 
 # Per-dataset total gradient budget (= baseline single-run budget; sift adds 0 grad steps).
 _EPOCHS = {"connectome": 20_000, "mouse": 5_000, "microns": 80_000}
-# Per-dataset max Jacobi sweeps (mouse is tiny -> more sweeps; large graphs cap at 12).
-_MAX_SWEEPS = {"connectome": 12, "mouse": 30, "microns": 12}
+# Per-dataset max Jacobi sweeps. Raised to 40 on connectome/mouse in Phase 6.2: the Jacobi
+# iterate was still improving at the old cap of 12 (it limit-cycles rather than converges,
+# so the extra sweeps recover ~+0.045 pp on connectome via the best-by-oracle phase).
+# microns kept at 12 for adequate runtime (its per-sweep cost is ~3x connectome's).
+_MAX_SWEEPS = {"connectome": 40, "mouse": 40, "microns": 12}
 
 
 def run(g: GraphData, seed: int, device, time_limit: Optional[float] = None

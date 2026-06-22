@@ -2055,3 +2055,54 @@ Two gates, BOTH must pass; either failure kills.
   estimator, directly confirming finding #3's drift-probe prediction.
 - Files: `experiments/proto_h34_perturbsort.py` → `experiments/outputs/proto_h34_perturbsort.json`.
 #### Decision: kill (by prototype gate) — FALSIFIED. The last untried continuous lever is exhausted; "continuous methods cannot close the gap on this problem regardless of gradient source" is a clean corroboration of finding #3.
+
+---
+
+# Phase 6.2 — under-relaxed two-phase sift (H35) + H30 sweep bump (2026-06-23)
+
+## 2026-06-23 — H35: under-relaxed two-phase exact-gain sift — CONFIRMED (connectome); microns-inferior at cap
+- Origin: exploratory `dr_tmp/` research (`dr_tmp/FINDINGS_underrelaxation.md`). Diagnosed that
+  H30's **Jacobi** sift (every node jumps FULLY to its exact gap each sweep) does **not converge**
+  on the large dense connectomes — it enters a period-2 **limit cycle** (connectome ~5,255 movers
+  stuck forever, candidate alternating 83.807/83.796; same on microns ~350 movers). Best-by-oracle
+  then only creeps up via the lucky phase.
+- Fix = **under-relaxation** (textbook 2-cycle cure): move each mover only a fraction `α` toward its
+  exact-optimal gap, `key = rank + α·((best_gap−0.5) − rank)`. Two-phase schedule: `α=1` for the
+  first `k_full=6` warm sweeps (fast progress, captures the Jacobi optimum where it converges), then
+  `α=0.7` (settle the cycle). Best-by-oracle keeps the max over the whole trajectory → never worse
+  than plain Jacobi within a run. Variant `src/mfas/experiments/H35.py`; refiner
+  `src/mfas/refine/underrelax.py` (reuses the brute-force-verified `jacobi_best_gaps` kernel
+  unchanged; at `α=1` it is bit-identical to H30's `sift`, asserted in
+  `tests/test_refine_underrelax.py`). Leakage-safe: oracle only accepts/rejects whole vectors;
+  0 extra gradient steps.
+- **Also raised H30 `_MAX_SWEEPS` 12→40 (connectome/mouse), microns stays 12** — the Jacobi iterate
+  was still improving at the old cap of 12 (it limit-cycles, doesn't converge), so the extra
+  best-by-oracle sweeps recover ~+0.045 pp on connectome for free. H35 uses the same caps so every
+  dataset comparison isolates `α`, not sweep count.
+
+#### Implementer (real harness, 3 seeds 42/123/999, role implement; `eval/run_variant.py`)
+- Tests: `pytest tests/test_refine_insertion.py tests/test_refine_underrelax.py -q` → **9 passed**
+  (α=1 ⇔ H30 sift exactly on small + mouse; monotone; two-phase ≥ Jacobi; float32-rank oracle-exact).
+- Frozen integrity OK on every run; runner `score == best_score` re-score assertion held everywhere.
+
+| dataset | H35 mean±std | H30@40 mean±std | Δ(H35−H30) | 95% CI lo | Δ vs H02 | Δ vs baseline |
+|---|---|---|---|---|---|---|
+| **connectome** | **83.9101 ± 0.0060** | 83.8118 ± 0.0143 | **+0.0983 pp** | **+0.0759** | +0.9808 | +1.0144 |
+| mouse | 92.9018 ± 0.0000 | 92.9018 ± 0.0000 | +0.0000 | — | +0.4225 | +0.8322 |
+| microns | 83.2045 ± 0.0005 | 83.2064 ± 0.0010 (@12) | −0.0019 pp | −0.0035 | +0.0757 | +0.0874 |
+
+- connectome per-seed Δ(H35−H30): +0.0798 / +0.1192 / +0.0958 — all positive, CI_lo well > 0.
+- microns reuses the existing H30@12 confirm JSONs as comparator (microns H30 cap unchanged); H30
+  microns was NOT re-run. The −0.0019 pp is ≈2× the tiny microns noise floor: at the 12-sweep cap
+  (only 6 under-relaxed sweeps with `k_full=6`) the under-relaxation does not overtake H30's 12 full
+  Jacobi sweeps — the `dr_tmp` sizing showed it overtakes on microns only at ~30 sweeps (+0.008 pp).
+- Result JSONs: `results/*-H35-{connectome,mouse,microns}-s{42,123,999}-implement-*.json` and
+  `results/*-H30-{connectome,mouse}-s{42,123,999}-implement-*.json` (H30@40); comparators
+  `results/*-{H02,baseline_passthrough}-*` (existing).
+
+#### Decision: CONFIRMED win on the connectome (primary large graph; +0.098 pp, CI_lo +0.076,
+3 seeds), non-regressing on mouse; **marginal regression vs H30 on microns at the 12-sweep cap →
+NOT a clean 3-dataset GENERAL WIN.** On the fly connectome H35 is the better refiner (82.93%
+plateau → 83.91%, ~58% of the Rocket↔best gap, no MIP, 0 extra grad steps). Path to a general
+win (deferred): higher microns sweep cap or a cycle-triggered α (under-relax only once oscillation
+is detected) so microns is not penalized by the short budget. Repro commands in `findings.md` #5.

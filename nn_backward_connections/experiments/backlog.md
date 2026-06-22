@@ -1634,3 +1634,29 @@ strong prior that *any* continuous lever re-converges to the 82.9% basin, so its
 all five: every entry reports the **pure-Rocket score separately** from the refinement (CLAUDE.md),
 honors the require-improvement-on-ALL-THREE-datasets promotion rule, and uses the oracle only for
 best-by-oracle whole-vector acceptance.
+
+---
+
+# Phase 6.2 backlog (H35) — dynamics of the discrete refiner (2026-06-23)
+
+## H35 — under-relaxed two-phase exact-gain sift (break the Jacobi limit cycle)
+- **One-line hypothesis:** H30's sift is a *Jacobi* iteration that does NOT converge on the large
+  dense connectomes (period-2 limit cycle); **under-relaxing** the move (`key = rank + α·(best_gap −
+  rank)`, `α=0.7` after `k_full` full warm sweeps) breaks the cycle, the iterate converges, and the
+  refined order beats H30's Jacobi sift at equal gradient budget. Expected direction: **positive on
+  the large dense connectomes, non-regressing on small/already-converged graphs (mouse).**
+- **Design:** `src/mfas/refine/underrelax.py::sift_underrelaxed` (reuses the verified
+  `jacobi_best_gaps` kernel; α=1 is bit-identical to `insertion.sift`); variant
+  `src/mfas/experiments/H35.py` chains H02 init + `run_rocket` + the under-relaxed sift. H30
+  `_MAX_SWEEPS` raised 12→40 (connectome/mouse) in the same commit; H35 matches caps so the
+  comparison isolates α. Comparators: H30@40 (isolate α), H02 (sift increment), baseline_passthrough.
+- **status: CONFIRMED (connectome) / NOT a general win** <!-- 2026-06-23 connectome Δ(H35−H30@40) =
+  +0.098 pp (CI_lo +0.076, 3 seeds, all per-seed +); mouse Δ=0 (non-regressing); microns Δ=−0.0019 pp
+  at the 12-sweep cap (under-relaxation needs ~30 sweeps to overtake Jacobi on microns, dr_tmp). Win
+  on the fly connectome (82.93%→83.91%); microns-inferior at the reduced budget. See findings.md #5,
+  log.md Phase 6.2. -->
+
+### Open follow-up (deferred)
+- **H36 (proposed):** cycle-triggered α — run pure Jacobi until oscillation is detected (candidate
+  dips while movers plateau), THEN switch to under-relaxation. Would make H35 a clean 3-dataset
+  general win (microns no longer penalized by a fixed short budget). Untried.

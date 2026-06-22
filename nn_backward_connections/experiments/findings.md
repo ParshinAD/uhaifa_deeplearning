@@ -184,6 +184,14 @@ is now exhausted (`experiments/proto_h34_perturbsort.py`; killed by prototype ga
 
 ## #4 — A cheap full-range discrete sift recovers ~half the connectome gap with NO MIP (Phase 6)
 
+> **⚙ UPDATED by Phase 6.2 (2026-06-23).** H30's sift sweep cap was raised **12 → 40** on
+> connectome/mouse (microns stays 12). Re-run H30@40 connectome = **83.8118 ± 0.0143 (3 seeds)**
+> (was 83.7761 @12; the +0.045 pp is the extra best-by-oracle sweeps — the Jacobi iterate was
+> still improving at the old cap of 12). The old @12 numbers below remain reproducible at the
+> prior commit (invariant #5). The Jacobi sift does **not converge** on the large connectomes
+> (it enters a period-2 limit cycle); the under-relaxed variant **H35** (finding #5) breaks the
+> cycle for a further **+0.098 pp** on connectome.
+
 **Claim.** Appending a **leakage-safe, full-range, exact-gain node re-insertion ("sift")** post-phase to
 H02-warm-started Rocket recovers a large, CONFIRMED chunk of feedforward weight the continuous optimizer
 leaves on the table — at **equal gradient budget** (the sift adds **0** optimizer steps; only wall-clock)
@@ -244,6 +252,60 @@ for S in 42 123 999 7 31415; do python -m eval.run_variant --exp H30 --dataset m
 ```
 Result JSONs: `results/*-H30-{connectome,microns,mouse}-*-{implement,verify,confirm}-{1976d9,954bab,ff2174}.json`.
 Full cycle (implementer/verifier/critic verdicts): `experiments/log.md` (Phase-6 H30 entry).
+
+## #5 — Under-relaxation breaks the Jacobi sift limit cycle: +0.098 pp on the fly connectome (Phase 6.2)
+
+**Claim.** H30's production sift is a **Jacobi** iteration (every node jumps FULLY to its
+exact feedforward-maximising gap each sweep). On the two large dense connectomes it does **not
+converge** — it enters a period-2 **limit cycle** (thousands of nodes leapfrogging each other
+forever; on connectome ~5,255 movers stuck, candidate alternating 83.807/83.796), so
+best-by-oracle only creeps up via the lucky phase. Replacing the rebuild with an
+**under-relaxed** step (move each mover only a fraction `α=0.7` of the way to its gap, after
+`k_full=6` full warm sweeps) **breaks the cycle**: the iterate converges (movers collapse to a
+few hundred) and reaches a strictly higher fixed point — at the **same gradient budget** (the
+sift adds 0 optimizer steps) and the same per-sweep cost. Variant **H35** = H02→Rocket→
+under-relaxed two-phase sift (`src/mfas/experiments/H35.py`, refiner
+`src/mfas/refine/underrelax.py`). At `α=1` it is bit-identical to H30's sift (unit-tested), so
+the gain is purely the `α<1` dynamics.
+
+**Evidence (3 seeds 42/123/999; H30 here is H30@40, the new baseline; Δ is seed-matched mean ±
+paired-std, conservative 95% CI lower bound = mean − 1.96·SE):**
+
+| dataset | H35 mean±std | H30@40 mean±std | Δ(H35−H30) | 95% CI lo | Δ vs H02 | Δ vs baseline_passthrough |
+|---|---|---|---|---|---|---|
+| **connectome** | **83.9101 ± 0.0060** | 83.8118 ± 0.0143 | **+0.0983 pp** | **+0.0759** | +0.9808 | +1.0144 |
+| mouse | 92.9018 ± 0.0000 | 92.9018 ± 0.0000 | +0.0000 (non-regressing) | — | +0.4225 | +0.8322 |
+| microns | 83.2045 ± 0.0005 | 83.2064 ± 0.0010 (@12) | **−0.0019 pp** | −0.0035 | +0.0757 | +0.0874 |
+
+**Verdict: CONFIRMED win on the connectome (the primary large graph and where the Rocket↔best
+gap lives); non-regressing on mouse; a marginal regression vs H30 on microns at the 12-sweep
+cap — so this is NOT a clean 3-dataset GENERAL WIN like H30.** All three connectome per-seed
+deltas are positive (+0.080/+0.119/+0.096) and the CI lower bound is well above 0. On the
+connectome this lifts Rocket's 82.93% plateau to **83.91%**, recovering ~58% of the 1.69 pp
+Rocket↔best gap (vs H30's ~51%) and closing ~17% of the residual to the 84.61% challenge SOTA
+(Vahidi 2025), still with **no MIP and 0 extra gradient steps**.
+
+**Why microns regresses (honest).** The under-relaxation needs more sweeps than Jacobi to
+converge; the exploratory `dr_tmp` sizing showed it overtakes Jacobi on microns only at ~30
+sweeps (+0.008 pp there), but microns' cap was kept at 12 for adequate runtime (its per-sweep
+sift cost is ~3–9× connectome's; the 80k-epoch Rocket dominates the wall regardless). With
+`k_full=6` only 6 under-relaxed sweeps run on microns — not enough to overtake H30's 12 full
+Jacobi sweeps, so H35 lands −0.0019 pp (≈2× the tiny microns noise floor) below H30 there. H35
+still beats H02/baseline on microns (+0.076/+0.087). A general win would need a higher microns
+sweep cap or a cycle-triggered α (switch to under-relaxation only once oscillation is detected)
+— deferred. Variant config: `_MAX_SWEEPS={connectome:40, mouse:40, microns:12}`, `_K_FULL=6`,
+`_ALPHA=0.7`.
+
+**Reproduce** (env `/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python`):
+```
+PYTHONPATH=src python -m pytest tests/test_refine_underrelax.py -q   # α=1 ⇔ H30 sift; monotone
+for S in 42 123 999; do python -m eval.run_variant --exp H35 --dataset connectome --seed $S --out results/ --role implement --device auto; done
+for S in 42 123 999; do python -m eval.run_variant --exp H30 --dataset connectome --seed $S --out results/ --role implement --device auto; done  # @40 baseline
+for S in 42 123 999; do python -m eval.run_variant --exp H35 --dataset mouse   --seed $S --out results/ --role implement; done
+for S in 42 123 999; do python -m eval.run_variant --exp H35 --dataset microns --seed $S --out results/ --role implement --device auto; done
+```
+Exploratory diagnosis (the limit-cycle + α sizing): `dr_tmp/FINDINGS_underrelaxation.md`,
+`dr_tmp/exp_sweeps.py`, `dr_tmp/exp_damped.py`, `dr_tmp/exp_underrelax.py`.
 
 ## Phase-6 summary — global discrete refinement (H30–H34, 2026-06-22)
 
