@@ -17,7 +17,7 @@ Append-only lab notebook. Each entry: date, hypothesis, command, result (traced 
 <!-- The table below is auto-generated; do not edit by hand. -->
 
 <!-- BEGIN AGGREGATED RESULTS (auto-generated) -->
-_Generated 2026-06-22T11:06:34Z from 191 run(s)._
+_Generated 2026-06-22T16:12:43Z from 244 run(s)._
 
 | algo | dataset | n_seeds | pct mean±std | score mean±std | wall_clock_s (mean) | seeds | config_hash | git_commit |
 |---|---|---|---|---|---|---|---|---|
@@ -46,11 +46,14 @@ _Generated 2026-06-22T11:06:34Z from 191 run(s)._
 | H16 | microns | 3 | 83.1033 ± 0.0000 | 12,798,371 ± 1 | 577.2 | [42, 123, 999] | c5c44a | 32d290734ec |
 | H16 | mouse | 3 | 92.6131 ± 0.0000 | 8.4825 ± 0.0000 | 2.1 | [42, 123, 999] | afe423 | 9cc9c34eb98 |
 | H19 | mouse | 3 | 90.1263 ± 0.0000 | 8.2547 ± 0.0000 | 2.4 | [42, 123, 999] | 5dceca | 3275f5cce2d |
+| H30 | connectome | 11 | 83.7805 ± 0.0096 | 35,114,220 ± 4,041 | 151.7 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 31415] | 1976d9 | 7dc17e20460 |
+| H30 | microns | 11 | 83.2067 ± 0.0012 | 12,814,293 ± 185 | 728.4 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 31415] | 954bab | 7dc17e20460 |
+| H30 | mouse | 26 | 92.9018 ± 0.0000 | 8.5089 ± 0.0000 | 2.7 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 1111, 1234, 1414, 1618, 1732, 2222, 2236, 2718, 3333, 4444, 5555, 6666, 7777, 8888, 9999, 31415] | ff2174 | 7dc17e20460 |
 | baseline_multistart | connectome | 3 | 82.0507 ± 0.0293 | 34,389,211 ± 12,284 | 77.2 | [42, 123, 999] | 330c58 | 704221ab778 |
 | baseline_multistart | mouse | 3 | 92.1625 ± 0.0242 | 8.4412 ± 0.0022 | 1.9 | [42, 123, 999] | c6938b | 704221ab778 |
 | baseline_passthrough | connectome | 21 | 82.8838 ± 0.0224 | 34,738,365 ± 9,388 | 419.0 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 1414, 1618, 1732, 2236, 2718, 5005, 6004, 7003, 8002, 9001, 31415] | f8cb3c | 8f0e5066211, 9cc9c34eb98, f36e02847a9 |
-| baseline_passthrough | microns | 6 | 83.0705 ± 0.0511 | 12,793,325 ± 7,869 | 344.8 | [42, 42, 123, 123, 999, 999] | c2f06f | 97b951056ae |
-| baseline_passthrough | mouse | 23 | 92.2464 ± 0.2138 | 8.4489 ± 0.0196 | 40.9 | [7, 42, 42, 123, 123, 999, 999, 1111, 1234, 1414, 1618, 1732, 2222, 2236, 2718, 3333, 4444, 5555, 6666, 7777, 8888, 9999, 31415] | 7b7cba | 8f0e5066211, f36e02847a9 |
+| baseline_passthrough | microns | 8 | 83.0823 ± 0.0483 | 12,795,132 ± 7,445 | 396.2 | [7, 42, 42, 123, 123, 999, 999, 31415] | c2f06f | 7dc17e20460, 97b951056ae |
+| baseline_passthrough | mouse | 26 | 92.2260 ± 0.2215 | 8.4470 ± 0.0203 | 36.5 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 1111, 1234, 1414, 1618, 1732, 2222, 2236, 2718, 3333, 4444, 5555, 6666, 7777, 8888, 9999, 31415] | 7b7cba | 7dc17e20460, 8f0e5066211, f36e02847a9 |
 | baseline_rocket | connectome | 3 | 82.8958 ± 0.0189 | 34,743,386 ± 7,927 | 75.9 | [42, 123, 999] | 5ec3ce | 7a77547dee9 |
 | baseline_rocket | microns | 1 | 83.0997 (n=1) | 12,797,820 (n=1) | 278.2 | [42] | 4727ce | 97b951056ae |
 | baseline_rocket | mouse | 3 | 92.0696 ± 0.2624 | 8.4327 ± 0.0240 | 1.9 | [42, 123, 999] | 5cf05a | 7a77547dee9 |
@@ -1728,3 +1731,184 @@ flat greedy-FAS, theory-aligned with Finding #2).
 - 012e9ad — H16r KILL(ARTIFACT) + H03r KILL(NULL)
 - 71eb853 — H02r GENERAL WIN
 - 82973a0 — H11r KILL(NULL)
+
+---
+
+# PHASE 6 — Global discrete refinement (H30–H34)
+
+Premise: Finding #3 ("the ~1.69 pp Rocket→best gap is irreducible to continuous +
+**bounded-local** discrete methods") was scoped to BOUNDED moves (H22 ±W window, H04
+barycenter both killed). Phase 6 tests the one untried lever: **full-range, exact-gain**
+discrete refinement. New code lives only under `src/mfas/refine/` + `src/mfas/experiments/H3x.py`;
+the frozen scorer/harness/aggregate are untouched (`verify_frozen_manifest()` = OK before every run).
+
+## 2026-06-22 — H30: full-range exact-gain node re-insertion ("sift") as a Rocket post-phase
+- Hypothesis: after H02-warm-started Rocket, a leakage-safe full-range exact-gain **Jacobi** node
+  re-insertion (sift) post-phase recovers feedforward weight the continuous optimizer leaves on the
+  table; refined ≥ pure Rocket. Variant `src/mfas/experiments/H30.py` = H02 (`greedy_fas_order` →
+  `_init_positions_from_order` → unchanged `run_rocket`) then the sift post-phase. Refiner:
+  `src/mfas/refine/insertion.py` (pure vectorized NumPy; numba/pyamg absent). H30 adds **0 gradient
+  steps** (`n_epochs_done` = baseline budget), so the compute-matched comparators are H02 (isolates the
+  sift = the within-run pure→refined gain) and `baseline_passthrough` (total stacked gain), all at
+  matched seeds 42/123/999.
+- **Mechanism / exactness.** For node `u` at rank `p`, the feedforward weight of its incident edges as a
+  function of insertion gap `g` is piecewise-constant: `total_u(0)=Σ out_w`; out-edge `u→v` drops `−w` at
+  breakpoint `q(v)+1`, in-edge `x→u` adds `+w` at `q(x)+1` (reduced rank `q=rank if rank<p else rank−1`).
+  `jacobi_best_gaps` computes the exact best gap+gain for EVERY node at once via one combined-key argsort
+  `u*(n+2)+b`, per-(u,b) delta aggregation, segmented cumsum + segmented `maximum.reduceat`. Verified by
+  unit tests against brute force (with an isolated node + a self-loop), against an O(deg) reference kernel
+  on a small graph AND on mouse, monotone-improvement on mouse, and float32-rank oracle-exactness on mouse
+  (`tests/test_refine_insertion.py`, 5/5 green; full suite + frozen guard green).
+- **Sift loop (leakage-safe).** The *working* order advances unconditionally each Jacobi sweep (like
+  Rocket's iterate); a SEPARATE best-by-oracle tracker keeps the strictly-best candidate the frozen oracle
+  ever scored and is what is returned (result can never regress). Decoupling is required for Jacobi: on
+  dense cyclic cores a simultaneous sweep can transiently dip before climbing (stopping on the first
+  non-improving sweep would abandon the gain). Every move is chosen from input edge weights + current ranks
+  only; the oracle is used ONLY to accept/reject whole vectors; never reads `data/best_solution`; never
+  dataset-special-cased. `best_positions` = final best rank cast to float32 (oracle-exact at n<2²⁴ → the
+  runner's `score == best_score` re-score assert held on every run).
+
+### Prototype (CPU; `experiments/proto_sift_fullrange.py` → `experiments/outputs/proto_sift_fullrange.json`)
+Production kernel reproduces the `dr_tmp` falsifier's positive gains. Δ vs H02 (3 seeds):
+  - hard synthetic (n=400): Jacobi-sift **+0.50 … +0.93 pp** (GS-ref +0.71 … +0.98 pp); Jacobi exceeds the
+    high-effort reference order on s42/s123. Mouse (n=148): Jacobi-sift **+0.422 pp** on all 3 seeds
+    (≥ GS-ref). Clearly positive on both proxies → no further CPU gate needed (per backlog).
+
+#### Implementer (screen, n=3 seeds 42/123/999, role=implement, equal gradient budget)
+Refinement is near-deterministic (std ~0) → the 2σ screen is technically uninformative; recorded here, but
+the decisive judgement is the within-run pure→refined gain and a CI-lower-bound CONFIRM (recommended next).
+H30's pure-Rocket order == H02's order at the same seed (identical greedy init + Rocket budget + seed), so
+the within-run pure→refined gain = H30_refined − H02.
+
+| dataset | H30 refined (mean±std) | pure-Rocket = H02 (mean) | Δ vs H02 (pure→refined) | Δ vs baseline_passthrough | screen 2σ gate |
+|---|---|---|---|---|---|
+| connectome | **83.79068 ± 0.00358** | 82.93076 | **+0.85992 pp** | +0.89487 pp | PASS (Δ ≫ 2σ=0.0072, gate 0.04) |
+| microns    | **83.20705 ± 0.00094** | 83.12861 | **+0.07845 pp** | +0.08987 pp | PASS (Δ ≫ 2σ=0.0019, gate 0.002) |
+| mouse      | **92.90180 ± 0.00000** | 92.47934 | **+0.42246 pp** | +0.83218 pp | non-inferior (≫ −0.52) |
+
+- **DECISIVE NUMBER (connectome):** the sift beats the *real* 82.93% H02 plateau by **+0.86 pp**
+  (83.786–83.795% per seed) — full-range exact-gain insertion recovers ~51% of the 1.69 pp Rocket→best gap
+  on the connectome, the one number the `dr_tmp` spike could not measure (it started from an 81.6% partial
+  order). This DIRECTLY revises Finding #3's "bounded-local" verdict on the connectome.
+- **Runtime.** Sift adds ~37 s (connectome, 12/12 sweeps all improving), ~127 s (microns), ~0 s (mouse).
+  Wall multiplier vs H02: **connectome 1.40×, microns 1.19×, mouse 0.92×** — all within the ≤2× ceiling.
+- **Per-seed within-run pure→refined:** connectome s42 +0.85501 / s123 +0.86468 / s999 +0.86006;
+  microns s42 +0.07745 / s123 +0.07951 / s999 +0.07838; mouse +0.42246 (all seeds).
+- **Result file ids (implement):**
+  - connectome: `20260622T124119Z-H30-connectome-s42-implement-1976d9`,
+    `20260622T124336Z-H30-connectome-s123-implement-1976d9`, `20260622T124554Z-H30-connectome-s999-implement-1976d9`
+  - microns: `20260622T124826Z-H30-microns-s42-implement-954bab`,
+    `20260622T130014Z-H30-microns-s123-implement-954bab`, `20260622T131203Z-H30-microns-s999-implement-954bab`
+  - mouse: `20260622T124101Z-H30-mouse-s42-implement-ff2174`,
+    `20260622T124104Z-H30-mouse-s123-implement-ff2174`, `20260622T124107Z-H30-mouse-s999-implement-ff2174`
+  - comparators reused (no re-run): H02 `…-H02-{connectome:059689, microns:59bc98, mouse:a8bbc0}-s{42,123,999}-implement`;
+    baseline_passthrough `…-baseline_passthrough-{connectome:f8cb3c, microns:c2f06f, mouse:7b7cba}-s{42,123,999}-implement`.
+- **Exact commands:**
+  ```
+  PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+  PYTHONPATH=src $PY -m pytest tests/test_refine_insertion.py -q          # 5/5 green
+  PYTHONPATH=src $PY experiments/proto_sift_fullrange.py                   # prototype gains
+  for S in 42 123 999; do $PY -m eval.run_variant --exp H30 --dataset mouse      --seed $S --out results/ --role implement;            done
+  for S in 42 123 999; do $PY -m eval.run_variant --exp H30 --dataset connectome --seed $S --out results/ --role implement --device auto; done
+  for S in 42 123 999; do $PY -m eval.run_variant --exp H30 --dataset microns    --seed $S --out results/ --role implement --device auto; done
+  ```
+- **SCREEN verdict: PASS on both primary connectomes (Δ ≫ gate on connectome AND microns) + mouse
+  non-inferior.** Status → **screened**. Because refinement is near-deterministic, escalate to the
+  H02-style 95% CI-lower-bound CONFIRM (connectome 5 / microns 5 @ 80k / mouse 20 seeds) — the 2σ screen
+  is a formality here; the magnitude (+0.86 pp connectome, +0.078 pp microns, +0.42 pp mouse over H02, all
+  three datasets, every seed) is unambiguous and well above noise. Honest caveat: connectome gain (+0.86 pp)
+  ≫ microns gain (+0.078 pp), i.e. the recovered fraction is graph-dependent (fly connectome leaves much
+  more on the table than MICrONS); the CONFIRM should report this as a likely GENERAL-but-graph-dependent
+  win, not a uniform-magnitude one.
+
+#### Critic verdict (2026-06-22 — H30 CONFIRM red-team)
+Adjudicated read-only on source; all numbers re-derived from `results/*.json` + frozen scorer via the
+`allen` interpreter. No optimization re-run.
+
+1. **Frozen-file integrity — PASS.** `git status`: none of `src/mfas/metrics.py`, `eval/harness.py`,
+   `eval/aggregate.py`, `tests/test_metrics.py` is in the working-tree diff; all four are last touched by
+   infra commit `8f0e506` with empty `git diff HEAD`. `eval/frozen_guard.py` → "frozen integrity OK"
+   (sha256 of all 4 match `eval/frozen.sha256`). `tests/test_metrics.py` 8 passed.
+
+2. **Metric leakage — PASS.** The move choice `jacobi_best_gaps(rank, src, tgt, w, n)`
+   (`src/mfas/refine/insertion.py:91`) and `jacobi_rebuild` (`:251`) take ONLY current ranks + input edge
+   weights via the closed-form step-function gain; they never receive the oracle, `best_score`, or any
+   `g.name` branch. The only `g.name` switches anywhere (H30.py `_EPOCHS`/`_MAX_SWEEPS`, lines 62–64) set
+   compute budget, not the metric. The frozen oracle `score_from_order` appears in `sift` ONLY at lines 307
+   (init best) and 319 (`cand_score`), and `cand_score` gates the best tracker (`:323-326`) — it never
+   feeds back into a move choice or loss. The Jacobi WORKING order advances unconditionally (`:321`) but is
+   structurally decoupled from the returned `best_rank`; the returned `best_score` is honestly
+   `score_from_order(best_rank)` (verified by re-score below). No `data/best_solution`, no
+   `rocket_best_positions`, no dataset special-case (grep clean). The exact-gain math is validated against
+   true brute force (`tests/test_refine_insertion.py::test_jacobi_gains_match_brute_force_small`, 0
+   mismatches) and an independent O(deg) reference on mouse — 5 passed.
+
+3. **Reproducibility — PASS.** Re-scored 3 confirm `_positions.npy` (s42 each dataset) with the frozen
+   `score_from_positions`: connectome 35,118,658.0, microns 12,814,097.0, mouse 8.5 — all EXACTLY equal the
+   JSON `score` (and pct), and each `best_positions` is a unique integer permutation in float32 (n<2^24, so
+   `score==best_score` round-trip is exact, as the runner asserts at `eval/run_variant.py:91`). JSONs carry
+   `role`, `seed`, `git_commit`, `config_hash`, `total_grad_steps`, re-runnable command logged.
+
+4. **Significance / noise — PASS.** Re-derived from confirm JSONs (SE = comparator sample-std·√(2/n),
+   95% CI):
+   - connectome (n=5): H30 83.7761±0.0095 vs baseline_passthrough@20k 82.879 → Δ+0.897, CI_lo **+0.869**;
+     vs H02 82.9297 → Δ+0.846, CI_lo **+0.845**.
+   - microns (n=5): H30 83.2069±0.0012 vs baseline@80k 83.1175 → Δ+0.0894, CI_lo **+0.086**; vs H02
+     83.1286 → Δ+0.0783, CI_lo **+0.076**.
+   - mouse (n=20): H30 92.9018 (σ=0) vs baseline 92.273 → Δ+0.629, CI_lo **+0.505**; vs H02 92.4793 (σ=0)
+     → Δ+0.4225 (SE=0; deterministic fixed point, not cherry-picked).
+   All CI_lo > 0 on BOTH primaries + mouse, vs BOTH comparators. Screen (implement n=3) Δ>2σ on all three.
+
+5. **Both-primary robustness / generality — PASS (with scope caveat).** Sign positive and CI_lo>0 on
+   connectome AND microns AND mouse → meets the 3-dataset rule. BUT magnitude is ~11× larger on connectome
+   (+0.85 pp over H02) than microns (+0.078 pp). Required caveat wording for findings.md: *"GENERAL but
+   graph-dependent win: the sift recovers feedforward weight on all three real connectomes (connectome,
+   MICrONS, mouse), but the recovered fraction is highly graph-dependent — ~+0.85 pp over the H02 plateau on
+   the fly connectome vs only ~+0.078 pp on MICrONS. The fly connectome leaves far more on the table after
+   continuous optimization than MICrONS does; do not claim a uniform-magnitude effect."*
+
+6. **Double-counting — PASS.** The sift increment is correctly credited via the paired within-seed
+   H30−H02 gain (H30's pure-Rocket order == H02 at the same seed): connectome +0.837…+0.864 pp every seed,
+   microns +0.0789/+0.0791, mouse +0.4225 every seed. This isolates the sift from H02's warm-start; the log
+   reports Δ-vs-H02 separately from Δ-vs-baseline_passthrough. CAVEAT (minor): the pure→refined split lives
+   in `history.attrs` (`H30.py:114-121`) but `run_variant.build_record` does NOT serialize `history.attrs`,
+   so the results JSON stores only the final refined number. The CLAUDE.md "report pure Rocket separately"
+   rule is satisfied because pure-Rocket == H02 by construction and is logged as the comparator — but the
+   per-run pure number is not independently in the JSON. Acceptable (pure==H02 is exact), worth a note.
+
+7. **Compute fairness — PASS (wall-clock figure understated).** H30 confirm `total_grad_steps` == baseline
+   budget exactly (connectome 20000, microns 80000, mouse 5000); sift adds 0 gradient steps, so the equal-
+   compute comparison vs H02 / baseline_passthrough is honest. Wall-clock IS disclosed (`sift_time_s` folded
+   into `wall_clock_s`). NOTE: measured connectome wall is H30 ~184.5s vs H02 ~94.4s ≈ **1.95×** (vs
+   baseline_passthrough 106.9s ≈ 1.7×) — the brief's "1.2–1.4×" understates it for the connectome, though
+   still ≤2×. Recommend the finding state the true ratio (~2× connectome wall, 0 extra grad steps).
+
+8. **Overfitting to the proxy — PASS.** The real target (connectome) is the LARGEST gain, not a proxy
+   artifact; the prototype's mouse/synthetic validation is corroborated, not relied upon. Residual risks are
+   disclosed in code: Jacobi (simultaneous) vs Gauss-Seidel dynamics can transiently overshoot — handled by
+   best-by-oracle decoupling (`insertion.py:283-296`); MPS nondeterminism affects only the pure-Rocket seed
+   order feeding the sift, and the sift's accept/reject guarantees refined ≥ pure regardless. Cross-seed
+   spread is tiny (connectome σ0.0095), so MPS jitter does not threaten the sign.
+
+**Top concerns (all minor, none blocking):**
+- (a) microns comparators (H02, baseline_passthrough) have only **n=2 confirm seeds** {7,31415} vs H30's
+  n=5; the CI uses n=min=2 (conservatively handled), but the microns confirm is thinner than connectome.
+  The signal is 75σ so the conclusion is safe, but ideally backfill ≥1 more microns H02/baseline seed.
+- (b) `git_commit` in the JSONs is `7dc17e2…+dirty` — expected mid-experiment, but the promoting commit
+  must be clean so the logged command reproduces from `git checkout`.
+- (c) wall-clock overhead is ~2× on connectome, not 1.2–1.4× — state honestly in findings.md.
+
+**Recommendation: keep** — promote to findings.md as a CONFIRMED GENERAL (graph-dependent) WIN. All five
+core checks plus the three H30-specific risks (leakage decoupling, float32 exactness, double-counting) pass
+on independently re-derived evidence; required caveat = the ~11× connectome-vs-microns magnitude gap + the
+~2× connectome wall-clock + credit the SIFT INCREMENT (Δ-vs-H02), not H02 itself.
+
+#### Decision: keep — CONFIRMED GENERAL WIN (graph-dependent magnitude)
+H30 (full-range exact-gain sift post-phase) is promoted to **findings.md #4**. CI lower bound > 0 on both
+primaries vs both comparators (connectome Δ-vs-H02 +0.847, CI_lo +0.835; microns +0.078, CI_lo +0.077),
+mouse non-inferior (+0.422). Recovers ~51% of the 1.69 pp connectome Rocket↔best gap (82.93% → 83.78%)
+with **no MIP / 0 extra gradient steps** (wall ~2× connectome, ~1.2× microns). Partially **revises
+finding #3** (the residual is reachable by cheap *global* discrete refinement, not only the Crane MIP; the
+*bounded-local* clause stands — W=10 sift ≈ 0 reproduces H22). Prior-art cross-check: Vahidi 2025
+(arXiv:2506.13799) reaches 84.61% on this graph with cheap greedy + bounded-span insertion + SCC, no MIP.
+Backlog H30 → `confirmed`. Next: H31 (ILS/LNS wrapper on the sift move) targets the residual ~0.83 pp.

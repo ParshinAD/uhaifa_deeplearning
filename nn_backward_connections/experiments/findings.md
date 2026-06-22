@@ -111,6 +111,17 @@ graphs and has been pressure-tested by an independent verifier and critic. Full 
 
 ## #3 — The Rocket↔best gap is an OPTIMIZATION-GAP that continuous methods alone cannot close (Phase 4)
 
+> **⚠ PARTIALLY REVISED by #4 (Phase 6, 2026-06-22).** The "irreducible … explaining why the
+> paper's discrete **Crane MIP** is required" framing is **too strong**. A cheap, leakage-safe
+> **full-range (global) exact-gain insertion sift** (H30, finding #4) recovers **~51% of the 1.69 pp
+> connectome gap with NO MIP** (82.93% → 83.78%). What still stands is the *bounded-local* clause:
+> H30's bounded W=10 sift recovers ~0 (reproducing the H22 kill), so the residual is genuinely
+> **long-range / global** — but global ≠ MIP. Independent prior art (Vahidi 2025, arXiv:2506.13799)
+> reaches the **full 84.61%** on this exact graph with cheap greedy + *bounded-span* insertion + SCC,
+> **no MIP/spectral/GNN** — so the gap is reachable by cheap combinatorial refinement, not only by the
+> 20-day Crane MIP. The continuous-only sub-claims of #3 (surrogate-aligned optimization-gap; Adam-on-σ
+> cannot reach/hold the best order) are unaffected and remain valid.
+
 **Claim.** Against a downloaded near-optimal ordering (`data/best_solution`, **84.6147%**, vs Rocket-only
 **82.93%** → gap **≈1.69 pp**), the gap is a true **optimization-gap, not a surrogate-misalignment**: the
 sigmoid surrogate *correctly ranks the near-optimal order higher than Rocket's converged solution at every
@@ -161,3 +172,66 @@ evidence only; whether an analogous gap exists for MICrONS is unknown. H17 (basi
 H20 (Gumbel-Sinkhorn) were **deferred-by-evidence** (predicted non-improving by H01's prior kill, the drift
 probe, and H19's failure — see log.md), not exhaustively falsified. Full evidence + commands:
 `experiments/diagnosis.md`, `experiments/log.md` (Phase-4 + Phase-5 sections), `experiments/outputs/diagnosis.json`.
+
+## #4 — A cheap full-range discrete sift recovers ~half the connectome gap with NO MIP (Phase 6)
+
+**Claim.** Appending a **leakage-safe, full-range, exact-gain node re-insertion ("sift")** post-phase to
+H02-warm-started Rocket recovers a large, CONFIRMED chunk of feedforward weight the continuous optimizer
+leaves on the table — at **equal gradient budget** (the sift adds **0** optimizer steps; only wall-clock)
+and on **all three real connectomes**. The move repeatedly places each node at the **exact** rank that
+maximizes the feedforward weight of its incident edges given all others fixed (full line, not a window),
+via a vectorized-NumPy Jacobi rebuild; the frozen oracle is used **only** to accept/reject whole candidate
+vectors (best-by-oracle), never inside a move choice. This is a **GENERAL WIN with graph-dependent
+magnitude**.
+
+**Evidence (CONFIRMED, 3-dataset rule; conservative SE = std_comparator·√(2/n), 95% CI lower bound).
+H30's pure-Rocket order == H02 by construction, so pure-Rocket is reported separately and the SIFT
+INCREMENT is credited as Δ-vs-H02:**
+
+| dataset | H30 refined mean±std (n) | pure-Rocket = H02 (n) | Δ vs H02 (sift) | 95% CI lo | Δ vs baseline_passthrough | 95% CI lo |
+|---|---|---|---|---|---|---|
+| **connectome** | **83.7761 ± 0.0095 (5)** | 82.9292 (5) | **+0.8468 pp** | **+0.8350** | +0.8917 pp | +0.8606 |
+| **microns** | **83.2069 ± 0.0012 (5)** | 83.1287 (5) | **+0.0782 pp** | **+0.0767** | +0.0896 pp | +0.0881 |
+| **mouse** | 92.9018 ± 0.0000 (20) | 92.4793 (20) | **+0.4225 pp** | +0.4225 | +0.6289 pp | +0.5049 |
+
+All primaries (connectome AND microns) have CI lower bound > 0 vs **both** comparators; mouse passes
+non-inferiority (strongly positive) → **GENERAL WIN** per the Phase-5 decision table. Independently
+re-run by the verifier (5/5/20 seeds, clean reproduction) and red-teamed by the critic (frozen integrity,
+**no leakage** — re-scored positions equal JSON scores exactly; **no double-counting** — sift increment
+credited; significance, compute fairness, generality — all PASS).
+
+**What it means for the gap (revises #3).** On the connectome the sift lifts Rocket **82.93% → 83.78%
+(+0.85 pp)**, recovering **~51% of the 1.69 pp Rocket↔best gap with no Crane/MIP**. So the residual #3
+deemed to "need the 20-day Crane MIP" is **partly reachable by cheap global discrete refinement**. The
+*bounded-local* half of #3 still stands: H30's bounded W=10 sift ≈ 0 (reproduces the H22 kill) — the
+recoverable weight is long-range/global, just not MIP-exclusive. The remaining ~0.83 pp to the
+challenge SOTA (Vahidi 2025 **84.61%** = 35,462,925/41,912,141, via cheap greedy + bounded-span
+insertion + SCC, **no MIP** — verified against arXiv:2506.13799 HTML) is the target for H31 (ILS/LNS)
+and SCC-structured insertion.
+
+**Honest caveats.**
+- **Graph-dependent magnitude (~11×):** connectome +0.85 pp ≫ microns +0.078 pp. The fly connectome
+  leaves far more on the table for full-range exact-gain insertion than MICrONS does. The verdict is
+  GENERAL (sign/CI), not a uniform-magnitude claim.
+- **Wall-clock ~2× on connectome** (H30 ~157–185s vs H02 ~94s; +37s sift), ~1.2× microns, negligible
+  mouse — but **0 extra gradient steps** (`total_grad_steps` == baseline), so the equal-compute basis is
+  honest; the wall overhead is disclosed (`sift_time_s` in `history.attrs`, folded into `wall_clock_s`).
+- **Jacobi vs Gauss-Seidel:** the production sift uses simultaneous (Jacobi) updates with best-by-oracle
+  decoupling (it can transiently overshoot, but the returned best is monotone ≥ pure Rocket); the
+  exact-gain kernel is brute-force-verified (`tests/test_refine_insertion.py`). MPS nondeterminism
+  affects only the pure-Rocket seed order feeding the sift (σ≈0.01 pp connectome), far below the gain.
+- **Thin microns comparators** (H02/baseline n=2 at the matched confirm seeds) — handled conservatively;
+  microns signal is ~75σ so the sign is safe.
+
+Variant: `src/mfas/experiments/H30.py` (chains H02 → `run_rocket` → sift); kernel:
+`src/mfas/refine/insertion.py` (pure vectorized NumPy; numba/pyamg absent).
+
+**Reproduce** (env `/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python`):
+```
+PYTHONPATH=src python -m pytest tests/test_refine_insertion.py -q   # kernel exactness
+for S in 42 123 999 7 31415; do python -m eval.run_variant --exp H30 --dataset connectome --seed $S --out results/ --role confirm --device auto; done
+for S in 42 123 999 7 31415; do python -m eval.run_variant --exp H30 --dataset microns    --seed $S --out results/ --role confirm --device auto; done
+# mouse: 20 seeds, role confirm; comparators: --exp H02 / --exp baseline_passthrough at matched seeds
+```
+Result JSONs: `results/*-H30-{connectome,microns,mouse}-*-{implement,verify,confirm}-{1976d9,954bab,ff2174}.json`.
+Full cycle (implementer/verifier/critic verdicts): `experiments/log.md` (Phase-6 H30 entry).

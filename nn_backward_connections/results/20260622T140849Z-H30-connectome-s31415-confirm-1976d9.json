@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260622T140849Z-H30-connectome-s31415-confirm-1976d9",
+  "algo": "H30",
+  "dataset": "connectome",
+  "seed": 31415,
+  "score": 35108863.0,
+  "pct": 83.76776314051816,
+  "wall_clock_s": 132.20460295677185,
+  "git_commit": "7dc17e204608f48025f42c97216182aeaa3c3163+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "1976d9919223",
+  "timestamp": "2026-06-22T14:11:10Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260622T140849Z-H30-connectome-s31415-confirm-1976d9_positions.npy",
+  "experiment_id": "H30",
+  "role": "confirm",
+  "hypothesis": "After H02-warm-started Rocket, a leakage-safe full-range exact-gain Jacobi node re-insertion (sift) post-phase recovers feedforward weight the continuous optimizer leaves on the table; refined >= pure Rocket.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

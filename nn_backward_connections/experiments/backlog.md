@@ -1260,3 +1260,351 @@ Then the fly-specific deferrals **H17r/H18r** whose deferral reasoning was tied 
 kept only to re-confirm finding #2 on a 2nd large graph. Every entry honors the require-improvement-on-
 ALL-THREE rule for promotion; a MICrONS+mouse gain with a persistent connectome regression is reported
 as a GRAPH-DEPENDENT "recovered theory," not a general win.
+
+---
+
+# Phase-6 backlog (H30–H34) — DISCRETE-REFINEMENT-LED, post-`dr_tmp` deep-research
+
+**Why this section exists.** Phases 3–5 closed the *continuous* search space: the fly graph's
+~1.69 pp gap is an OPTIMIZATION-gap (the surrogate ranks the better order above Rocket; the optimizer
+fails to reach/hold it — diagnosis #1), the 82.9% attractor is *intrinsic to Adam-on-σ* (H16 monotone-β
+re-converged below plateau), and the gap is a **long-range / global** reordering (H22 sizing:
+recoverable-edge rank-distance p50 = 22,580 of 136,648; net recoverable within any tractable window
+≤ 0). Finding #3 concluded the residual is "irreducible to continuous + **bounded-local** discrete
+methods." **That conclusion is correct but scoped to BOUNDED moves** (H22 = ±W window; H04 = barycenter
+mean). The single move the gap's structure calls for — **full-range, exact-gain node re-insertion
+(sift)** — was never tried. The `dr_tmp` deep-research read-only agent built and ran the sizing
+falsifier (`dr_tmp/size_global_discrete.py` → `.json`, CPU-only, ~41 s) and found full-range sift
+recovers **+0.71 … +0.98 pp** over H02 on the repo's own gap-bearing hard synthetic (H21) and
+**+0.42 pp** over H02 on mouse, while bounded W=10 sift recovers ≈ 0 (reproducing the H22 kill) —
+isolating *move range* as the mechanism. Two independent web searches surfaced the current SOTA on
+this exact FlyWire graph — Vahidi (2025), arXiv:2506.13799, ~84.6% via greedy + gain-aware insertion
+local refinement + SCC, **Python/Colab, no MIP/Gurobi/spectral/trophic/GNN** — i.e. the gap the repo
+deemed "needs the 20-day Crane MIP" is reachable by *cheap combinatorial insertion local search*. The
+one unexploited lever even vs SOTA is **global / full-range** insertion (Sakuraba–Yagiura *TREE*).
+
+**Source of truth for this section:** `dr_tmp/REPORT.md` (the ranked TOP-5) and
+`dr_tmp/size_global_discrete.json` (prototype numbers). These five entries (H30–H34) are a 1:1
+transcription of that report's ranked ideas — not new inventions. All prototype numbers below are
+cited as **prototype/estimate**, never as harness-measured wins.
+
+**Budget rule (every Phase-6 entry).** ≤ ~1.5× target / ≤ 2× ceiling of the current best Rocket
+(~80 s/seed connectome; ~550 s/seed microns at 80k). No O(n²) at n=136k, no MIP/Gurobi, no multi-day
+compute. `numba` and `pyamg` are NOT installed — refiners are vectorized-NumPy / `scipy.sparse` only;
+any eigensolve must be benchmarked at connectome scale before spending full-run compute.
+
+**Comparators (PROTOCOL §Compute-matched).** The discrete-refinement post-phases (H30/H31/H32/H33)
+add **0 gradient steps** to the continuous run, so `total_grad_steps` is *equal* to the comparator's
+and the equal-budget basis is preserved. Each must therefore state **both**:
+- **Δ vs H02 @ matched-seeds** — H02's greedy-FAS-warm-started Rocket is the SOTA the refiner is
+  bolted onto; this is the *promotion* comparison (marginal gain of the refinement).
+- **Δ vs `baseline_passthrough`** — random-init Rocket at the same seeds; the total stacked gain
+  (informational). For H32/H33 the warm-start *replaces* the init, so the same two comparators apply
+  (vs `baseline_passthrough` = total, vs H02 = "does the new global warm-start beat greedy-FAS").
+H34 is a continuous surrogate swap → standard knob-swap, screen vs `baseline_passthrough`, promote
+vs H02@matched-seeds.
+
+**Leakage rule (every Phase-6 entry, explicit).** The frozen oracle may be used ONLY for
+best-by-oracle accept/reject of a **whole** position/order vector *after* it is produced — exactly as
+`run_rocket` already best-tracks the discrete score. Every move/seed is chosen from **input edge
+weights + current node ranks only** (closed-form Δ = `w_uv − w_vu + …` for sift; degrees/adjacency for
+the spectral/trophic warm-starts; positions + input weights for the surrogate). No variant reads
+`data/best_solution` (privileged to `mfas.analysis.gap`), folds the oracle *value* into a move choice
+/ loss / init, or is dataset-special-cased.
+
+**Prototype-first gate.** Per the H18–H20 precedent, novel/heavier variants run on **CPU mouse + the
+hard synthetic (H21)** before ANY connectome/microns compute:
+- **H30** is **prototype-POSITIVE already** (the `dr_tmp` falsifier ran it on mouse + synthetic and it
+  closed the gap on both) → go straight to in-repo reproduction of the prototype, then connectome.
+- **H31** builds on H30 (it wraps H30's move) → unblocked once H30's refiner exists.
+- **H32, H33, H34** are **PROTOTYPE-GATED**: earn connectome/microns compute only after closing
+  ≥ ~0.1 pp of the synthetic gap AND not regressing mouse, on CPU.
+
+**Measurement note (refinement variants are near-deterministic).** H30–H33 apply a deterministic
+exact-Δ refiner to a (near-deterministic from H02) order, so their per-seed variance is tiny — the
+2σ-baseline SCREEN is mis-specified for them (the H02/H16 low-variance pattern). Judge them by the
+**95% CI-lower-bound CONFIRM directly** (connectome 5 seeds, microns 5 seeds @ 80k, mouse 20 seeds),
+not the 2σ screen. Report the **pure-Rocket score and the Rocket+refinement score separately**
+(CLAUDE.md rule). The continuous H34 keeps the normal 2σ-screen-then-CONFIRM path.
+
+**Ranked Phase-6 order (highest EV/cost first):**
+
+| rank | id | idea (one line) | axis | est. runtime mult. | prototype signal |
+|---|---|---|---|---|---|
+| 1 | **H30** | full-range exact-gain node re-insertion (TREE sift) as a Rocket post-phase | discrete refinement | 1.40×/1.19×/0.92× (conn/mic/mouse) | **SCREENED PASS** — +0.86/+0.078/+0.42 pp over H02 (conn/mic/mouse), beats real 82.93% plateau |
+| 2 | **H31** | ILS / LNS wrapper on the H30 insertion move (perturb → re-sift → keep-best) | discrete metaheuristic | ~1.3–2× | +0.20 pp over H30 on synthetic (`dr_tmp`) |
+| 3 | **H32** | trophic-level Laplacian global warm-start → H30 sift | init (global) + discrete | ~1.1–1.5× | untried (PROTOTYPE-GATED) |
+| 4 | **H33** | magnetic-Laplacian directional spectral warm-start → H30 sift | init (global, directional) + discrete | ~1.3–2× | untried (PROTOTYPE-GATED) |
+| 5 | **H34** | perturbed/blackbox differentiable SORT surrogate (non-vanishing gradient) | surrogate (continuous) | ~1.5–2× | untried; lowest EV (PROTOTYPE-GATED) |
+
+---
+
+## H30 — Full-range exact-gain node re-insertion (TREE sift) as a Rocket post-phase  [REPORT #1, TOP PICK]
+- **One-line hypothesis:** after H02-warm-started Rocket converges, refining the ORDER by repeatedly
+  moving each node to its **exact feedforward-weight-maximising rank** given all other nodes fixed
+  (sweeping the WHOLE line, not a window) and accepting only strict improvements, recovers a fraction
+  of the ~1.69 pp connectome gap that the continuous optimizer cannot. Expected direction: **positive**
+  (prototype-positive on mouse + synthetic; honest residual risk on connectome).
+- **Exact mechanism:** for each node `v`, the change in feedforward weight from re-inserting it at any
+  rank is a step function of its insertion position whose breakpoints are the current ranks of `v`'s
+  in/out neighbours; the argmax over the **full line** is computed from `Δ = w_uv − w_vu + …` (incident
+  input edge weights + current ranks only) and `v` is moved there iff it strictly improves. Repeat in
+  sweeps. Prototype is O(n²)/sweep (fine at n ≤ 400); **connectome requires a Fenwick / balanced-tree
+  position index → O(m log m + n log n) per sweep** (Sakuraba–Yagiura *TREE*, Jacobi rebuild),
+  implemented in **vectorized NumPy** (numba unavailable), so a sweep ≈ a few Rocket epochs and a
+  handful of sweeps adds ~10–40 s (estimate). `src/mfas/experiments/H30.py`: reuse `H02.greedy_fas_order`
+  → unchanged `run_rocket` → discrete sift sweeps on the resulting order; report pure-Rocket vs
+  Rocket+sift separately.
+- **Design axis:** discrete refinement (hybrid continuous → discrete post-phase). Sanctioned by parent
+  CLAUDE.md goal #1 ("stronger local search, hybrid discrete+continuous").
+- **Comparators (PROTOCOL §Compute-matched):** the refinement adds **0 gradient steps**, so
+  `total_grad_steps` equals the comparator's. Report **Δ vs H02 @ matched-seeds** (the promotion
+  comparison — marginal gain of the sift) AND **Δ vs `baseline_passthrough`** (total stacked gain).
+  Disclose the added non-gradient wall-clock (the sift sweeps).
+- **Leakage rule:** oracle used ONLY for best-by-oracle accept/reject of the whole order vector after
+  it is produced; every move uses input edge weights + current ranks only (closed-form Δ); never reads
+  `data/best_solution`; never dataset-special-cased. Pure Rocket score reported separately.
+- **Distinct-from-killed:**
+  - vs **H04** (barycenter, killed, 0 moves accepted): barycenter places a node at the *mean* of its
+    neighbours' ranks; sift places it at the *argmax of the exact step-function*. For cyclic-core nodes
+    (bimodal neighbour ranks) the argmax is far from the mean — the `dr_tmp` falsifier accepted many
+    improving moves where barycenter accepted none.
+  - vs **H22** (bounded ±W-window sift, killed by long-range sizing): same exact-Δ code, but H22's
+    candidate range was ±W ranks and the gap is long-range (p50 = 22,580 ranks), so net ≤ 0 for all
+    tractable W. H30's candidate range is the **whole line** — the falsifier shows bounded W=10 ≈ 0
+    while full-range ≈ +0.7–1.0 pp on the same graphs, isolating *range* as the mechanism.
+- **Expected effect (ESTIMATE — cites `dr_tmp/size_global_discrete.json`, NOT harness-measured):** on
+  the hard synthetic (n=400, H21) full-range sift recovers **+0.71 … +0.98 pp** over H02 (s42 +0.714,
+  s123 +0.979, s999 +0.709) and *exceeds the high-effort reference order*; on mouse (n=148) **+0.42 pp**
+  over H02 (all three seeds 92.479 → ~92.90); bounded W=10 recovers ≈ 0 on both. **Connectome estimate:
+  recover a FRACTION of the 1.69 pp** — magnitude unknown and honestly uncertain (synthetic n=400 ≠
+  connectome structure; the connectome order may already be closer to a sift fixed point than the
+  proxies are). Given connectome 2σ = 0.04 pp / microns 2σ = 0.002 pp, even a small true gain is
+  detectable.
+- **Est. compute cost:** **cheap–medium.** One-time greedy order (as H02) + Fenwick/TREE sift sweeps
+  (~10–40 s added on connectome, estimate) → **~1.1–1.5×** with Rocket; within the ≤2× ceiling. Note
+  the falsifier's efficiency upside: `sift on the cheap greedy order with NO Rocket` matched
+  sift-on-Rocket on every row, so a *greedy + TREE-sift* path may even be cheaper than baseline Rocket
+  while scoring higher (label: estimate). Pure-NumPy may be slower than the C/numba ideal — the 2×
+  ceiling is the gate.
+- **Prototype-first gate:** **prototype-POSITIVE already** (`dr_tmp` ran it on mouse + synthetic). Plan:
+  (1) reproduce the `dr_tmp` prototype numbers in-repo, (2) implement the Fenwick/TREE sift, (3) first
+  **connectome** run (the only outstanding decisive compute), then microns. No further CPU gate needed.
+- **Measurement:** exact ff% via the frozen oracle, **all three datasets**, refinement is
+  near-deterministic → judge by the **95% CI-lower-bound CONFIRM** (connectome 5 seeds, microns 5 @ 80k,
+  mouse 20), NOT the 2σ screen. Report pure-Rocket and Rocket+sift side by side per dataset.
+- **KILL/keep prediction + cheapest first test:** lean **KEEP** (strongest of the five; positive on
+  both available proxies). **Cheapest first test = the sizing falsifier already run**
+  (`dr_tmp/size_global_discrete.py`). **Falsified if**, with the Fenwick structure on connectome, a few
+  full-range sweeps from the H02 order yield Δ ≤ noise vs H02 — which would mean the connectome order is
+  already a full-range-sift fixed point and would *re-strengthen* finding #3.
+- **status: confirmed** (2026-06-22) — CONFIRMED GENERAL WIN, promoted to findings.md #4 (verifier 5/5/20 seeds, critic keep). SCREEN PASS on both primaries + mouse non-inferior. Within-run
+  pure→refined gain (n=3, seeds 42/123/999): **connectome +0.860 pp** (82.931 → 83.791; beats the REAL
+  82.93% H02 plateau — settles the decisive unknown, recovers ~51% of the 1.69 pp gap), **microns +0.078 pp**
+  (83.129 → 83.207), **mouse +0.422 pp** (92.479 → 92.902). Δ vs baseline_passthrough +0.895 / +0.090 /
+  +0.832 pp. Runtime multiplier vs H02: 1.40× / 1.19× / 0.92× (≤2× ceiling). Refinement near-deterministic
+  (std ≤0.004) → 2σ screen uninformative; recommend CI-lower-bound CONFIRM (connectome 5 / microns 5 /
+  mouse 20). Gain is GRAPH-DEPENDENT in magnitude (connectome ≫ microns). Revises finding #3's
+  "bounded-local" scope on the connectome. Tests `tests/test_refine_insertion.py` 5/5 green;
+  prototype `experiments/proto_sift_fullrange.py`. Result ids in `experiments/log.md` (Phase-6 H30 entry).
+
+## H31 — ILS / LNS wrapper on the H30 insertion move (perturb → re-sift → keep-best)  [REPORT #2]
+- **One-line hypothesis:** wrapping H30's exact-gain insertion in an Iterated Local Search / Large
+  Neighbourhood Search — perturb the current best order (insert-kick, or ruin-and-recreate: remove the
+  k nodes carrying the most back-edge weight and re-insert each at its exact-optimal rank), run a short
+  sift sweep, keep-best-by-oracle — recovers *more* of the gap than single-pass H30 by reaching the
+  coordinated multi-node reorder the gap requires. Expected direction: **positive, smaller than H30**.
+- **Exact mechanism:** outer loop of R rounds, each = (a) target-blind perturbation — random insert-kick
+  OR a ruin step that removes k nodes selected by *current* back-edge weight (input weights + ranks
+  only) — (b) re-insert each removed node at its exact-Δ-optimal rank (the H30 move), (c) one short
+  TREE sweep, (d) oracle-score the whole order and keep the global best. Cap R so total added wall-clock
+  holds ≤ 2×. `src/mfas/experiments/H31.py`: reuse H02 init + `run_rocket` + the H30 refiner, add the
+  ILS/LNS outer loop. This is the recipe that improved all best-known large LOP instances
+  (Sakuraba et al. 2015, ILS-on-TREE).
+- **Design axis:** discrete metaheuristic (multi-start / large-neighbourhood — *not* continuous).
+- **Comparators (PROTOCOL §Compute-matched):** the wrapper adds **0 gradient steps** (it perturbs and
+  re-sifts a discrete order; the continuous run is one H02 pass), so `total_grad_steps` equals the
+  comparator's. Report **Δ vs H02 @ matched-seeds** (promotion) AND **Δ vs `baseline_passthrough`**
+  (total). Also report **Δ vs single-pass H30** (does the wrapper earn its extra wall-clock?). Disclose
+  the added non-gradient cost (R sweeps + repairs).
+- **Leakage rule:** perturbations are target-blind (random kicks / highest-back-edge-weight ruin from
+  input weights + current ranks); repair uses the closed-form Δ; oracle ONLY for whole-vector
+  best-by-oracle accept. Never reads `data/best_solution`; never dataset-special-cased.
+- **Distinct-from-killed:** vs **H01** (random multi-start of the CONTINUOUS Rocket, killed +0.0003 pp):
+  H01 restarted the *continuous* optimizer from fresh random inits under the same dynamics that
+  re-converge to the plateau — its "same basin" argument is about continuous flow. H31 perturbs and
+  re-optimizes a **discrete order with a discrete move** in an entirely different search space; H01's
+  basin argument does not apply. (Also distinct from H17 continuous basin-hopping, which re-runs the
+  surrogate optimizer; H31's inner solver is the exact-Δ sift.)
+- **Expected effect (ESTIMATE — cites `dr_tmp/size_global_discrete.json`):** on the hard synthetic LNS
+  added **+0.20 pp over full sift** (s42 73.692 → 73.896, s123 73.787 → 74.050, s999 76.023 → 76.258);
+  on mouse the marginal gain over H30 was small (+0.006 … +0.02 pp). **Connectome estimate: a small
+  increment on top of H30's fraction** — genuinely uncertain and bounded by how many kicks fit in the
+  2× budget. Most plausible where the gap is a *distributed* (multi-node) reorder, i.e. the fly graph.
+- **Est. compute cost:** **medium.** Each round = one short TREE sweep + an O(k·deg) repair; tune R to
+  the budget. **~1.3–2×** (estimate). Cap rounds to hold the 2× ceiling.
+- **Prototype-first gate:** builds on H30 → unblocked once H30's refiner exists. Before any
+  connectome/microns compute, run an **ILS round-count sweep on mouse + synthetic at matched wall-clock**
+  to confirm LNS beats single-pass H30 beyond noise; only then spend large-graph compute.
+- **Measurement:** exact ff% all three datasets; near-deterministic → **95% CI-lower-bound CONFIRM**
+  (connectome 5 / microns 5 @ 80k / mouse 20), not the 2σ screen. Report pure-Rocket, Rocket+H30, and
+  Rocket+H31 side by side.
+- **KILL/keep prediction + cheapest first test:** lean **keep, smaller than H30**. **First test = the
+  LNS column in `dr_tmp/size_global_discrete.py`** (already positive); then the round-count sweep on
+  mouse/synthetic at matched compute. **Falsified if** ILS/LNS does not beat single-pass H30 beyond
+  noise at matched compute (then ship H30 alone).
+- **status: proposed**
+
+## H32 — Trophic-level Laplacian global warm-start → H30 sift  [REPORT #3, PROTOTYPE-GATED]
+- **One-line hypothesis:** seeding the order from **trophic levels** (one sparse symmetric-Laplacian
+  solve giving a least-squares-optimal global hierarchy) instead of greedy-FAS, then refining with the
+  H30 sift, reaches a better basin than H02+sift on a graph where greedy peeling under-captures the
+  macro order. Expected direction: **positive iff trophic+sift > greedy+sift on the prototype**.
+- **Exact mechanism:** compute trophic levels `h` by one sparse solve `Λ h = v` with
+  `Λ = diag(w_in + w_out) − (W + Wᵀ)`, `v = w_in − w_out` (MacKay–Johnson–Sansom 2020) via
+  `scipy.sparse.linalg.cg` (`pyamg` unavailable → CG, optionally diagonal-preconditioned); order nodes
+  by `argsort(h)` (sources → sinks); feed that global order to the H30 refiner (and/or as a Rocket
+  init). `src/mfas/experiments/H32.py`. One SDD/Laplacian solve is near-linear → seconds at m = 5.6M.
+- **Design axis:** initialization (global linear solve) + discrete refinement.
+- **Comparators (PROTOCOL §Compute-matched):** the warm-start *replaces* the init and the sift adds
+  **0 gradient steps**, so report **Δ vs `baseline_passthrough`** (total stacked gain) AND **Δ vs H02
+  @ matched-seeds** ("does a global trophic warm-start + sift beat greedy-FAS + sift / + Rocket"). Most
+  decisive sub-comparison: **trophic+sift vs greedy+sift** (isolates the warm-start's contribution).
+- **Leakage rule:** `h` is a function of the input graph only (degrees + adjacency); oracle ONLY for
+  whole-vector best-by-oracle; never reads `data/best_solution`; never dataset-special-cased. Sift
+  leakage is H30's (closed-form Δ).
+- **Distinct-from-killed:** vs **all repo inits** (`random` / `uniform` / `degree_diff` / `degree_abs`
+  / H02 greedy-FAS): those are per-node degree imbalances or a local greedy peel; trophic level is a
+  *global* linear solve coupling all nodes (the minimiser of a feedback-coherence proxy
+  `F₀ = Σ w(h_v − h_u − 1)²`, conceptually the FAS objective). No spectral/trophic method has been run
+  on this instance (Vahidi 2025 and the challenge winners are purely combinatorial), so it is genuinely
+  untried. Crucially, finding #3's "flat init → plateau (≤0.06 pp)" is *init → run Rocket → plateau*
+  (Rocket melts any init); here the trophic order seeds the **discrete refiner**, which *holds and
+  improves* a good global order rather than melting it — so the flat-ceiling argument does not bind.
+- **Expected effect (ESTIMATE — no prototype number yet; the `dr_tmp` falsifier did NOT run trophic):**
+  **uncertain → modest.** Honest range: +0.0 … +0.3 pp over H02+sift on a graph whose macro order
+  greedy under-captures; could TIE H30 where greedy already captures the macro order. `F₀` is a
+  squared-difference proxy, not the exact weighted feedforward count, so it may not transfer.
+- **Est. compute cost:** **cheap–medium.** One sparse CG Laplacian solve (seconds at m = 5.6M) + the
+  H30 refiner → **~1.1–1.5×** (estimate). No heavy dependency beyond `scipy.sparse` (confirm CG
+  convergence at connectome scale before committing full compute; `pyamg` is unavailable).
+- **Prototype-first gate (PROTOTYPE-GATED):** **CPU mouse + hard synthetic (H21) BEFORE any
+  connectome/microns compute.** Compute the trophic order, score it raw, score it after the H30
+  refiner; **keep only if trophic+sift ≥ greedy+sift beyond noise on the synthetic (gap-bearing)
+  without regressing mouse.** Earn large-graph compute only on ≥ ~0.1 pp synthetic-gap improvement
+  over greedy+sift.
+- **Measurement:** exact ff% all three datasets; near-deterministic → **95% CI-lower-bound CONFIRM**
+  (connectome 5 / microns 5 @ 80k / mouse 20), not the 2σ screen. Report raw trophic order pct,
+  trophic+sift, and greedy+sift side by side.
+- **KILL/keep prediction + cheapest first test:** lean **uncertain → modest keep**. **Cheapest first
+  test = the prototype sizing gate** (trophic+sift vs greedy+sift on mouse + synthetic). **Falsified
+  if** trophic+sift ≤ greedy+sift on the synthetic (then greedy already captures the macro order and
+  trophic adds nothing) → no large-graph compute.
+- **status: proposed**
+
+## H33 — Magnetic-Laplacian directional spectral warm-start → H30 sift  [REPORT #4, PROTOTYPE-GATED]
+- **One-line hypothesis:** seeding the order from the leading eigenvector of the **Hermitian magnetic
+  Laplacian** `L_q` (charge `q ≈ 0.25` encodes arc direction as complex phase), then refining with the
+  H30 sift, reaches a better basin than the trophic warm-start (H32) on a graph whose ranking signal
+  is carried by *edge direction itself* rather than net in/out imbalance. Expected direction:
+  **positive only if it beats H32**.
+- **Exact mechanism:** build `L_q` (direction → complex phase), represent the n×n complex-Hermitian
+  operator as a **2n×2n real-symmetric** one, take the leading eigenpair via
+  `scipy.sparse.linalg.eigsh` / `lobpcg` (no AMG — `pyamg` unavailable), order nodes by the de-rotated
+  eigenvector phases, feed that global order to the H30 refiner. `src/mfas/experiments/H33.py`.
+  Convergence of the leading eigenpair is spectral-gap-dependent.
+- **Design axis:** initialization (global, *direction-aware*) + discrete refinement.
+- **Comparators (PROTOCOL §Compute-matched):** as H32 — eigensolve replaces the init, sift adds **0
+  gradient steps**: report **Δ vs `baseline_passthrough`** (total) AND **Δ vs H02 @ matched-seeds**
+  (promotion). Decisive sub-comparison: **magnetic+sift vs trophic+sift (H32)** — it must beat H32 to
+  justify the more fragile, slower eigensolve.
+- **Leakage rule:** eigenvector of an operator built only from the input graph; oracle ONLY for
+  whole-vector best-by-oracle; never reads `data/best_solution`; never dataset-special-cased. Sift
+  leakage is H30's.
+- **Distinct-from-killed:** an entirely new axis vs the repo's inits (none are spectral); distinct from
+  **H32** (directional complex phase vs undirected net-imbalance solve) and from undirected Fiedler /
+  spectral seriation (which *discards* edge direction — the FAS signal — and is therefore down-ranked
+  in the report). Same "seed the discrete refiner, not Rocket" logic as H32 sidesteps the flat
+  init → plateau ceiling.
+- **Expected effect (ESTIMATE — no prototype number; not run by the `dr_tmp` falsifier):** **uncertain.**
+  The most theoretically apt *directional* spectral seed, but if it merely ties H32 it is the worse
+  EV/cost (more fragile, slower). Honest range: +0.0 … +0.3 pp over H02+sift, *conditional* on beating
+  H32.
+- **Est. compute cost:** **medium.** One sparse leading-eigenvector solve, near-linear per matvec but
+  iteration-count-sensitive, + the H30 refiner → **~1.3–2×** (estimate) — **must be measured.**
+  **Requires a connectome-scale eigensolve TIMING benchmark** (the eigensolve alone, no full run)
+  before any full compute; **drop in favour of H32 if it cannot hit ≤ 2× or does not beat H32.**
+- **Prototype-first gate (PROTOTYPE-GATED):** **CPU mouse + hard synthetic (H21) BEFORE any
+  connectome/microns compute** (same sizing gate as H32: magnetic+sift vs trophic+sift vs greedy+sift),
+  **PLUS** the connectome-scale eigensolve timing micro-benchmark. Earn large-graph compute only if
+  magnetic+sift > trophic+sift on the synthetic AND the eigensolve hits ≤ 2×.
+- **Measurement:** exact ff% all three datasets; near-deterministic → **95% CI-lower-bound CONFIRM**
+  (connectome 5 / microns 5 @ 80k / mouse 20), not the 2σ screen. Report raw magnetic order pct,
+  magnetic+sift, and the H32/greedy+sift comparators side by side; log eigensolve wall-clock.
+- **KILL/keep prediction + cheapest first test:** lean **keep only if it beats H32.** **Cheapest first
+  test = the prototype sizing gate + the eigensolve timing micro-benchmark.** **Falsified if**
+  magnetic+sift ≤ trophic+sift on the synthetic, OR the eigensolve cannot hit the time budget.
+- **status: proposed**
+
+## H34 — Perturbed / blackbox differentiable SORT surrogate (non-vanishing gradient)  [REPORT #5, lowest EV, PROTOTYPE-GATED]
+- **One-line hypothesis:** replacing Rocket's sigmoid (and the killed soft-rank H19) with a surrogate
+  whose gradient comes from **perturb-and-MAP over a SORT** (Berthet 2020) or a **blackbox-solver
+  interpolation** (Vlastelica 2020) — gradient magnitude set by the perturbation ε/λ, *independent of
+  n* — lets the optimizer keep refining the order instead of stalling, beating raw-position Rocket on a
+  graph that has a gap. Expected direction: **positive if any continuous lever works; lean falsified.**
+- **Exact mechanism:** the feedforward weight `Σ w · 1[order(u) < order(v)]` is linear in the order
+  indicator, so its gradient is obtained from 1–8 extra **sort** calls per step (perturb-and-MAP /
+  blackbox interpolation); the inner solver MUST be a sort (O(n log n), n = 136k is cheap) — **never a
+  greedy-FAS pass** (20k greedy passes would blow the budget). Pair with a graduated sharpness (ε)
+  schedule. H02 init. `src/mfas/experiments/H34.py`. Blondel fast-soft-sort (O(n log n), ε decoupled
+  from n) is the fallback drop-in if perturbation overhead is too high.
+- **Design axis:** surrogate / relaxation (continuous), with a graduated ε-schedule.
+- **Comparators (PROTOCOL §Compute-matched):** standard continuous knob-swap at the same gradient
+  budget → screen vs **`baseline_passthrough`**, promote vs **H02 @ matched-seeds**. (Continuous → keep
+  the normal 2σ-screen-then-CONFIRM path, unlike the near-deterministic H30–H33.)
+- **Leakage rule:** the surrogate is a function of positions + input weights; the inner sort sees only
+  the *current* positions; oracle ONLY for whole-vector best-by-oracle. Never reads
+  `data/best_solution`; never dataset-special-cased.
+- **Distinct-from-killed:**
+  - vs **H19 soft-rank** (killed): same rank-space idea but a fundamentally different, **non-vanishing**
+    gradient estimator. H19 died from **O(1/n) vanishing gradients** (normalized rank gaps → σ gradient
+    too flat → optimizer stalled exactly at the H02 init, robust across α). Perturbed/blackbox
+    differentiation is the literature's *structural* fix: the gradient does NOT scale with n.
+  - vs **H11 hinge** (killed): the hinge kept a saturating *analytic* gradient on raw positions; H34
+    changes *where the gradient comes from* (perturb-and-MAP over a sort), not just its shape.
+- **Expected effect (ESTIMATE — no prototype number; not run by the `dr_tmp` falsifier):** **uncertain,
+  lean small/null.** The drift probe (diagnosis #2) shows continuous gradient flow collapses even a
+  *perfect* order to the 82.9% basin — which may hold regardless of the gradient *source*. This is the
+  best *continuous* bet but the diagnosis is a strong prior against any continuous lever; ranked last
+  of the five and included for axis-completeness (the only untried continuous mechanism).
+- **Est. compute cost:** **medium.** 1–8 sorts/step (O(n log n)) → **~1.5–2×** (estimate). Blondel
+  fast-soft-sort is the cheaper fallback.
+- **Prototype-first gate (PROTOTYPE-GATED):** **CPU mouse + hard synthetic (H21) BEFORE any
+  connectome/microns compute.** On the synthetic (which *has* a gap), does the perturbed-sort surrogate
+  exceed raw-position Rocket beyond noise across ε? Earn large-graph compute only on ≥ ~0.1 pp synthetic
+  gap closure without mouse regression.
+- **Measurement:** exact ff% all three datasets; continuous variant → standard **2σ SCREEN** (3 seeds)
+  then **CONFIRM** (connectome 5 / microns 5 @ 80k / mouse 20, 95% CI lower bound > 0). Sweep ε; log
+  converged `pos`/`rank` std to confirm the gradient stays non-vanishing.
+- **KILL/keep prediction + cheapest first test:** lean **kill (prototype decides).** **Cheapest first
+  test = the hard-synthetic ε sweep on CPU.** **Falsified if** it stalls like H19 did across ε (then
+  continuous is truly exhausted on this problem — itself a clean, citable thesis result).
+- **status: proposed**
+
+### Phase-6 ranking rationale (EV / cost)
+**H30 first** — the only prototype-POSITIVE idea (full-range sift closed the gap on BOTH available
+proxies, mouse + hard-synthetic, in `dr_tmp`), the cheapest large-graph lever (~1.1–1.5×, adds 0
+gradient steps), and the move the gap's *long-range* structure (H22 sizing: p50 = 22,580 ranks) calls
+for; its only outstanding compute is the first connectome run. **H31** builds directly on H30's move
+(ILS/LNS for the coordinated multi-node tail) and was +0.20 pp over H30 on the synthetic — gated by a
+matched-compute round-count sweep so it ships only if it beats single-pass H30. **H32 (trophic)** and
+**H33 (magnetic)** are the two cheap *global* warm-starts for axis diversity (a genuinely new init axis
+vs every killed/confirmed repo init), both PROTOTYPE-GATED on the cheap synthetic sizing gate before
+any large-graph compute; H32 ranks above H33 because the trophic solve is cheaper and more robust than
+a spectral-gap-dependent eigensolve (H33 must additionally pass a connectome-scale timing benchmark and
+beat H32 to survive). **H34** is last — the only untried *continuous* mechanism (non-vanishing
+perturbed-sort gradient, the structural fix for H19's O(1/n) stall), but the drift-probe diagnosis is a
+strong prior that *any* continuous lever re-converges to the 82.9% basin, so its EV is lowest. Across
+all five: every entry reports the **pure-Rocket score separately** from the refinement (CLAUDE.md),
+honors the require-improvement-on-ALL-THREE-datasets promotion rule, and uses the oracle only for
+best-by-oracle whole-vector acceptance.
