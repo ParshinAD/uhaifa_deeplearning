@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260622T163922Z-H31-mouse-s123-implement-8a4eac",
+  "algo": "H31",
+  "dataset": "mouse",
+  "seed": 123,
+  "score": 8.508909693009656,
+  "pct": 92.90180243040469,
+  "wall_clock_s": 3.06027889251709,
+  "git_commit": "2b3f6c64809861ee2db8bc02aaa3bb86bbf3d7ac+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "8a4eaced2691",
+  "timestamp": "2026-06-22T16:39:25Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260622T163922Z-H31-mouse-s123-implement-8a4eac_positions.npy",
+  "experiment_id": "H31",
+  "role": "implement",
+  "hypothesis": "Wrapping the confirmed H30 exact-gain sift in an ILS/LNS outer loop (ruin-&-recreate: re-insert the k highest-back-edge-weight nodes at their exact gaps, short re-sift, keep-best-by-oracle) recovers more of the gap than single-pass H30 within a <=2x wall budget; refined >= H30 >= pure Rocket.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}

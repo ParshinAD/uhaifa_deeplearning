@@ -1332,7 +1332,7 @@ not the 2σ screen. Report the **pure-Rocket score and the Rocket+refinement sco
 | rank | id | idea (one line) | axis | est. runtime mult. | prototype signal |
 |---|---|---|---|---|---|
 | 1 | **H30** | full-range exact-gain node re-insertion (TREE sift) as a Rocket post-phase | discrete refinement | 1.40×/1.19×/0.92× (conn/mic/mouse) | **SCREENED PASS** — +0.86/+0.078/+0.42 pp over H02 (conn/mic/mouse), beats real 82.93% plateau |
-| 2 | **H31** | ILS / LNS wrapper on the H30 insertion move (perturb → re-sift → keep-best) | discrete metaheuristic | ~1.3–2× | +0.20 pp over H30 on synthetic (`dr_tmp`) |
+| 2 | ~~**H31**~~ | ILS / LNS wrapper on the H30 insertion move (perturb → re-sift → keep-best) | discrete metaheuristic | 1.92× (conn) | **KILLED** — gate-positive on synthetic (+0.25 pp) but Δ vs H30 = −0.0008 pp (conn) / +0.0000 (mouse); ship H30 alone |
 | 3 | **H32** | trophic-level Laplacian global warm-start → H30 sift | init (global) + discrete | ~1.1–1.5× | untried (PROTOTYPE-GATED) |
 | 4 | **H33** | magnetic-Laplacian directional spectral warm-start → H30 sift | init (global, directional) + discrete | ~1.3–2× | untried (PROTOTYPE-GATED) |
 | 5 | **H34** | perturbed/blackbox differentiable SORT surrogate (non-vanishing gradient) | surrogate (continuous) | ~1.5–2× | untried; lowest EV (PROTOTYPE-GATED) |
@@ -1453,7 +1453,22 @@ not the 2σ screen. Report the **pure-Rocket score and the Rocket+refinement sco
   LNS column in `dr_tmp/size_global_discrete.py`** (already positive); then the round-count sweep on
   mouse/synthetic at matched compute. **Falsified if** ILS/LNS does not beat single-pass H30 beyond
   noise at matched compute (then ship H30 alone).
-- **status: proposed**
+- **status: killed**  <!-- 2026-06-22 SCREEN FAIL on the connectome (primary) → KILL, ship H30 alone.
+  Built `src/mfas/refine/lns.py` (ruin-&-recreate: top-k highest-current-back-edge-weight victims, target-
+  blind, re-inserted at exact gaps via the H30 kernel; short re-sift; best-by-oracle) + `H31.py` (H02→Rocket
+  →H30 sift→ils_lns within residual wall, ≤2× ceiling). Tests `tests/test_refine_lns.py` 5/5 (+H30 5/5)
+  green. CHEAPEST-FIRST GATE PASSED on the gap-bearing hard synthetic: ils_lns − single-pass sift = mean
+  **+0.2483 pp** (3 seeds, matched wall) — reproduces `dr_tmp` +0.20 pp → earned connectome compute. BUT
+  SCREEN vs H30 @ matched seeds 42/123/999: **connectome Δ(H31−H30) = −0.0008 pp** (H31 83.7899±0.0132 vs
+  H30 83.7907±0.0044; per-seed +0.0098/−0.0203/+0.0083 — straddles 0, one seed regresses, H31 std 3× H30's),
+  **mouse +0.0000 pp** (0 LNS accepts, already at the deterministic sift fixed point). Instrumented
+  connectome s42: LNS gained only +0.0057 pp over sift in 6 rounds/1 accept (each round = a full 5.66M-edge
+  sift sweep), realized multiplier 1.92× (vs H30 ~1.4×). The +0.25 pp synthetic signal does NOT transfer to
+  the connectome's distributed reorder within a ≤2× budget. microns NOT run (connectome — a primary —
+  already fails the BOTH-primaries screen; compute conserved). Exactly the backlog's falsification clause.
+  See experiments/log.md 2026-06-22 H31 cycle; result ids `…-H31-connectome-s{42,123,999}-implement-80c75b`,
+  `…-H31-mouse-s{42,123,999}-implement-8a4eac`; gate `experiments/outputs/proto_h31_lns.json`. -->
+
 
 ## H32 — Trophic-level Laplacian global warm-start → H30 sift  [REPORT #3, PROTOTYPE-GATED]
 - **One-line hypothesis:** seeding the order from **trophic levels** (one sparse symmetric-Laplacian

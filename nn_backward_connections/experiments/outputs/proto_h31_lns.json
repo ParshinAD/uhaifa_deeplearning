@@ -1,0 +1,165 @@
+{
+  "synthetic": [
+    {
+      "seed": 42,
+      "n": 400,
+      "m": 7679,
+      "greedy_pct": 68.14397880995176,
+      "h02_pct": 72.9779585658878,
+      "sift_pct": 73.72528616024974,
+      "lns_pct": 73.92394286254849,
+      "lns_minus_sift": 0.19865670229874866,
+      "t_rocket_s": 0.58,
+      "t_sift_s": 0.03,
+      "t_lns_s": 1.13,
+      "refine_budget_s": 1.16,
+      "n_sift_sweeps": 20,
+      "n_lns_rounds": 35,
+      "n_lns_accepted": 3,
+      "lns_cfg": {
+        "k": 20,
+        "mode": "ruin",
+        "inner": 2,
+        "sequential": true
+      },
+      "reference_pct": 73.27594361933592,
+      "gap_h02_to_ref": 0.2979850534481159,
+      "gap_sift_to_ref": -0.4493425409138183
+    },
+    {
+      "seed": 123,
+      "n": 400,
+      "m": 7645,
+      "greedy_pct": 67.74740411104048,
+      "h02_pct": 72.80779826234372,
+      "sift_pct": 73.74019919474465,
+      "lns_pct": 74.0241576605213,
+      "lns_minus_sift": 0.2839584657766494,
+      "t_rocket_s": 0.63,
+      "t_sift_s": 0.03,
+      "t_lns_s": 1.25,
+      "refine_budget_s": 1.27,
+      "n_sift_sweeps": 20,
+      "n_lns_rounds": 38,
+      "n_lns_accepted": 3,
+      "lns_cfg": {
+        "k": 20,
+        "mode": "ruin",
+        "inner": 2,
+        "sequential": true
+      },
+      "reference_pct": 73.16380589107862,
+      "gap_h02_to_ref": 0.35600762873490055,
+      "gap_sift_to_ref": -0.5763933036660234
+    },
+    {
+      "seed": 999,
+      "n": 400,
+      "m": 7672,
+      "greedy_pct": 69.9612327211497,
+      "h02_pct": 75.31424991189255,
+      "sift_pct": 75.81156752946704,
+      "lns_pct": 76.07393194188825,
+      "lns_minus_sift": 0.26236441242120634,
+      "t_rocket_s": 0.58,
+      "t_sift_s": 0.03,
+      "t_lns_s": 1.12,
+      "refine_budget_s": 1.15,
+      "n_sift_sweeps": 20,
+      "n_lns_rounds": 34,
+      "n_lns_accepted": 3,
+      "lns_cfg": {
+        "k": 20,
+        "mode": "ruin",
+        "inner": 2,
+        "sequential": true
+      },
+      "reference_pct": 75.7802404354466,
+      "gap_h02_to_ref": 0.4659905235540549,
+      "gap_sift_to_ref": -0.03132709402044043
+    }
+  ],
+  "mouse": [
+    {
+      "seed": 42,
+      "n": 148,
+      "m": 583,
+      "greedy_pct": 90.12629794323948,
+      "h02_pct": 92.47934218373807,
+      "sift_pct": 92.90180243040469,
+      "lns_pct": 92.90180243040469,
+      "lns_minus_sift": 0.0,
+      "t_rocket_s": 0.46,
+      "t_sift_s": 0.0,
+      "t_lns_s": 0.69,
+      "refine_budget_s": 0.69,
+      "n_sift_sweeps": 5,
+      "n_lns_rounds": 579,
+      "n_lns_accepted": 0,
+      "lns_cfg": {
+        "k": 8,
+        "mode": "ruin",
+        "inner": 2,
+        "sequential": true
+      }
+    },
+    {
+      "seed": 123,
+      "n": 148,
+      "m": 583,
+      "greedy_pct": 90.12629794323948,
+      "h02_pct": 92.47934218373807,
+      "sift_pct": 92.90180243040469,
+      "lns_pct": 92.90180243040469,
+      "lns_minus_sift": 0.0,
+      "t_rocket_s": 0.45,
+      "t_sift_s": 0.0,
+      "t_lns_s": 0.68,
+      "refine_budget_s": 0.68,
+      "n_sift_sweeps": 5,
+      "n_lns_rounds": 578,
+      "n_lns_accepted": 0,
+      "lns_cfg": {
+        "k": 8,
+        "mode": "ruin",
+        "inner": 2,
+        "sequential": true
+      }
+    },
+    {
+      "seed": 999,
+      "n": 148,
+      "m": 583,
+      "greedy_pct": 90.12629794323948,
+      "h02_pct": 92.47934218373807,
+      "sift_pct": 92.90180243040469,
+      "lns_pct": 92.90180243040469,
+      "lns_minus_sift": 0.0,
+      "t_rocket_s": 0.46,
+      "t_sift_s": 0.0,
+      "t_lns_s": 0.69,
+      "refine_budget_s": 0.69,
+      "n_sift_sweeps": 5,
+      "n_lns_rounds": 579,
+      "n_lns_accepted": 0,
+      "lns_cfg": {
+        "k": 8,
+        "mode": "ruin",
+        "inner": 2,
+        "sequential": true
+      }
+    }
+  ],
+  "synthetic_summary": {
+    "mean_lns_minus_sift": 0.24832652683220147,
+    "std_lns_minus_sift": 0.0443496830537426,
+    "min": 0.19865670229874866,
+    "max": 0.2839584657766494
+  },
+  "mouse_summary": {
+    "mean_lns_minus_sift": 0.0,
+    "std_lns_minus_sift": 0.0,
+    "min": 0.0,
+    "max": 0.0
+  }
+}

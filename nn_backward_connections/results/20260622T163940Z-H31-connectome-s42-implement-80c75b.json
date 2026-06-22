@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260622T163940Z-H31-connectome-s42-implement-80c75b",
+  "algo": "H31",
+  "dataset": "connectome",
+  "seed": 42,
+  "score": 35120756.0,
+  "pct": 83.79613916645299,
+  "wall_clock_s": 163.73845195770264,
+  "git_commit": "2b3f6c64809861ee2db8bc02aaa3bb86bbf3d7ac+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "80c75bd71175",
+  "timestamp": "2026-06-22T16:42:31Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260622T163940Z-H31-connectome-s42-implement-80c75b_positions.npy",
+  "experiment_id": "H31",
+  "role": "implement",
+  "hypothesis": "Wrapping the confirmed H30 exact-gain sift in an ILS/LNS outer loop (ruin-&-recreate: re-insert the k highest-back-edge-weight nodes at their exact gaps, short re-sift, keep-best-by-oracle) recovers more of the gap than single-pass H30 within a <=2x wall budget; refined >= H30 >= pure Rocket.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

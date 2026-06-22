@@ -17,7 +17,7 @@ Append-only lab notebook. Each entry: date, hypothesis, command, result (traced 
 <!-- The table below is auto-generated; do not edit by hand. -->
 
 <!-- BEGIN AGGREGATED RESULTS (auto-generated) -->
-_Generated 2026-06-22T16:12:43Z from 244 run(s)._
+_Generated 2026-06-22T16:57:21Z from 250 run(s)._
 
 | algo | dataset | n_seeds | pct mean±std | score mean±std | wall_clock_s (mean) | seeds | config_hash | git_commit |
 |---|---|---|---|---|---|---|---|---|
@@ -49,6 +49,8 @@ _Generated 2026-06-22T16:12:43Z from 244 run(s)._
 | H30 | connectome | 11 | 83.7805 ± 0.0096 | 35,114,220 ± 4,041 | 151.7 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 31415] | 1976d9 | 7dc17e20460 |
 | H30 | microns | 11 | 83.2067 ± 0.0012 | 12,814,293 ± 185 | 728.4 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 31415] | 954bab | 7dc17e20460 |
 | H30 | mouse | 26 | 92.9018 ± 0.0000 | 8.5089 ± 0.0000 | 2.7 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 1111, 1234, 1414, 1618, 1732, 2222, 2236, 2718, 3333, 4444, 5555, 6666, 7777, 8888, 9999, 31415] | ff2174 | 7dc17e20460 |
+| H31 | connectome | 3 | 83.7899 ± 0.0132 | 35,118,149 ± 5,522 | 165.3 | [42, 123, 999] | 80c75b | 2b3f6c64809 |
+| H31 | mouse | 3 | 92.9018 ± 0.0000 | 8.5089 ± 0.0000 | 3.0 | [42, 123, 999] | 8a4eac | 2b3f6c64809 |
 | baseline_multistart | connectome | 3 | 82.0507 ± 0.0293 | 34,389,211 ± 12,284 | 77.2 | [42, 123, 999] | 330c58 | 704221ab778 |
 | baseline_multistart | mouse | 3 | 92.1625 ± 0.0242 | 8.4412 ± 0.0022 | 1.9 | [42, 123, 999] | c6938b | 704221ab778 |
 | baseline_passthrough | connectome | 21 | 82.8838 ± 0.0224 | 34,738,365 ± 9,388 | 419.0 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 1414, 1618, 1732, 2236, 2718, 5005, 6004, 7003, 8002, 9001, 31415] | f8cb3c | 8f0e5066211, 9cc9c34eb98, f36e02847a9 |
@@ -1912,3 +1914,97 @@ finding #3** (the residual is reachable by cheap *global* discrete refinement, n
 *bounded-local* clause stands — W=10 sift ≈ 0 reproduces H22). Prior-art cross-check: Vahidi 2025
 (arXiv:2506.13799) reaches 84.61% on this graph with cheap greedy + bounded-span insertion + SCC, no MIP.
 Backlog H30 → `confirmed`. Next: H31 (ILS/LNS wrapper on the sift move) targets the residual ~0.83 pp.
+
+## 2026-06-22 — H31: ILS/LNS wrapper on the H30 sift move (perturb → re-sift → keep-best) — KILL (no gain over H30 on connectome)
+- Hypothesis (backlog H31): wrapping the CONFIRMED H30 full-range exact-gain insertion in an Iterated
+  Local Search / Large-Neighbourhood-Search — perturb the current best order (ruin-&-recreate: remove the
+  `k` nodes carrying the most CURRENT back-edge weight and re-insert each at its exact-optimal rank), run a
+  short sift sweep, keep-best-by-oracle — recovers *more* of the gap than single-pass H30. Expected
+  direction: positive but smaller than H30; honest chance of a no-op on real graphs.
+- **What was built.** New refiner `src/mfas/refine/lns.py` (`back_edge_weight`, `apply_victim_reinsertions`,
+  `ils_lns`) + variant `src/mfas/experiments/H31.py` = H02 greedy→`run_rocket` (PURE) → H30 `sift` to a
+  fixed point → `ils_lns` within the RESIDUAL wall budget → best-by-oracle. Adds **0 gradient steps**
+  (`n_epochs_done` = baseline budget), so the compute-matched comparators are **H30** (the key test: does
+  the wrapper earn its extra wall?), H02 (all refinement), and `baseline_passthrough` (total), all at
+  matched seeds 42/123/999. Budget is the binding constraint: refinement (sift + LNS) capped at
+  `_REFINE_WALL_FRAC=0.85 × rocket_wall` so total ≤ ~1.85× (hard ceiling 2×); realized multiplier measured.
+- **Mechanism / efficiency / leakage.** Victims = top-`k` nodes by current back-edge weight (an edge
+  `(u,v)` is back iff `rank[u] > rank[v]`; both endpoints charged its weight) — target-blind, from input
+  weights + ranks only. Repair = re-insert each victim at its exact-optimal gap via the H30 closed-form
+  kernel (`jacobi_best_gaps`), sequential Gauss-Seidel (mouse) or all-at-once Jacobi (large graphs, to
+  avoid O(k·m) per-victim kernel calls in the hot loop). One short `sift` sweep cleans up; the frozen oracle
+  is consulted ONLY to accept/reject whole candidate vectors (best-by-oracle). Never reads
+  `data/best_solution`; the only `g.name` branches set compute budget (k / sweeps), never the metric. By
+  construction LNS ≥ sift ≥ pure.
+- **Unit tests** (`tests/test_refine_lns.py`, 5 new; full `test_refine_*` suite 10/10 green): `back_edge_weight`
+  == brute force; victim re-insertion stays a permutation; `ils_lns` best ≥ sift best ≥ initial on mouse for
+  BOTH ruin and kick modes (monotone, oracle-gated); leakage guard — the perturb/repair selectors take only
+  `(rank, src, tgt, w, n)`, no GraphData/oracle handle.
+  ```
+  PYTHONPATH=src $PY -m pytest tests/test_refine_*.py -q     # 10 passed
+  ```
+
+### Prototype gate (cheapest-first; CPU, torch.set_num_threads(2); `experiments/proto_h31_lns.py` → `experiments/outputs/proto_h31_lns.json`)
+At MATCHED refinement wall-clock, `ils_lns` vs single-pass H30 `sift`, Δ = `lns_pct − sift_pct`:
+- **hard synthetic (n=400, gap-bearing), 3 seeds:** mean **+0.2483 pp** (s42 +0.1987, s123 +0.2840,
+  s999 +0.2624) — clearly beats sift beyond noise; reproduces the `dr_tmp` +0.20 pp.
+- **mouse (n=148), 3 seeds:** **+0.0000 pp** (0 accepts across ~578 LNS rounds/seed; already at the H30
+  plateau 92.902%). Non-inferior, as predicted.
+- **GATE: GO** — LNS clears the gap-bearing synthetic bar, so connectome compute is justified.
+
+#### Implementer (screen, n=3 seeds 42/123/999, role=implement, equal gradient budget)
+Comparator = **H30** at matched seeds (the decisive test). Refinement is near-deterministic per-stage, but
+the connectome's PURE-Rocket seed order is MPS-nondeterministic, so H31's connectome variance is real.
+
+| dataset | H31 (mean±std) | H30 (mean±std) | **Δ vs H30** | Δ vs H02 | Δ vs baseline | screen verdict |
+|---|---|---|---|---|---|---|
+| connectome | 83.7899 ± 0.0132 | 83.7907 ± 0.0044 | **−0.0008 pp** | +0.8592 | +0.8941 | **FAIL** (Δ≈0; within noise; one seed −0.0203) |
+| mouse      | 92.9018 ± 0.0000 | 92.9018 ± 0.0000 | **+0.0000 pp** | +0.4225 | +0.8322 | non-inferior, no gain |
+
+- **DECISIVE NUMBER (connectome): Δ(H31−H30) = −0.0008 pp** — H31 does NOT beat H30. Per-seed deltas
+  straddle zero (s42 +0.0098, s123 **−0.0203**, s999 +0.0083); H31's own std (0.0132) is 3× H30's (0.0044),
+  so the LNS adds nothing detectable while it ADDS variance. The +0.25 pp synthetic signal does **not**
+  transfer to the connectome.
+- **Why (instrumented connectome s42, `history.attrs`):** pure 82.9298 → sift(H30) 83.7835 → LNS 83.7892,
+  so the LNS phase gained only **+0.0057 pp** over sift on that run — and only **6 LNS rounds / 1 accepted**
+  fit in 36 s (each round is a full sift sweep over 5.66M edges). This is NOT budget-starvation pathology
+  (it ran rounds and found a tiny gain) but the per-round gain is ~3 orders of magnitude smaller than on the
+  synthetic and is swamped by cross-seed MPS-Rocket-basin noise. **Realized multiplier = 1.92×** (rocket
+  78.3 s + sift 35.6 s + LNS 36.3 s) — within the 2× ceiling but markedly worse than H30's ~1.4× for zero
+  real benefit.
+- **mouse:** 0 LNS accepts; bit-identical to H30 (already the deterministic sift fixed point). Non-inferior.
+- **microns NOT run** (compute conserved): connectome — a PRIMARY — already FAILS the "beats H30 beyond
+  noise" gate, and the 3-dataset screen requires BOTH primaries, so microns cannot rescue the verdict.
+  Skipping it saved ~3×550 s of MPS time.
+- **Result file ids (implement, H31):** connectome `20260622T163940Z-H31-connectome-s42-implement-80c75b`,
+  `20260622T164426Z-H31-connectome-s123-implement-80c75b`, `20260622T164719Z-H31-connectome-s999-implement-80c75b`;
+  mouse `20260622T163918Z-H31-mouse-s42-implement-8a4eac`, `20260622T163922Z-H31-mouse-s123-implement-8a4eac`,
+  `20260622T163926Z-H31-mouse-s999-implement-8a4eac`. (A duplicate connectome s999 re-run, 83.7765, was
+  moved to `results/_dup_excluded/` to keep n=3 clean.) Comparators reused, no re-run: H30 implement ids
+  logged in the H30 cycle above.
+- **Exact commands:**
+  ```
+  PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+  PYTHONPATH=src $PY -m pytest tests/test_refine_*.py -q                      # 10 passed
+  PYTHONPATH=src $PY experiments/proto_h31_lns.py                             # gate: GO (synthetic +0.25 pp)
+  for S in 42 123 999; do $PY -m eval.run_variant --exp H31 --dataset mouse      --seed $S --out results/ --role implement;            done
+  for S in 42 123 999; do $PY -m eval.run_variant --exp H31 --dataset connectome --seed $S --out results/ --role implement --device auto; done
+  $PY -m eval.aggregate --glob "results/*.json" --out experiments/log.md
+  ```
+- **SCREEN verdict: FAIL → KILL.** ILS/LNS does not beat single-pass H30 beyond noise on the connectome
+  (Δ −0.0008 pp, within noise, one seed regressing) and adds nothing on mouse, while pushing the wall
+  multiplier from H30's ~1.4× to ~1.9×. This is exactly the backlog's falsification criterion ("Falsified
+  if ILS/LNS does not beat single-pass H30 beyond noise at matched compute → then ship H30 alone"). The
+  +0.25 pp synthetic signal is a property of that fixture's small, easily-coordinated cyclic blocks; the
+  connectome's distributed reorder is not unlocked by back-edge-weight ruin within a ≤2× budget. **Ship H30
+  alone.** Status → backlog H31 `killed`. (No verifier/critic escalation: a screen FAIL on a primary is a
+  kill, not a CONFIRM candidate.)
+
+#### Decision: kill — ship H30 alone
+ILS/LNS does not beat single-pass H30 beyond noise on the connectome (Δ −0.0008 pp, n=3) while raising the
+wall multiplier to ~1.9×; mouse gains nothing; microns not run (cannot rescue a both-primaries screen).
+Backlog H31 → `killed`. The H30 single-pass sift (finding #4) remains the shipped refiner. Confirms the
+backlog's pre-registered falsification clause. The reusable `src/mfas/refine/lns.py` is kept (tested) for
+any future use but is not on the H30 path.
+
+#### Decision: kill — ship H30 alone (LNS adds nothing over single-pass H30 on the real connectomes)

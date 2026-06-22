@@ -12,10 +12,18 @@ from .insertion import (
     jacobi_rebuild,
     sift,
 )
+from .lns import (
+    apply_victim_reinsertions,
+    back_edge_weight,
+    ils_lns,
+)
 
 __all__ = [
     "build_sift_edges",
     "jacobi_best_gaps",
     "jacobi_rebuild",
     "sift",
+    "back_edge_weight",
+    "apply_victim_reinsertions",
+    "ils_lns",
 ]
