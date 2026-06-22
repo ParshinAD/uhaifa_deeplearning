@@ -67,17 +67,20 @@ descends barely matters; *where* it begins does.
 **Evidence (each row = one screened variant; n=3 seeds 42/123/999; Δ = variant − baseline on the
 exact metric; all numbers from logged `results/*.json`, one git commit per experiment):**
 
-| variant | mechanism / axis | Δ connectome | Δ mouse | result |
-|---|---|---|---|---|
-| **H02** | **starting basin** (greedy-FAS warm-start) | **+0.0448** | **+0.2064** | **CONFIRMED win** |
-| H01 | restarts (dynamics) | +0.0003 | +0.0000 | kill |
-| H03 | β schedule (dynamics) | −0.0376 | +0.0114 | kill |
-| H04 | in-loop refinement (dynamics) | −0.0000 | +0.0000 | kill |
-| H13 | edge-subsample noise (dynamics) | −0.8356 | −0.0325 | kill |
-| H05 | optimizer → AdamW (dynamics, **falsifier**) | +0.0018 | +0.0000 | kill |
-| H06 | weight-aware loss reweight (objective) | −0.0380 | −0.0794 | kill |
-| H11 | margin/hinge surrogate (objective) | −0.0387 | +0.1264 | kill |
-| H09 | anti-tie jitter (free-edge) | −0.0010 | +0.0000 | kill (0 ties exist) |
+| variant | mechanism / axis | Δ connectome | Δ mouse | Δ microns | result |
+|---|---|---|---|---|---|
+| **H02** | **starting basin** (greedy-FAS warm-start) | **+0.0448** | **+0.2064** | **+0.0114** | **CONFIRMED win** |
+| H01 | restarts (dynamics) | +0.0003 | +0.0000 | — | kill |
+| H03 | β schedule (dynamics) | −0.0376 | +0.0114 | −0.0092† | kill |
+| H04 | in-loop refinement (dynamics) | −0.0000 | +0.0000 | — | kill |
+| H13 | edge-subsample noise (dynamics) | −0.8356 | −0.0325 | — | kill |
+| H05 | optimizer → AdamW (dynamics, **falsifier**) | +0.0018 | +0.0000 | — | kill |
+| H06 | weight-aware loss reweight (objective) | −0.0380 | −0.0794 | — | kill |
+| H11 | margin/hinge surrogate (objective) | −0.0387 | +0.1264‡ | +0.0007† | kill |
+| H09 | anti-tie jitter (free-edge) | −0.0010 | +0.0000 | — | kill (0 ties exist) |
+
+† Phase-5 result (MICrONS, 80k epochs, 3 seeds — see log.md Phase-5 section). "—" = not run on microns.
+‡ Mouse mean Δ driven by single seed (999: +0.381 pp vs 42: −0.043, 123: +0.041 pp); CI_lower = −0.128 pp — NOT CONFIRMED.
 
 Two corroborating sub-results: (a) **free-edge recovery is empty** — the continuous optimizer leaves
 **0 exact position ties**, so the strict-`>` oracle drops nothing recoverable (H09 sized this before
@@ -92,13 +95,19 @@ initial orderings / basins** (stronger discrete FAS heuristics, multi-basin sear
 optimizer/LR/β/loss tuning. It also says reproductions need not chase Rocket's exact training
 trajectory — the plateau is basin-determined, not schedule-determined.
 
-**Honest scope.** Negative results over two real connectomes and one screened arm per hypothesis;
-some un-screened arms remain (β_max∈{2,8} for H03, FRAC=0.25 for H13, Lion for H05, etc.) and four
-LOW-EV dynamics knobs (H07/H08/H10/H12) were **deferred, not falsified**, when the campaign hit its
-`EARLY_EXIT` stop (7 consecutive non-improving cycles, no promising items left). The inference was
-pressure-tested (the ideator kept H05 as a falsifier rather than assuming the conclusion), but it is
-an inductive conclusion, not a proof. Full per-cycle evidence + commands: `experiments/log.md`
-(H01–H13 cycles + the 2026-06-21 campaign-stop note).
+**Honest scope.** Negative results over two real connectomes (Phase 3) and one screened arm per
+hypothesis; some un-screened arms remain (β_max∈{2,8} for H03, FRAC=0.25 for H13, Lion for H05,
+etc.) and four LOW-EV dynamics knobs (H07/H08/H10/H12) were **deferred, not falsified**, when the
+campaign hit its `EARLY_EXIT` stop. The inference was pressure-tested (the ideator kept H05 as a
+falsifier rather than assuming the conclusion), but it is an inductive conclusion, not a proof.
+
+**Phase-5 corroboration (MICrONS, 2026-06-22).** H11 (objective reshaping) and H03 (β-schedule
+dynamics) were re-run on MICrONS (67k neurons, second large connectome): H11 Δ=+0.0007 pp
+(NOT CONFIRMED, CI_lower=−0.0003 pp; the previously-reported mouse +0.126 pp is an unconfirmed
+single-seed fluctuation); H03 Δ=−0.0092 pp (regression). The objective/dynamics null extends to a
+second large connectome from a different species — the conclusion is now supported on two large
+graphs and has been pressure-tested by an independent verifier and critic. Full evidence:
+`experiments/log.md` (H01–H13 Phase-3 cycles + Phase-5 H11r/H03r entries).
 
 ## #3 — The Rocket↔best gap is an OPTIMIZATION-GAP that continuous methods alone cannot close (Phase 4)
 

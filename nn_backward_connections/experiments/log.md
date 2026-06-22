@@ -17,7 +17,7 @@ Append-only lab notebook. Each entry: date, hypothesis, command, result (traced 
 <!-- The table below is auto-generated; do not edit by hand. -->
 
 <!-- BEGIN AGGREGATED RESULTS (auto-generated) -->
-_Generated 2026-06-22T10:17:32Z from 188 run(s)._
+_Generated 2026-06-22T11:06:34Z from 191 run(s)._
 
 | algo | dataset | n_seeds | pct mean±std | score mean±std | wall_clock_s (mean) | seeds | config_hash | git_commit |
 |---|---|---|---|---|---|---|---|---|
@@ -38,7 +38,7 @@ _Generated 2026-06-22T10:17:32Z from 188 run(s)._
 | H09 | connectome | 3 | 82.8948 ± 0.0187 | 34,742,975 ± 7,818 | 77.4 | [42, 123, 999] | 8e9a0f | 90073cf2d95 |
 | H09 | mouse | 4 | 92.1425 ± 0.2591 | 8.4394 ± 0.0237 | 1.9 | [42, 42, 123, 999] | ace4f2 | 90073cf2d95 |
 | H11 | connectome | 3 | 82.8571 ± 0.0235 | 34,727,188 ± 9,856 | 94.5 | [42, 123, 999] | ec5418 | 258bcbd07c0 |
-| H11 | microns | 5 | 83.1186 ± 0.0009 | 12,800,725 ± 141 | 683.4 | [7, 42, 123, 999, 31415] | 71746c | 012e9ad9c74, 32d290734ec |
+| H11 | microns | 8 | 83.1183 ± 0.0011 | 12,800,687 ± 172 | 832.5 | [7, 7, 42, 42, 123, 999, 31415, 31415] | 71746c | 012e9ad9c74, 32d290734ec, 71eb853e521 |
 | H11 | mouse | 3 | 92.1960 ± 0.2643 | 8.4443 ± 0.0242 | 2.4 | [42, 123, 999] | 29b494 | 258bcbd07c0 |
 | H13 | connectome | 3 | 82.0602 ± 0.0045 | 34,393,204 ± 1,875 | 1332.1 | [42, 123, 999] | 52314a | 07b26a8edcc |
 | H13 | mouse | 3 | 92.0371 ± 0.2110 | 8.4297 ± 0.0193 | 3.9 | [42, 123, 999] | c42396 | 07b26a8edcc |
@@ -1507,3 +1507,172 @@ non-inferior (+0.206 pp >> −0.26 pp threshold). The warm-start mechanism is gr
 (no leakage), dataset-agnostic, and confirmed on circuits from two different species and brain
 regions. Promote finding #1 in `findings.md` with the microns column added to the evidence table
 and the generality caveat updated: "confirmed on three real connectomes from two species."
+
+---
+
+## 2026-06-22 — H11r: smooth-hinge surrogate — microns confirm (Phase 5)
+
+### Implementer (screen → confirm, microns)
+
+Screen (seeds 42/123/999, role=implement):
+```
+results/20260622T072521Z-H11-microns-s42-implement-71746c.json  pct=83.1201%
+results/20260622T073631Z-H11-microns-s123-implement-71746c.json pct=83.1180%
+results/20260622T074746Z-H11-microns-s999-implement-71746c.json pct=83.1181%
+mean=83.1187%  σ=0.0012 pp  Δ=+0.0016 pp  → SCREEN PASS (Δ > 2σ_base=0.0013 pp)
+```
+
+Confirm (seeds 7, 31415, role=confirm):
+```
+results/20260622T092047Z-H11-microns-s7-confirm-71746c.json    pct=83.1187%
+results/20260622T093246Z-H11-microns-s31415-confirm-71746c.json pct=83.1180%
+```
+
+Combined n=5 (implementer): mean=83.1186%, σ=0.0009 pp, Δ=+0.0014 pp
+SE = σ_base·√(2/5) = 0.0006·0.632 = 0.0004 pp
+95% CI lower (implementer) = +0.0014 − 1.96·0.0004 = +0.0006 pp (barely > 0)
+
+#### Verifier (independent re-run — 2026-06-22)
+
+**Frozen oracle check:** `verify_frozen_manifest()` → OK (confirmed before each run).
+`git diff --stat` shows only `.claude/settings.json` and `brain_like_model/connectome_init_prototype.ipynb` modified;
+none of `src/mfas/metrics.py`, `eval/harness.py`, `eval/aggregate.py`, `tests/test_metrics.py` were touched. CLEAN.
+
+**Independent verify runs (role=verify, seeds 42 / 7 / 31415, microns, 80k epochs):**
+```bash
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python -m eval.run_variant \
+  --exp H11 --dataset microns --seed 42 --out results/ --role verify
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python -m eval.run_variant \
+  --exp H11 --dataset microns --seed 7 --out results/ --role verify
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python -m eval.run_variant \
+  --exp H11 --dataset microns --seed 31415 --out results/ --role verify
+```
+
+Result JSONs:
+```
+results/20260622T102948Z-H11-microns-s42-verify-71746c.json     pct=83.1193%  score=12,800,839  epochs=80000
+results/20260622T104244Z-H11-microns-s7-verify-71746c.json      pct=83.1163%  score=12,800,375  epochs=80000
+results/20260622T104249Z-H11-microns-s31415-verify-71746c.json  pct=83.1182%  score=12,800,658  epochs=80000
+```
+
+**Statistics (verifier, n=3):**
+```
+mean  = 83.1179%   std = 0.0015 pp  (ddof=1)
+Δ vs baseline (83.1172%) = +0.0007 pp
+SE = σ_base · √(2/n) = 0.0006 · √(2/3) = 0.0005 pp
+95% CI lower = +0.0007 − 1.96·0.0005 = −0.0002 pp  < 0  → NOT CONFIRMED
+```
+
+**Comparison with implementer's claimed values (MPS nondeterminism expected):**
+| seed | implementer | verifier | diff |
+|---|---|---|---|
+| 42 | 83.1201% | 83.1193% | −0.0008 pp |
+| 7 | 83.1187% | 83.1163% | −0.0024 pp |
+| 31415 | 83.1180% | 83.1182% | +0.0002 pp |
+
+All differences are within MPS nondeterminism band (max 0.0024 pp < 0.003 pp threshold — no flag).
+However, the verifier's seed-7 run (83.1163%) falls BELOW baseline mean (83.1172%), pulling the
+verifier mean down to 83.1179% and making the effect disappear. The implementer's seed-7 (83.1187%)
+was above baseline, which inflated their n=5 combined estimate.
+
+**Schema check:** all 3 verify JSONs contain all required fields:
+`exp_id`, `algo`, `dataset`, `seed`, `score`, `pct`, `total_grad_steps`, `budget_basis`.
+`budget_basis="total_grad_steps"`, `total_grad_steps=80000` in all three. PASS.
+
+**Assessment:** The claimed Δ=+0.0014 pp is ~2.3× the noise floor σ=0.0006 pp. The verifier
+mean (83.1179%) vs baseline (83.1172%) gives Δ=+0.0007 pp — only ~1.2σ. The verifier std
+(0.0015 pp) is 2.5× larger than the baseline σ (0.0006 pp), indicating MPS nondeterminism is
+inflating variance on this variant at these seeds. The effect is fragile: one seed flip (seed 7)
+inverts the sign. The CI lower bound is −0.0002 pp < 0 using the protocol formula.
+
+VERDICT: NOT CONFIRMED — CI_lower = −0.0002 pp. The smooth-hinge surrogate (H11) does NOT
+show a statistically significant improvement on microns under independent verification. The
+effect claimed by the implementer (+0.0014 pp, CI_lower≈+0.0006 pp) is inside the noise band
+and does not survive replication at different seeds. H11 is GRAPH-DEPENDENT only in the sense
+that it is negative on connectome (−0.039 pp) and indistinguishable from noise on microns;
+it should NOT be promoted as a confirmed microns win. Status: KILL (null on both primary datasets).
+
+#### Critic verdict (2026-06-22)
+
+**Check 1 — Frozen-file integrity: PASS**
+Re-derived sha256 sums for all four frozen files match `eval/frozen.sha256` exactly:
+- `src/mfas/metrics.py`: bd2ff905... (matches)
+- `eval/harness.py`: 0ba53413... (matches)
+- `eval/aggregate.py`: 28340949... (matches)
+- `tests/test_metrics.py`: 27f02a77... (matches)
+`git diff --stat` on the current branch shows only `.claude/settings.json` and
+`brain_like_model/connectome_init_prototype.ipynb` modified — none of the frozen files.
+
+**Check 2 — Verifier math: PASS (with a rounding note)**
+Re-derived from the three verify JSONs (`results/20260622T102948Z-H11-microns-s42-verify-71746c.json`,
+`...-s7-...`, `...-s31415-...`):
+- verify pcts: 83.11932%, 83.11631%, 83.11815%
+- verify mean: 83.117929% vs baseline mean 83.117180% → Δ = +0.000749 pp (rounds to +0.0007 pp)
+- σ_base (ddof=1 from 3 baseline 80k runs) = 0.000636 pp (log rounds to 0.0006)
+- SE = 0.000636 · √(2/3) = 0.000519 pp
+- CI_lower = 0.000749 − 1.96 · 0.000519 = **−0.000269 pp**
+
+This rounds to −0.0003 pp, not −0.0002 pp as stated in the log. The log used σ_base = 0.0006
+exactly (rounded) giving SE = 0.0006 · √(2/3) = 0.000490, CI_lower = −0.000260 which rounds to
+−0.0002. Both are minor rounding variants of the same sub-zero result. Either way CI_lower < 0;
+the NOT CONFIRMED conclusion is correct and unaffected by the rounding.
+
+**Check 3 — Implementer math: PASS (formula choice noted)**
+Re-derived from the 5 H11 microns runs (3 implement + 2 confirm):
+- all 5 pcts: 83.12012, 83.11797, 83.11808, 83.11875, 83.11801
+- H11 n=5 mean: 83.118587%; baseline 80k n=3 mean: 83.117180%
+- Δ = +0.001407 pp ≈ +0.0014 pp (matches log)
+- The log uses SE = σ_base · √(2/5) = 0.0006 · 0.632 = 0.0004 pp, CI_lower = +0.0006 pp.
+  This formula treats the SE as driven solely by the baseline σ, ignoring H11's own variance (0.0009 pp).
+  A two-sample formula gives SE = √(0.0006²/3 + 0.0009²/5) = 0.0005 pp → CI_lower = +0.0003 pp.
+  Even on the implementer's own more optimistic formula, CI_lower = +0.0006 pp is barely positive.
+  The verifier's independent CI_lower = −0.0003 pp is the authoritative bound. Consistent: KILL.
+
+**Check 4 — Compute fairness: PASS**
+All 8 H11 microns JSONs (implement + confirm + verify, config_hash 71746c) have
+`total_grad_steps=80000` and `budget_basis="total_grad_steps"`. Baseline passthrough comparator
+JSONs at 80k steps (second batch, `results/20260621T23*-baseline_passthrough-microns-*.json`) also
+have `total_grad_steps=80000`. Budget is matched. Early baseline runs at 20k steps (first batch)
+are NOT the comparator used. No fairness violation.
+
+**Check 5 — Connectome regression: PASS (confirmed valid)**
+Phase-3 connectome numbers re-derived from JSONs:
+- H11 connectome (seeds 42/123/999): 82.88367, 82.84872, 82.83894 → mean 82.8571%
+- Baseline passthrough connectome (same seeds, f8cb3c): 82.91604, 82.89217, 82.87919 → mean 82.8958%
+- Per-seed deltas: −0.0323, −0.0435, −0.0403 pp → mean Δ = **−0.0387 pp**, std = 0.0057 pp
+- SE (paired, n=3) = 0.0033 pp; CI_lower = −0.0387 − 1.96·0.0033 = **−0.0451 pp** (well below zero)
+The connectome regression is confirmed: H11 is strictly worse than baseline on the large fly
+connectome. This finding stands.
+
+**Check 6 — Small-graph artifact classification: KILL (NULL), not KILL (SMALL-GRAPH ARTIFACT)**
+The Phase-3 mouse "gain" of +0.1264 pp is driven almost entirely by a single outlier seed (seed 999:
++0.3811 pp; seeds 42 and 123 average −0.001 pp). The per-seed mouse deltas are −0.0427, +0.0407,
++0.3811 pp (std = 0.2245 pp), yielding:
+- SE (paired, n=3) = 0.1296 pp
+- 95% CI = [−0.1278 pp, +0.3804 pp]
+- CI_lower = **−0.1278 pp < 0**
+
+The mouse CI does NOT exclude zero. There is no confirmed positive effect on the mouse graph
+either. The correct classification is therefore **KILL (NULL)**, not KILL (SMALL-GRAPH ARTIFACT).
+
+"SMALL-GRAPH ARTIFACT" would require: (a) a confirmed positive effect on the small graph AND (b) a
+confirmed null or negative on the large graphs, implying a real but size-contingent mechanism.
+Neither condition holds here — the mouse CI_lower is large-negative. The mean Δ = +0.1264 pp is
+~0.97× the within-group std (0.2245 pp / √3 = 0.13 pp SE), so it is entirely attributable to a
+single high-variance seed. There is also no theoretical mechanism that predicts the smooth-hinge
+constant-gradient property would benefit small graphs more than large ones: both graph sizes have
+the same density of "correct-but-thin-margin" edges that the hypothesis targets. The label
+"small-graph artifact" would overstate what is observed.
+
+The aggregate picture: H11 is NEGATIVE on connectome (CI entirely below zero), NOT CONFIRMED on
+microns (CI_lower = −0.0003 pp), and INDETERMINATE on mouse (CI straddles zero, driven by a
+single outlier seed). This is a NULL result across all three graphs.
+
+#### Decision: KILL (NULL)
+
+H11 (smooth-hinge surrogate) has no confirmed positive effect on any graph. The connectome
+regression (Δ = −0.039 pp, CI_lower = −0.045 pp) is the strongest signal; the microns and mouse
+results are within noise. The "small-graph artifact" framing in the verifier's entry overstates
+the evidence from the mouse: the mouse CI_lower is −0.128 pp, not positive, and the apparent mean
+gain is a single-seed fluctuation. There is no size-contingent theory that would explain the
+surrogate shaping differently across graph scales. Label correctly as NULL on all three datasets.
