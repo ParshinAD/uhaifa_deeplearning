@@ -1,0 +1,142 @@
+{
+  "charge_q": 0.25,
+  "sift_sweeps": 30,
+  "seeds": [
+    42,
+    123,
+    999
+  ],
+  "quality_summary": {
+    "synthetic": {
+      "greedy_sift_mean": 69.8551767632081,
+      "greedy_sift_std": 1.9107358587929602,
+      "magnetic_sift_mean": 64.88308858644011,
+      "magnetic_sift_std": 2.4112174608394,
+      "delta_mean": -4.972088176767994,
+      "delta_std": 0.9372005223838985,
+      "delta_min": -6.267145965376976,
+      "delta_max": -4.0803539961624296
+    },
+    "mouse": {
+      "greedy_sift_mean": 92.91629587453781,
+      "greedy_sift_std": 0.0,
+      "magnetic_sift_mean": 91.42186843393297,
+      "magnetic_sift_std": 0.0,
+      "delta_mean": -1.494427440604838,
+      "delta_std": 0.0,
+      "delta_min": -1.494427440604838,
+      "delta_max": -1.494427440604838
+    }
+  },
+  "quality_rows": {
+    "synthetic": [
+      {
+        "seed": 42,
+        "greedy_pct": 68.14397880995176,
+        "greedy_sift_pct": 69.44470721786018,
+        "magnetic_pct": 51.69804181250591,
+        "magnetic_sift_pct": 63.17756125248321,
+        "trophic_pct": 52.60145681581686,
+        "trophic_sift_pct": 65.52360230820169,
+        "delta_sift": -6.267145965376976,
+        "eig_wall_s": 0.0063800811767578125,
+        "chose_reverse": true,
+        "chosen_col": 0,
+        "ref_pct": 73.27594361933592
+      },
+      {
+        "seed": 123,
+        "greedy_pct": 67.74740411104048,
+        "greedy_sift_pct": 67.74740411104048,
+        "magnetic_pct": 51.421911421911425,
+        "magnetic_sift_pct": 63.1786395422759,
+        "trophic_pct": 50.057215511760965,
+        "trophic_sift_pct": 63.91608391608391,
+        "delta_sift": -4.568764568764578,
+        "eig_wall_s": 0.007415771484375,
+        "chose_reverse": true,
+        "chosen_col": 0,
+        "ref_pct": 73.16380589107862
+      },
+      {
+        "seed": 999,
+        "greedy_pct": 69.9612327211497,
+        "greedy_sift_pct": 72.37341896072365,
+        "magnetic_pct": 50.66765869131065,
+        "magnetic_sift_pct": 68.29306496456122,
+        "trophic_pct": 60.39472138465756,
+        "trophic_sift_pct": 72.67102635391784,
+        "delta_sift": -4.0803539961624296,
+        "eig_wall_s": 0.009660005569458008,
+        "chose_reverse": false,
+        "chosen_col": 0,
+        "ref_pct": 75.7802404354466
+      }
+    ],
+    "mouse": [
+      {
+        "seed": 42,
+        "greedy_pct": 90.12629794323948,
+        "greedy_sift_pct": 92.91629587453781,
+        "magnetic_pct": 82.21995443076128,
+        "magnetic_sift_pct": 91.42186843393297,
+        "trophic_pct": 45.85177660778506,
+        "trophic_sift_pct": 91.47843801814436,
+        "delta_sift": -1.494427440604838,
+        "eig_wall_s": 0.004695892333984375,
+        "chose_reverse": true,
+        "chosen_col": 0,
+        "ref_pct": null
+      },
+      {
+        "seed": 123,
+        "greedy_pct": 90.12629794323948,
+        "greedy_sift_pct": 92.91629587453781,
+        "magnetic_pct": 82.21995443076128,
+        "magnetic_sift_pct": 91.42186843393297,
+        "trophic_pct": 45.85177660778506,
+        "trophic_sift_pct": 91.47843801814436,
+        "delta_sift": -1.494427440604838,
+        "eig_wall_s": 0.0044748783111572266,
+        "chose_reverse": true,
+        "chosen_col": 0,
+        "ref_pct": null
+      },
+      {
+        "seed": 999,
+        "greedy_pct": 90.12629794323948,
+        "greedy_sift_pct": 92.91629587453781,
+        "magnetic_pct": 82.21995443076128,
+        "magnetic_sift_pct": 91.42186843393297,
+        "trophic_pct": 45.85177660778506,
+        "trophic_sift_pct": 91.47843801814436,
+        "delta_sift": -1.494427440604838,
+        "eig_wall_s": 0.004996061325073242,
+        "chose_reverse": true,
+        "chosen_col": 0,
+        "ref_pct": null
+      }
+    ]
+  },
+  "timing": {
+    "n_nodes": 136648,
+    "operator_dim": 273296,
+    "nnz": 41375888,
+    "build_wall_s": 1.0416109561920166,
+    "eig_wall_s": 303.66661524772644,
+    "eig_vals": [
+      3.196881152689457e-06,
+      0.1071248940716032,
+      0.2496697468450293,
+      0.42064098521950655
+    ],
+    "gershgorin_c": 165314.00000000017,
+    "chosen_col": 0,
+    "k": 4
+  },
+  "timing_budget_s": 60.0,
+  "quality_pass": false,
+  "timing_pass": false,
+  "verdict": "NO-GO",
+  "total_wall_s": 349.57536792755127
+}

@@ -2008,3 +2008,50 @@ backlog's pre-registered falsification clause. The reusable `src/mfas/refine/lns
 any future use but is not on the H30 path.
 
 #### Decision: kill — ship H30 alone (LNS adds nothing over single-pass H30 on the real connectomes)
+
+## 2026-06-22 — H32: trophic-level Laplacian global warm-start → H30 sift — KILL (by prototype gate)
+- Hypothesis (backlog H32): a global trophic-level order (sparse symmetric-Laplacian solve `Λh=v`,
+  `Λ=diag(w_in+w_out)−(W+Wᵀ)`, `v=w_in−w_out`; MacKay–Johnson–Sansom 2020) is a better basin for the
+  CONFIRMED H30 sift than greedy-FAS. Leakage-safe (h from input graph only).
+#### Implementer (CPU prototype gate — mouse + hard synthetic, scipy.sparse CG; no large-graph compute)
+Comparator = greedy→sift (the H30 refiner on the greedy basin). Δ = trophic→sift − greedy→sift.
+- hard synthetic (n=400, 3 seeds): greedy→sift 69.855 ± 1.911 vs trophic→sift 67.733 — **Δ = −2.122 pp**
+  (per-seed −3.27/−1.91/−1.19, never positive).
+- mouse (n=148, deterministic): greedy→sift 92.916 vs trophic→sift 91.656 — **Δ = −1.260 pp**.
+- CG converged everywhere (rel. residual 5e-11…1e-10; 25–133 iters); orders are valid permutations — the
+  NO-GO is not a bad-solve artifact. Trophic raw pct is itself 2–4 pp below greedy (synthetic): it captures
+  the coarse source→sink axis but not the cyclic-core structure greedy-FAS peels, and the sift can't rebuild it.
+- Files: `experiments/proto_h32_trophic.py` → `experiments/outputs/proto_h32_trophic.json`.
+  `PYTHONPATH=src $PY experiments/proto_h32_trophic.py`
+#### Decision: kill (by prototype gate) — trophic+sift < greedy+sift on BOTH proxies; no large-graph compute spent.
+
+## 2026-06-22 — H33: magnetic-Laplacian directional spectral warm-start → H30 sift — KILL (by prototype gate)
+- Hypothesis (backlog H33): the leading eigenvector of the Hermitian magnetic Laplacian `L_q` (q≈0.25,
+  direction-aware) gives a better order than trophic/greedy for the H30 sift. Represented as a 2n×2n
+  real-symmetric operator; eigsh (no AMG — pyamg absent).
+#### Implementer (CPU prototype gate + connectome eigensolve timing micro-benchmark)
+Two gates, BOTH must pass; either failure kills.
+- QUALITY (synthetic + mouse, 3 seeds): magnetic→sift vs greedy→sift. synthetic **Δ = −4.97 pp**
+  (69.855 → 64.883; per-seed −6.27/−4.57/−4.08); mouse **Δ = −1.49 pp**. Directional spectral order is a
+  *weaker* warm-start than greedy; sift can't rescue it. FAIL.
+- TIMING (connectome eigensolve ALONE, dim 273,296, nnz 41.4M, exactly symmetric): eigsh **303.7 s (k=4) /
+  507.1 s (k=2)**, converged — ~5–8× over the ≤60 s budget (≤2× ceiling leaves ≈80 s for eigensolve+sift).
+  Without AMG the factorization-free Lanczos cost is intrinsic. FAIL.
+- Files: `experiments/proto_h33_magnetic.py` → `experiments/outputs/proto_h33_magnetic.json`.
+#### Decision: kill (by prototype gate) — fails quality AND timing; per the report, drop H33 for H32. No full cycle run.
+
+## 2026-06-22 — H34: perturbed/blackbox differentiable SORT surrogate — KILL (by prototype gate; FALSIFIED, continuous exhausted)
+- Hypothesis (backlog H34): a surrogate whose gradient comes from perturb-and-MAP over a SORT (Berthet
+  2020) is NON-VANISHING (unlike the killed H19 soft-rank, O(1/n) gaps) and can finally move the metric
+  past the sigmoid basin. Inner solver = sort (O(n log n)); graduated ε schedule. The only untried
+  *continuous* mechanism (lowest EV).
+#### Implementer (CPU prototype gate — hard synthetic ε sweep, sigmoid Rocket as the head-to-head baseline)
+- hard synthetic (3 seeds, best ε reported): sigmoid Rocket 73.735 ± 1.155 vs perturbed-sort 73.093 ± 1.031
+  — **Δ = −0.643 pp** (per-seed −0.56/−0.55/−0.82, all negative, far outside the ~0.04 pp floor). FAIL.
+- mouse (no verified gap): +0.205 pp but per-seed overlapping (+0.07/+0.17/+0.38) — not a GO basis.
+- DID NOT STALL: 398–400/400 nodes left their init rank (init ~50% → ~73%), i.e. the perturbed gradient is
+  genuinely non-vanishing — the key contrast with H19 — yet it STILL cannot exceed the basin the sigmoid
+  already reaches. This isolates the bottleneck as the continuous-relaxation BASIN itself, not the gradient
+  estimator, directly confirming finding #3's drift-probe prediction.
+- Files: `experiments/proto_h34_perturbsort.py` → `experiments/outputs/proto_h34_perturbsort.json`.
+#### Decision: kill (by prototype gate) — FALSIFIED. The last untried continuous lever is exhausted; "continuous methods cannot close the gap on this problem regardless of gradient source" is a clean corroboration of finding #3.

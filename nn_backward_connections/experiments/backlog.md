@@ -1515,7 +1515,10 @@ not the 2σ screen. Report the **pure-Rocket score and the Rocket+refinement sco
   test = the prototype sizing gate** (trophic+sift vs greedy+sift on mouse + synthetic). **Falsified
   if** trophic+sift ≤ greedy+sift on the synthetic (then greedy already captures the macro order and
   trophic adds nothing) → no large-graph compute.
-- **status: proposed**
+- **status: killed (by prototype gate)** <!-- 2026-06-22 trophic+sift < greedy+sift on BOTH proxies
+  (synthetic Δ=−2.12 pp, mouse Δ=−1.26 pp; CG converged, residual ~1e-10). Trophic is a WORSE basin
+  than greedy and the sift does not rescue it (captures coarse source→sink axis, not the cyclic core).
+  No large-graph compute spent. proto_h32_trophic.{py,json}. -->
 
 ## H33 — Magnetic-Laplacian directional spectral warm-start → H30 sift  [REPORT #4, PROTOTYPE-GATED]
 - **One-line hypothesis:** seeding the order from the leading eigenvector of the **Hermitian magnetic
@@ -1559,7 +1562,10 @@ not the 2σ screen. Report the **pure-Rocket score and the Rocket+refinement sco
 - **KILL/keep prediction + cheapest first test:** lean **keep only if it beats H32.** **Cheapest first
   test = the prototype sizing gate + the eigensolve timing micro-benchmark.** **Falsified if**
   magnetic+sift ≤ trophic+sift on the synthetic, OR the eigensolve cannot hit the time budget.
-- **status: proposed**
+- **status: killed (by prototype gate)** <!-- 2026-06-22 fails BOTH gates (either sufficient):
+  (1) QUALITY: magnetic+sift < greedy+sift (synthetic Δ=−4.97 pp, mouse Δ=−1.49 pp) — directional
+  spectral order is a weaker warm-start than greedy. (2) TIMING: connectome eigensolve ALONE = 304s
+  (k=4) / 507s (k=2), ~5–8× over the ≤60s budget without AMG (pyamg absent). proto_h33_magnetic.{py,json}. -->
 
 ## H34 — Perturbed / blackbox differentiable SORT surrogate (non-vanishing gradient)  [REPORT #5, lowest EV, PROTOTYPE-GATED]
 - **One-line hypothesis:** replacing Rocket's sigmoid (and the killed soft-rank H19) with a surrogate
@@ -1604,7 +1610,12 @@ not the 2σ screen. Report the **pure-Rocket score and the Rocket+refinement sco
 - **KILL/keep prediction + cheapest first test:** lean **kill (prototype decides).** **Cheapest first
   test = the hard-synthetic ε sweep on CPU.** **Falsified if** it stalls like H19 did across ε (then
   continuous is truly exhausted on this problem — itself a clean, citable thesis result).
-- **status: proposed**
+- **status: killed (by prototype gate) — FALSIFIED (continuous exhausted)** <!-- 2026-06-22 The
+  perturb-and-MAP-over-sort surrogate (Berthet 2020) does NOT stall (unlike H19: 398/400 nodes moved,
+  init ~50%→~73%, gradient genuinely non-vanishing) yet still LOSES to sigmoid Rocket on the gap-bearing
+  synthetic (Δ=−0.64 pp, all 3 seeds). Confirms finding #3: the bottleneck is the continuous-relaxation
+  BASIN, not the gradient estimator. The last untried continuous mechanism is exhausted.
+  proto_h34_perturbsort.{py,json}. -->
 
 ### Phase-6 ranking rationale (EV / cost)
 **H30 first** — the only prototype-POSITIVE idea (full-range sift closed the gap on BOTH available

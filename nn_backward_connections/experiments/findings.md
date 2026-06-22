@@ -173,6 +173,15 @@ H20 (Gumbel-Sinkhorn) were **deferred-by-evidence** (predicted non-improving by 
 probe, and H19's failure — see log.md), not exhaustively falsified. Full evidence + commands:
 `experiments/diagnosis.md`, `experiments/log.md` (Phase-4 + Phase-5 sections), `experiments/outputs/diagnosis.json`.
 
+**Phase-6 corroboration — the last untried continuous lever also fails (H34, 2026-06-22).** A
+perturbed/blackbox differentiable **sort** surrogate (Berthet 2020 perturb-and-MAP over a sort; the
+literature's structural fix for H19's O(1/n) vanishing gradient) was prototyped on the gap-bearing
+synthetic. Unlike H19 it does **not stall** (398/400 nodes move, init ~50% → ~73% — the gradient is
+genuinely non-vanishing), yet it still **loses to the sigmoid Rocket** (Δ = −0.64 pp, all 3 seeds). This
+isolates the bottleneck as the **continuous-relaxation basin itself, not the gradient estimator** —
+sharpening #3: no continuous lever closes the gap *regardless of gradient source*. The continuous family
+is now exhausted (`experiments/proto_h34_perturbsort.py`; killed by prototype gate, no large-graph compute).
+
 ## #4 — A cheap full-range discrete sift recovers ~half the connectome gap with NO MIP (Phase 6)
 
 **Claim.** Appending a **leakage-safe, full-range, exact-gain node re-insertion ("sift")** post-phase to
@@ -235,3 +244,40 @@ for S in 42 123 999 7 31415; do python -m eval.run_variant --exp H30 --dataset m
 ```
 Result JSONs: `results/*-H30-{connectome,microns,mouse}-*-{implement,verify,confirm}-{1976d9,954bab,ff2174}.json`.
 Full cycle (implementer/verifier/critic verdicts): `experiments/log.md` (Phase-6 H30 entry).
+
+## Phase-6 summary — global discrete refinement (H30–H34, 2026-06-22)
+
+**Result: 1 CONFIRMED win (H30), 4 kills.** The backlog (H30–H34) is exhausted.
+
+| ID | idea | verdict | decisive evidence |
+|---|---|---|---|
+| **H30** | full-range exact-gain sift (post-Rocket) | **CONFIRMED GENERAL WIN** (finding #4) | connectome +0.85 pp over H02 (CI_lo +0.835), microns +0.078, mouse +0.42; ~51% of the gap, no MIP |
+| H31 | ILS/LNS wrapper on the sift | kill (screen) | beats sift +0.25 pp on synthetic but Δ vs H30 = −0.0008 pp on connectome at ~1.9× wall |
+| H32 | trophic-Laplacian warm-start → sift | kill (prototype gate) | trophic→sift −2.12 pp (synthetic) / −1.26 (mouse) vs greedy→sift |
+| H33 | magnetic-Laplacian warm-start → sift | kill (prototype gate) | quality −4.97 pp vs greedy→sift AND eigensolve 304–507 s (~5–8× over budget, no AMG) |
+| H34 | perturbed-sort continuous surrogate | kill (prototype gate, FALSIFIED) | moves (non-vanishing grad) but −0.64 pp vs sigmoid Rocket on synthetic |
+
+**Cross-cutting insight (extends #2).** The **discrete refiner does the work; the basin it starts from
+barely matters.** Full-range exact-gain sift recovers the gap from a greedy-FAS order about as well as from
+a Rocket order (the `dr_tmp` "sift-on-greedy ≈ sift-on-Rocket" result), and two *global linear-algebra*
+warm-starts (trophic H32, directional-spectral magnetic H33) are **worse** seeds for the sift than plain
+greedy-FAS — so **greedy+sift is the design**; no smarter init earns its cost. This mirrors finding #2
+(*where* you start matters, not *how* you descend) one level up: among discrete starting orders for the
+sift, the cheap greedy peel is already at least as good as expensive spectral/trophic embeddings.
+
+**Is finding #3 revised? Partially, yes (see the banner on #3).** The ~1.69 pp connectome Rocket↔best gap
+is **not** MIP-exclusive: a cheap, leakage-safe *global* (full-range) discrete refinement recovers ~51% of
+it with 0 MIP and 0 extra gradient steps (H30). The *bounded-local* half of #3 still stands (H30's W=10
+sift ≈ 0 reproduces the H22 kill — the recoverable weight is long-range/global). The *continuous-only*
+sub-claims of #3 are reinforced, not revised: H34 shows even a non-vanishing-gradient continuous surrogate
+cannot beat the relaxation basin. Independent prior art (Vahidi 2025, arXiv:2506.13799, verified vs HTML)
+reaches the **full 84.61%** on this exact graph with cheap greedy + *bounded-span* insertion + SCC and **no
+MIP** — consistent with our message that the residual is reachable by cheap combinatorial refinement. The
+remaining ~0.83 pp from H30's 83.78% to that 84.61% SOTA is the target for future SCC-structured insertion
+(H31's generic ruin-&-recreate did not reach it within budget).
+
+**Runtime.** H30 adds 0 gradient steps; wall ~1.4–2× connectome (+~37 s sift), ~1.2× microns, negligible
+mouse — all ≤ the 2× ceiling. The four kills consumed only cheap CPU prototype gates (+ one connectome
+eigensolve timing benchmark for H33); no wasted large-graph variant cycles. All numbers trace to
+`results/*.json` (H30/H31) or `experiments/outputs/proto_h3{2,3,4}_*.json` (gates) with re-runnable
+commands in `experiments/log.md`. One git commit per experiment on branch `phase6-global-discrete`.

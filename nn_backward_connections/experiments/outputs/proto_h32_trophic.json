@@ -1,0 +1,163 @@
+{
+  "max_sweeps": 30,
+  "seeds": [
+    42,
+    123,
+    999
+  ],
+  "fixtures": {
+    "hard_synthetic": {
+      "rows": [
+        {
+          "graph": "hard_synthetic",
+          "seed": 42,
+          "n_nodes": 400,
+          "n_edges": 7679,
+          "greedy_raw": 68.14397880995176,
+          "trophic_raw": 63.87758963201211,
+          "greedy_sift": 69.44470721786018,
+          "trophic_sift": 66.17633147289754,
+          "delta_sift": -3.26837574496264,
+          "delta_raw": -4.266389177939651,
+          "cg_flag": 0,
+          "cg_iters": 25,
+          "cg_resid_abs": 5.316170773341589e-08,
+          "cg_resid_rel": 9.684190536430044e-11,
+          "greedy_sift_wall_s": 0.04689526557922363,
+          "trophic_sift_wall_s": 0.046405792236328125
+        },
+        {
+          "graph": "hard_synthetic",
+          "seed": 123,
+          "n_nodes": 400,
+          "n_edges": 7645,
+          "greedy_raw": 67.74740411104048,
+          "trophic_raw": 64.4458571731299,
+          "greedy_sift": 67.74740411104048,
+          "trophic_sift": 65.84022038567493,
+          "delta_sift": -1.907183725365556,
+          "delta_raw": -3.3015469379105866,
+          "cg_flag": 0,
+          "cg_iters": 27,
+          "cg_resid_abs": 4.233454338800015e-08,
+          "cg_resid_rel": 6.895334043571725e-11,
+          "greedy_sift_wall_s": 0.047300100326538086,
+          "trophic_sift_wall_s": 0.046913862228393555
+        },
+        {
+          "graph": "hard_synthetic",
+          "seed": 999,
+          "n_nodes": 400,
+          "n_edges": 7672,
+          "greedy_raw": 69.9612327211497,
+          "trophic_raw": 67.6665230841524,
+          "greedy_sift": 72.37341896072365,
+          "trophic_sift": 71.1829893879469,
+          "delta_sift": -1.1904295727767504,
+          "delta_raw": -2.294709636997297,
+          "cg_flag": 0,
+          "cg_iters": 26,
+          "cg_resid_abs": 3.917954344150998e-08,
+          "cg_resid_rel": 5.267162061039508e-11,
+          "greedy_sift_wall_s": 0.049490928649902344,
+          "trophic_sift_wall_s": 0.0477292537689209
+        }
+      ],
+      "summary": {
+        "n_seeds": 3,
+        "greedy_sift_mean": 69.8551767632081,
+        "greedy_sift_std": 1.9107358587929602,
+        "trophic_sift_mean": 67.73318041550647,
+        "trophic_sift_std": 2.443239533281779,
+        "delta_mean": -2.1219963477016486,
+        "delta_std": 0.8618094997007475,
+        "delta_min": -3.26837574496264,
+        "delta_max": -1.1904295727767504,
+        "seed_straddling": false
+      }
+    },
+    "mouse": {
+      "rows": [
+        {
+          "graph": "mouse",
+          "seed": 42,
+          "n_nodes": 148,
+          "n_edges": 583,
+          "greedy_raw": 90.12629794323948,
+          "trophic_raw": 89.97676018223167,
+          "greedy_sift": 92.91629587453781,
+          "trophic_sift": 91.65581403098643,
+          "delta_sift": -1.260481843551375,
+          "delta_raw": -0.14953776100780658,
+          "cg_flag": 0,
+          "cg_iters": 133,
+          "cg_resid_abs": 1.8674419343279607e-10,
+          "cg_resid_rel": 7.361189275403706e-11,
+          "greedy_sift_wall_s": 0.004521846771240234,
+          "trophic_sift_wall_s": 0.004225015640258789
+        },
+        {
+          "graph": "mouse",
+          "seed": 123,
+          "n_nodes": 148,
+          "n_edges": 583,
+          "greedy_raw": 90.12629794323948,
+          "trophic_raw": 89.97676018223167,
+          "greedy_sift": 92.91629587453781,
+          "trophic_sift": 91.65581403098643,
+          "delta_sift": -1.260481843551375,
+          "delta_raw": -0.14953776100780658,
+          "cg_flag": 0,
+          "cg_iters": 133,
+          "cg_resid_abs": 1.8674419343279607e-10,
+          "cg_resid_rel": 7.361189275403706e-11,
+          "greedy_sift_wall_s": 0.0043849945068359375,
+          "trophic_sift_wall_s": 0.004294872283935547
+        },
+        {
+          "graph": "mouse",
+          "seed": 999,
+          "n_nodes": 148,
+          "n_edges": 583,
+          "greedy_raw": 90.12629794323948,
+          "trophic_raw": 89.97676018223167,
+          "greedy_sift": 92.91629587453781,
+          "trophic_sift": 91.65581403098643,
+          "delta_sift": -1.260481843551375,
+          "delta_raw": -0.14953776100780658,
+          "cg_flag": 0,
+          "cg_iters": 133,
+          "cg_resid_abs": 1.8674419343279607e-10,
+          "cg_resid_rel": 7.361189275403706e-11,
+          "greedy_sift_wall_s": 0.004333019256591797,
+          "trophic_sift_wall_s": 0.0043489933013916016
+        }
+      ],
+      "summary": {
+        "n_seeds": 3,
+        "greedy_sift_mean": 92.91629587453781,
+        "greedy_sift_std": 0.0,
+        "trophic_sift_mean": 91.65581403098643,
+        "trophic_sift_std": 0.0,
+        "delta_mean": -1.260481843551375,
+        "delta_std": 0.0,
+        "delta_min": -1.260481843551375,
+        "delta_max": -1.260481843551375,
+        "seed_straddling": false
+      }
+    }
+  },
+  "note": "GATE: GO iff trophic->sift beats greedy->sift beyond noise on the gap-bearing synthetic (positive mean \u0394, not seed-straddling, |\u0394_mean|>greedy_sift_std) AND mouse does not regress (\u0394_mean >= -noise). Otherwise NO-GO (refiner washes out the warm-start choice).",
+  "gate": {
+    "synth_delta_mean": -2.1219963477016486,
+    "synth_delta_std": 0.8618094997007475,
+    "synth_noise_proxy": 1.9107358587929602,
+    "synth_seed_straddling": false,
+    "synth_go": false,
+    "mouse_delta_mean": -1.260481843551375,
+    "mouse_delta_std": 0.0,
+    "mouse_noise_proxy": 1e-09,
+    "mouse_ok": false,
+    "verdict": "NO-GO"
+  }
+}
