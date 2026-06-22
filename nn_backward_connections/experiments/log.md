@@ -1676,3 +1676,55 @@ results are within noise. The "small-graph artifact" framing in the verifier's e
 the evidence from the mouse: the mouse CI_lower is −0.128 pp, not positive, and the apparent mean
 gain is a single-seed fluctuation. There is no size-contingent theory that would explain the
 surrogate shaping differently across graph scales. Label correctly as NULL on all three datasets.
+
+---
+
+## 2026-06-22 — Phase 5 Part E: headline conclusions across two large connectomes
+
+### Summary: what Phase 5 changes vs Phase 3
+
+Phase 5 adds MICrONS minnie65 (67k neurons, mouse visual cortex, n=5 seeds confirmed per hypothesis)
+as a second independent large connectome. Four Phase-3 results were re-evaluated:
+
+| hypothesis | Phase-3 verdict | Phase-5 microns result | Phase-5 verdict |
+|---|---|---|---|
+| H02 warm-start | CONFIRMED (fly+mouse) | Δ=+0.0114 pp, CI_lower=+0.0106 pp (n=5, verify CI_lower=+0.0110) | **GENERAL WIN (all 3 real graphs)** |
+| H16 monotone β melt | KILL (fly) | Δ=−0.0139 pp deterministic (3 seeds identical) | **KILL (SMALL-GRAPH ARTIFACT)** — mouse gain is 148-node noise |
+| H11 smooth-hinge | KILL (fly) | Δ=+0.0007 pp, CI_lower=−0.0003 pp (NOT CONFIRMED) | **KILL (NULL)** — mouse mean also unconfirmed (CI_lower=−0.128 pp) |
+| H03 sharper β | KILL (fly) | Δ=−0.0092 pp (regression) | **KILL (NULL, regression extends to microns)** |
+
+### What is strengthened
+
+**Finding #1 (H02 warm-start):** Now GENERAL WIN on three real connectomes from two species (fly
+Drosophila + mouse Mus musculus). The basin-landing mechanism is graph-structure-general. The
+18σ microns signal is the strongest per-σ confirmation.
+
+**Finding #2 (basin-not-dynamics):** Phase-3 negative results on connectome and mouse now extend
+to MICrONS: H11 objective reshaping is null on microns (CI_lower = −0.0003 pp); H03 β-schedule
+dynamics regresses on microns. This is the strongest corroboration yet — the conclusion holds on
+**two independent large connectomes from different species**. The dynamics/objective null is not
+fly-specific.
+
+### What remains fly-specific (honest scope)
+
+**Finding #3 (optimization gap):** The decisive gap analysis (surrogate alignment, drift probe,
+window sizing, gap structure) requires a reference near-optimal solution (`best_solution`).
+No best_solution exists for MICrONS. Therefore the quantification of the Rocket↔best gap,
+and the claim that it is irreducible to continuous methods, rest on the fly connectome and one
+hard synthetic only. Whether an analogous gap exists on MICrONS is unknown.
+
+### Remaining backlog items not run in Phase 5
+
+H17r (basin-hopping from H02 warm-start), H18r (STE), H22 (SCC/block-macro warm-start) and
+H07r/H08r/H10r/H12r (LOW-EV dynamics) were not run in Phase 5. These are deferred by the
+same evidence that killed them in Phase 4 (H01 null, drift probe, H19 failure) plus the
+Finding #2 corroboration — there is no new reason to expect dynamics/relaxation knobs to win
+on a second large graph given the Phase-5 evidence. If the campaign resumes, the highest-EV
+remaining item is H22 (new hypothesis: SCC-aware macro warm-start, a stronger init lever than
+flat greedy-FAS, theory-aligned with Finding #2).
+
+### commits in this campaign
+- 32d2907 — Parts A+B: MICrONS build + 3-dataset rule
+- 012e9ad — H16r KILL(ARTIFACT) + H03r KILL(NULL)
+- 71eb853 — H02r GENERAL WIN
+- 82973a0 — H11r KILL(NULL)

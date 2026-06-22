@@ -152,8 +152,12 @@ bounded-window single-node local search (sifting/re-insertion, DIRECTION D) cann
 **killed at the sizing gate** before building (H09 pattern). This sharpens the conclusion: closing the
 residual requires *global* discrete optimization (the paper's Crane MIP), not local discrete cleanup.
 
-**Honest scope.** best_solution exists only for connectome (mouse has none) so the decisive surrogate/gap
-steps are connectome-only; conclusions about R rest on mouse + one hard synthetic. H17 (basin-hopping),
-H18 (STE), H20 (Gumbel-Sinkhorn) were **deferred-by-evidence** (predicted non-improving by H01's prior kill,
-the drift probe, and H19's failure — see log.md), not exhaustively falsified. Full evidence + commands:
-`experiments/diagnosis.md`, `experiments/log.md` (Phase-4 section), `experiments/outputs/diagnosis.json`.
+**Honest scope.** best_solution exists only for connectome (mouse and microns have none) so the decisive
+surrogate/gap steps are connectome-only; conclusions about DIRECTION R rest on mouse + one hard synthetic.
+The optimization-gap diagnosis (surrogate alignment, drift probe, gap structure, window sizing) **cannot be
+replicated on MICrONS** — there is no reference near-optimal solution for MICrONS to compare against. The
+conclusion that the gap is irreducible to continuous methods therefore rests on the fly connectome + synthetic
+evidence only; whether an analogous gap exists for MICrONS is unknown. H17 (basin-hopping), H18 (STE),
+H20 (Gumbel-Sinkhorn) were **deferred-by-evidence** (predicted non-improving by H01's prior kill, the drift
+probe, and H19's failure — see log.md), not exhaustively falsified. Full evidence + commands:
+`experiments/diagnosis.md`, `experiments/log.md` (Phase-4 + Phase-5 sections), `experiments/outputs/diagnosis.json`.
