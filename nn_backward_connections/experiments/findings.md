@@ -120,7 +120,16 @@ graphs and has been pressure-tested by an independent verifier and critic. Full 
 > reaches the **full 84.61%** on this exact graph with cheap greedy + *bounded-span* insertion + SCC,
 > **no MIP/spectral/GNN** — so the gap is reachable by cheap combinatorial refinement, not only by the
 > 20-day Crane MIP. The continuous-only sub-claims of #3 (surrogate-aligned optimization-gap; Adam-on-σ
-> cannot reach/hold the best order) are unaffected and remain valid.
+> cannot *reach* the best order) are unaffected and remain valid.
+
+> **⚠ FURTHER CORRECTED by Q01 (Track B, 2026-08-01).** The "unholdable / not a *stable* attractor"
+> half of #3 was **wrong** — it rested on a mis-scaled probe. Started from the best order's true
+> surrogate-optimal spacing **P\*** (std≈53,626, a critical point ‖∇F‖≈5e-4 with F(P\*) > F(Rocket)
+> by +307), small-lr **and Rocket-default-lr** Adam **HOLD 84.6147% exactly**. The logged "collapse"
+> was a **scale artefact** — the probe used even spacing (std≈0.58, ~200× below the operating scale),
+> where the best *order* is a high-loss point GD correctly flees. The optimum is a **stable attractor
+> at its own scale**; the surviving barrier is **reachability**, not stability. Evidence:
+> `diagnosis.md` § Q01, `experiments/diagnostics/q01_drift_from_optimum.py`.
 
 **Claim.** Against a downloaded near-optimal ordering (`data/best_solution`, **84.6147%**, vs Rocket-only
 **82.93%** → gap **≈1.69 pp**), the gap is a true **optimization-gap, not a surrogate-misalignment**: the
@@ -136,7 +145,7 @@ reordering with no discretization slack, and is therefore largely **irreducible 
 | probe | result | implication |
 |---|---|---|
 | decisive surrogate (scale-fair) | best's order out-surrogates Rocket at **every** β (+238 … +1153) | surrogate aligned → **optimization-gap**, not misalignment |
-| drift probe (init AT best) | Rocket collapses 84.61% → 82.75–83.03% under every schedule/scale | best is **unreachable/unholdable** by Adam-on-σ |
+| drift probe (init AT best, **even spacing**) | collapses 84.61% → 82.75–83.03% — but a **scale artefact** (std≈0.58); from optimal spacing P\* it **HOLDS** (Q01) | best is **not reachable** by Adam-on-σ from a generic start (it IS holdable at its own scale) |
 | init→plateau (connectome) | **flat** 82.87–82.93% across inits 36–69% | better-init-alone ceiling ≤0.06 pp (DIRECTION I down) |
 | gap structure | 7.5% of weight flips; Kendall-τ 0.61; **0 ties**, near-ties 0.03% | distributed reordering, **no discretization slack** |
 | H16 (DIRECTION O: monotone β) | connectome **−0.27 pp** vs baseline (KILL) | β-schedule change can't beat the tuned cyclic baseline |
@@ -149,8 +158,9 @@ a gap demonstrably exists. The Rocket-only best remains **H02 = 82.93% connectom
 
 **Why it matters.** It quantifies the continuous/discrete boundary for Rocket: of the ~1.69 pp Crane gap,
 continuous optimization recovers **≈0** beyond H02's warm-start (~0.05 pp). The surrogate is faithful; the
-barrier is the non-convex landscape — a near-optimal ordering is not a reachable or even *stable* attractor
-of Adam-on-σ, and rank/scale/schedule reparametrizations don't change that. This is the mechanistic reason
+barrier is the non-convex landscape — a near-optimal ordering is not **reachable** by Adam-on-σ from a
+generic start (though it IS a *stable* attractor at its own scale — see Q01), and rank/scale/schedule
+reparametrizations don't change the reachability barrier. This is the mechanistic reason
 the paper needs a discrete MIP (Crane) to surpass Rocket.
 
 **Corroboration — the gap is also irreducible to *bounded-local* discrete refinement (H22 sizing,

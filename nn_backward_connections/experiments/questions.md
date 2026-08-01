@@ -32,7 +32,12 @@ Contract: `experiments/PROTOCOL.md` § "Track B — Diagnostics". In one line:
 ---
 
 ## Q01 — Why does starting Rocket from the best solution drift the score DOWN?
-- **status:** open  *(first task — ~80% pre-worked in `dr_tmp/`, needs consolidation)*
+- **status:** **answered (2026-08-01)** — `experiments/diagnostics/q01_drift_from_optimum.py` →
+  `diagnosis.md` § Q01; `findings.md` #3 corrected. **The intuition holds:** from the true low-loss
+  point P\* (best order's surrogate-optimal spacing, std≈53,626, a critical point with F(P\*) >
+  F(Rocket)+307), small-lr **and Rocket-default-lr** Adam **hold 84.6147% exactly**. The logged
+  "collapse" was a **scale artefact** (even-spacing init, std≈0.58, ~200× too small). Barrier is
+  **reachability**, not stability.
 - **why it matters:** `findings.md` #3 currently claims the best order is "unreachable/unholdable
   by Adam-on-σ under **every** schedule/scale". Prior scratch work contradicts the "every scale"
   strength: it is **holdable at the right scale**. The finding needs correcting for thesis

@@ -142,3 +142,55 @@ Crane phase). Stage B will quantify how much O/R recovers; the prototype-first g
 synthetic + mouse decides whether any variant earns connectome compute.
 
 **Reproduce:** `python experiments/diagnostics.py --steps 0,1,2,3,4` → `experiments/outputs/diagnosis.json`.
+
+---
+
+## Q01 — Why does starting Rocket from the best solution drift the score DOWN?
+
+**Answer (2026-08-01): it does NOT drift when you start from the true low-loss point. The logged
+"collapse" was a SCALE artefact of the probe, not a property of the optimum.** This corrects the
+over-strong half of finding #3 ("best is unreachable/unholdable … under *every* schedule/scale").
+
+**The subtlety.** The surrogate F(pos) = Σ σ(β·Δ)·ŵ depends on position **gaps**, not on the order
+alone. So the best *order* embedded at an arbitrary (even) spacing is **not** a low-loss point — the
+gaps are wrong even though the ranking is optimal. Gradient descent correctly flees that high-loss
+point, and in doing so it **reshuffles the order**, which is what drops the discrete score. The
+original drift probe (`diagnosis.json`) started from the best order at **even spacing in [−1,1]
+(std≈0.58)** — ~90,000× below the surrogate-optimal scale — so it measured the flight from a
+high-loss point, not the stability of the optimum.
+
+**Evidence** (`experiments/diagnostics/q01_drift_from_optimum.py` → `experiments/outputs/q01_drift.json`
++ `q01_hold_from_optimum.png`, `q01_scale_sweep.png`; connectome, β=1.05, seed 42):
+
+| quantity | value | reading |
+|---|---|---|
+| best_solution discrete | 84.6147% | the target |
+| **P\*** = best order at surrogate-optimal spacing | F=14,745.8, **std≈53,626**, disc 84.6147% | the true low-loss point (large scale) |
+| Rocket reference | F=14,438.5, std≈141, disc 82.9161% | Rocket's basin is **lower-F** |
+| **F(P\*) − F(Rocket)** | **+307.3** | GD *ascends* F ⇒ from P\* it cannot flow to Rocket |
+| **‖∇F(P\*)‖** | **4.9e-4** (max 2.1e-4) | P\* is a **critical point** (local max of the surrogate) |
+| **HOLD from P\***, Adam lr ∈ {5e-4, 5e-3, **5e-2**} | 84.6147% → **84.6147%** (min 84.6146%) | holds exactly — even at Rocket's default lr |
+
+**The drift is entirely a function of position SCALE** (same optimal *shape*, rescaled; drop after
+1000 Adam steps at lr 5e-3):
+
+| std(pos) | 0.58 | 2 | 10 | 50 | **141** | 500 | 5000 | 53000 |
+|---|---|---|---|---|---|---|---|---|
+| ‖∇F‖ @start | 19.9 | 15.6 | 10.2 | 5.2 | 3.5 | 1.7 | 0.41 | 5e-4 |
+| discrete **drop** (pp) | **5.51** | 4.32 | 2.35 | 0.97 | **0.47** | 0.18 | 0.009 | **0.00** |
+
+At the logged even-spacing scale (std≈0.58) the drop is 5.5 pp; at Rocket's operating scale
+(std≈141) it is 0.47 pp; at the true optimal scale (std≈53k) it is 0.00 pp. So:
+
+- **The intuition is correct.** From the genuine loss-minimizing configuration P\*, small-lr — and
+  even Rocket-default-lr — GD **holds** the best score; there is no lower-F basin to fall into.
+- **The logged collapse was methodological**, not physical: it started ~200× (in std) too small,
+  where the best order is a *high-loss* point that GD correctly leaves (reshuffling the order).
+- **What survives from #3 (unchanged):** Adam-on-σ does not *navigate to* P\* from a cold or
+  Rocket-scale start (the init→plateau curve is flat; Rocket converges to its own std≈141, lower-F
+  basin). The barrier is **reachability**, not **stability** — the optimum is a stable attractor at
+  its own scale; the optimizer just never gets there on its own.
+
+**Reproduce:** `PYTHONPATH=src python experiments/diagnostics/q01_drift_from_optimum.py`
+(env `allen`, ~3–6 min). Supersedes the exploratory `dr_tmp/drift_from_optimal_spacing.py`
+and `dr_tmp/drift_scale_sweep.py`.

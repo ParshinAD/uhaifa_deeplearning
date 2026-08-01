@@ -21,5 +21,8 @@ Promoted, re-runnable diagnostic scripts that answer a `Q0x` in
 4. Update the pointer in `../roadmap.md` and flip status in `../questions.md`.
 
 ## Index
-*(empty — first promotions expected: the drift probes `dr_tmp/drift_from_optimal_spacing.py` and
-`dr_tmp/drift_scale_sweep.py` answering `Q01`.)*
+- **`q01_drift_from_optimum.py`** — answers `Q01` (why starting from best drifts down: it doesn't,
+  at the right scale). Consolidates the two `dr_tmp/drift_*.py` probes; reads the committed parity
+  anchor, not a gitignored positions file. Run: `PYTHONPATH=src python
+  experiments/diagnostics/q01_drift_from_optimum.py` → `experiments/outputs/q01_*.{json,png}`.
+  Answer: `../diagnosis.md` § Q01.
