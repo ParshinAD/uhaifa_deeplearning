@@ -81,8 +81,10 @@ Post-Rocket plateau vs init quality, leakage-safe inits:
 | greedy (H02) | 68.91 → 82.930 | 90.13 → **92.479** |
 
 **Connectome plateau is essentially init-invariant (82.87–82.93%, range 0.06 pp) despite inits
-spanning 36–69%.** Better init does *not* buy a better plateau — consistent with the drift probe
-(even an 84.6% init collapses). **Better-init-alone (DIRECTION I) has a ~0.06 pp ceiling on
+spanning 36–69%.** Better init does *not* buy a better plateau — Rocket re-converges to its own
+std≈141 basin regardless of init quality (⚠ the separate 84.6%-init drift "collapse" was an
+even-spacing artefact, § Q01; the point stands via *reachability*: Rocket doesn't navigate to a
+better basin from any init). **Better-init-alone (DIRECTION I) has a ~0.06 pp ceiling on
 connectome** and is therefore *not* the primary lever; H02's confirmed +0.045 pp is approximately
 all that init can buy. (Mouse is mildly init-sensitive — greedy best — but is near-saturated.)
 
@@ -141,8 +143,10 @@ scale — corrected by § Q01; the earlier "not holdable" was an even-spacing ar
    captured the available gain. Stronger inits are only worth pursuing *in combination* with O/R
    (a good basin that the dynamics can now hold).
 
-**Honest ceiling read.** Because even a perfect init collapses under gradient flow, and the gap is a
-distributed reordering rather than recoverable ties, a large share of the 1.69 pp may be
+**Honest ceiling read.** Because a perfect init is not *reached* by gradient flow from a generic
+start (⚠ corrected — it IS retained at its own scale; the "collapse" was an even-spacing artefact,
+§ Q01 — so the barrier is reachability, not stability), and the gap is a distributed reordering
+rather than recoverable ties, a large share of the 1.69 pp may be
 **irreducible to continuous optimization** and genuinely require discrete refinement (the paper's
 Crane phase). Stage B will quantify how much O/R recovers; the prototype-first gate on a *hard*
 synthetic + mouse decides whether any variant earns connectome compute.
