@@ -8,6 +8,12 @@ dist/
 .pytest_cache/
 .ipynb_checkpoints/
 
+# Ephemeral scratch — exploratory diagnostics live here until PROMOTED to a track home
+# (experiments/diagnostics/, src/mfas/randomgraph/, or a track .md). See experiments/roadmap.md.
+# Keepers (e.g. the drift probes feeding Q01, the H35 under-relaxation evidence) must be promoted,
+# not left here, so they stay reproducible-by-checkout.
+dr_tmp/
+
 # Project caches / large generated artifacts (rebuildable; see experiments/build_microns.py)
 data/processed/
 # Keep the small MICrONS build documentation (recipe + stats JSON) — NOT the 55MB npz

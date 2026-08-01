@@ -1,3 +1,8 @@
+<!-- TRACK-B ANSWER LEDGER. This file records answered diagnostic questions (see
+experiments/questions.md and PROTOCOL.md § "Track B — Diagnostics"). New answers are appended as
+`## Q0x — <question>` sections that questions.md links to. The Phase-4 section below predates the
+Q-numbering and is kept as-is (cited by hash elsewhere). -->
+
 # Phase-4 Stage-A Diagnosis — the Rocket↔best gap
 
 **Question.** Of the ~1.7 pp gap between Rocket-only quality and a near-optimal ordering, how

@@ -1,0 +1,25 @@
+# experiments/diagnostics/ — Track B stable diagnostic scripts
+
+Promoted, re-runnable diagnostic scripts that answer a `Q0x` in
+[`../questions.md`](../questions.md). This is the **keeper** home; ephemeral exploration stays in
+`dr_tmp/` (gitignored) and is promoted here once it earns a place in a finding.
+
+## Contract (per `../PROTOCOL.md` § "Track B — Diagnostics")
+- **Privileged reads via `mfas.analysis.gap` only.** Never `open()` `data/best_solution` directly.
+- **Never write to `results/`.** Diagnostic outputs go to `experiments/outputs/*.json` (+ plots);
+  conclusions go to `../diagnosis.md` under a `## Q0x —` anchor. (`results/*.json` is
+  runner-only and write-protected by the guard hook.)
+- **Reproducible by checkout.** No hardcoded paths to gitignored artifacts
+  (`results/*_positions.npy` is excluded from git) — regenerate, or read the committed
+  `results/rocket_best_positions.npy`.
+- Every printed number must be reproducible from the script + a logged command; fix seeds.
+
+## Promotion checklist (dr_tmp → here)
+1. Move the script; fix any hardcoded gitignored paths (see above).
+2. Add a module docstring: which `Q0x` it answers, the exact run command, expected artifact.
+3. Write/point the answer in `../diagnosis.md`; annotate any `findings.md` claim it corrects.
+4. Update the pointer in `../roadmap.md` and flip status in `../questions.md`.
+
+## Index
+*(empty — first promotions expected: the drift probes `dr_tmp/drift_from_optimal_spacing.py` and
+`dr_tmp/drift_scale_sweep.py` answering `Q01`.)*

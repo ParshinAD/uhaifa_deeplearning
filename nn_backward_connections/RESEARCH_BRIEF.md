@@ -1,5 +1,16 @@
 # Research Brief — Improving the Rocket MFAS sub-algorithm
 
+> **Research map (updated 2026-08).** The work now spans **three tracks**. The live cross-track
+> plan is **[`experiments/roadmap.md`](experiments/roadmap.md)**; governance is
+> **[`experiments/PROTOCOL.md`](experiments/PROTOCOL.md)** (§ "Multi-track research map").
+> - **A — Improvement** (beat the baseline): `experiments/backlog.md` → `findings.md`.
+> - **B — Diagnostics** (explain Rocket): `experiments/questions.md` → `diagnosis.md`.
+> - **C — Random graphs vs brains** (goal #2): `experiments/randomgraph.md` → `results/randomgraph/`.
+>
+> The sections below are the **Phase-0 infrastructure brief** (historical) — the oracle, the
+> reproduced baseline, and the working agreement. Improvements H02–H35 and Tracks B/C came later;
+> where this brief says "no algorithmic improvements," read it as *scope of Phase 0 only*.
+
 ## Goal
 Improve the **Rocket** sub-algorithm for the **Minimum Feedback Arc Set (MFAS)** problem from
 Bader et al. (2025), *"Rocket-Crane algorithm for the Feedback Arc Set problem"*

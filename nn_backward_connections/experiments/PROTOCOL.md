@@ -199,3 +199,65 @@ at matched seeds and 80k epochs. Multi-start variants → `baseline_multistart` 
 `eval/frozen_guard.verify_frozen_manifest()` called before every scored run. `src/mfas/io.py` is
 writable (adding `microns` needed no change to any frozen file). MICrONS is leakage-clean (no
 known MFAS solution; `data/best_solution` does not apply).
+
+---
+
+## Multi-track research map (added 2026-08-01)
+
+The campaign now spans **three tracks**. Track A (everything above) is unchanged. Tracks B and C
+reuse the same frozen oracle and the shared reproducibility contract below, but each has its own
+verdict rule and file contract — they are **not** run through SCREEN/CONFIRM. The live cross-track
+plan is `experiments/roadmap.md` (priority + pointers; it never restates a queue's status).
+
+| track | question | queue (owns status) | code | results | conclusions | verdict rule |
+|---|---|---|---|---|---|---|
+| **A — improvement (H)** | beat the baseline on the exact metric | `backlog.md` | `src/mfas/experiments/H*.py` | `results/*.json` | `findings.md` | SCREEN + CONFIRM (above) |
+| **B — diagnostics (Q)** | *explain* Rocket's behaviour | `questions.md` | `experiments/diagnostics/` + `src/mfas/analysis/gap.py` | *(none in `results/`)* | `diagnosis.md` | reproducible-explanation |
+| **C — random graphs (G)** | real vs random unavoidable feedback | `randomgraph.md` | `src/mfas/randomgraph/` | `results/randomgraph/*.json` | `randomgraph.md` (findings §) | N-realization mean±std |
+
+### Shared reproducibility contract (ALL tracks)
+- Every reported number traces to a **committed artifact** (a `results/*.json`, an
+  `experiments/outputs/*.json`, a plot, or a table) **plus a re-runnable command**. Never fabricated.
+- Never modify frozen files; never hardcode/peek at the discrete target metric inside any
+  algorithm **or generator**.
+- Fixed, logged seeds; report dispersion (std / CI), not point values.
+- One git commit per experiment/answer; scratch stays in `dr_tmp/` (gitignored) until **promoted**
+  to its track's home.
+
+### Track B — Diagnostics (Q-series) — verdict + contract
+- **Purpose:** answer a question (mechanism / measurement), not to win — **no SCREEN/CONFIRM**.
+- **ANSWERED** when: claim + method + cited artifact + re-runnable command are written to
+  `diagnosis.md` under a `## Q0x — <question>` anchor, **and** any finding it contradicts is
+  corrected/annotated.
+- **Leakage firewall:** any read of `data/best_solution` goes through `mfas.analysis.gap`;
+  diagnostics **never write to `results/`** (outputs → `experiments/outputs/` or `dr_tmp/`;
+  conclusions → `diagnosis.md`). Enforced by convention + the critic + the Edit/Write guard hook
+  (`data/best_solution` and `results/**/*.json` are write-protected). *Convention still covers what
+  the hook can't see — e.g. a raw `best_solution` read from inside a running script.*
+- **File contract:** `questions.md` (owns Q status) ; stable scripts in `experiments/diagnostics/`
+  (promoted from `dr_tmp/`) ; answers appended to `diagnosis.md`.
+- **Numbering:** `Q01`+ for new questions. Historical diagnostics that shipped in the H-series
+  (**H21** hard-synthetic fixture, **H22** window/SCC sizing) keep their H IDs — they are cited by
+  commit-hash across `findings.md`/`diagnosis.md`/`log.md`; do **not** renumber.
+
+### Track C — Random graphs vs brains (G-series) — verdict + contract
+- **Purpose:** quantify `unavoidable_feedback = total_weight − best_feedforward` and compare the
+  real connectome(s) to **structure-matched** null models (ER, configuration model, stochastic
+  block model, degree-preserving rewiring).
+- **Estimator contract** (best_feedforward is *estimated*, so be explicit — full version in
+  `randomgraph.md`):
+  1. Use a **Track-C runner**, not `eval/run_variant.py` (it only accepts registered datasets, and
+     `H35.run` keys its budget on `g.name` → a generated graph silently gets defaults).
+  2. **Size-scaled, family-invariant budget** held constant across graph families; log epochs/sweeps.
+  3. Report a **greedy-FAS lower bound** beside the H35 estimate:
+     `unavoidable_feedback ∈ [total − H35, total − greedy]`; trends must hold for **both** bounds,
+     else it's an estimator artefact, not structure.
+  4. Score every ordering with the frozen `mfas.metrics`; the runner writes provenance JSON
+     (`git_commit`, `config_hash`, seeds, `n_nodes`, generator params, `estimator_budget`) to
+     `results/randomgraph/*.json`.
+- **Leakage:** none — random graphs have no reference solution (the `gap.py` firewall does not
+  apply). The only risk is **estimator bias**, handled by the lower-bound control (#3). Generators
+  live in `src/mfas/randomgraph/` and must be **answer-free** — distinct from the answer-carrying
+  synthetic generators in the privileged `mfas.analysis.gap`.
+- **Verdict:** report mean ± std over ≥K graph realizations per model at fixed seeds; a real-vs-null
+  difference counts only if it exceeds realization noise (report a CI). State K.

@@ -42,4 +42,21 @@ for f in "${FROZEN[@]}"; do
   fi
 done
 
+# ── Track B/C hardening (leakage boundary + results namespace) ──
+# The near-optimal reference must never be edited — mutating it would silently corrupt every
+# gap/diagnostic measurement. It is read-only and only via mfas.analysis.gap.
+if [[ "$norm" == *data/best_solution* ]]; then
+  echo "BLOCKED: '$FILE_PATH' is the near-optimal reference (data/best_solution) — read-only, and only via mfas.analysis.gap. See experiments/PROTOCOL.md § 'Track B — Diagnostics'." >&2
+  exit 2
+fi
+
+# results/*.json records are produced ONLY by the frozen runner (eval/run_variant.py), never
+# hand-authored: hand-editing a metric is fabrication (CLAUDE.md invariant #3), and it is also how
+# a diagnostic could leak the target into results/. The runner writes via Python I/O (not the
+# Edit/Write tool), so it is unaffected. (Covers results/randomgraph/*.json too.)
+if [[ "$norm" == results/*.json ]] || [[ "$norm" == */results/*.json ]]; then
+  echo "BLOCKED: '$FILE_PATH' — results/*.json is runner-produced only (eval/run_variant.py). Hand-editing a metric is forbidden (no fabricated numbers). See experiments/PROTOCOL.md." >&2
+  exit 2
+fi
+
 exit 0
