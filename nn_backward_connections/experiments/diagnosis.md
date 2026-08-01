@@ -58,11 +58,16 @@ running its optimization:
 | constant β=1.05, lr .05 | 83.03 | 78.87 | −1.58 |
 | constant β=1.05, lr .005 | 82.75 | 76.60 | −1.86 |
 
-Under **every** schedule/scale tried, gradient ascent on the surrogate **flows a near-optimal
-solution back down to Rocket's ~82.9% plateau** (dipping into the 76–79% range first). So best is
-*not a reachable or even holdable attractor* of Adam-on-sigmoid: the continuous landscape, as
-navigated, has a dominant ~82.9% basin that even a perfect init falls into. This makes the gap a
-**deep optimization-landscape problem**, not a "train longer" shortfall.
+Under every schedule tried **at even spacing (std≈0.58)**, gradient ascent on the surrogate flows
+the near-optimal solution back down to Rocket's ~82.9% plateau (dipping into the 76–79% range first).
+At the time this read as: best is *not a reachable or even holdable attractor* of Adam-on-sigmoid.
+
+> **⚠ CORRECTED by Q01 (2026-08-01).** The "not **holdable**" half was an **artefact of the even
+> spacing** (std≈0.58 — ~200× below the operating scale). From the best order's surrogate-optimal
+> spacing P\* (std≈53,626) the score **HOLDS exactly** under small- and Rocket-default lr. Best IS a
+> stable attractor at its own scale; only **reachability** fails (Adam-on-σ never navigates to P\*
+> from a generic start). See § Q01 below. The gap is still a real optimization-landscape problem —
+> just a **reachability**, not a **stability**, one.
 
 ### Step 4 — init→plateau curve (rules DIRECTION I down)
 Post-Rocket plateau vs init quality, leakage-safe inits:
@@ -113,8 +118,9 @@ a Stage-B prototype graph must inject far more feedback / strong-connectivity to
 ## Selected direction(s) — rule-based, ranked by diagnostic magnitude
 
 Evidence: (1) **OPTIMIZATION-GAP** confirmed — best out-surrogates Rocket at all β; surrogate
-aligned. (2) DIRECTION I has a **flat init→plateau** (≤0.06 pp) → down-ranked. (3) **Best is not a
-holdable attractor** — free gradient flow collapses any good order to the 82.9% basin. (4) Kendall-τ
+aligned. (2) DIRECTION I has a **flat init→plateau** (≤0.06 pp) → down-ranked. (3) **Best is not
+*reachable* by free gradient flow from a generic start** (it IS a holdable attractor at its own
+scale — corrected by § Q01; the earlier "not holdable" was an even-spacing artefact). (4) Kendall-τ
 0.61 → moderate, distributed reordering (partial-basin difference). Per the pre-registered tree
 (1a dominant → DIRECTION O), and refined by (3):
 
@@ -191,6 +197,46 @@ At the logged even-spacing scale (std≈0.58) the drop is 5.5 pp; at Rocket's op
   basin). The barrier is **reachability**, not **stability** — the optimum is a stable attractor at
   its own scale; the optimizer just never gets there on its own.
 
+**Why (the deeper cause): the surrogate is SCALE-BLIND and prefers the best order only above a
+large scale.** F depends on gaps, so the *same* best order has a different surrogate value at
+different scales — and the best order out-surrogates Rocket **only above std≈459** (`q01_F_vs_scale.png`):
+
+| std(pos) | 0.29 (≈[0,1]) | 0.58 | 50 | **141 (Rocket)** | **459 (crossover)** | 5000 | 53626 (P\*) |
+|---|---|---|---|---|---|---|---|
+| F(best order) | 9,224 | 9,669 | 13,921 | **14,273** | ≈14,439 | 14,689 | 14,746 |
+| vs F(Rocket)=14,439 | −5,215 | −4,770 | −518 | **−165** | 0 | +250 | +307 |
+
+(discrete score of the best order = 84.61% at every scale — the order never changes; only F moves.)
+
+- At std→0 every Δ→0 ⇒ σ→0.5 for all edges ⇒ F→0.5·Σŵ = **8,714**: the surrogate goes fully blind.
+- **At Rocket's own operating scale (std≈141) the best order has LOWER F than Rocket** (14,273 <
+  14,438). So a non-ideal-but-well-spread order (Rocket) genuinely beats the ideal-but-squished order
+  *in the surrogate's own currency*. The best order only wins once positions spread past std≈459 — a
+  regime Rocket never enters (its positions converge to std≈141).
+- This is the mechanistic core of the plateau: **at the achievable scale the continuous relaxation
+  does not even rank the better order higher**, so no local gradient step points toward it.
+
+### Insights & how to use
+1. **The plateau is a surrogate-SCALE property, not an optimizer failure.** At std≈141 Rocket's own
+   order is (locally) surrogate-optimal; the better order isn't preferred there. This *sharpens* #3:
+   the gap is not "the optimizer is too weak" but "the relaxation, at its natural scale, points the
+   wrong way." Reconciles with the scale-fair alignment (each order at its *own* optimal spacing ⇒
+   best wins by +307): alignment holds only when the best order is granted a large scale.
+2. **This is exactly why discrete refinement (H30/H35) works and continuous levers don't.** The sift
+   operates in rank space and is immune to the surrogate's scale-blindness — it finds the reordering
+   the surrogate cannot "see" at std≈141, recovering ~half the gap with 0 gradient steps (#4/#5). Q01
+   is the mechanistic "why" behind that. Conversely it predicts the continuous Track-A levers are
+   dead ends: alt-surrogate (A-SURR / killed H11/H34) reshapes σ but not the operating scale;
+   tight-init (A-INIT) starts *smaller*, deeper in the blind regime.
+3. **The one continuous lever the crossover suggests — and why it's still low-EV.** Push the optimizer
+   to operate above std≈459 (scale/temperature annealing, or growing β·std) so the surrogate becomes
+   discriminative. But (a) Rocket's positions already free-scale and *choose* std≈141 because that is
+   where ITS order is optimal — growing scale alone won't relocate it to a *different* order; (b) above
+   the crossover σ saturates on correct edges ⇒ vanishing gradient (the H19 soft-rank stall and the H03
+   β-schedule kill are this failure mode). Logged as roadmap **A-SCALE** (low-EV, prior evidence
+   attached). Net: the discrete sift already achieves what a scale lever gropes toward.
+
 **Reproduce:** `PYTHONPATH=src python experiments/diagnostics/q01_drift_from_optimum.py`
-(env `allen`, ~3–6 min). Supersedes the exploratory `dr_tmp/drift_from_optimal_spacing.py`
-and `dr_tmp/drift_scale_sweep.py`.
+(env `allen`, ~3–6 min). Artifacts: `q01_drift.json`, `q01_hold_from_optimum.png`,
+`q01_scale_sweep.png`, `q01_F_vs_scale.png`. Supersedes the exploratory
+`dr_tmp/drift_from_optimal_spacing.py` and `dr_tmp/drift_scale_sweep.py`.

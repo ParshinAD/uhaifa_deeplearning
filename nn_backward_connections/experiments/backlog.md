@@ -540,8 +540,10 @@ sharper diagnosis than Phase-3's "basin not dynamics" inference:
   differentiated (straight-through discrete forward, rank-space normalization). Secondary: targets
   *why* gradient flow drifts off best (scale blow-up saturating σ, surrogate≠discrete in the forward).
 
-**Honest ceiling read (applies to all H16+).** Because even a perfect init collapses under gradient
-flow and the gap is a distributed reordering with no tie-slack, **a large share of the 1.69 pp may be
+**Honest ceiling read (applies to all H16+).** Because a perfect init is not *reachable* by gradient
+flow from a generic start (⚠ *corrected by Q01: it IS holdable at its own scale — the "collapse" was
+an even-spacing artefact; the barrier is reachability, not stability — see `diagnosis.md` § Q01*) and
+the gap is a distributed reordering with no tie-slack, **a large share of the 1.69 pp may be
 irreducible to continuous optimization** and genuinely require discrete refinement (the paper's Crane
 MIP). Each entry below states honestly *why it might still beat 82.93%* and roughly *how much* —
 estimates are reasoned, NOT measured. Many are bets to recover a *fraction* of the gap, not all of it.

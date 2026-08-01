@@ -139,6 +139,21 @@ for std in CONFIG["SCALE_GRID"]:
     scale_rows.append(dict(std=std, gradnorm=gnorm, disc0=d0, discN=dN, drop=d0 - dN))
     print(f"  std={std:8.1f}  ‖∇F‖={gnorm:10.4g}  disc {d0:.4f}% -> {dN:.4f}%  drop={d0 - dN:.4f}")
 
+# ── F(best order) vs SCALE — the crossover with F(Rocket) ───────────────────────
+# The surrogate depends on gaps, so the best ORDER only out-surrogates Rocket ABOVE a large scale.
+# Below the crossover, a non-ideal-but-spread solution (Rocket) has LOWER loss than the ideal-but-
+# squished order — which is why GD from a squished ideal flows away (and reshuffles the order).
+from scipy.special import expit
+nw_np = (w / w.max()).astype(np.float64)
+F_blind = 0.5 * float(nw_np.sum())                       # F at std->0 (surrogate sees everything ~0.5)
+def F_np(pos):
+    return float((expit(BETA * (pos[tgt] - pos[src])) * nw_np).sum())
+F_grid = [(float(s), F_np(shape * s)) for s in np.logspace(np.log10(0.2), np.log10(1e5), 40)]
+crossover_std = next((s for s, fv in F_grid if fv >= F_rock), None)
+print(f"\nF(best order) vs scale:  F@std->0 = 0.5·Σŵ = {F_blind:.1f} (surrogate blind)")
+print(f"  F(Rocket) = {F_rock:.1f}; best order out-surrogates Rocket only above std≈"
+      f"{crossover_std:.0f}" if crossover_std else "  (best never crosses F(Rocket) on the grid)")
+
 # ── Persist numbers (NOT to results/) ───────────────────────────────────────────
 out = dict(
     config={k: (str(v) if isinstance(v, Path) else v) for k, v in CONFIG.items()},
@@ -148,6 +163,8 @@ out = dict(
     dF_Pstar_minus_rocket=Fstar - F_rock,
     gradnorm_Pstar=gnorm_Pstar, gradmax_Pstar=gmax_Pstar,
     hold=hold, scale_sweep=scale_rows,
+    F_vs_scale=[dict(std=s, F=fv) for s, fv in F_grid],
+    F_rock=F_rock, F_blind_zero_scale=F_blind, crossover_std=crossover_std,
 )
 (OUT / "q01_drift.json").write_text(json.dumps(out, indent=2))
 print(f"\nsaved {OUT / 'q01_drift.json'}")
@@ -178,3 +195,20 @@ ax.set_title("Q01 — the 'collapse' is a SCALE artefact: big drop only at tiny 
 ax.legend(loc="upper right", fontsize=8); plt.tight_layout()
 plt.savefig(OUT / "q01_scale_sweep.png", dpi=120, bbox_inches="tight")
 print(f"saved {OUT / 'q01_scale_sweep.png'}")
+
+# ── Plot C: F(best order) vs scale, with the F(Rocket) crossover ─────────────────
+fig, ax = plt.subplots(figsize=(9, 5.5))
+xs = [s for s, _ in F_grid]; ys = [f for _, f in F_grid]
+ax.plot(xs, ys, "-o", ms=3, color="tab:purple", label="F(best order) vs scale (discrete=84.61% throughout)")
+ax.axhline(F_rock, color="tab:blue", ls="--", label=f"F(Rocket, discrete 82.92%) = {F_rock:.0f}")
+ax.axhline(F_blind, color="gray", ls=":", label=f"0.5·Σŵ = {F_blind:.0f} (surrogate blind, std→0)")
+if crossover_std:
+    ax.axvline(crossover_std, color="tab:red", ls=":", label=f"crossover std≈{crossover_std:.0f}")
+ax.axvline(141.0, color="tab:green", ls=":", alpha=0.6, label="Rocket operating scale std≈141")
+ax.set_xscale("log")
+ax.set_xlabel("position scale  std(pos)  [log]"); ax.set_ylabel("surrogate F")
+ax.set_title("Q01 — surrogate prefers the best ORDER only ABOVE a large scale\n"
+             "(below the crossover, non-ideal Rocket has LOWER loss than the squished ideal)")
+ax.legend(loc="lower right", fontsize=8); plt.tight_layout()
+plt.savefig(OUT / "q01_F_vs_scale.png", dpi=120, bbox_inches="tight")
+print(f"saved {OUT / 'q01_F_vs_scale.png'}")
