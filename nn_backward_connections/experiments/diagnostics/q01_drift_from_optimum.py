@@ -154,6 +154,23 @@ print(f"\nF(best order) vs scale:  F@std->0 = 0.5·Σŵ = {F_blind:.1f} (surroga
 print(f"  F(Rocket) = {F_rock:.1f}; best order out-surrogates Rocket only above std≈"
       f"{crossover_std:.0f}" if crossover_std else "  (best never crosses F(Rocket) on the grid)")
 
+# ── β and scale are the SAME knob: F sees only the product β·std ─────────────────
+SUM = float(nw_np.sum())
+rock_shape = (rock - rock.mean()) / rock.std()
+def F_bs(shp, std, beta):
+    return float((expit(beta * (shp[tgt] - shp[src]) * std) * nw_np).sum())
+# coupling: F(best) is identical along constant β·std (β=1.05,std=141 => β·std≈148)
+couple = [dict(beta=b, std=141 * 1.05 / b, betastd=b * (141 * 1.05 / b),
+               F=F_bs(shape, 141 * 1.05 / b, b)) for b in [1.05, 0.30, 3.0]]
+# F(best) vs F(Rocket) at Rocket's operating scale std=141, across the cyclic β range
+beta_at141 = [dict(beta=b, F_best=F_bs(shape, 141, b), F_rock=F_bs(rock_shape, 141, b))
+              for b in [0.05, 0.30, 1.05, 3.0]]
+print("β≡scale knob — F(best) identical along β·std≈148: " +
+      ", ".join(f"β={c['beta']}→{c['F']:.1f}" for c in couple))
+print("  at std=141 across β: " +
+      ", ".join(f"β={r['beta']}:best={r['F_best']:.0f}/rock={r['F_rock']:.0f}" for r in beta_at141)
+      + "  (best not preferred for β≤1.05, our cyclic range; β=3.0 is out-of-range)")
+
 # ── Persist numbers (NOT to results/) ───────────────────────────────────────────
 out = dict(
     config={k: (str(v) if isinstance(v, Path) else v) for k, v in CONFIG.items()},
@@ -165,6 +182,8 @@ out = dict(
     hold=hold, scale_sweep=scale_rows,
     F_vs_scale=[dict(std=s, F=fv) for s, fv in F_grid],
     F_rock=F_rock, F_blind_zero_scale=F_blind, crossover_std=crossover_std,
+    beta_analysis=dict(coupling=couple, at_std141=beta_at141, floor=F_blind,
+                       ceiling_best=disc_best / 100 * SUM, ceiling_rock=disc_rock / 100 * SUM),
 )
 (OUT / "q01_drift.json").write_text(json.dumps(out, indent=2))
 print(f"\nsaved {OUT / 'q01_drift.json'}")

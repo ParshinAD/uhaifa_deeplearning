@@ -232,13 +232,18 @@ different scales — and the best order out-surrogates Rocket **only above std�
    is the mechanistic "why" behind that. Conversely it predicts the continuous Track-A levers are
    dead ends: alt-surrogate (A-SURR / killed H11/H34) reshapes σ but not the operating scale;
    tight-init (A-INIT) starts *smaller*, deeper in the blind regime.
-3. **The one continuous lever the crossover suggests — and why it's still low-EV.** Push the optimizer
-   to operate above std≈459 (scale/temperature annealing, or growing β·std) so the surrogate becomes
-   discriminative. But (a) Rocket's positions already free-scale and *choose* std≈141 because that is
-   where ITS order is optimal — growing scale alone won't relocate it to a *different* order; (b) above
-   the crossover σ saturates on correct edges ⇒ vanishing gradient (the H19 soft-rank stall and the H03
-   β-schedule kill are this failure mode). Logged as roadmap **A-SCALE** (low-EV, prior evidence
-   attached). Net: the discrete sift already achieves what a scale lever gropes toward.
+3. **The one continuous lever the crossover suggests — and why it's already dead.** Push the optimizer
+   to operate above the crossover (scale/temperature annealing) so the surrogate becomes discriminative.
+   But **β and position-scale are the SAME knob**: F sees only the product **β·std** (verified — F(best)
+   is bit-identical at (β=1.05,std=141), (β=0.3,std=493), (β=3.0,std=49), all β·std≈148). So "scale
+   annealing" (roadmap **A-SCALE**) *is* "sharper terminal β" (**H03, already KILLED**, connectome
+   −0.038 pp) — same lever, and Adam normalises the extra β gradient-prefactor. Both hit the same wall:
+   at large β·std, σ saturates ⇒ **vanishing gradient** on correct edges (why the schedule caps β≤1.05
+   and re-melts; the H19 soft-rank stall is the same failure). β-invariants: the blind floor
+   (0.5·Σŵ=8,714) and the saturation ceilings (best 14,746, Rocket 14,450) don't depend on β; across
+   the whole cyclic range β∈[0.05,1.05] at std≈141 the best order is **never** preferred, so the plateau
+   conclusion is robust to β, not an artefact of β=1.05. Net: the discrete sift already achieves what a
+   scale/β lever gropes toward.
 
 **Reproduce:** `PYTHONPATH=src python experiments/diagnostics/q01_drift_from_optimum.py`
 (env `allen`, ~3–6 min). Artifacts: `q01_drift.json`, `q01_hold_from_optimum.png`,
