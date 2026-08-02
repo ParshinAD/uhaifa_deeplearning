@@ -249,3 +249,74 @@ different scales — and the best order out-surrogates Rocket **only above std�
 (env `allen`, ~3–6 min). Artifacts: `q01_drift.json`, `q01_hold_from_optimum.png`,
 `q01_scale_sweep.png`, `q01_F_vs_scale.png`. Supersedes the exploratory
 `dr_tmp/drift_from_optimal_spacing.py` and `dr_tmp/drift_scale_sweep.py`.
+
+---
+
+## Q02 — How far apart are Rocket solutions across seeds (no greedy warm-start)?
+
+**Answer (2026-08-03): the discrete SCORE is stable across seeds but the ORDERING is not — plain
+Rocket has a degenerate, near-flat set of near-optimal orderings that all score ~the same
+feedforward weight.** The one robust structure inside that degeneracy is a source/sink asymmetry:
+the **extreme sinks reproduce far more stably than the extreme sources** — but this is a small-k /
+**tail** phenomenon that closes as k→n. This is a direct extension of the prior
+`experiments/rocket_base.ipynb` seed-stability analysis (which found sinks Jaccard@1000 ≈ 0.65–0.74
+vs sources ≈ 0.33–0.40), now quantified with global rank correlations and front/back Jaccard curves.
+
+**Evidence** (`experiments/diagnostics/q02_seed_distance.py` → `experiments/outputs/q02_seed_distance.json`
++ `q02_seed_distance.png`; plain Rocket, random N(0,1) init, **no greedy warm-start**; MPS + random
+init = the only stochastic sources):
+
+| quantity | connectome (PRIMARY) | mouse (secondary) |
+|---|---|---|
+| n, epochs, seeds | 136,648; 20,000; 42/123/999/7/31415 | 148; 5,000; 5 seeds |
+| discrete % (mean ± std) | **82.8845 ± 0.0225** | 92.1745 ± 0.2176 |
+| Spearman ρ (mean ± std over 10 pairs) | **0.9577 ± 0.0012** | 0.9074 ± 0.0369 |
+| Kendall-τ | **0.9095 ± 0.0032** | — |
+
+Front/back Jaccard@k across seed pairs (FRONT = k lowest-rank nodes = **sources**; BACK = k
+highest-rank = **sinks**):
+
+| dataset | k | Jaccard FRONT (sources) | Jaccard BACK (sinks) | back − front |
+|---|---|---|---|---|
+| connectome | 100 | 0.186 | **0.598** | +0.412 |
+| connectome | 1000 | 0.370 | **0.684** | +0.314 |
+| connectome | 10000 | 0.783 | 0.794 | **+0.011** |
+| mouse | 50 | 0.675 | **0.924** | +0.249 |
+
+(microns DEFERRED — 80k epochs × 5 seeds is too expensive; noted in the JSON.)
+
+**Precise framing (what the numbers do and do NOT say).**
+- **Score stable, order not.** Score std is 0.0225 pp (connectome) while global rank correlation is
+  Spearman 0.958 / Kendall-τ 0.910 — high but *not* 1.0. Many near-equivalent orderings yield
+  near-identical feedforward weight: a **degenerate / flat set of near-optimal solutions**, not one
+  attractor recovered up to noise.
+- **The source/sink asymmetry is a genuine structural signal, not a Jaccard-on-extremes artefact.**
+  A symmetric algorithm would give equal front/back overlap at each k; the back−front gap (+0.31 at
+  k=1000, verifier's independent 3-seed recompute +0.313 vs builder +0.314) shows the two ends are
+  *not* interchangeable.
+- **⚠ Qualifier — it is a small-k / TAIL effect, not "the whole back half is stable."** The gap is
+  large only for the *extreme* tails (k=100: 0.60 vs 0.19; k=1000: 0.68 vs 0.37) and **nearly
+  vanishes by k=10000** (0.783 vs 0.794, gap +0.011). As k→n both ends converge because any two
+  near-optimal orderings necessarily share their bulk. The claim is narrowly: the *extreme sinks*
+  reproduce stably vs the *extreme sources* — do **not** read it as a stable back half.
+
+**Interpretation (hypothesis, corroborating the prior notebook).** Sinks are terminal,
+high-in-degree targets: their late position is **over-constrained** by many incoming edges, so it is
+pinned and reproduces across seeds/basins. Extreme sources have weaker positional constraints (fewer
+edges anchor them early), so many arrangements of the front are near-equivalent in feedforward
+weight and each basin picks a different one. This is stated as a hypothesis consistent with the
+`rocket_base.ipynb` finding, not a proven mechanism.
+
+**Connections.**
+- **Retroactively explains the H01 (multi-start / best-of-K) KILL.** If every seed lands at ~82.9%
+  with only *tail* reshuffling and no rich score tail (score std 0.0225 pp), then best-of-K harvests
+  ≈nothing — there is no dispersed score distribution to skim the max from. Q02 quantifies *why*
+  multi-start was dead (see `findings.md` #2 and the H01 backlog kill).
+- **Feeds Track C (random graphs vs brains).** The degeneracy of the feedback-minimizing order — and
+  specifically *which* ends are pinned vs free — is a structural property of the connectome to
+  compare later against SBM / configuration-model nulls (does a random graph with matched degree show
+  the same sink-pinned / source-free asymmetry?).
+
+**Reproduce:** `PYTHONPATH=src python experiments/diagnostics/q02_seed_distance.py`
+(env `allen`). Artifacts: `experiments/outputs/q02_seed_distance.json`,
+`experiments/outputs/q02_seed_distance.png`. Extends `experiments/rocket_base.ipynb`.

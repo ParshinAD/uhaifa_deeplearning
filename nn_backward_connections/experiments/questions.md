@@ -58,7 +58,12 @@ Contract: `experiments/PROTOCOL.md` § "Track B — Diagnostics". In one line:
   optimization-gap sub-claims are unaffected and stay).
 
 ## Q02 — How far apart are Rocket solutions across seeds (no greedy warm-start)?
-- **status:** open
+- **status:** **answered (2026-08-03)** — `experiments/diagnostics/q02_seed_distance.py` →
+  `diagnosis.md` § Q02. Score **stable** (connectome 82.8845 ± 0.0225 pp) but the **order is not**
+  (Spearman 0.9577 ± 0.0012): a degenerate set of near-equivalent orderings. Genuine source/sink
+  asymmetry — **extreme sinks stabler than extreme sources** (Jaccard@1000 back 0.68 vs front 0.37) —
+  but a **tail effect that closes by k=10000** (0.783 vs 0.794). Retroactively explains the H01
+  multi-start kill (no score tail ⇒ best-of-K harvests nothing).
 - **why it matters:** characterises the basin structure (motivated the killed multi-start H01) and
   feeds the Track-C narrative on structural determinism of feedback. Partly done already — this is
   an **extension**, not a fresh start.
