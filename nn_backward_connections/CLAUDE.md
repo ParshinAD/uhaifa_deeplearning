@@ -74,23 +74,34 @@ sub-algorithm (see "Current state" below).
 
 ## Tech stack
 - Python 3.9 (conda env `allen`:
-  `/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python`)
+  `/c/ProgramData/anaconda3/envs/allen/python.exe`)
 - PyTorch (Rocket: continuous positions as a learnable Parameter + Adam)
 - NumPy / Pandas, Matplotlib, SciPy (stats), nbformat (notebook generation)
 - networkx / igraph are reasonable choices for the random-graph study (confirm
   what's installed before relying on them).
 
 ## Hardware notes
-- Run on **Apple MPS** (`torch.backends.mps`) when available, else CUDA, else CPU.
-- **Compute the discrete score on CPU**, not MPS: large-magnitude float32 index
-  ops on MPS can occasionally return garbage and corrupt best-score tracking.
-  (`torch_score` already does this — keep it.)
+- `select_device("auto")` prefers MPS → CUDA → CPU. **This checkout runs on CUDA**
+  (NVIDIA RTX 4060 Laptop GPU); the MPS branch is dead code here.
+- **Compute the discrete score on CPU**, not on the accelerator: large-magnitude float32
+  index ops on MPS can occasionally return garbage and corrupt best-score tracking.
+  (`torch_score` already does this — keep it, it is also what makes the score portable.)
+- **The champion pipelines are deterministic on CUDA.** H02/H30/H35 take a `seed` but never
+  draw from it: `init_positions` comes from greedy-FAS, so `make_init_positions` — the only
+  RNG consumer — is never called. Seeds 42/123/999 produce **bit-identical** position vectors,
+  so σ = 0 and the seed-to-seed spread seen on MPS was pure device non-determinism. Consequence:
+  a Welch CI computed from these seeds is degenerate (SE = 0 makes any positive delta look
+  significant). Use the PROTOCOL CI (`audit.py` floors its σ at `baseline_sigma_pp`) together
+  with `screen_delta_pp` as a minimum effect size. Verified in P01 — see `experiments/log.md`.
+- A connectome run is ~2.7× slower here than on the MacBook (591 s vs 219 s) — the loop is
+  gather/scatter over 5.7 M edges with atomic accumulation, i.e. memory-bound, where a 128-bit
+  8 GB laptop card has no advantage over unified memory. Still far inside the 3600 s budget.
 
 ## Workflow conventions
 - **Notebooks are generated from `create_notebook.py`** via nbformat — they are
   build artifacts. Edit the `.py` generator, then regenerate; do not hand-edit the
   `.ipynb` as the source of truth. Regenerate with:
-  `/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python create_notebook.py`
+  `/c/ProgramData/anaconda3/envs/allen/python.exe create_notebook.py`
 - Use **time limits** (`time_limit=`) on Rocket runs rather than fixed epoch counts
   when comparing — runtime differs a lot from the paper's GPUs.
 - Keep the reproduction notebook intact; put new experiments under `experiments/`
@@ -140,5 +151,12 @@ These govern the evaluation harness built under `src/mfas/`, `eval/`, `tests/`.
   authoritative reproduction claim rests on the deterministic **scorer-parity test**.
 
 ### Run everything via
-`/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python` (conda env `allen`).
+`/c/ProgramData/anaconda3/envs/allen/python.exe` (conda env `allen`, Python 3.9.25,
+torch 2.8.0+cu128). Shell is **Git Bash**, not WSL.
 One-command reproduction: `bash scripts/reproduce_baseline.sh`.
+
+**Interpreter changed with the port (2026-08-09).** Everything written before that date —
+`findings.md`, `experiments/backlog.md`, `dr_tmp/`, the diagnostics docstrings — quotes the
+MacBook path `/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python`. Those documents are
+left as written because they record how those numbers were actually produced; substitute the
+interpreter above when re-running any of them here. See `experiments/log.md` (P01).

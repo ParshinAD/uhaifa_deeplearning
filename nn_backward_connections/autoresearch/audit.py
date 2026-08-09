@@ -125,8 +125,22 @@ def check_frozen(rep: Report) -> None:
 # ──────────────────────────────────────────────────────────────────────────────
 # 2. Run inventory
 # ──────────────────────────────────────────────────────────────────────────────
+def run_device(d: dict) -> str:
+    """Device a run was measured on, as recorded by the harness ('Apple MPS', a CUDA name...)."""
+    return str((d.get("env") or {}).get("gpu") or "")
+
+
 def load_runs(variant: str, dataset: Optional[str] = None,
-              role: Optional[str] = None) -> List[dict]:
+              role: Optional[str] = None,
+              device_tag: Optional[str] = None) -> List[dict]:
+    """Result records for one variant, optionally restricted to a dataset/role/device.
+
+    ``device_tag`` exists because sota.json is machine-specific (CAMPAIGN.md § Hardware): a score
+    is produced by a particular device with its own kernels and its own non-determinism. Pooling
+    MPS-measured and CUDA-measured runs of the same id is a moving comparator in the one dimension
+    ``config_hash`` cannot see. It is off by default (single-machine history stays unaffected) and
+    set from ``campaign.yaml environment.device_tag`` once a checkout has moved.
+    """
     runs = []
     for f in sorted(glob.glob(str(_ROOT / "results" / "*.json"))):
         p = Path(f)
@@ -141,6 +155,8 @@ def load_runs(variant: str, dataset: Optional[str] = None,
         if dataset and d.get("dataset") != dataset:
             continue
         if role and d.get("role") != role:
+            continue
+        if device_tag and run_device(d) != device_tag:
             continue
         d["_file"] = p.name
         runs.append(d)
@@ -163,6 +179,9 @@ def summarize(runs: List[dict]) -> dict:
         # of the same variant (e.g. H30 at 12 vs 40 sweeps). The commit is what separates them.
         commits=sorted({str(r.get("git_commit", "")).split("+")[0][:8] for r in runs}),
         roles=sorted({str(r.get("role", "")) for r in runs}),
+        # Same argument as commits, one level down: a pool spanning two devices is not one
+        # measurement of one thing.
+        devices=sorted({run_device(r) for r in runs}),
     )
 
 
@@ -190,7 +209,8 @@ def check_rescore(rep: Report, runs: List[dict]) -> None:
             graphs[ds] = io.load_dataset(ds)
         g = graphs[ds]
         pos = np.load(path)
-        score = score_from_positions(g, pos)
+        # Frozen signature is (positions, src, tgt, weights) — see src/mfas/metrics.py.
+        score = score_from_positions(pos, g.src, g.tgt, g.weight)
         recorded = float(r["score"])
         if abs(float(score) - recorded) > 1e-6:
             rep.add("rescore", "FAIL",
@@ -220,10 +240,19 @@ def welch(a: dict, b: dict) -> Tuple[float, float, float]:
     return delta, se, delta - 1.96 * se
 
 
-def protocol_se(comparator: dict) -> float:
-    """PROTOCOL.md conservative SE = std_comparator * sqrt(2/n)."""
+def protocol_se(comparator: dict, sigma_floor: float = 0.0) -> float:
+    """PROTOCOL.md conservative SE = std_comparator * sqrt(2/n), with a noise floor.
+
+    ``sigma_floor`` (campaign.yaml ``datasets.<ds>.baseline_sigma_pp``) matters on a device
+    where the pipeline is deterministic: these variants take ``seed`` but never draw from it
+    (``init_positions`` comes from greedy-FAS, so ``make_init_positions`` is never called), so
+    seed-to-seed spread only ever measured DEVICE non-determinism. On CUDA that reproduces
+    bit-identically, std collapses to 0, and an unfloored SE of 0 would make any positive
+    delta -- +0.0001 pp included -- clear a 95% CI lower bound. That is a false-positive
+    machine, and CAMPAIGN.md's "never claim a win inside noise" is what forbids it.
+    """
     n = max(comparator["n"], 1)
-    return comparator["std"] * math.sqrt(2.0 / n)
+    return max(comparator["std"], sigma_floor) * math.sqrt(2.0 / n)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -323,6 +352,9 @@ def main() -> int:
                          "comparator id spans several commits/configurations")
     ap.add_argument("--datasets", default="connectome,microns,mouse")
     ap.add_argument("--out", default=None, help="write the full report JSON here")
+    ap.add_argument("--device-tag", default=None,
+                    help="only count runs measured on this device (env.gpu). Defaults to "
+                         "campaign.yaml environment.device_tag; pass '' to pool every device.")
     args = ap.parse_args()
 
     rep = Report()
@@ -340,11 +372,19 @@ def main() -> int:
 
     sota = json.loads((_HERE / "sota.json").read_text())
 
+    # An explicit --device-tag wins; otherwise take the campaign's own device. '' disables it.
+    device_tag = args.device_tag
+    if device_tag is None:
+        device_tag = (campaign.get("environment") or {}).get("device_tag") or None
+    if device_tag:
+        rep.add("device", "INFO", f"counting only runs measured on '{device_tag}' "
+                                  f"(sota.json is machine-specific; see CAMPAIGN.md § Hardware)")
+
     all_variant_runs: List[dict] = []
     per_dataset: Dict[str, dict] = {}
 
     for ds in [d.strip() for d in args.datasets.split(",") if d.strip()]:
-        v_runs = load_runs(args.variant, ds, args.role)
+        v_runs = load_runs(args.variant, ds, args.role, device_tag)
         if not v_runs:
             rep.add(f"runs.{ds}", "WARN", f"no runs found for {args.variant} on {ds}")
             continue
@@ -355,7 +395,7 @@ def main() -> int:
         if not comp_id:
             rep.add(f"runs.{ds}", "WARN", f"no champion registered for {ds}")
             continue
-        c_runs = load_runs(comp_id, ds, args.comparator_role)
+        c_runs = load_runs(comp_id, ds, args.comparator_role, device_tag)
         if not c_runs:
             rep.add(f"comparator.{ds}", "WARN",
                     f"no runs found for comparator {comp_id} on {ds}")
@@ -363,8 +403,17 @@ def main() -> int:
 
         v, c = summarize(v_runs), summarize(c_runs)
         delta, se, ci_lo = welch(v, c)
-        p_se = protocol_se(c)
+        sigma_floor = float(((campaign.get("datasets") or {}).get(ds) or {})
+                            .get("baseline_sigma_pp") or 0.0)
+        p_se = protocol_se(c, sigma_floor)
         p_ci_lo = delta - 1.96 * p_se
+        if c["std"] == 0.0 or v["std"] == 0.0:
+            rep.add(f"significance.{ds}.degenerate", "WARN",
+                    f"zero variance in a pool (variant std={v['std']:.4f}, comparator "
+                    f"std={c['std']:.4f}): the pipeline is deterministic on this device, so the "
+                    f"Welch CI is degenerate (SE=0 makes any positive delta 'significant'). "
+                    f"Use the PROTOCOL CI, floored at baseline_sigma_pp={sigma_floor:.4f}, and "
+                    f"the screen_delta_pp minimum effect size. See experiments/log.md P01.")
 
         per_dataset[ds] = dict(
             variant=args.variant, comparator=comp_id, variant_stats=v, comparator_stats=c,
@@ -395,6 +444,18 @@ def main() -> int:
                         f"{ident} runs span {len(stats['commits'])} commits — the same id may "
                         f"denote different configurations. Restrict by role/commit before "
                         f"quoting a delta. Breakdown: {breakdown}")
+            # A pool spanning devices is the same error in the dimension config_hash cannot see.
+            if len(stats["devices"]) > 1:
+                pool = v_runs if label == "variant" else c_runs
+                by_dev: Dict[str, list] = {}
+                for r in pool:
+                    by_dev.setdefault(run_device(r) or "?", []).append(r["pct"])
+                rep.add(f"comparator_homogeneity.{ds}.{label}.device", "FAIL",
+                        f"{ident} runs span {len(stats['devices'])} devices — scores are "
+                        f"machine-specific and must not be pooled. Re-run the re-baseline (queue "
+                        f"P01) or pass --device-tag. Breakdown: " + "; ".join(
+                            f"{k}: n={len(vals)}, mean={float(np.mean(vals)):.4f}"
+                            for k, vals in sorted(by_dev.items())))
 
         # Runtime budget
         budget = ((campaign.get("runtime") or {}).get("max_wall_clock_s_per_run"))

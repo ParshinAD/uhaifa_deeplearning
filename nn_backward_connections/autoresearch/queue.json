@@ -6,7 +6,7 @@
     {
       "id": "P01",
       "title": "HARDWARE RE-BASELINE — re-measure the champions on this machine before any cycle",
-      "status": "proposed",
+      "status": "done",
       "priority": 0,
       "kind": "prerequisite",
       "axis": "measurement",
@@ -14,9 +14,33 @@
       "rationale": "The whole Phase-7 verdict rule compares a variant to the champion. Comparing a CUDA-measured variant against an MPS-measured champion is exactly the moving-comparator error the auditor exists to catch — except the auditor cannot see it, because the device is not part of config_hash. The deterministic scorer-parity test (tests/test_metrics.py, 34,751,902) is what carries over between machines; training trajectories do not.",
       "method": "1) pytest tests/ -q must be fully green (the scorer parity is the portability anchor). 2) Run the current champions at the screen seeds on all three datasets: H35 on connectome/mouse, H30 on microns/mouse, role=implement. 3) Recompute mean/std per dataset with autoresearch/audit.py. 4) If any champion mean or sigma differs materially from sota.json, update sota.json via update_sota.py --force with the hardware change logged in experiments/log.md, and update the screen_delta_pp values in campaign.yaml to 2x the NEW sigma. 5) Record the device name and torch version in the log entry.",
       "kill_condition": "Not killable — it is a gate. If the scorer parity test fails on the new machine, STOP: the environment is wrong and no result from it is admissible.",
-      "prior_evidence": ["experiments/PROTOCOL.md § Phase-7", "autoresearch/CAMPAIGN.md § Hardware", "tests/test_metrics.py"],
+      "prior_evidence": [
+        "experiments/PROTOCOL.md § Phase-7",
+        "autoresearch/CAMPAIGN.md § Hardware",
+        "tests/test_metrics.py"
+      ],
       "est_cost": "cheap-medium (about 9 runs; connectome ~4 min each, microns ~12 min each on MPS — faster on a discrete GPU)",
-      "expected_pp": "n/a — this establishes the reference frame, it does not move the metric"
+      "expected_pp": "n/a — this establishes the reference frame, it does not move the metric",
+      "outcome": "Done 2026-08-09 on Windows 10 / RTX 4060 Laptop GPU (CUDA), torch 2.8.0+cu128, Python 3.9.25. Champions re-measured at seeds 42/123/999, role=implement. sota.json and campaign.yaml screen_delta_pp updated; see experiments/log.md."
+    },
+    {
+      "id": "P02",
+      "title": "The screen seeds are inert for deterministic variants — is 3x the compute buying anything?",
+      "status": "proposed",
+      "priority": 1,
+      "kind": "protocol",
+      "axis": "measurement",
+      "hypothesis": "For every variant that does not consume RNG, the screen's 3 seeds are three identical runs on this machine, so 2/3 of every screen's wall-clock buys no information. If that holds, the screen can run 1 seed for deterministic variants and keep 3 only for RNG-consuming ones (multi-start, LNS destroy), roughly tripling hypotheses per night.",
+      "rationale": "P01 established it directly: H35 on connectome produced BIT-IDENTICAL best_positions vectors at seeds 42/123/999, and H30 on mouse gave identical scores. The cause is structural, not incidental — H02/H30/H35 pass init_positions from deterministic greedy-FAS into run_rocket, so make_init_positions (the only RNG consumer) is never called; torch.manual_seed/np.random.seed are set and then nothing draws. The seed-to-seed spread recorded on MPS (connectome sigma 0.0060) was therefore device non-determinism, not seed variance. NOT actioned unilaterally during P01: dropping to 1 seed changes what every future number means and breaks comparability with the whole existing record, so it needs a decision with the evidence in front of it, not a silent protocol edit.",
+      "method": "1) Programmatically check which variants under src/mfas/experiments/ reach make_init_positions (i.e. do not pass init_positions) — that is the RNG-consuming set. 2) For 2-3 of the deterministic ones, run 2 seeds on the cheap datasets and assert bit-identical positions. 3) If it holds, propose a protocol amendment: screen at 1 seed for deterministic variants, 3 for RNG-consuming ones, with the classification RECORDED per variant in the log entry so no reader has to guess which regime a number came from. 4) Leave confirm_seeds alone — confirm is where an RNG variant must show its spread.",
+      "kill_condition": "Any deterministic-classified variant that differs across seeds on any dataset. One counter-example falsifies the classification and the protocol stays at 3 seeds.",
+      "prior_evidence": [
+        "experiments/log.md P01 (2026-08-09)",
+        "results/20260809T*-H35-connectome-s{42,123,999}-implement-*_positions.npy",
+        "src/mfas/baseline/rocket.py:168 (make_init_positions is skipped when init_positions is given)"
+      ],
+      "est_cost": "cheap (minutes; mouse + one microns pair)",
+      "expected_pp": "n/a — this buys throughput, not score, and on this hardware throughput is the binding constraint: microns runs at 3214 s here vs 706 s on MPS, so a 3-seed screen is 3.2 h and a 5-seed confirm 5.3 h. At 1 seed for deterministic variants a full cycle drops from ~8.5 h to ~2.5 h, i.e. from one cycle a day to four."
     },
     {
       "id": "H36",
@@ -27,7 +51,12 @@
       "hypothesis": "Condensing the graph into SCCs, ordering the condensation DAG topologically, and then recursively applying exact-gain insertion WITHIN the giant SCC (rather than over the whole line) recovers a large part of the remaining 0.70 pp to the 84.6147% reference, at bounded cost.",
       "rationale": "Vahidi 2025 reaches 84.61% on this exact graph with cheap greedy + bounded-span insertion + SCC and NO MIP, so the residual is demonstrably reachable by combinatorial means. Our H22 kill only falsified RANK-window locality (killed.json M4); a structural (SCC) neighbourhood is a different object. dr_tmp/FINDINGS_underrelaxation.md E2 warns that a ONE-SHOT SCC split recovers ~nothing (inter-SCC edges 1.50%, giant SCC 92.82%) — so the hypothesis is specifically the RECURSIVE within-giant-SCC form.",
       "kill_condition": "If recursive within-SCC insertion on the giant SCC does not beat the champion sift on the prototype proxy, the decomposition story is dead and we stop paying for SCC machinery.",
-      "prior_evidence": ["experiments/roadmap.md A-SCC", "dr_tmp/FINDINGS_underrelaxation.md E2", "dr_tmp/probe_scc.json", "2506.13799v1.pdf"],
+      "prior_evidence": [
+        "experiments/roadmap.md A-SCC",
+        "dr_tmp/FINDINGS_underrelaxation.md E2",
+        "dr_tmp/probe_scc.json",
+        "2506.13799v1.pdf"
+      ],
       "est_cost": "medium (SCC via scipy.csgraph is cheap; the recursion is the work)",
       "expected_pp": "connectome: up to +0.7 (the whole residual) if the Vahidi mechanism transfers; honest estimate +0.1 to +0.4"
     },
@@ -40,7 +69,11 @@
       "hypothesis": "Switching from Jacobi (alpha=1) to under-relaxed (alpha<1) sweeps ONLY once a period-2 limit cycle is actually detected — instead of unconditionally after k_full=6 sweeps — recovers H35's connectome gain without the -0.0019 pp microns loss, making it a clean 3-dataset GENERAL WIN.",
       "rationale": "findings.md #5 documents the exact cause: microns is capped at 12 sweeps, so k_full=6 leaves only 6 under-relaxed sweeps, not enough to overtake 12 full Jacobi sweeps. Detection (candidate score alternating between two values / mover set oscillating) is cheap and removes the hand-tuned constant.",
       "kill_condition": "If cycle-triggered alpha does not restore microns to >= H30's 83.2069 while holding connectome >= 83.9101.",
-      "prior_evidence": ["findings.md #5", "dr_tmp/FINDINGS_underrelaxation.md", "dr_tmp/exp_sweeps.json"],
+      "prior_evidence": [
+        "findings.md #5",
+        "dr_tmp/FINDINGS_underrelaxation.md",
+        "dr_tmp/exp_sweeps.json"
+      ],
       "est_cost": "cheap (a detector plus a branch inside an existing refiner)",
       "expected_pp": "microns +0.002 to +0.010; connectome ~0 (must not regress)"
     },
@@ -53,7 +86,11 @@
       "hypothesis": "Replacing the simultaneous (Jacobi) rebuild with sequential (Gauss-Seidel) or block-sequential updates — each node re-inserted against the CURRENT order, not the stale one — converges where Jacobi limit-cycles and reaches a strictly better fixed point than under-relaxation.",
       "rationale": "Under-relaxation (H35) is the textbook cure for a Jacobi 2-cycle; Gauss-Seidel is the other one, and usually the stronger. The open question is cost: the current kernel is vectorized-NumPy over all nodes at once, so a naive GS loses the vectorization. Block-sequential (K blocks, Jacobi within a block, sequential across blocks) is the practical middle and is a tunable interpolation between the two.",
       "kill_condition": "If block-sequential at any block count fails to beat H35 on the connectome prototype, or if the per-sweep cost exceeds the runtime budget.",
-      "prior_evidence": ["findings.md #5", "src/mfas/refine/underrelax.py", "src/mfas/refine/insertion.py"],
+      "prior_evidence": [
+        "findings.md #5",
+        "src/mfas/refine/underrelax.py",
+        "src/mfas/refine/insertion.py"
+      ],
       "est_cost": "medium (needs a blocked kernel to keep vectorization)",
       "expected_pp": "connectome +0.05 to +0.3 (speculative)"
     },
@@ -66,7 +103,11 @@
       "hypothesis": "Alternating sift and a SHORT gradient phase whose position scale is pinned above the Q01 crossover (std >> 459) escapes the sift's fixed point, whereas a naive re-Rocket phase (std ~141) destroys it.",
       "rationale": "Q01 established that the surrogate only ranks a better order higher above std ~459, and that the optimum is HOLDABLE at its own scale. That is a concrete, testable prescription for the one place a gradient phase can still help. dr_tmp/kick_gate.py already scaffolds this probe with scales {150, 500, 1500} straddling the crossover — an unfinished experiment worth completing first.",
       "kill_condition": "If no scale above the crossover produces a post-re-sift gain over the sift fixed point, the hybrid direction is closed and Q01's prediction is confirmed in the strong form.",
-      "prior_evidence": ["diagnosis.md Q01", "dr_tmp/kick_gate.py", "experiments/roadmap.md A-ALT"],
+      "prior_evidence": [
+        "diagnosis.md Q01",
+        "dr_tmp/kick_gate.py",
+        "experiments/roadmap.md A-ALT"
+      ],
       "est_cost": "cheap-medium (the scaffold exists; one connectome run per scale)",
       "expected_pp": "connectome 0 to +0.2; high information value either way"
     },
@@ -79,7 +120,10 @@
       "hypothesis": "A destroy operator that removes a CYCLE-DENSE or SCC-coherent set of nodes (rather than a random contiguous span) and re-inserts them by exact gain beats the plain sift, where H31's random ruin-and-recreate did not.",
       "rationale": "killed.json H31 revival condition names exactly this. The feedback weight is concentrated in the giant SCC; random destruction mostly re-does work the full-range sift already did.",
       "kill_condition": "No gain over the champion sift on the prototype proxy at <= 1.5x wall.",
-      "prior_evidence": ["experiments/log.md H31", "src/mfas/refine/lns.py"],
+      "prior_evidence": [
+        "experiments/log.md H31",
+        "src/mfas/refine/lns.py"
+      ],
       "est_cost": "medium",
       "expected_pp": "connectome +0.05 to +0.2"
     },
@@ -92,7 +136,10 @@
       "hypothesis": "Moving contiguous SEGMENTS (or coherent groups) of nodes as a unit reaches orders that no sequence of single-node insertions can, because the Rocket<->best difference is a distributed long-range reordering rather than a set of independent misplacements.",
       "rationale": "The gap structure (diagnosis Step 2) is a distributed reordering with Kendall-tau 0.61 and rank-distance p50 ~22,580 — consistent with whole regions being in the wrong place. Single-node exact-gain insertion is, by construction, blind to a move that is only profitable jointly.",
       "kill_condition": "If segment moves add nothing over the node sift on the hard synthetic (which is built to carry a verified gap), the move-class story is dead.",
-      "prior_evidence": ["experiments/diagnosis.md Step 2", "experiments/outputs/localsearch_sizing.json"],
+      "prior_evidence": [
+        "experiments/diagnosis.md Step 2",
+        "experiments/outputs/localsearch_sizing.json"
+      ],
       "est_cost": "medium",
       "expected_pp": "connectome +0.05 to +0.3 (speculative)"
     },
@@ -106,7 +153,10 @@
       "hypothesis": "Because the discrete sift does most of the work and 'sift-on-greedy ~ sift-on-Rocket' was already observed, the 20k-epoch Rocket phase can be cut by an order of magnitude (or removed) at equal final score — a ~10x wall-clock reduction.",
       "rationale": "findings.md Phase-6 cross-cutting insight says the refiner does the work and the basin barely matters. If true, the expensive gradient phase is largely ceremonial. This is the single highest-leverage speed hypothesis and it is cheap to size: run the champion pipeline with epochs in {0, 500, 2000, 5000, 20000} and plot final score.",
       "kill_condition": "If final score degrades beyond the noise floor below 20k epochs, the gradient phase is load-bearing and Phase 2 must look elsewhere.",
-      "prior_evidence": ["findings.md Phase-6 summary", "experiments/outputs/proto_sift_fullrange.json"],
+      "prior_evidence": [
+        "findings.md Phase-6 summary",
+        "experiments/outputs/proto_sift_fullrange.json"
+      ],
       "est_cost": "cheap (5 connectome runs, no new code)",
       "expected_pp": "score ~0; wall-clock -50% to -90%",
       "note": "Sizing may run during Phase 1 (it is cheap and informative); any CHANGE to the champion pipeline waits for Phase 2."

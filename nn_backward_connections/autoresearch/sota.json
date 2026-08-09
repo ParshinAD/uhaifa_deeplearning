@@ -12,63 +12,73 @@
     "wall_clock_s_approx": "approximate per-run wall clock; recompute from JSONs before quoting"
   },
   "updated": "2026-08-09",
-  "updated_by": "phase7 bootstrap (seeded from experiments/findings.md #4 and #5)",
+  "updated_by": "update_sota.py --variant H30 --dataset mouse",
   "datasets": {
     "connectome": {
       "champion": "H35",
       "pipeline": "H02 greedy-FAS warm-start -> run_rocket(20k) -> under-relaxed two-phase exact-gain sift (alpha=0.7, k_full=6, max_sweeps=40)",
-      "pct_mean": 83.9101,
-      "pct_std": 0.0060,
+      "pct_mean": 83.9135,
+      "pct_std": 0.0,
       "n_seeds": 3,
-      "seeds": [42, 123, 999],
+      "seeds": [
+        42,
+        123,
+        999
+      ],
       "role": "implement",
-      "evidence": "results/*-H35-connectome-s{42,123,999}-implement-*.json",
-      "finding": "findings.md #5",
-      "wall_clock_s_approx": 220,
+      "evidence": "results/*-H35-connectome-*-implement-*.json",
+      "finding": "findings.md #5 (re-baselined on CUDA, P01 2026-08-09)",
+      "wall_clock_s_approx": 591,
       "runner_up": {
-        "variant": "H30",
-        "pct_mean": 83.8118,
-        "pct_std": 0.0143,
-        "n_seeds": 3,
-        "note": "H30 at max_sweeps=40; H35 beats it by +0.0983 pp, CI lower +0.0759"
+        "champion": "H35",
+        "pct_mean": 83.9101,
+        "pct_std": 0.006,
+        "n_seeds": 3
       }
     },
     "microns": {
       "champion": "H30",
       "pipeline": "H02 greedy-FAS warm-start -> run_rocket(80k) -> Jacobi full-range exact-gain sift (max_sweeps=12)",
-      "pct_mean": 83.2069,
-      "pct_std": 0.0012,
-      "n_seeds": 5,
-      "seeds": [42, 123, 999, 7, 31415],
-      "role": "confirm",
-      "evidence": "results/*-H30-microns-*-confirm-*.json",
-      "finding": "findings.md #4",
-      "wall_clock_s_approx": 700,
+      "pct_mean": 83.2063,
+      "pct_std": 0.0,
+      "n_seeds": 3,
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "role": "implement",
+      "evidence": "results/*-H30-microns-*-implement-*.json",
+      "finding": "findings.md #4 (re-baselined on CUDA, P01 2026-08-09)",
+      "wall_clock_s_approx": 3240,
       "runner_up": {
-        "variant": "H35",
-        "pct_mean": 83.2045,
-        "pct_std": 0.0005,
-        "n_seeds": 3,
-        "note": "H35 loses 0.0019 pp here ONLY because the microns sweep cap is 12, giving just 6 under-relaxed sweeps (k_full=6). Known, documented, and the target of queue item H37."
+        "champion": "H30",
+        "pct_mean": 83.2069,
+        "pct_std": 0.0012,
+        "n_seeds": 5
       }
     },
     "mouse": {
       "champion": "H30",
       "pipeline": "H02 -> run_rocket(5k) -> Jacobi full-range exact-gain sift",
       "pct_mean": 92.9018,
-      "pct_std": 0.0000,
-      "n_seeds": 20,
-      "role": "confirm",
-      "evidence": "results/*-H30-mouse-*-confirm-*.json",
-      "finding": "findings.md #4",
-      "wall_clock_s_approx": 3,
+      "pct_std": 0.0,
+      "n_seeds": 3,
+      "role": "implement",
+      "evidence": "results/*-H30-mouse-*-implement-*.json",
+      "finding": "findings.md #4 (re-baselined on CUDA, P01 2026-08-09)",
+      "wall_clock_s_approx": 6,
       "runner_up": {
-        "variant": "H35",
+        "champion": "H30",
         "pct_mean": 92.9018,
-        "pct_std": 0.0000,
-        "n_seeds": 3,
-        "note": "exact tie; mouse is saturated and is a non-inferiority check only"
-      }
+        "pct_std": 0.0,
+        "n_seeds": 20
+      },
+      "seeds": [
+        42,
+        123,
+        999
+      ]
     }
   },
   "targets": {

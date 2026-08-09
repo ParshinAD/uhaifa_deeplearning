@@ -27,7 +27,7 @@ writes its own JSON) and you return your verdict as your final message.
 
 3. If the screen holds, run **CONFIRM** at the seed counts in `campaign.yaml`
    (connectome 5, microns 5, mouse 20), `--role confirm`. Make sure matched-seed champion numbers
-   exist at the same role; generate them if they do not. Runs are **sequential** — one MPS device.
+   exist at the same role; generate them if they do not. Runs are **sequential** — one GPU device.
 
 4. **The test.** Per dataset compute `Δ = mean_variant − mean_champion`, the Welch standard error
    `SE = sqrt(s_v²/n_v + s_c²/n_c)` and the 95% CI lower bound `Δ − 1.96·SE`. Also report the
@@ -41,7 +41,7 @@ writes its own JSON) and you return your verdict as your final message.
 
 5. Cross-check your arithmetic mechanically:
    ```bash
-   PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+   PY=/c/ProgramData/anaconda3/envs/allen/python.exe
    $PY autoresearch/audit.py --variant <id> --comparator champion \
        --role confirm --comparator-role confirm
    ```
@@ -62,10 +62,18 @@ writes its own JSON) and you return your verdict as your final message.
 - Beware the **moving comparator**: a champion id may span commits with different configurations
   (`H30` at 12 vs 40 sweeps). Restrict by role and check the auditor's `comparator_homogeneity`
   warning before quoting any delta.
-- MPS is non-deterministic. A difference inside the noise band, or with CI lower bound ≤ 0, is NOT
-  an improvement.
+- A difference inside the noise band, or with CI lower bound ≤ 0, is NOT an improvement.
+- **On this machine the Welch CI alone cannot decide that.** The champion pipelines never draw
+  from `seed` (`init_positions` comes from greedy-FAS), and CUDA reproduces bit-identically, so
+  σ = 0 across the confirm seeds and SE = 0 — which would make a +0.0001 pp delta "significant".
+  Require BOTH: delta > the dataset's `screen_delta_pp` (minimum effect size) AND a PROTOCOL CI
+  lower bound > 0 (`audit.py` floors its σ at `baseline_sigma_pp`). If the auditor emits
+  `significance.<ds>.degenerate`, that is this situation, not a bug. See `experiments/log.md` P01.
+- Because seeds are inert for deterministic variants, repeating a seed proves reproducibility, not
+  independence: a variant that consumes RNG (multi-start, LNS destroy) is the only case where the
+  seed list carries information.
 - Never edit any file (you have no write tools). Never run anything that could change source.
 - Use the conda `allen` interpreter:
-  `/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python`.
+  `/c/ProgramData/anaconda3/envs/allen/python.exe`.
 - Report honestly. "Not confirmed" is the correct outcome for most variants, and saying so
   clearly is the job.

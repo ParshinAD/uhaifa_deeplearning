@@ -34,9 +34,23 @@ def main() -> int:
     ap.add_argument("--finding", default=None, help="findings.md section documenting it")
     ap.add_argument("--force", action="store_true",
                     help="promote even if the audit reports a FAIL (must be justified in log.md)")
+    ap.add_argument("--device-tag", default=None,
+                    help="only count runs measured on this device (env.gpu). Defaults to "
+                         "campaign.yaml environment.device_tag; pass '' to pool every device.")
     args = ap.parse_args()
 
-    runs = load_runs(args.variant, args.dataset, args.role)
+    device_tag = args.device_tag
+    if device_tag is None:
+        cpath = _HERE / "campaign.yaml"
+        if cpath.exists():
+            try:
+                import yaml
+                device_tag = ((yaml.safe_load(cpath.read_text()) or {})
+                              .get("environment") or {}).get("device_tag") or None
+            except Exception:
+                device_tag = None
+
+    runs = load_runs(args.variant, args.dataset, args.role, device_tag)
     if not runs:
         print(f"REFUSED: no results/*.json for {args.variant} on {args.dataset} "
               f"at role={args.role}")
@@ -60,7 +74,8 @@ def main() -> int:
         [sys.executable, str(_HERE / "audit.py"), "--variant", args.variant,
          "--comparator", "champion", "--role", args.role,
          "--comparator-role", entry.get("role", "confirm"),
-         "--datasets", args.dataset],
+         "--datasets", args.dataset,
+         "--device-tag", device_tag or ""],
         cwd=_ROOT, capture_output=True, text=True)
     print(audit.stdout[-4000:])
     if audit.returncode != 0 and not args.force:

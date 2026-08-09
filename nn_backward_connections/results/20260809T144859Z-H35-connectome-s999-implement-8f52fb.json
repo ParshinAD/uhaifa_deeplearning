@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260809T144859Z-H35-connectome-s999-implement-8f52fb",
+  "algo": "H35",
+  "dataset": "connectome",
+  "seed": 999,
+  "score": 35169952.0,
+  "pct": 83.91351804242117,
+  "wall_clock_s": 545.7408576011658,
+  "git_commit": "c4199932db693f3ced6e221a17a4f85cd11237bc+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "8f52fbb52eb8",
+  "timestamp": "2026-08-09T14:58:16Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results\\20260809T144859Z-H35-connectome-s999-implement-8f52fb_positions.npy",
+  "experiment_id": "H35",
+  "role": "implement",
+  "hypothesis": "After H02-warm-started Rocket, an under-relaxed two-phase exact-gain Jacobi sift (move each node only a fraction alpha toward its exact-optimal gap after k_full warm sweeps) breaks the limit cycle that plain Jacobi (H30) suffers on large dense connectomes; refined >= H30's Jacobi sift at equal gradient budget, non-regressing.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

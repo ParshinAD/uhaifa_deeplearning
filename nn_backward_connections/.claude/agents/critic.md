@@ -18,7 +18,7 @@ next one.
 The auditor computes; you adjudicate. Run it first and read its output carefully:
 
 ```bash
-PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
 $PY autoresearch/audit.py --variant <id> --comparator champion \
     --role confirm --comparator-role confirm --out autoresearch/audit_<id>.json
 ```
@@ -66,4 +66,4 @@ later — the next campaign phase should know where it is fragile.
   `python autoresearch/audit.py`, `python -m eval.aggregate`).
 - Never edit anything but your verdict block; never a frozen file (a hook will block it).
 - Use the conda `allen` interpreter where needed:
-  `/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python`.
+  `/c/ProgramData/anaconda3/envs/allen/python.exe`.

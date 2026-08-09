@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$REPO_DIR"
 
-PY="${MFAS_PYTHON:-/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python}"
+PY="${MFAS_PYTHON:-/c/ProgramData/anaconda3/envs/allen/python.exe}"
 if [ ! -x "$PY" ]; then PY="python3"; fi
 
 SEEDS=(42 123 999)

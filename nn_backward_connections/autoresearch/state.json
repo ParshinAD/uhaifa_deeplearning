@@ -2,10 +2,10 @@
   "_doc": "Mutable campaign state. The driver reads it to decide whether to start a cycle; the cycle updates it at the end. A fresh session with no context can resume the campaign from this file alone.",
   "campaign": "phase7-autonomous",
   "phase": "quality",
-  "cycle": 0,
+  "cycle": 1,
   "started": "2026-08-09",
-  "last_cycle_at": null,
-  "last_cycle_outcome": null,
+  "last_cycle_at": "2026-08-09T17:40:00Z",
+  "last_cycle_outcome": "P01 done — hardware re-baseline on CUDA; champions re-measured, sota.json and campaign.yaml updated",
   "current_item": null,
   "consecutive_kills": 0,
   "cycles_since_literature_scan": 0,
@@ -13,8 +13,16 @@
   "wall_clock_h_today": 0.0,
   "wall_clock_h_total": 0.0,
   "day": null,
-  "history": [],
+  "history": [
+    {
+      "cycle": 1,
+      "item": "P01",
+      "outcome": "done",
+      "at": "2026-08-09",
+      "note": "Port MacBook/MPS -> Windows/RTX 4060 (CUDA). 12 runs, 3 seeds x (H35 connectome, H30 microns, H30 mouse, H35 mouse). All champions re-measured; every seed bit-identical (sigma = 0). Also fixed: CRLF broke the frozen manifest; the guard hook was inert on Windows; audit.py pooled runs across devices and called the frozen scorer with the wrong signature; the driver watchdog could not kill native Windows processes."
+    }
+  ],
   "machine": "Windows 10 laptop, NVIDIA RTX 4060 Laptop GPU (CUDA), Git Bash",
-  "hardware_rebaseline_done": false,
-  "notes": "Bootstrapped by the Phase-7 setup. Queue seeded with P01 + H36-H41 + S01 + L01; no cycle has run yet. IF THIS CHECKOUT IS MOVED TO ANOTHER MACHINE: set hardware_rebaseline_done=false, update `machine`, and run queue item P01 before any other cycle — sota.json is machine-specific (see autoresearch/PORTING.md)."
+  "hardware_rebaseline_done": true,
+  "notes": "P01 done 2026-08-09 on the new machine; the campaign may now run cycles. Two things a resuming session must know. (1) The champion pipelines are DETERMINISTIC here: they take a seed but never draw from it, so seeds 42/123/999 give bit-identical positions and sigma = 0. A Welch CI built on those seeds is degenerate (SE = 0), so a verdict needs delta > screen_delta_pp AND the floored PROTOCOL CI; audit.py emits significance.<ds>.degenerate when this applies. (2) microns costs 3240 s/run here (706 s on MPS), so a 3-seed screen is ~3.2 h and a 5-seed confirm ~5.3 h; max_cycle_wall_clock_h was raised 6 -> 10 and driver CYCLE_TIMEOUT_S 21600 -> 36000 so cycles are not killed mid-confirm. Queue item P02 (priority 1) asks whether the inert seeds can be dropped for deterministic variants, which would cut a cycle from ~8.5 h to ~2.5 h. IF THIS CHECKOUT IS MOVED AGAIN: set hardware_rebaseline_done=false, update `machine` and environment.device_tag, and re-run P01 — sota.json is machine-specific (see autoresearch/PORTING.md)."
 }

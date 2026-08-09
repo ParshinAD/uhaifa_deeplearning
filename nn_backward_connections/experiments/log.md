@@ -2106,3 +2106,131 @@ NOT a clean 3-dataset GENERAL WIN.** On the fly connectome H35 is the better ref
 plateau → 83.91%, ~58% of the Rocket↔best gap, no MIP, 0 extra grad steps). Path to a general
 win (deferred): higher microns sweep cap or a cycle-triggered α (under-relax only once oscillation
 is detected) so microns is not penalized by the short budget. Repro commands in `findings.md` #5.
+
+---
+
+# Phase 7 — autonomous campaign, cycle 1 (2026-08-09)
+
+## 2026-08-09 — P01: hardware re-baseline, MacBook/MPS → Windows/RTX 4060 (CUDA) — DONE
+
+Not a hypothesis. `sota.json` records scores, and scores are produced by a device; judging a
+CUDA-measured variant against an MPS-measured champion is a moving comparator that `config_hash`
+cannot see. This cycle re-measures the champions here and re-points everything machine-specific.
+
+### Environment
+| | |
+|---|---|
+| machine | Windows 10, NVIDIA GeForce RTX 4060 Laptop GPU (8 GB), Git Bash (not WSL) |
+| python | `/c/ProgramData/anaconda3/envs/allen/python.exe`, 3.9.25 (was 3.9.23) |
+| torch | 2.8.0+cu128, CUDA 12.8 (was torch 2.8.0 / MPS) |
+| pins | numpy 1.23.5, scipy 1.10.1, pandas 1.5.3 — unchanged |
+| gate | `pytest tests/ -q` → **25 passed**; scorer parity **34,751,902 / 41,912,141 = 82.9161%** |
+
+The parity test is the whole portability claim: the deterministic scorer travels, a training
+trajectory does not.
+
+### Re-baselined champions (3 seeds 42/123/999, `--role implement`, `--device auto`)
+
+| dataset | variant | CUDA mean ± std | max wall | MPS mean ± std | wall (MPS) | Δ |
+|---|---|---|---|---|---|---|
+| connectome | H35 | **83.9135 ± 0.0000** | 591 s | 83.9101 ± 0.0060 | 219 s | +0.0034 |
+| microns | H30 | **83.2063 ± 0.0000** | 3240 s | 83.2069 ± 0.0012 | 706 s | −0.0006 |
+| mouse | H30 | **92.9018 ± 0.0000** | 6 s | 92.9018 ± 0.0000 | 3 s | 0.0000 |
+| mouse | H35 | 92.9018 ± 0.0000 | 5 s | 92.9018 ± 0.0000 | — | 0.0000 |
+
+Every new mean sits inside the corresponding MPS σ. The algorithm ports cleanly; nothing here
+suggests a behavioural difference, only a timing and noise one. `sota.json` updated via
+`update_sota.py --force ×3` (forced because microns/mouse do not *beat* the old numbers — the
+justification is the hardware change, not a result). Note the `runner_up` rows now hold the
+superseded **MPS** measurement of the *same* variant id; that is the prior entry being preserved,
+not a different algorithm.
+
+### Finding 1 — the seeds are inert; σ = 0 is structural, not a tight noise floor
+
+All three connectome runs returned score **35,169,952** and, checked directly, **bit-identical**
+`best_positions` vectors; microns returned **12,814,227** three times. The cause is in the code,
+not in luck: H02/H30/H35 build `init_positions` from deterministic greedy-FAS and pass it into
+`run_rocket`, so `make_init_positions` — the only consumer of the seed — is never called
+(`src/mfas/baseline/rocket.py:168`). `torch.manual_seed`/`np.random.seed` are set and then nothing
+draws. **The seed-to-seed spread recorded on MPS was device non-determinism, not seed variance.**
+
+This is not cosmetic. With σ = 0 the Welch SE is 0, so *any* positive delta — +0.0001 pp included —
+clears a 95% CI lower bound. Left alone, the confirm gate would have been a false-positive machine
+crowning champions on numerically meaningless differences all night. Handled by:
+- `protocol_se()` now floors σ at the dataset's `baseline_sigma_pp`;
+- the auditor emits `significance.<ds>.degenerate` whenever a pool has zero variance;
+- `screen_delta_pp` is **kept** at 0.012 / 0.002 but re-justified as a **minimum effect size**
+  (2 × σ would now be 0). It is 1.7% of the 0.70 pp mission gap, so it blocks nothing real;
+- `campaign.yaml` confirm gate, `verifier.md` and `implementer.md` say so explicitly.
+
+Follow-up filed as **P02** (priority 1): if seeds are inert for deterministic variants, a screen
+can run 1 seed instead of 3. Not actioned here — it changes what every future number means, so it
+belongs to a cycle with its own gates, not to a silent protocol edit.
+
+### Finding 2 — this hardware is 2.7–4.6× slower, and it reshapes the cycle budget
+
+591 s vs 219 s on connectome; 3240 s vs 706 s on microns. The GPU is genuinely working (99%
+utilisation, 64% memory-controller, 54 W, 2168 MHz), so this is not a misconfiguration: the Rocket
+inner loop is a gather over 5.7 M / 10.4 M edges plus an atomic scatter-add into 137 k / 68 k
+slots — memory- and atomics-bound, where a 128-bit 8 GB laptop card has no edge over unified
+memory. Consequences, measured not guessed:
+- a screen (3 seeds × 3 datasets) ≈ **3.2 h**; a confirm (5 seeds × 3 datasets) ≈ **5.3 h**;
+- a cycle reaching confirm ≈ **8.5 h**, against `max_cycle_wall_clock_h: 6` and the driver's 6 h
+  `CYCLE_TIMEOUT_S` — i.e. **every confirming cycle would have been killed mid-confirm, silently,
+  forever.** Raised to 10 h / 36000 s.
+- `warn_wall_clock_s_per_run` 1200 → 3400: at 1200 s every microns run warns, which just teaches
+  the cycle to ignore warnings. The 3600 s hard cap is unchanged and the champion fits inside it
+  with ~11% headroom — but any variant that adds work on microns will breach it.
+
+### Infrastructure defects found and fixed (each would have broken the campaign silently)
+
+1. **CRLF checkout broke the frozen manifest.** The clone landed with `core.autocrlf=true`, so all
+   four frozen files failed `eval/frozen.sha256` — `FROZEN INTEGRITY ABORT`, no scored run possible
+   — although their content was byte-correct once normalized. Set `core.autocrlf=false`/`eol=lf`,
+   restored the tree to the committed bytes, and added `.gitattributes` (`* text=auto eol=lf`) so
+   no future clone can repeat it.
+2. **The guard hook was inert on Windows.** Its patterns are `/`-separated and its sandbox test
+   required a leading `/`, but Claude Code passes `D:\...`; and `settings.json` invoked the `.sh`
+   by bare path, which Windows does not execute. So *nothing* was protected. Both fixed and
+   verified in a fresh headless session: editing `src/mfas/metrics.py` is blocked with the file
+   hash unchanged, writes to `tmp/` pass, 11/11 path cases correct. (It has since blocked a real
+   out-of-sandbox write during this cycle.)
+3. **`audit.py` pooled runs across devices.** `load_runs()` filtered on variant/dataset/role only,
+   so the 265 MPS records would have been averaged into every CUDA mean — the exact contamination
+   P01 exists to prevent. Added `device_tag` filtering (default from
+   `campaign.yaml environment.device_tag`), a `FAIL` when a pool spans devices, and `--device-tag`
+   on `audit.py`/`update_sota.py`.
+4. **`audit.py` called the frozen scorer with the wrong signature** (`score_from_positions(g, pos)`
+   for `(positions, src, tgt, weights)`), so `check_rescore` crashed on any run with a local
+   positions file — taking down the critic gate. Fixed; it now re-scores 3/3 exact.
+5. **The driver's watchdog could not kill a wedged cycle.** Under Git Bash a native Windows child
+   survives a signal to its MSYS job — verified: a backgrounded `powershell` outlived `kill -TERM`.
+   The watchdog would have believed it killed the cycle, `wait` would return, and the next cycle
+   would start alongside the orphan — two cycles on one GPU, which the lock exists to prevent.
+   Added `kill_tree()` (MSYS pid → WINPID via `ps -W` → `taskkill //T //F`), used by the watchdog,
+   `--abort` and the keep-awake; re-tested against a native child.
+6. **No keep-awake on Windows.** `caffeinate`/`systemd-inhibit` do not exist here, so the laptop
+   could have slept through the night. Added `autoresearch/keepawake.ps1`
+   (`SetThreadExecutionState`, process-scoped so a crashed driver cannot leave the machine unable
+   to sleep) and wired it into `driver.sh`.
+7. **Every agent instruction hardcoded the MacBook interpreter**, so each cycle would have failed
+   on a missing python. Re-pointed in `research-cycle.md`, `implementer.md`, `verifier.md`,
+   `critic.md`, `CLAUDE.md`, `README.md`, `PROTOCOL.md`, `reproduce_baseline.sh`. Historical
+   documents (`findings.md`, `backlog.md`, `dr_tmp/`) keep the old path deliberately — they record
+   how those numbers were actually produced; `CLAUDE.md` says so.
+
+### Reproduce
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+for S in 42 123 999; do PYTHONPATH=src $PY -m eval.run_variant --exp H35 --dataset connectome --seed $S --out results/ --role implement --device auto; done
+for S in 42 123 999; do PYTHONPATH=src $PY -m eval.run_variant --exp H30 --dataset microns    --seed $S --out results/ --role implement --device auto; done
+for S in 42 123 999; do PYTHONPATH=src $PY -m eval.run_variant --exp H30 --dataset mouse      --seed $S --out results/ --role implement --device auto; done
+for S in 42 123 999; do PYTHONPATH=src $PY -m eval.run_variant --exp H35 --dataset mouse      --seed $S --out results/ --role implement --device auto; done
+PYTHONPATH=src $PY autoresearch/audit.py --variant H35 --comparator H30 --role implement --comparator-role implement
+```
+Evidence: `results/20260809T*-{H35,H30}-*-implement-*.json` (12 runs).
+
+#### Decision: P01 DONE. `hardware_rebaseline_done=true`; the campaign may run cycles. The
+comparator is now measured on the device that will judge every future variant. Two constraints
+inherited by every later cycle: verdicts cannot rest on the Welch CI alone (σ = 0), and microns
+dominates the wall-clock (3240 s/run) until P02 settles the seed question.

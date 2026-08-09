@@ -36,7 +36,7 @@ PY="${MFAS_PY:-/c/ProgramData/anaconda3/envs/allen/python.exe}"
 # start out "Not logged in". Export it before starting the driver if you keep a separate profile.
 CLAUDE_BIN="${CLAUDE_BIN:-claude}"
 CYCLE_PROMPT="${CYCLE_PROMPT:-/research-cycle}"
-CYCLE_TIMEOUT_S="${CYCLE_TIMEOUT_S:-21600}"      # 6 h, matches campaign.yaml max_cycle_wall_clock_h
+CYCLE_TIMEOUT_S="${CYCLE_TIMEOUT_S:-36000}"      # 10 h, matches campaign.yaml max_cycle_wall_clock_h
 PAUSE_S="${PAUSE_S:-60}"                          # breather between cycles
 MAX_DAILY_H="${MAX_DAILY_H:-12}"                  # campaign.yaml budget.max_wall_clock_h_per_day
 MIN_FREE_GB="${MIN_FREE_GB:-50}"
@@ -44,6 +44,27 @@ MODEL_ARG=""
 [ -n "${CAMPAIGN_MODEL:-}" ] && MODEL_ARG="--model ${CAMPAIGN_MODEL}"
 
 log() { printf '%s  %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" | tee -a "$DRIVER_LOG"; }
+
+# Kill a background job and everything under it.
+#
+# On macOS/Linux `kill` is enough. Under Git Bash it is NOT: a native Windows child (claude is a
+# node process; so is powershell) survives a signal sent to its MSYS job — verified on this box,
+# where a backgrounded powershell outlived `kill -TERM` and kept running. The watchdog would then
+# believe it had killed a wedged cycle, `wait` would return, and the next cycle would start
+# alongside the orphan — two concurrent cycles on one GPU, which is exactly what the lock exists
+# to prevent. So translate the MSYS pid to a Windows pid via `ps -W` and take down the tree.
+kill_tree() {
+  local pid="${1:-}" winpid
+  [ -z "$pid" ] && return 0
+  kill -TERM "$pid" 2>/dev/null
+  if command -v taskkill >/dev/null 2>&1; then
+    winpid="$(ps -W 2>/dev/null | awk -v p="$pid" '$1==p {print $4}' | head -1)"
+    [ -n "$winpid" ] && taskkill //T //F //PID "$winpid" >/dev/null 2>&1
+  fi
+  sleep 1
+  kill -KILL "$pid" 2>/dev/null
+  return 0
+}
 
 # ── --abort: stop now, release the lock ───────────────────────────────────────
 if [ "${1:-}" = "--abort" ]; then
@@ -53,10 +74,8 @@ if [ "${1:-}" = "--abort" ]; then
   for f in cycle_pid pid; do
     [ -f "$LOCK/$f" ] || continue
     pid="$(cat "$LOCK/$f")"
-    log "ABORT: terminating $f=$pid"
-    kill -TERM "$pid" 2>/dev/null || true
-    sleep 2
-    kill -KILL "$pid" 2>/dev/null || true
+    log "ABORT: terminating $f=$pid (process tree)"
+    kill_tree "$pid"
   done
   rm -rf "$LOCK"
   log "ABORT: lock released, STOP file set"
@@ -70,7 +89,7 @@ if ! mkdir "$LOCK" 2>/dev/null; then
   exit 1
 fi
 echo $$ > "$LOCK/pid"
-trap 'rm -rf "$LOCK"; log "driver exited, lock released"' EXIT
+trap 'rm -rf "$LOCK"; kill_tree "${KEEPAWAKE_PID:-}"; log "driver exited, lock released"' EXIT
 
 rm -f "$STOP"
 log "=============================================================="
@@ -105,7 +124,7 @@ run_with_timeout() {
   "$@" &
   local cmd_pid=$!
   echo "$cmd_pid" > "$LOCK/cycle_pid"
-  ( sleep "$secs"; kill -TERM "$cmd_pid" 2>/dev/null; sleep 10; kill -KILL "$cmd_pid" 2>/dev/null ) &
+  ( sleep "$secs"; kill_tree "$cmd_pid" ) &
   local watchdog=$!
   wait "$cmd_pid"; local rc=$?
   kill -TERM "$watchdog" 2>/dev/null
@@ -116,10 +135,18 @@ run_with_timeout() {
 # Keep the machine awake for overnight campaigns. macOS: caffeinate. Linux/WSL: systemd-inhibit
 # when available. Neither is required — the loop just runs unprotected without them.
 CAFF=""
+KEEPAWAKE_PID=""
 if command -v caffeinate >/dev/null 2>&1; then
   CAFF="caffeinate -i"
 elif command -v systemd-inhibit >/dev/null 2>&1; then
   CAFF="systemd-inhibit --what=idle --why=mfas-campaign"
+elif command -v powershell >/dev/null 2>&1 && [ -f "$AR/keepawake.ps1" ]; then
+  # Windows: neither of the above exists. A separate process holds SetThreadExecutionState for
+  # as long as the driver runs; the trap below releases it. Not a CAFF prefix, because the
+  # request must span the whole campaign rather than a single cycle.
+  powershell -NoProfile -ExecutionPolicy Bypass -File "$(cygpath -w "$AR/keepawake.ps1")" \
+      >> "$LOGDIR/keepawake.log" 2>&1 &
+  KEEPAWAKE_PID=$!
 fi
 
 # ── preflight: headless auth ──────────────────────────────────────────────────

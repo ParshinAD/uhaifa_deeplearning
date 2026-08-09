@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260809T155154Z-H30-microns-s123-implement-954bab",
+  "algo": "H30",
+  "dataset": "microns",
+  "seed": 123,
+  "score": 12814227.0,
+  "pct": 83.20625676071326,
+  "wall_clock_s": 3237.715036869049,
+  "git_commit": "c4199932db693f3ced6e221a17a4f85cd11237bc+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "954bab6406da",
+  "timestamp": "2026-08-09T16:45:52Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 80000,
+  "best_positions_path": "results\\20260809T155154Z-H30-microns-s123-implement-954bab_positions.npy",
+  "experiment_id": "H30",
+  "role": "implement",
+  "hypothesis": "After H02-warm-started Rocket, a leakage-safe full-range exact-gain Jacobi node re-insertion (sift) post-phase recovers feedforward weight the continuous optimizer leaves on the table; refined >= pure Rocket.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 80000
+}

@@ -47,7 +47,11 @@ phases:
 runtime:
   max_wall_clock_s_per_run: 3600      # user-set: "quality first, but within about an hour"
   # Soft warning band — the cycle should flag (not kill) a variant crossing this.
-  warn_wall_clock_s_per_run: 1200
+  # Raised 1200 -> 3400 at the P01 re-baseline: the CHAMPION itself now takes 3214 s on microns
+  # (706 s on MPS, 4.55x), so a 1200 s band would fire on every single microns run and train the
+  # cycle to ignore the warning. At 3400 it means what it is supposed to mean: this run is
+  # approaching the 3600 s hard cap. Connectome runs (591 s) are nowhere near either number.
+  warn_wall_clock_s_per_run: 3400
   # Only ONE heavy training/refinement process at a time: single GPU (RTX 4060, 8 GB).
   max_concurrent_heavy_runs: 1
 
@@ -59,13 +63,22 @@ datasets:
     role: primary
     n_nodes: 136648
     baseline_sigma_pp: 0.0189         # frozen-baseline noise floor (PROTOCOL.md)
-    screen_delta_pp: 0.012            # 2 x champion sigma (H35 sigma = 0.0060); see CAMPAIGN.md
+    # KEPT at the MPS-era value, but its JUSTIFICATION changed at the P01 re-baseline.
+    # It used to be 2 x champion sigma (H35 sigma = 0.0060 on MPS). On CUDA the champion's sigma
+    # is exactly 0.0000 — the pipeline never draws from `seed` — so "2 x sigma" would be 0 and
+    # would wave through a +0.0001 pp difference. Read this now as a MINIMUM EFFECT SIZE: a gain
+    # smaller than this is not worth a champion change, whatever its CI says. It is 1.7% of the
+    # 0.70 pp mission gap, so it does not stand in the way of a real result.
+    screen_delta_pp: 0.012
     confirm_seeds: [42, 123, 999, 7, 31415]
     screen_seeds: [42, 123, 999]
   microns:
     role: primary
     n_nodes: 67534
     baseline_sigma_pp: 0.0006
+    # Same re-justification as connectome: champion sigma is 0.0000 here, so this is a minimum
+    # effect size, not 2 x sigma. Note microns is the expensive dataset on this hardware
+    # (3240 s/run vs 706 s on MPS) — see runtime above and queue item P02.
     screen_delta_pp: 0.002
     confirm_seeds: [42, 123, 999, 7, 31415]
     screen_seeds: [42, 123, 999]
@@ -111,6 +124,12 @@ gates:
     what: >
       Independent re-run by the verifier: confirm_seeds per dataset, role=confirm.
       Pass iff Welch 95% CI lower bound > 0 on BOTH primaries and mouse non-inferior.
+      ON THIS MACHINE THE WELCH CI IS NOT SUFFICIENT ON ITS OWN. These pipelines take a
+      seed but never draw from it (init_positions comes from deterministic greedy-FAS), so
+      seed spread only ever measured device non-determinism; CUDA reproduces bit-identically
+      and std collapses to 0, which makes SE 0 and any positive delta "significant". Use the
+      PROTOCOL CI lower bound (audit.py floors its sigma at baseline_sigma_pp) AND require
+      delta > screen_delta_pp. Verified in P01, 2026-08-09; see experiments/log.md.
   - id: critic
     what: >
       Red-team + mechanical audit (autoresearch/audit.py). Leakage, frozen integrity,
@@ -122,7 +141,13 @@ gates:
 budget:
   max_cycles: 200                     # hard backstop on total research cycles
   max_wall_clock_h_per_day: 12
-  max_cycle_wall_clock_h: 6           # a single cycle is killed past this
+  # Raised 6 -> 10 at the P01 re-baseline (2026-08-09), together with driver.sh CYCLE_TIMEOUT_S.
+  # Measured here: a screen (3 seeds x 3 datasets) is ~3.2 h and a confirm (5 seeds x 3 datasets)
+  # ~5.3 h, so a cycle that reaches confirm needs ~8.5 h. At the old 6 h cap the driver would have
+  # killed every such cycle mid-confirm — i.e. no variant could ever have been confirmed on this
+  # machine, silently, forever. This is a consequence of microns taking 3214 s/run here vs 706 s
+  # on MPS; it should come back down once queue item P02 settles the seed question.
+  max_cycle_wall_clock_h: 10          # a single cycle is killed past this
   min_free_disk_gb: 50                # driver refuses to start below this
   results_dir_max_gb: 20
 
@@ -159,6 +184,10 @@ environment:
   python: /c/ProgramData/anaconda3/envs/allen/python.exe
   claude_config_dir: default           # `claude /login` on this box writes to ~/.claude
   device: auto                        # MPS -> CUDA -> CPU; discrete score always on CPU
+  # env.gpu string the harness stamps into every results/*.json on this box. audit.py and
+  # update_sota.py count only runs carrying it, so the 265 MPS-measured records from the MacBook
+  # can never be pooled into a mean or a sigma here. Clear it to pool every device.
+  device_tag: "NVIDIA GeForce RTX 4060 Laptop GPU"
   torch: "2.8.0+cu128"
   python_version: "3.9.25"            # 3.9.23 on the MacBook; numpy/scipy/pandas pins unchanged
   shell: "Git Bash (MSYS2) — driver.sh and the guard hook run under it, not WSL"

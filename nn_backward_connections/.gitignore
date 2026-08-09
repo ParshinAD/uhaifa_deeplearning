@@ -13,6 +13,9 @@ dist/
 # Keepers (e.g. the drift probes feeding Q01, the H35 under-relaxation evidence) must be promoted,
 # not left here, so they stay reproducible-by-checkout.
 dr_tmp/
+# tmp/ is the port's staging area (payload tarball, one-off migration scripts). Untracked and
+# unignored, it made every run record its git_commit as "<sha>+dirty", which the audit reads.
+tmp/
 
 # Project caches / large generated artifacts (rebuildable; see experiments/build_microns.py)
 data/processed/

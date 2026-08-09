@@ -1,0 +1,22 @@
+# Line endings are load-bearing in this subtree, not cosmetic.
+#
+# eval/frozen.sha256 hashes the WORKING-TREE BYTES of the frozen oracle/harness/tests, so a
+# checkout that lands CRLF fails verify_frozen_manifest() and no scored run can start — which is
+# exactly what happened when this campaign was first cloned onto Windows with core.autocrlf=true
+# (all four frozen files reported MODIFIED although their content was byte-for-byte correct once
+# normalized). See autoresearch/PORTING.md.
+#
+# eol=lf pins the checkout to LF on every platform, so the manifest matches everywhere; text=auto
+# keeps whatever a Windows tool writes with CRLF (dashboard.py, log.md edits) normalized in the
+# index instead of showing up as a whole-file diff.
+* text=auto eol=lf
+
+# Binary payloads: never touch these bytes.
+*.npy binary
+*.npz binary
+*.gz binary
+*.pdf binary
+*.png binary
+*.jpg binary
+*.zip binary
+*.ipynb -text

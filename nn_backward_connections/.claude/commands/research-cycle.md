@@ -12,7 +12,7 @@ Work in `nn_backward_connections/` (the campaign root). All paths below are rela
 ## 0. Preflight — abort the cycle if any of this fails
 
 ```bash
-PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
 git status --porcelain | head -20          # expect a clean-ish tree; NEVER proceed with frozen-file edits
 git rev-parse --abbrev-ref HEAD            # MUST be auto/campaign
 PYTHONPATH=src $PY -m pytest tests/ -q     # MUST be green (25 passed)
@@ -67,7 +67,7 @@ done; done
 ```
 
 Pass iff `Δ > screen_delta_pp` on **both primaries** (connectome, microns) and mouse is
-non-inferior. Run these **sequentially** — one MPS device; parallel runs contend and poison
+non-inferior. Run these **sequentially** — one GPU device; parallel runs contend and poison
 `wall_clock_s`.
 
 **Confirm.** Only if the screen passed. Use the `verifier` subagent (read-only on source, generates
@@ -117,7 +117,7 @@ Verdict is one of **keep / kill / iterate**, per the ladder. Then:
 - Most cycles end in **kill**. That is the expected outcome and a good one — provided the kill is
   written down with its revival condition.
 - Never report a number you did not produce; never keep a number the audit contradicts.
-- Sequential heavy runs only. One MPS device.
+- Sequential heavy runs only. One GPU device (RTX 4060).
 - Keep every run under the `runtime.max_wall_clock_s_per_run` budget (3600 s). A variant that
   cannot answer in an hour is not a usable algorithm — kill it or make it cheaper.
 - Scratch goes to `dr_tmp/` (gitignored). Anything that matters gets promoted to its track home.

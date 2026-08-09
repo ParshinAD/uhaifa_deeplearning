@@ -36,11 +36,19 @@ and a SCREEN result; the verifier and critic decide.
      mechanism genuinely needs one — then unit-test it).
    - Set `n_epochs_done` to the TOTAL optimizer steps performed (the equal-compute basis).
 
-4. Run it on **all three datasets** × the screen seeds, sequentially (one MPS device — parallel
-   runs contend and poison `wall_clock_s`):
+4. Run it on **all three datasets** × the screen seeds, sequentially (one GPU device — parallel
+   runs contend and poison `wall_clock_s`).
+
+   Keep all three seeds even though, for a variant that does not consume RNG, they are inert on
+   this machine: the champion pipelines produce **bit-identical** results across 42/123/999
+   (P01, 2026-08-09), because `init_positions` comes from deterministic greedy-FAS and CUDA
+   reproduces exactly. Report σ honestly as 0.0000 rather than treating it as a tight noise floor
+   — with σ = 0 the Welch CI is degenerate, so the verdict rests on `screen_delta_pp` as a
+   minimum effect size plus the floored PROTOCOL CI. If your variant DOES consume RNG
+   (multi-start, randomized destroy), say so in the log entry: for those the seeds are real.
 
    ```bash
-   PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+   PY=/c/ProgramData/anaconda3/envs/allen/python.exe
    for DS in connectome microns mouse; do for S in 42 123 999; do
      $PY -m eval.run_variant --exp <id> --dataset $DS --seed $S --out results/ \
          --role implement --device auto

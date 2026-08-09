@@ -15,7 +15,7 @@ Rocket baseline as a sanity anchor. **No algorithmic changes are introduced.**
 
 ```bash
 # conda env `allen` (Python 3.9, torch 2.8, Apple MPS)
-PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
 
 # 1. Run the oracle gate (exact parity + known-answer; ~10s, no training)
 $PY -m pytest tests/test_metrics.py -v
