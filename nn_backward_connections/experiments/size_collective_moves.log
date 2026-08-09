@@ -1,0 +1,37 @@
+[connectome] n=136,648 m=5,657,719 self_loops=0 H35 order = 83.90348%  (20260622T213942Z-H35-connectome-s42-implement-8f52fb_positions.npy)
+  [S1] realized +0.01736 pp from 977 moves (independent sum +0.01698 pp); median span 7616 ranks; 58.1s + 61.2s
+  [S2] s=    64: gain +0.00090 pp (topo 321 + small 58); ceiling 0.0783 pp; 0.4s
+  [S2] s=   256: gain +0.00235 pp (topo 754 + small 229); ceiling 0.1484 pp; 0.3s
+  [S2] s=  1024: gain +0.00368 pp (topo 1346 + small 198); ceiling 0.4081 pp; 0.4s
+  [S2] s=  4096: gain +0.00494 pp (topo 1858 + small 212); ceiling 1.3299 pp; 0.3s
+  [S2] s= 16384: gain +0.00178 pp (topo 722 + small 25); ceiling 4.0845 pp; 0.3s
+  [ITER] round 1: S1 +0.01736 pp (977 moves) + S2@0 +0.00600 pp -> cumulative +0.02336 pp (59.6s)
+  [ITER] round 2: S1 +0.00990 pp (594 moves) + S2@2048 +0.00371 pp -> cumulative +0.03697 pp (59.6s)
+  [ITER] round 3: S1 +0.00538 pp (317 moves) + S2@0 +0.00285 pp -> cumulative +0.04521 pp (59.5s)
+  [ITER] round 4: S1 +0.00562 pp (277 moves) + S2@2048 +0.00263 pp -> cumulative +0.05346 pp (54.7s)
+  [ITER] round 5: S1 +0.00299 pp (194 moves) + S2@0 +0.00172 pp -> cumulative +0.05818 pp (59.0s)
+  [ITER] round 6: S1 +0.00235 pp (121 moves) + S2@2048 +0.00144 pp -> cumulative +0.06196 pp (66.6s)
+[microns] n=67,534 m=10,436,569 self_loops=0 H35 order = 83.20505%  (20260622T215314Z-H35-microns-s42-implement-134019_positions.npy)
+  [S1] realized +0.00392 pp from 339 moves (independent sum +0.00723 pp); median span 801 ranks; 40.5s + 37.8s
+  [S2] s=    64: gain +0.00151 pp (topo 199 + small 34); ceiling 0.0193 pp; 0.3s
+  [S2] s=   256: gain +0.00289 pp (topo 420 + small 25); ceiling 0.1037 pp; 0.2s
+  [S2] s=  1024: gain +0.00154 pp (topo 229 + small 8); ceiling 0.5213 pp; 0.2s
+  [S2] s=  4096: gain +0.00057 pp (topo 88 + small 0); ceiling 2.0007 pp; 0.3s
+  [S2] s= 16384: gain +0.00020 pp (topo 30 + small 1); ceiling 6.9405 pp; 0.4s
+  [ITER] round 1: S1 +0.00392 pp (339 moves) + S2@0 +0.00250 pp -> cumulative +0.00642 pp (33.8s)
+  [ITER] round 2: S1 +0.00054 pp (69 moves) + S2@128 +0.00127 pp -> cumulative +0.00823 pp (33.0s)
+  [ITER] round 3: S1 +0.00021 pp (28 moves) + S2@0 +0.00047 pp -> cumulative +0.00892 pp (33.1s)
+  [ITER] round 4: S1 +0.00005 pp (6 moves) + S2@128 +0.00016 pp -> cumulative +0.00913 pp (32.5s)
+  [ITER] round 5: S1 +0.00000 pp (0 moves) + S2@0 +0.00009 pp -> cumulative +0.00922 pp (33.1s)
+  [ITER] round 6: S1 +0.00000 pp (0 moves) + S2@128 +0.00003 pp -> cumulative +0.00925 pp (32.9s)
+[mouse] n=148 m=583 self_loops=0 H35 order = 92.90180%  (20260622T213523Z-H35-mouse-s42-implement-f0b547_positions.npy)
+  [S1] realized +0.02675 pp from 3 moves (independent sum +0.02169 pp); median span 40 ranks; 0.0s + 0.0s
+  [S2] s=    64: gain +0.01103 pp (topo 0.00101 + small 0); ceiling 3.1227 pp; 0.0s
+  [ITER] round 1: S1 +0.02675 pp (3 moves) + S2@0 +0.00000 pp -> cumulative +0.02675 pp (0.0s)
+  [ITER] round 2: S1 +0.02716 pp (2 moves) + S2@32 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 3: S1 +0.00000 pp (0 moves) + S2@0 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 4: S1 +0.00000 pp (0 moves) + S2@32 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 5: S1 +0.00000 pp (0 moves) + S2@0 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 6: S1 +0.00000 pp (0 moves) + S2@32 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+
+[done] wrote experiments/outputs/collective_moves_sizing.json

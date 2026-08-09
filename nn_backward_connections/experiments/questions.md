@@ -74,3 +74,44 @@ Contract: `experiments/PROTOCOL.md` § "Track B — Diagnostics". In one line:
 - **artifacts:** `experiments/outputs/seed_distance.json` + plot. **No writes to `results/`.**
 - **answer:** → `diagnosis.md` `## Q02` (to be written).
 - **touches:** none yet (new measurement); may inform the H01 kill rationale.
+
+## Q03 — How far is our current best order from the reference near-optimal one, and how degenerate is the near-optimal set?
+- **status:** **open** — queued behind the S1/S2 collective-move sizing (`experiments/size_collective_moves.py`),
+  because that sizing tells us which move class to characterise the residual with.
+- **why it matters:** two separate reasons.
+  1. **Every existing gap-structure number is stale.** The Step-2 measurements in
+     `diagnosis.md` (8.47% of edges flip / 7.51% of weight; Spearman 0.757, Kendall-τ 0.610;
+     flip rank-distance p25=8,290 / p50=22,580 / p90=87,497 from `localsearch_sizing.json`)
+     were all taken against **Rocket/H02's 82.93% order**. H30+H35 have since closed **0.98 pp**
+     of the 1.69 pp. Whether the sift removed the *short-range* part of the disagreement and
+     left a purely long-range residual — or shrank it uniformly — is unknown, and it decides
+     what the next move class must look like.
+  2. **"How many variants are there?"** Q02 established that plain Rocket's ~82.9% level is a
+     **degenerate set** of near-equivalent orderings (score std 0.0225 pp, Spearman 0.958).
+     Whether the ~84.6% level is *also* degenerate is the open question: if many mutually
+     distant orderings score ~84.61%, then "reach that specific order" is the wrong framing
+     and the target is a *region*; if the top is essentially unique, the residual is a single
+     hard reordering. This also bounds what any best-of-K / multi-basin scheme could ever buy.
+- **method:**
+  1. **Re-measure the gap structure against H35** (not H02) and put the two side by side:
+     flip fraction and its gain/lose decomposition, Spearman / Kendall-τ, and the flip
+     rank-distance percentiles. Reuse the machinery in `experiments/size_localsearch.py`.
+  2. **Localise the residual:** which nodes carry it — the extreme sources Q02 found unstable,
+     the giant SCC's interior, median-degree nodes (Step 2's finding)? Report the residual's
+     concentration, not just its size.
+  3. **Degeneracy at the top:** produce several distinct orderings scoring within ε of the
+     reference (perturb → re-sift under the frozen oracle, keep those above a threshold) and
+     report their pairwise Spearman / Jaccard@k. Compare that spread with Q02's ~82.9% spread.
+     State K and ε; a null result ("we could not find a second distant 84.6% order") must be
+     reported as such and not as evidence of uniqueness.
+  4. **Reconcile the reference's provenance.** `data/best_solution` scores **84.6147%**
+     (≈35,463,832) but Vahidi 2025 publishes **35,462,925 = 84.6125%** — ~907 weight units
+     apart, so they are **not the same solution** even though `findings.md` #4 equates them.
+     Verify both numbers through the frozen oracle and correct the docs.
+- **artifacts:** `experiments/outputs/q03_gap_to_reference.json` + plots. **No writes to `results/`.**
+  Privileged: reads `data/best_solution` **only** via `mfas.analysis.gap.load_best_solution`.
+  Nothing produced here may feed a variant's init, loss or move choice.
+- **answer:** → `diagnosis.md` `## Q03` (to be written).
+- **touches:** `diagnosis.md` § "Gap structure (Step 2)" (annotate as measured-vs-H02);
+  `findings.md` #3 (same), #4 (the Vahidi 35,462,925 vs 84.6147% conflation), #5 (the
+  "~17% of the residual closed" framing depends on which reference is meant).

@@ -1,0 +1,48 @@
+[microns] seed=42 n=67,534 m=10,436,569 self_loops=0 H35 order = 83.20505%  (20260622T215314Z-H35-microns-s42-implement-134019_positions.npy)
+  [1-OPT CONTROL] 38 sweeps, 16 movers left, single-node recovery +0.00561 pp -> 83.21066%  (424.9s)
+  [S1] realized +0.00164 pp from 205 moves (independent sum +0.00167 pp); median span 1226 ranks; 32.4s + 37.3s
+  [S2] s=    64: gain +0.00040 pp (topo 46 + small 16); ceiling 0.0185 pp; 0.3s
+  [S2] s=   256: gain +0.00139 pp (topo 201 + small 13); ceiling 0.1011 pp; 0.2s
+  [S2] s=  1024: gain +0.00110 pp (topo 162 + small 7); ceiling 0.5179 pp; 0.2s
+  [S2] s=  4096: gain +0.00052 pp (topo 80 + small 0); ceiling 1.9974 pp; 0.3s
+  [S2] s= 16384: gain +0.00019 pp (topo 29 + small 1); ceiling 6.9357 pp; 0.4s
+  [ITER] round 1: S1 +0.00164 pp (205 moves) + S2@0 +0.00154 pp -> cumulative +0.00318 pp (33.2s)
+  [ITER] round 2: S1 +0.00027 pp (37 moves) + S2@128 +0.00116 pp -> cumulative +0.00460 pp (32.1s)
+  [ITER] round 3: S1 +0.00012 pp (17 moves) + S2@0 +0.00048 pp -> cumulative +0.00521 pp (33.3s)
+  [ITER] round 4: S1 +0.00012 pp (17 moves) + S2@128 +0.00023 pp -> cumulative +0.00555 pp (32.0s)
+  [ITER] round 5: S1 +0.00001 pp (1 moves) + S2@0 +0.00011 pp -> cumulative +0.00567 pp (31.5s)
+  [ITER] round 6: S1 +0.00002 pp (3 moves) + S2@128 +0.00006 pp -> cumulative +0.00575 pp (30.8s)
+
+[done] wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/experiments/outputs/siftfirst_microns_s42.json
+[microns] seed=123 n=67,534 m=10,436,569 self_loops=0 H35 order = 83.20446%  (20260622T220606Z-H35-microns-s123-implement-134019_positions.npy)
+  [1-OPT CONTROL] 44 sweeps, 9 movers left, single-node recovery +0.00437 pp -> 83.20883%  (428.4s)
+  [S1] realized +0.00171 pp from 204 moves (independent sum +0.00171 pp); median span 1472 ranks; 30.0s + 34.5s
+  [S2] s=    64: gain +0.00022 pp (topo 24 + small 10); ceiling 0.0184 pp; 0.3s
+  [S2] s=   256: gain +0.00147 pp (topo 200 + small 27); ceiling 0.1007 pp; 0.2s
+  [S2] s=  1024: gain +0.00114 pp (topo 166 + small 10); ceiling 0.5168 pp; 0.2s
+  [S2] s=  4096: gain +0.00051 pp (topo 77 + small 1); ceiling 1.9931 pp; 0.2s
+  [S2] s= 16384: gain +0.00019 pp (topo 27 + small 2); ceiling 6.9371 pp; 0.4s
+  [ITER] round 1: S1 +0.00171 pp (204 moves) + S2@0 +0.00154 pp -> cumulative +0.00325 pp (31.5s)
+  [ITER] round 2: S1 +0.00036 pp (46 moves) + S2@128 +0.00103 pp -> cumulative +0.00464 pp (31.4s)
+  [ITER] round 3: S1 +0.00025 pp (26 moves) + S2@0 +0.00049 pp -> cumulative +0.00538 pp (31.3s)
+  [ITER] round 4: S1 +0.00007 pp (9 moves) + S2@128 +0.00027 pp -> cumulative +0.00572 pp (31.1s)
+  [ITER] round 5: S1 +0.00004 pp (5 moves) + S2@0 +0.00016 pp -> cumulative +0.00592 pp (31.2s)
+  [ITER] round 6: S1 +0.00002 pp (3 moves) + S2@128 +0.00008 pp -> cumulative +0.00602 pp (31.3s)
+
+[done] wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/experiments/outputs/siftfirst_microns_s123.json
+[microns] seed=999 n=67,534 m=10,436,569 self_loops=0 H35 order = 83.20414%  (20260622T221749Z-H35-microns-s999-implement-134019_positions.npy)
+  [1-OPT CONTROL] 44 sweeps, 17 movers left, single-node recovery +0.00647 pp -> 83.21061%  (423.3s)
+  [S1] realized +0.00190 pp from 234 moves (independent sum +0.00177 pp); median span 1295 ranks; 30.1s + 34.7s
+  [S2] s=    64: gain +0.00028 pp (topo 35 + small 8); ceiling 0.0187 pp; 0.3s
+  [S2] s=   256: gain +0.00155 pp (topo 222 + small 16); ceiling 0.1010 pp; 0.2s
+  [S2] s=  1024: gain +0.00119 pp (topo 173 + small 10); ceiling 0.5157 pp; 0.2s
+  [S2] s=  4096: gain +0.00047 pp (topo 72 + small 1); ceiling 1.9936 pp; 0.2s
+  [S2] s= 16384: gain +0.00020 pp (topo 29 + small 2); ceiling 6.9388 pp; 0.4s
+  [ITER] round 1: S1 +0.00190 pp (234 moves) + S2@0 +0.00165 pp -> cumulative +0.00355 pp (32.9s)
+  [ITER] round 2: S1 +0.00036 pp (38 moves) + S2@128 +0.00117 pp -> cumulative +0.00507 pp (31.9s)
+  [ITER] round 3: S1 +0.00020 pp (24 moves) + S2@0 +0.00047 pp -> cumulative +0.00575 pp (31.6s)
+  [ITER] round 4: S1 +0.00010 pp (13 moves) + S2@128 +0.00023 pp -> cumulative +0.00608 pp (32.1s)
+  [ITER] round 5: S1 +0.00004 pp (5 moves) + S2@0 +0.00007 pp -> cumulative +0.00619 pp (32.2s)
+  [ITER] round 6: S1 +0.00000 pp (0 moves) + S2@128 +0.00006 pp -> cumulative +0.00625 pp (31.7s)
+
+[done] wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/experiments/outputs/siftfirst_microns_s999.json

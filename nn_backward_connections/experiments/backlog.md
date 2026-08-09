@@ -1662,3 +1662,45 @@ best-by-oracle whole-vector acceptance.
 - **H36 (proposed):** cycle-triggered α — run pure Jacobi until oscillation is detected (candidate
   dips while movers plateau), THEN switch to under-relaxation. Would make H35 a clean 3-dataset
   general win (microns no longer penalized by a fixed short budget). Untried.
+
+---
+
+# Phase 6.3 backlog (H36) — collective (multi-node) discrete moves (2026-08-09)
+
+Opened by the S1/S2 sizing gate (`experiments/log.md` 2026-08-09; probe
+`experiments/size_collective_moves.py`, artifacts `experiments/outputs/collective_moves_sizing.json`
++ `experiments/outputs/siftfirst_*.json`). Closes the roadmap's `A-SCC` question and opens `A-PAIR`.
+
+## H36 — Collective discrete refinement: paired backward-edge relocation + block-SCC condensation
+- **Hypothesis:** After H35, appending a **collective** (multi-node) discrete phase — alternating
+  (a) Vahidi-Alg-2 **paired relocation** of a backward edge's two endpoints over the whole span
+  between them, and (b) Vahidi-Alg-3 **block-SCC** condensation refinement on contiguous rank
+  windows — raises the exact feedforward metric beyond H35, at **0 extra gradient steps**.
+- **Rationale (measured, not assumed):** H35's sift is a *single-node* move. With the single-node
+  class first exhausted to a fixed point as a control, the collective phase still gains
+  **connectome +0.0599 pp (seed 42; 94.5% of the total is outside the single-node class)** and
+  **microns +0.00601 ± 0.00025 pp (n=3, 95% CI lower +0.00561, vs the 0.002 pp gate)**. Mouse gains
+  +0.0539 pp, 100% of it from the paired move. Every move's gain is exact by the contiguous-interval
+  lemma and oracle-verified (`experiments/diagnostics/verify_collective_moves.py`: max error 1.6e-14).
+- **Design axis:** discrete refinement, collective move class (post-Rocket, post-sift).
+- **Expected effect:** ≥ the sized numbers — the sizing is a **lower bound**: it examined only the
+  top 200k of ~1.19M backward edges (≈50% of connectome backward weight), and a full-K single S1
+  pass gains **2.5×** more (+0.04293 vs +0.01736 pp). Round count (6) had not converged on connectome.
+- **Est. compute cost:** **expensive in wall-clock, free in gradient steps.** The sized configuration
+  costs 359 s of collective rounds + 204 s of control on top of H35's 219 s on connectome = **~2.6×**,
+  which **breaches the campaign's ~2× wall ceiling** — declare this up front and consider it a
+  budget knob (rounds, top-K) rather than a fixed cost.
+- **Comparator:** **H35 at matched seeds** (the incumbent), not `baseline_passthrough`. Report the
+  pure-Rocket score, the H35 score and the H36 score separately per CLAUDE.md.
+- **Leakage:** safe. Gains use ranks + input edge weights only; the frozen oracle only accepts/rejects
+  whole candidate vectors. The probe never reads `data/best_solution`.
+- **Measurement:** standard — both large connectomes + mouse, ≥3 seeds SCREEN, CONFIRM at 5/20 with
+  95% CI lower bound > 0 vs H35.
+- **Spec requirements carried from the critic (do not drop):**
+  1. Sift to a 1-opt fixed point **before and between** collective rounds — H35's returned order is
+     NOT a fixed point (163 / 608 / 0 movers left), so without this the gain is mis-attributed
+     (on microns the uncontrolled headline was ~60% single-node).
+  2. Report K-sensitivity; top-K truncation under-states the paired move by ~2.5×.
+  3. A monotone best-by-oracle refinement "beating the incumbent" is near-tautological — the real
+     test is magnitude vs seed noise on ≥3 seeds, and the wall-clock cost.
+- **status: open** — promoted by the sizing gate, not yet run as a variant cycle.

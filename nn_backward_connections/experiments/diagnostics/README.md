@@ -26,3 +26,11 @@ Promoted, re-runnable diagnostic scripts that answer a `Q0x` in
   anchor, not a gitignored positions file. Run: `PYTHONPATH=src python
   experiments/diagnostics/q01_drift_from_optimum.py` → `experiments/outputs/q01_*.{json,png}`.
   Answer: `../diagnosis.md` § Q01.
+- **`q02_seed_distance.py`** — answers `Q02` (Rocket's score is seed-stable, its ordering is not).
+  Run: `PYTHONPATH=src python experiments/diagnostics/q02_seed_distance.py` →
+  `experiments/outputs/q02_seed_distance.{json,png}`. Answer: `../diagnosis.md` § Q02.
+- **`verify_collective_moves.py`** — **not** a `Q0x` answer: an independent brute-force check of the
+  exact-gain algebra in `experiments/size_collective_moves.py` (the H36 sizing gate), written by the
+  critic and promoted here because the 2026-08-09 log entry cites its numbers. Compares the closed-form
+  S1 / small-SCC-DP / S2 gains against explicit full-graph oracle rescoring on random graphs.
+  Run: `python experiments/diagnostics/verify_collective_moves.py` (prints max abs errors, ~1e-14).

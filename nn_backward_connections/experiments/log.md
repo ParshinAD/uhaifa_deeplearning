@@ -2106,3 +2106,284 @@ NOT a clean 3-dataset GENERAL WIN.** On the fly connectome H35 is the better ref
 plateau → 83.91%, ~58% of the Rocket↔best gap, no MIP, 0 extra grad steps). Path to a general
 win (deferred): higher microns sweep cap or a cycle-triggered α (under-relax only once oscillation
 is detected) so microns is not penalized by the short budget. Repro commands in `findings.md` #5.
+
+---
+
+## 2026-08-09 — S1/S2 collective-move sizing (Track-A gate for A-SCC / A-PAIR) — PROMOTE to H36
+
+#### What was sized and why
+The roadmap's `A-SCC` item was blocked on a misconception. `dr_tmp/FINDINGS_underrelaxation.md` E2
+had shown a **global** SCC condensation is worthless here (inter-SCC weight = 1.50% of total, already
+99.99% feedforward, forcing it gains **+0.00013 pp**) — but reading the Vahidi 2025 PDF
+(arXiv:2506.13799, repo root) closely shows his SCC step (**Algorithm 3**) is *not* a global split:
+it decomposes the induced subgraph of a **rank window**, which shatters into many small sub-SCCs
+even though 92.82% of the graph is one giant SCC. That is a different, untested move. Alongside it
+his **Algorithm 2** relocates the two endpoints of a backward edge *jointly* over the whole span
+between them. Both are **collective** (multi-node) moves; H30/H35's sift is single-node only.
+
+So the gate sizes two moves on top of our H35 incumbent:
+- **S1 (Alg 2)** — paired relocation `[n_1..n_r, u, v, n_{r+1}..n_t]`, best split `r` by exact
+  prefix-sum gain over the span.
+- **S2 (Alg 3)** — contiguous rank blocks of size `s`; per block, sub-SCC decomposition +
+  topological sort of the condensation + exact bitmask-DP re-solve of sub-SCCs of size ≤10.
+- plus an **alternating S1↔S2 iteration** (6 rounds, S2 grid offset alternating 0 / s/2 — Vahidi
+  Alg-3 line 4's "optional bias").
+
+Both moves permute nodes **inside a contiguous rank interval**, so by the interval lemma no edge
+leaving the interval can change orientation and every gain is exactly computable locally. The probe
+nevertheless re-scores with the **frozen oracle** and asserts `accumulated gain == oracle delta`
+at every round and every 2,000 S1 candidates.
+
+#### Probe & artifacts
+- Script: `experiments/size_collective_moves.py` (sizing only — writes **nothing** to `results/`;
+  never reads `data/best_solution`).
+- Round-1 artifact: `experiments/outputs/collective_moves_sizing.json`
+  (+ `experiments/size_collective_moves.log`), 3 datasets, seed 42, `--top-k 200000 --rounds 6`.
+- Independent algebra check: `experiments/diagnostics/verify_collective_moves.py` (promoted from the
+  critic's scratch) — S1 formula vs brute-force full-graph rescoring **max err 1.6e-14** over 17,441
+  (edge, split) pairs; small-SCC DP vs `itertools.permutations` **1.4e-14**; S2 pass vs oracle
+  **1.5e-13** over 2,345 non-trivial passes.
+
+#### Round-1 results (seed 42, NO attribution control — superseded, see below)
+| dataset | H35 | S1 1-pass | S2 best `s` | iter 6 rounds |
+|---|---|---|---|---|
+| connectome | 83.90348% | +0.01736 | +0.00494 (s=4096) | **+0.06196** (not converged) |
+| microns | 83.20505% | +0.00392 | +0.00289 (s=256) | +0.00925 (converged) |
+| mouse | 92.90180% | +0.02675 | +0.01103 (s=64) | +0.05391 (converged at round 2) |
+
+I drafted the conclusion "the collective class is real but modest; ~9% of the 0.71 pp gap; not the
+route to 84.61%" and sent it to the critic. **The critic broke two load-bearing claims.**
+
+#### Critic verdict
+
+**1. Frozen-file integrity — PASS.**
+`eval/frozen_guard.py` → `frozen integrity OK`; `eval/frozen.sha256` matches all four entries
+(`src/mfas/metrics.py`, `eval/harness.py`, `eval/aggregate.py`, `tests/test_metrics.py`).
+`git diff --stat HEAD -- src/ eval/ tests/` is empty. Nothing written to `results/`: the only dirty
+files there are six legacy notebook CSVs (`all_results.csv`, `comparison_vs_paper.csv`,
+`exp_{beta,init,multi_start}.csv`, `rocket_baseline_history.csv`) that were already dirty in the
+pre-probe `git status`; no new `results/*.json` and no `*_positions.npy`. The probe writes exactly
+one file, `experiments/outputs/collective_moves_sizing.json` (not gitignored → committable).
+
+**2. Metric leakage — PASS.**
+No reference to `data/best_solution`, `mfas.analysis.gap`, or any target constant anywhere in the
+script (`grep` clean; the only "84.61" is a prose citation of Vahidi in the docstring). Imports are
+`mfas.io` and `mfas.metrics.{pct, score_from_positions}` only. Every move gain is computed from
+ranks + input edge weights (`_pair_gain_curve`, `s2_pass`, `_exact_small_scc_order`); the oracle is
+called only to score whole rank vectors for verification, never inside a move choice — confirmed by
+reading all four call sites. No dataset special-casing (`s >= g.n_nodes` block-size skip is
+structural, not tuned). One thing that is *not* leakage but *is* tuning-on-the-evaluated-instance:
+`run_dataset` picks the iteration's `block_size` as the argmax of the S2 grid measured on the very
+same order it then iterates (connectome→4096, microns→256). Acceptable for a sizing gate, must be
+disclosed, and H36 needs a fixed or principled `s`.
+
+**3. Gain algebra — PASS (independently re-derived).**
+Brute-force cross-check (`dr_tmp/critic_collective/bf_check.py`, run with the `allen` interpreter),
+comparing each formula against explicit **full-graph** rescoring by the frozen oracle:
+- S1 `_pair_gain_curve`: max |brute force − formula| = **1.6e-14** over **17,441 (edge, split)
+  pairs** on 400 random int/float-weighted digraphs. Because I rescore the whole graph, this also
+  *proves* the contiguous-interval lemma empirically; separately stressed on 200 dense graphs with
+  hub nodes wired to every node (max boundary-crossing pressure) — exact.
+- `_exact_small_scc_order` bitmask DP: max |exhaustive-permutation optimum − DP| = **1.4e-14** for
+  k = 2…7, and the returned sequence realizes the claimed value.
+- S2 `s2_pass`: max |oracle Δ − claimed gain| = **1.5e-13** over **2,345 non-trivial passes**,
+  s ∈ {4,7,16,32} × offset ∈ {0, s/2, s−1} (including offsets the probe never uses). Output is
+  always a valid permutation; gain always ≥ 0 and always ≤ the reported intra-block ceiling.
+  Confirms all three S2 accounting claims (inter-sub-SCC weight → feedforward under any topological
+  order; intra-SCC relative order preserved; small-SCC DP gain additive).
+
+Assertions are **real and reachable, not vacuous** (`dr_tmp/critic_collective/mutation_test.py`,
+`mutation2.py`): injected bugs fired the S1 final check, the S1 periodic in-loop check, the S2
+per-block-size check and the iterated per-round check. Two injected mutations (`roll(+1)`,
+`drop-last`) did *not* fire — I verified these are behaviour-preserving on that instance (identical
+`moves_applied=3`, identical realized gain 0.00245): no real error escaped. Minor: with
+`verify_every=2000` the in-loop check never runs on mouse (123 candidates) — only the final check.
+
+**4. Over/under-counting and overclaiming — FAIL (two claims must be withdrawn).**
+
+*(4a) The motivating premise is false on both large graphs.* "H35's sift converges to a 1-opt
+fixed point" does not hold — `findings.md` #5 itself only says movers "collapse to a few hundred",
+and H35 returns a best-by-oracle iterate, not a terminal one. Measured on the same seed-42 orders
+(`dr_tmp/critic_collective/oneopt_control.py`, `oneopt_realized.py`):
+
+| dataset | single-node movers left | pure 1-opt restart gain | collective iter-6 gain | fraction NOT reachable by 1-opt |
+|---|---|---|---|---|
+| connectome | 163 / 136,648 | **+0.00328 pp** (Jacobi ×20) / +0.00309 (H35 sift ×20) | +0.06196 | ~95% |
+| microns | 608 / 67,534 | **+0.00555 pp** (Jacobi ×12) / +0.00549 (H35 sift ×12) | +0.00925 | **~40%** |
+| mouse | **0** | +0.00000 | +0.05391 | 100% |
+
+So on connectome and mouse the attribution to collectivity survives; **on microns ~60% of the
+headline is recoverable by simply running H35's existing single-node sift longer** (consistent with
+`findings.md` #5, which documents microns as under-converged at the 12-sweep cap). Per wall-second
+on microns the collective class is barely better than more sift (4.7e-5 vs 3.8e-5 pp/s); on
+connectome it is ~3.8× better (1.7e-4 vs 4.6e-5 pp/s).
+
+*(4b) "recovers only ~9% of the 0.71 pp gap → not the route to 84.61%" is contradicted by the
+probe's own truncation.* Re-running the S1 pass at full K (`--top-k 1200000 --rounds 0`) gives
+**+0.04293 pp from 5,203 moves** vs +0.01736 pp at K=200,000 — the truncation costs **2.5× on a
+single pass**. Top-200k covers only **50.6%** of connectome backward weight and **22.4%** of
+microns backward weight. The 0.062 pp is a **lower bound**; the binding constraint is the probe's
+own budget, not the move class. The "not the route" sentence must be deleted or downgraded to
+"unresolved by this probe".
+
+*(4c) Extrapolation — drop it.* Connectome per-round increments 0.02336 / 0.01361 / 0.00823 /
+0.00826 / 0.00471 / 0.00378 have ratios 0.58, 0.60, **1.00**, 0.57, 0.80 — not geometric (the
+alternating S2 offset 0/2048 imposes a period-2 structure). A geometric tail fit with r ∈ [0.6, 0.8]
+gives ~0.068–0.077 pp; r ≈ 0.91 (needed for 0.10) is never observed. The "~0.07–0.10 pp asymptote"
+overstates the top end. Rounds cost ~60 s — **run to convergence instead of extrapolating**.
+
+*(4d) The screen comparison is mis-framed but the underlying claim now holds.* PROTOCOL.md L23-26 /
+L164-167 define the SCREEN as Δ vs the **baseline** noise floor; the probe's Δ is vs **H35, the
+incumbent**. That analogy is defensible (the H35 entry above, L2088-2094, gates on Δ-vs-incumbent
+with 3 seeds + CI) but must be labelled as such. Two number fixes: the microns threshold in
+PROTOCOL.md is **0.002 pp** (not 0.0012), and **mouse is non-inferiority only** — +0.05391 pp is
+1/5 of σ_mouse (0.2624 pp) and must never be cited as clearing a gate. Also note that because every
+applied move has a positive exact gain verified by the oracle, the refinement is **monotone
+non-negative by construction**, so "clears the noise gate" is close to tautological; the real
+questions are magnitude, attribution and wall cost.
+
+**5. Overfitting / robustness — PASS (I ran the missing multi-seed check).**
+Single seed was a *choice*, not a constraint: the H35 orders for seeds 123/999 are all on disk. I
+re-ran the probe's own `run_dataset()` on them (`dr_tmp/critic_collective/seed_sweep.py`):
+
+| dataset | s42 | s123 | s999 | mean ± std (n=3) |
+|---|---|---|---|---|
+| connectome iter-6 | +0.06196 | +0.06628 | +0.06272 | **+0.0637 ± 0.0023 pp** |
+| connectome S1 1-pass | +0.01736 | +0.01788 | +0.01994 | +0.0184 ± 0.0014 pp |
+| mouse iter-6 | +0.05391 | +0.05391 | +0.05391 | +0.05391 ± 0.0000 pp |
+
+Paired 95% CI lower bound on connectome = **+0.0610 pp** (protocol's `SE = std·sqrt(2/n)` form:
++0.0600 pp) — comfortably > 0 and > the 0.04 pp gate. Seed 42 is the *worst* of the three H35
+connectome seeds (83.90348 vs mean 83.9101) yet gives a mid-range gain, so no cherry-picking.
+**microns seeds 123/999 remain unmeasured** — and microns is exactly where 4a bites, so that gap
+must be closed before any microns claim is made.
+
+**6. Reproducibility — CONCERN (works here, will not work from a clean checkout).**
+Verified re-runs match the logged JSON bit-exactly: full mouse run identical; `--datasets
+connectome --top-k 500 --rounds 1` gives S1 = 6 moves / +0.00048 pp, exactly the JSON's
+`gain_curve` checkpoint (`candidates:500, applied:6, gain_weight:201.0`), and all five S2 rows
+reproduce digit-for-digit (321+58, 754+229, 1346+198, 1858+212, 722+25). `h35_pct` equals the H35
+result JSONs exactly on all three datasets (83.90348037815582 / 83.20504901218833 /
+92.90180243040469) and `rank_of()` introduces **0 position ties**, so there is no rank-inflation.
+Config is a proper `CONFIG` dict, no magic numbers, English-only, `git_commit` recorded. Defects:
+- **`results/*_positions.npy` is gitignored** (`.gitignore:24`) → `latest_h35_positions()` finds
+  nothing on a fresh clone. The logged command MUST be prefixed with the H35 re-runs it depends on
+  (~219 s connectome + ~770 s microns + ~2 s mouse, per seed).
+- **No `--seed` flag**; `CONFIG["seed"]=42` is baked into `main()`. Multi-seed sizing currently
+  requires importing the module (what I did). Add the flag.
+- `s1_checkpoints` maxes at 20,000 while the run used `--top-k 200000` → the JSON's `gain_curve`
+  covers only the first 10% of the candidate list and cannot show whether K binds (it does — 4b).
+- `latest_h35_positions` relies on lexicographic `sorted(glob)[-1]`; correct only because filenames
+  are ISO-timestamp-prefixed, and it would silently switch file if a later H35 run appears.
+- Cosmetic: `--out <absolute path>` crashes at `dest.relative_to(_ROOT)` after writing.
+
+**Wall clock — CONCERN, not understated but must be stated.** The JSON timings are complete and
+honest. Sums: connectome iteration **359.0 s** on top of H35's 218.9 s = **2.64×** (the Phase-6
+summary states the campaign held to a **~2× ceiling**); microns 198.4 s on 770.5 s = 1.26×; mouse
+negligible. And the true cost of the *un-truncated* move is higher still — the full-K S1 pass alone
+took 674 s (302.5 pass-1 + 372.0 pass-2). H36 must declare the breach up front.
+
+#### Recommendation: **REVISE, then KEEP the gate decision (promote to H36 — do not kill).**
+The engineering is sound and the promote/kill call survives: on connectome the gain is
+**+0.0637 ± 0.0023 pp over 3 seeds (CI_lo +0.0610)**, ~95% of it provably outside the single-node
+move class, monotone-by-construction and oracle-verified — that is a real, if modest, opportunity.
+But the *stated conclusion* must be corrected on the points above before it is cited, and the H36
+spec must (i) sift to a 1-opt fixed point before and between collective rounds so the attribution is
+clean (this is what rescues the microns number, which is currently ~60% mis-attributed), (ii) treat
+top-K as a declared budget knob (K=200k under-states S1 by 2.5×), and (iii) declare the 2.6× wall
+breach. **Required wording corrections to the entry:** (a) drop "converges to a 1-opt fixed point"
+→ "163 / 608 / 0 single-node movers remain; a sift restart recovers +0.0033 / +0.0056 / +0.0000 pp";
+(b) restate the microns headline as ≤ +0.0037 pp genuinely collective, pending a sift-first control
+and seeds 123/999; (c) delete "it is not the route to 84.61%" — the probe is truncation-limited;
+(d) delete the 0.07–0.10 pp extrapolation, or cap it at ~0.08 pp and label it speculative;
+(e) say "Δ vs the H35 incumbent", not "clears the screen gate", and use the protocol's microns
+threshold **0.002 pp**; (f) never present mouse's +0.054 pp as clearing a gate (σ_mouse = 0.26 pp);
+(g) call mouse's "S2 best (s=64)" what it is — the only block size ≤ n=148 — and note S2
+contributed exactly 0.0 in all six mouse iteration rounds, so mouse's gain is 100% S1;
+(h) state that the iteration's block size was selected on the same order it was then measured on.
+
+*Critic evidence is reproducible via (`allen` interpreter, repo root):*
+```
+eval/frozen_guard.py ; git diff --stat HEAD -- src/ eval/ tests/
+python dr_tmp/critic_collective/bf_check.py          # exact-gain algebra vs brute force
+python dr_tmp/critic_collective/mutation_test.py     # assertions are non-vacuous
+python dr_tmp/critic_collective/oneopt_control.py    # movers left on the H35 orders
+python dr_tmp/critic_collective/oneopt_realized.py   # realizable single-node control
+python dr_tmp/critic_collective/seed_sweep.py        # seeds 123/999 (connectome, mouse)
+python experiments/size_collective_moves.py --datasets connectome --top-k 1200000 --rounds 0 \
+       --out ../../dr_tmp/critic_collective/repro_connALL.json     # full-K S1 = +0.04293 pp
+```
+`dr_tmp/` is gitignored scratch — promote these five scripts to `experiments/diagnostics/` if the
+verdict is cited.
+
+#### Response to the critic — corrections applied, control run, corrected numbers
+
+All eight wording corrections accepted. Three of them needed new measurement, not just rewording:
+
+**(a) "H35 converges to a 1-opt fixed point" was FALSE — control added and run.** The critic showed
+H35's returned order still has 163 / 608 / 0 single-node movers (connectome / microns / mouse), so
+part of the round-1 gain was really just *more of H35's own sift*. Added `--sift-first`, which runs
+`mfas.refine.underrelax.sift_underrelaxed` (≤60 sweeps, ≤420 s) to a fixed point **before** sizing
+and reports that recovery separately. **This is now the number to cite for any attribution claim:**
+
+| dataset | seed | H35 | single-node control | genuinely COLLECTIVE (6 rounds) | final |
+|---|---|---|---|---|---|
+| **connectome** | 42 | 83.90348 | +0.00349 (60 sw, 55 movers left) | **+0.05991** | 83.96688 |
+| microns | 42 | 83.20505 | +0.00561 (38 sw, 16 left) | +0.00575 | 83.21641 |
+| microns | 123 | 83.20446 | +0.00437 (44 sw, 9 left) | +0.00602 | 83.21485 |
+| microns | 999 | 83.20414 | +0.00647 (43 sw, 17 left) | +0.00625 | 83.21687 |
+| mouse | 42/123/999 | 92.90180 | +0.00000 (already a fixed point) | +0.05391 | 92.95571 |
+
+- connectome: **94.5%** of the total +0.0634 pp is outside the single-node move class.
+- **microns (n=3): collective +0.00601 ± 0.00025 pp, 95% CI lower +0.00561** — 3× the protocol's
+  0.002 pp microns gate. The critic's worry that microns was ~60% mis-attributed is **confirmed for
+  the round-1 headline** (+0.00561 of the +0.00925 was single-node), but a genuinely collective
+  component survives the control and is significant across 3 seeds.
+- mouse: 100% collective, and **100% S1** — S2 contributed exactly 0.0 in all six rounds, and its
+  "best s=64" is simply the only block size ≤ n=148. Mouse σ=0.26 pp, so this is **non-inferiority
+  only**, never "clears a gate".
+- Artifacts: `experiments/outputs/siftfirst_{connectome_s42,microns_s42,microns_s123,microns_s999}.json`,
+  logs `experiments/sizing_siftfirst_{conn,microns}.log`.
+
+**(b) Multi-seed (critic ran it).** Uncontrolled connectome iter-6 across the three H35 seeds:
++0.06196 / +0.06628 / +0.06272 = **+0.0637 ± 0.0023 pp, paired 95% CI lower +0.0610**. Seed 42 is
+the *worst* H35 connectome seed yet gives a mid-range gain — no cherry-picking.
+
+**(c) "Not the route to 84.61%" — WITHDRAWN.** The probe is truncation-limited: `--top-k 200000`
+covers only ~50% of the connectome's backward weight (22% on microns), and a **full-K** single S1
+pass gains **+0.04293 pp vs +0.01736 at K=200k — 2.5×** (critic's run, `--top-k 1200000 --rounds 0`).
+`0.062 pp` is therefore a **lower bound**, and no statement about the reachable ceiling is supported.
+Top-K is a declared budget knob, not a property of Algorithm 2.
+
+Also corrected, per the critic: the extrapolation to "0.07–0.10 pp" is **dropped** (per-round ratios
+0.58/0.60/1.00/0.57/0.80 are not geometric); Δ is stated **vs the H35 incumbent**, not vs baseline,
+and since every accepted move has an oracle-verified positive gain the refinement is monotone by
+construction — "clears the screen gate" is near-tautological and is not claimed; the iteration's
+block size was selected on the same order it was then measured on (disclosed).
+
+**Script defects fixed:** added `--seed` and `--sift-first`; `s1_checkpoints` extended to 1.2M so the
+gain curve can show whether K binds; `--out <abs path>` no longer crashes; the module docstring now
+states that `results/*_positions.npy` is gitignored and lists the H35 re-runs needed to reproduce
+from a clean checkout. Not fixed (accepted risk, documented): `latest_h35_positions` picks
+`sorted(glob)[-1]`, correct only because filenames are ISO-timestamp-prefixed.
+
+**Wall clock — declared breach.** connectome iteration 359 s on H35's 219 s = **2.64×**, plus 204 s
+for the control; the campaign's stated ceiling is ~2×. Full-K would add ~674 s per pass. H36 must
+open with this.
+
+#### Decision: **PROMOTE to H36** (do not kill at the gate)
+The collective move class is a real, oracle-verified, multi-seed-significant opportunity that the
+single-node sift provably cannot reach: **connectome +0.0599 pp (s42, 94.5% collective; uncontrolled
+3-seed +0.0637 ± 0.0023, CI_lo +0.0610)** and **microns +0.00601 ± 0.00025 pp (n=3, CI_lo +0.00561)**
+over the H35 incumbent, at 0 extra gradient steps. It is **modest** — ~8–9% of the 0.71 pp residual
+at this budget — but it is a lower bound, not a ceiling. S1 (the paired move) carries ~70% of the
+connectome gain and 100% of mouse's; S2 (block-SCC) contributes ~30% on connectome and peaks at a
+middling block size (s=4096 connectome, s=256 microns) — small blocks lack structure, large blocks
+re-form the giant SCC.
+
+H36 spec must: (i) sift to a 1-opt fixed point before **and between** collective rounds so
+attribution stays clean, (ii) treat top-K and round count as declared budget knobs and report the
+K-sensitivity, (iii) declare the ~2.6× wall breach up front, (iv) run the full implementer →
+verifier → critic cycle on all three datasets ≥3 seeds — the numbers above are a **sizing gate**,
+not a variant result, and a single-seed/one-order sizing figure must never be compared to a
+3-seed screen threshold.
