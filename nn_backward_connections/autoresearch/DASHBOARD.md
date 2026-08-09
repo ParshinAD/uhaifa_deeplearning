@@ -1,6 +1,6 @@
 # Campaign dashboard
 
-*Generated 2026-08-09 15:28 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-09 15:36 by `autoresearch/dashboard.py` — do not hand-edit.*
 
 **Phase:** `quality` · **cycle:** 0 · **mode:** `incremental` · **consecutive kills:** 0
 
@@ -21,10 +21,11 @@
 | microns | **H30** | 83.2069 ± 0.0012 | 5 | ~700s | findings.md #4 |
 | mouse | **H30** | 92.9018 ± 0.0 | 20 | ~3s | findings.md #4 |
 
-## Queue — 8 proposed / 8 total
+## Queue — 9 proposed / 9 total
 
 | # | id | title | status |
 |---|---|---|---|
+| 0 | `P01` | HARDWARE RE-BASELINE — re-measure the champions on this machine before any cyc | proposed |
 | 1 | `H36` | SCC-decomposed recursive bounded-span insertion (the Vahidi route) | proposed |
 | 2 | `H37` | Cycle-triggered under-relaxation (fix the microns regression, make H35 a gener | proposed |
 | 3 | `H38` | Gauss-Seidel / block-sequential exact-gain sift | proposed |

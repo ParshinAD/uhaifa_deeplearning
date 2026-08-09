@@ -14,5 +14,7 @@
   "wall_clock_h_total": 0.0,
   "day": null,
   "history": [],
-  "notes": "Bootstrapped by the Phase-7 setup. Queue seeded with H36-H41 + S01 + L01; no cycle has run yet."
+  "machine": "MacBook (Apple Silicon, MPS)",
+  "hardware_rebaseline_done": true,
+  "notes": "Bootstrapped by the Phase-7 setup. Queue seeded with P01 + H36-H41 + S01 + L01; no cycle has run yet. IF THIS CHECKOUT IS MOVED TO ANOTHER MACHINE: set hardware_rebaseline_done=false, update `machine`, and run queue item P01 before any other cycle — sota.json is machine-specific (see autoresearch/PORTING.md)."
 }

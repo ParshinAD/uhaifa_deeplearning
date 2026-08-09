@@ -151,7 +151,12 @@ reference:
   paper_rocket_plateau_pct: 82.87     # Bader et al. 2025
   paper_rocket_crane_pct: 84.60       # needs Gurobi MIP + ~20 days; out of scope
 
+# MACHINE-SPECIFIC — every value in this block must be re-pointed when the campaign moves to
+# another machine, together with campaign.sandbox_root above. See autoresearch/PORTING.md and
+# queue item P01 (hardware re-baseline), which is a prerequisite for any cycle on new hardware.
 environment:
+  machine: "MacBook (Apple Silicon, MPS)"
   python: /opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
   claude_config_dir: /Users/abed359/.claude-personal
   device: auto                        # MPS -> CUDA -> CPU; discrete score always on CPU
+  torch: "2.8.0"

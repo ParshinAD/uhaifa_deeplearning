@@ -4,6 +4,21 @@
   "next_free_id": "H42",
   "items": [
     {
+      "id": "P01",
+      "title": "HARDWARE RE-BASELINE — re-measure the champions on this machine before any cycle",
+      "status": "proposed",
+      "priority": 0,
+      "kind": "prerequisite",
+      "axis": "measurement",
+      "hypothesis": "Not a hypothesis — a prerequisite. Every number in sota.json was measured on Apple MPS. Scores and noise floors are hardware-dependent (different kernels, different non-determinism), so on any new device the champions and their sigmas must be re-measured before a single variant is judged.",
+      "rationale": "The whole Phase-7 verdict rule compares a variant to the champion. Comparing a CUDA-measured variant against an MPS-measured champion is exactly the moving-comparator error the auditor exists to catch — except the auditor cannot see it, because the device is not part of config_hash. The deterministic scorer-parity test (tests/test_metrics.py, 34,751,902) is what carries over between machines; training trajectories do not.",
+      "method": "1) pytest tests/ -q must be fully green (the scorer parity is the portability anchor). 2) Run the current champions at the screen seeds on all three datasets: H35 on connectome/mouse, H30 on microns/mouse, role=implement. 3) Recompute mean/std per dataset with autoresearch/audit.py. 4) If any champion mean or sigma differs materially from sota.json, update sota.json via update_sota.py --force with the hardware change logged in experiments/log.md, and update the screen_delta_pp values in campaign.yaml to 2x the NEW sigma. 5) Record the device name and torch version in the log entry.",
+      "kill_condition": "Not killable — it is a gate. If the scorer parity test fails on the new machine, STOP: the environment is wrong and no result from it is admissible.",
+      "prior_evidence": ["experiments/PROTOCOL.md § Phase-7", "autoresearch/CAMPAIGN.md § Hardware", "tests/test_metrics.py"],
+      "est_cost": "cheap-medium (about 9 runs; connectome ~4 min each, microns ~12 min each on MPS — faster on a discrete GPU)",
+      "expected_pp": "n/a — this establishes the reference frame, it does not move the metric"
+    },
+    {
       "id": "H36",
       "title": "SCC-decomposed recursive bounded-span insertion (the Vahidi route)",
       "status": "proposed",

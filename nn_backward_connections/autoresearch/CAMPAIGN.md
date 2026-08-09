@@ -136,6 +136,30 @@ These are the failure modes this project has already survived once; they are che
 Track B (diagnostics, `questions.md` → `diagnosis.md`) and Track C (random graphs,
 `randomgraph.md`) keep their existing contracts. Diagnostics never write to `results/`.
 
+## Hardware — the champion registry is machine-specific
+
+`sota.json` records scores, not truths about the algorithm alone: they were produced by a
+particular device (originally Apple MPS) with its own kernels and its own non-determinism. What
+travels between machines is the **deterministic scorer** — `tests/test_metrics.py` scoring
+`results/rocket_best_positions.npy` to exactly 34,751,902 — not a training trajectory.
+
+So on **any change of machine or device** (MPS → CUDA, new GPU, different torch build):
+
+1. `pytest tests/ -q` must be fully green first. If scorer parity fails, stop — nothing measured
+   on that environment is admissible.
+2. Re-measure the champions at the screen seeds on all three datasets (queue item **P01**), and
+   update `sota.json` and the `screen_delta_pp` values in `campaign.yaml` to 2× the *new* σ.
+3. Log the device name and torch version in the cycle entry.
+
+Until P01 is done, every delta is against a foreign-hardware comparator — the moving-comparator
+error, in a form the auditor cannot detect, because the device is not part of `config_hash`.
+
+**One machine at a time.** Two machines running `auto/campaign` will diverge: both write
+`sota.json`, `state.json`, `queue.json` and `experiments/log.md` every cycle, and the merge is
+not mechanical. If you genuinely want two, give them different branches
+(`auto/campaign-mps`, `auto/campaign-cuda`) and treat each as an independent replication — which
+is scientifically useful, but never merge their `sota.json` automatically.
+
 ## Human checkpoints
 
 The campaign runs unattended, but it stops and waits for a human when:

@@ -111,8 +111,14 @@ run_with_timeout() {
   return $rc
 }
 
+# Keep the machine awake for overnight campaigns. macOS: caffeinate. Linux/WSL: systemd-inhibit
+# when available. Neither is required — the loop just runs unprotected without them.
 CAFF=""
-command -v caffeinate >/dev/null 2>&1 && CAFF="caffeinate -i"
+if command -v caffeinate >/dev/null 2>&1; then
+  CAFF="caffeinate -i"
+elif command -v systemd-inhibit >/dev/null 2>&1; then
+  CAFF="systemd-inhibit --what=idle --why=mfas-campaign"
+fi
 
 # ── preflight: headless auth ──────────────────────────────────────────────────
 # Headless runs authenticate from .claude/settings.local.json (CLAUDE_CODE_OAUTH_TOKEN), which is
@@ -138,7 +144,8 @@ while true; do
     log "STOP file present -> exiting cleanly"; break
   fi
 
-  free_gb=$(df -g "$ROOT" | awk 'NR==2 {print $4}')
+  # POSIX `df -k` works on both macOS (BSD) and Linux/WSL; `df -g` is BSD-only.
+  free_gb=$(df -k "$ROOT" | awk 'NR==2 {print int($4/1048576)}')
   if [ "${free_gb:-0}" -lt "$MIN_FREE_GB" ]; then
     log "HALT: only ${free_gb}GB free (< ${MIN_FREE_GB}GB). Stopping to protect the machine."
     break
