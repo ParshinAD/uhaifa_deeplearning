@@ -5,6 +5,17 @@
 > The instructions in *this* file take precedence for work inside
 > `nn_backward_connections/`.
 
+> **⚙ THIS CHECKOUT IS THE AUTONOMOUS CAMPAIGN SANDBOX** (branch `auto/campaign`, Phase 7).
+> Read **`autoresearch/CAMPAIGN.md` first** — it is the standing brief and it overrides ordinary
+> defaults about scope and pace. Key differences from the original repo:
+> - variants are judged against the **champion** in `autoresearch/sota.json`, not the baseline;
+> - every run must finish within **3600 s**;
+> - `autoresearch/audit.py` must pass before any champion changes;
+> - nothing is ever written outside this worktree, pushed, or merged into another branch.
+>
+> Current state: `autoresearch/DASHBOARD.md`. One cycle: `/research-cycle`.
+> Unattended: `bash autoresearch/driver.sh`.
+
 ## Research context
 
 The task is **Maximum Feedforward Arc Set (MFAS)** on the **fly connectome**

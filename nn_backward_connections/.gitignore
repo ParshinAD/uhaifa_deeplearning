@@ -16,6 +16,9 @@ dr_tmp/
 
 # Project caches / large generated artifacts (rebuildable; see experiments/build_microns.py)
 data/processed/
+# In the Phase-7 sandbox these are symlinks into the original repo (48 GB of MICrONS source
+# data + the built .npz) — never copied, never committed.
+data/raw
 # Keep the small MICrONS build documentation (recipe + stats JSON) — NOT the 55MB npz
 !data/processed/microns_BUILD.md
 !data/processed/microns_stats.json
@@ -36,3 +39,10 @@ venv/
 
 # Local Claude settings (contains CLAUDE_CODE_OAUTH_TOKEN — never commit)
 .claude/settings.local.json
+
+# Phase-7 campaign RUNTIME state (not research artifacts — those stay tracked:
+# queue.json, killed.json, sota.json, state.json, lit/, DASHBOARD.md, audit_*.json)
+autoresearch/logs/
+autoresearch/.lock/
+autoresearch/.budget
+autoresearch/STOP

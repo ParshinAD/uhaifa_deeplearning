@@ -261,3 +261,62 @@ plan is `experiments/roadmap.md` (priority + pointers; it never restates a queue
   synthetic generators in the privileged `mfas.analysis.gap`.
 - **Verdict:** report mean ± std over ≥K graph realizations per model at fixed seeds; a real-vs-null
   difference counts only if it exceeds realization noise (report a CI). State K.
+
+---
+
+## Phase-7 addendum: the autonomous campaign (added 2026-08-09, branch `auto/campaign`)
+
+Phase 7 runs the Track-A loop **unattended** in an isolated git worktree. Everything above still
+holds. Three rules change or are added; the constitution is `autoresearch/CAMPAIGN.md`.
+
+### 1. The comparator is the CHAMPION, not the baseline
+
+Phases 3–6 compared each variant to `baseline_passthrough` (random-init Rocket). By Phase 7 the
+pipeline is three mechanisms deep (H02 warm-start → Rocket → sift), so beating the original
+baseline is no longer evidence of progress. The comparator is now the per-dataset champion in
+`autoresearch/sota.json`, at a matched role.
+
+Δ versus `baseline_passthrough` and `H02` is still reported, so every number stays comparable with
+`findings.md`; only the **verdict** moved.
+
+**Screen thresholds (champion comparator).** The Phase-3 thresholds were 2σ of the *baseline*
+noise floor. Against a lower-variance champion that gate is mis-scaled, so Phase 7 uses 2σ of the
+**champion's** dispersion, per dataset, from `campaign.yaml`:
+
+| dataset | champion σ | screen threshold | note |
+|---|---|---|---|
+| connectome | 0.0060 pp (H35, n=3) | **0.012 pp** | was 0.04 pp against the baseline floor |
+| microns | 0.0012 pp (H30, n=5) | **0.002 pp** | unchanged; already champion-scaled |
+| mouse | 0.0000 pp (saturated) | non-inferiority only, > −0.26 pp | unchanged |
+
+The screen remains a lenient gate, not a verdict. CONFIRM (Welch 95% CI lower bound > 0 on both
+primaries) is unchanged and is still what may be promoted.
+
+### 2. Runtime is a hard constraint, not a free variable
+
+Any run exceeding **3600 s wall-clock per (dataset, seed)** fails on usability grounds regardless
+of score: an algorithm that cannot answer within an hour is not a usable result for this thesis.
+`total_grad_steps` remains the equal-compute basis for fairness; wall-clock is now additionally a
+constraint. Phase 2 of the campaign turns wall-clock into an objective — that phase does not begin
+without human sign-off.
+
+### 3. Mechanical audit before promotion
+
+`autoresearch/audit.py` re-derives every claimed number directly from `results/*.json` and
+re-scores stored positions with the frozen oracle. It must exit 0 before any champion changes, and
+`autoresearch/sota.json` is writable only by `autoresearch/update_sota.py` (which runs the audit
+itself and refuses on failure). The critic adjudicates; the auditor computes.
+
+Two failure modes it exists to catch, both already observed in this repo:
+- **Moving comparator** — `config_hash` covers only (algo, dataset), so it cannot distinguish
+  `H30@12` from `H30@40`. Pooling them silently biases every delta. The auditor warns and breaks
+  the comparator down by commit.
+- **Prose drift** — a number quoted in a document that no longer matches the JSONs behind it.
+
+### Isolation
+
+The campaign runs in a worktree at `../../mfas_autoresearch` on branch `auto/campaign`, with
+`data/` symlinked to the original repository (read-only). A PreToolUse hook blocks writes outside
+the sandbox, to frozen files, to `data/best_solution`, to `results/*.json` and to
+`autoresearch/sota.json`. The campaign never pushes and never merges into another branch —
+integration is a human action.

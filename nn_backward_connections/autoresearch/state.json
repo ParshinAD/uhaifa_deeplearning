@@ -1,0 +1,18 @@
+{
+  "_doc": "Mutable campaign state. The driver reads it to decide whether to start a cycle; the cycle updates it at the end. A fresh session with no context can resume the campaign from this file alone.",
+  "campaign": "phase7-autonomous",
+  "phase": "quality",
+  "cycle": 0,
+  "started": "2026-08-09",
+  "last_cycle_at": null,
+  "last_cycle_outcome": null,
+  "current_item": null,
+  "consecutive_kills": 0,
+  "cycles_since_literature_scan": 0,
+  "mode": "incremental",
+  "wall_clock_h_today": 0.0,
+  "wall_clock_h_total": 0.0,
+  "day": null,
+  "history": [],
+  "notes": "Bootstrapped by the Phase-7 setup. Queue seeded with H36-H41 + S01 + L01; no cycle has run yet."
+}

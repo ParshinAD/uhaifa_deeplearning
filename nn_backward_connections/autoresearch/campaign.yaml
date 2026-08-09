@@ -1,0 +1,157 @@
+# Autonomous research campaign — configuration (Phase 7)
+#
+# This file is the ONLY place campaign-level knobs live. The cycle command, the driver and
+# the audit script all read it. Editing it changes the campaign; editing anything else to
+# change a threshold is a protocol violation.
+#
+# Governance: autoresearch/CAMPAIGN.md (constitution) + experiments/PROTOCOL.md (§ Phase-7).
+
+campaign:
+  name: phase7-autonomous
+  branch: auto/campaign
+  sandbox_root: /Users/abed359/IdeaProjects/university/mfas_autoresearch
+  # Everything below this path is writable by the campaign. Nothing above it ever is.
+  repo_subdir: nn_backward_connections
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Objective — ordered phases. Phase 2 does not start until Phase 1 exits.
+# ─────────────────────────────────────────────────────────────────────────────
+phases:
+  - id: quality
+    active: true
+    goal: >
+      Push the exact feedforward % on the fly connectome from the current champion (83.9101%,
+      H35) to at least the known-reachable reference 84.6147%, then beyond it, without
+      regressing microns or mouse. Runtime is a CONSTRAINT here, not an objective.
+    exit_criteria:
+      # ALL must hold, verified by the verifier + critic + autoresearch/audit.py.
+      - "connectome champion >= 84.6147 pct (CONFIRM stage, 95% CI lower bound > 0 vs prior champion)"
+      - "microns champion non-regressing vs its current champion (CI lower bound > -0.002 pp)"
+      - "mouse non-inferior (CI lower bound > -0.26 pp)"
+      - "champion reproduces from a clean checkout on >= 5 seeds"
+      - "autoresearch/audit.py returns exit code 0 on the champion's evidence"
+  - id: speed
+    active: false
+    goal: >
+      At the quality level fixed by Phase 1 (no score regression beyond its noise floor),
+      minimize wall-clock per run. Headline metric becomes the (score, wall_clock) Pareto front
+      plus score@60s / score@300s anytime curves.
+    exit_criteria:
+      - "connectome: same champion score within noise at <= 0.5x the Phase-1 champion wall-clock"
+      - "anytime curves logged for the champion and the prior champion on all three datasets"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Hard runtime constraint (Phase 1). A variant that cannot produce a scored run within
+# this wall-clock per (dataset, seed) is out of scope — it is not a usable algorithm.
+# ─────────────────────────────────────────────────────────────────────────────
+runtime:
+  max_wall_clock_s_per_run: 3600      # user-set: "quality first, but within about an hour"
+  # Soft warning band — the cycle should flag (not kill) a variant crossing this.
+  warn_wall_clock_s_per_run: 1200
+  # Only ONE heavy training/refinement process at a time: single Apple MPS device.
+  max_concurrent_heavy_runs: 1
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Datasets — character and per-dataset gates. Extends PROTOCOL.md § Phase-5.
+# ─────────────────────────────────────────────────────────────────────────────
+datasets:
+  connectome:
+    role: primary
+    n_nodes: 136648
+    baseline_sigma_pp: 0.0189         # frozen-baseline noise floor (PROTOCOL.md)
+    screen_delta_pp: 0.012            # 2 x champion sigma (H35 sigma = 0.0060); see CAMPAIGN.md
+    confirm_seeds: [42, 123, 999, 7, 31415]
+    screen_seeds: [42, 123, 999]
+  microns:
+    role: primary
+    n_nodes: 67534
+    baseline_sigma_pp: 0.0006
+    screen_delta_pp: 0.002
+    confirm_seeds: [42, 123, 999, 7, 31415]
+    screen_seeds: [42, 123, 999]
+  mouse:
+    role: supporting                  # non-inferiority only; tiny and 14x noisier
+    n_nodes: 148
+    baseline_sigma_pp: 0.2624
+    non_inferiority_pp: -0.26
+    confirm_seeds: [42, 123, 999, 7, 31415, 2718, 1618, 1414, 1732, 2236,
+                    9999, 8888, 7777, 6666, 5555, 4444, 3333, 2222, 1111, 1234]
+    screen_seeds: [42, 123, 999]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Comparator policy — Phase-7 change vs Phase 3-6.
+# Variants are now judged against the CURRENT CHAMPION (autoresearch/sota.json), not the
+# original random-init baseline. Beating a superseded baseline is not progress.
+# ─────────────────────────────────────────────────────────────────────────────
+comparator:
+  primary: champion                   # per-dataset, from autoresearch/sota.json
+  also_report: [baseline_passthrough, H02]   # kept for continuity with findings.md
+  budget_basis: total_grad_steps      # unchanged; wall_clock_s logged alongside
+
+# ─────────────────────────────────────────────────────────────────────────────
+# The cheap-first gate ladder. A hypothesis climbs; it never skips a rung.
+# This is what kept Phase 6 cheap (H32/H33/H34 died on rung 1 for ~0 large-graph compute).
+# ─────────────────────────────────────────────────────────────────────────────
+gates:
+  - id: novelty
+    what: >
+      Is the mechanism materially distinct from every entry in autoresearch/killed.json?
+      If it shares an axis with a killed entry, the proposal MUST state which revival
+      condition it satisfies. No revival condition -> drop without spending compute.
+  - id: prototype
+    what: >
+      Cheap proxies only (mouse + gap.make_hard_synthetic_graph + optionally an SCC subgraph).
+      Must beat the champion pipeline's proxy score, or show a mechanism-specific signal that
+      the proxy is known to under-represent. Budget: minutes, CPU.
+  - id: screen
+    what: >
+      Real harness, 3 seeds (42/123/999) x 3 datasets, role=implement, vs champion.
+      Pass iff delta > screen_delta_pp on BOTH primaries and mouse non-inferior.
+  - id: confirm
+    what: >
+      Independent re-run by the verifier: confirm_seeds per dataset, role=confirm.
+      Pass iff Welch 95% CI lower bound > 0 on BOTH primaries and mouse non-inferior.
+  - id: critic
+    what: >
+      Red-team + mechanical audit (autoresearch/audit.py). Leakage, frozen integrity,
+      fabricated numbers, cherry-picked seeds, double-counted increments, runtime honesty.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Budgets and stop/escalation criteria for unattended operation.
+# ─────────────────────────────────────────────────────────────────────────────
+budget:
+  max_cycles: 200                     # hard backstop on total research cycles
+  max_wall_clock_h_per_day: 12
+  max_cycle_wall_clock_h: 6           # a single cycle is killed past this
+  min_free_disk_gb: 50                # driver refuses to start below this
+  results_dir_max_gb: 20
+
+escalation:
+  # Consecutive kills before the campaign is FORCED out of incremental mode.
+  divergent_after_k_kills: 3
+  divergent_mode: >
+    Stop proposing variants of the current design. Run a literature scan (scout), re-read the
+    diagnosis (Q01/Q02) and findings, and attack a DIFFERENT level: problem reformulation,
+    a different move class, a different decomposition, or an idea imported from an adjacent
+    field. Write the reasoning to autoresearch/lit/ before proposing anything.
+  # Force a literature refresh at least this often regardless of outcomes.
+  literature_scan_every_n_cycles: 8
+  # If the queue has fewer than this many viable items, ideate before running anything.
+  min_queue_depth: 3
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Reference points (facts, not targets to hardcode into any algorithm).
+# NEVER let any of these numbers enter an optimizer, a loss, or a variant module.
+# ─────────────────────────────────────────────────────────────────────────────
+reference:
+  connectome_total_weight: 41912141
+  best_solution_score: 35463823       # data/best_solution -> 84.6147 pct (downloaded reference)
+  best_solution_pct: 84.6147
+  vahidi_2025_pct: 84.61              # arXiv:2506.13799, greedy + bounded-span insertion + SCC
+  paper_rocket_plateau_pct: 82.87     # Bader et al. 2025
+  paper_rocket_crane_pct: 84.60       # needs Gurobi MIP + ~20 days; out of scope
+
+environment:
+  python: /opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+  claude_config_dir: /Users/abed359/.claude-personal
+  device: auto                        # MPS -> CUDA -> CPU; discrete score always on CPU

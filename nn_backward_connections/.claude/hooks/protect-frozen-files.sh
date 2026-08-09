@@ -59,4 +59,27 @@ if [[ "$norm" == results/*.json ]] || [[ "$norm" == */results/*.json ]]; then
   exit 2
 fi
 
+# ── Phase-7 hardening (autonomous campaign) ──
+# The champion registry decides what every future variant is compared against. It is written
+# ONLY by autoresearch/update_sota.py, which refuses to promote without a passing audit. Letting
+# an agent hand-edit it would let a campaign crown itself.
+if [[ "$norm" == autoresearch/sota.json ]] || [[ "$norm" == */autoresearch/sota.json ]]; then
+  echo "BLOCKED: '$FILE_PATH' — the champion registry is written only by autoresearch/update_sota.py (which requires a passing audit). See autoresearch/CAMPAIGN.md." >&2
+  exit 2
+fi
+
+# Sandbox containment: the campaign runs in a git worktree and must never write outside it.
+# The original repository is read-only reference material. Temp dirs stay allowed so ordinary
+# tooling keeps working.
+if [ -n "${CLAUDE_PROJECT_DIR:-}" ] && [[ "$FILE_PATH" == /* ]]; then
+  case "$FILE_PATH" in
+    "$CLAUDE_PROJECT_DIR"/*|/tmp/*|/private/tmp/*|/var/folders/*|/private/var/folders/*)
+      ;;
+    *)
+      echo "BLOCKED: '$FILE_PATH' is OUTSIDE the campaign sandbox ($CLAUDE_PROJECT_DIR). The autonomous campaign may not write to the original repository or anywhere else on disk. See autoresearch/CAMPAIGN.md § 'The five things this campaign must never do'." >&2
+      exit 2
+      ;;
+  esac
+fi
+
 exit 0

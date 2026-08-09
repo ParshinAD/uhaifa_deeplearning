@@ -1,0 +1,82 @@
+{
+  "_doc": "Champion registry. THE comparator for every new variant (campaign.yaml: comparator.primary=champion). Updated ONLY after a full cycle passes confirm + critic + audit. Hand-editing this file is a protocol violation; use autoresearch/update_sota.py.",
+  "_schema": {
+    "champion": "variant id that currently holds the dataset",
+    "pct_mean": "exact feedforward percentage, mean over seeds",
+    "pct_std": "std over the same seeds",
+    "n_seeds": "number of seeds behind pct_mean",
+    "seeds": "the actual seeds",
+    "role": "role of the result JSONs used (implement|verify|confirm)",
+    "evidence": "glob of results/*.json backing this row",
+    "finding": "findings.md section that documents it",
+    "wall_clock_s_approx": "approximate per-run wall clock; recompute from JSONs before quoting"
+  },
+  "updated": "2026-08-09",
+  "updated_by": "phase7 bootstrap (seeded from experiments/findings.md #4 and #5)",
+  "datasets": {
+    "connectome": {
+      "champion": "H35",
+      "pipeline": "H02 greedy-FAS warm-start -> run_rocket(20k) -> under-relaxed two-phase exact-gain sift (alpha=0.7, k_full=6, max_sweeps=40)",
+      "pct_mean": 83.9101,
+      "pct_std": 0.0060,
+      "n_seeds": 3,
+      "seeds": [42, 123, 999],
+      "role": "implement",
+      "evidence": "results/*-H35-connectome-s{42,123,999}-implement-*.json",
+      "finding": "findings.md #5",
+      "wall_clock_s_approx": 220,
+      "runner_up": {
+        "variant": "H30",
+        "pct_mean": 83.8118,
+        "pct_std": 0.0143,
+        "n_seeds": 3,
+        "note": "H30 at max_sweeps=40; H35 beats it by +0.0983 pp, CI lower +0.0759"
+      }
+    },
+    "microns": {
+      "champion": "H30",
+      "pipeline": "H02 greedy-FAS warm-start -> run_rocket(80k) -> Jacobi full-range exact-gain sift (max_sweeps=12)",
+      "pct_mean": 83.2069,
+      "pct_std": 0.0012,
+      "n_seeds": 5,
+      "seeds": [42, 123, 999, 7, 31415],
+      "role": "confirm",
+      "evidence": "results/*-H30-microns-*-confirm-*.json",
+      "finding": "findings.md #4",
+      "wall_clock_s_approx": 700,
+      "runner_up": {
+        "variant": "H35",
+        "pct_mean": 83.2045,
+        "pct_std": 0.0005,
+        "n_seeds": 3,
+        "note": "H35 loses 0.0019 pp here ONLY because the microns sweep cap is 12, giving just 6 under-relaxed sweeps (k_full=6). Known, documented, and the target of queue item H37."
+      }
+    },
+    "mouse": {
+      "champion": "H30",
+      "pipeline": "H02 -> run_rocket(5k) -> Jacobi full-range exact-gain sift",
+      "pct_mean": 92.9018,
+      "pct_std": 0.0000,
+      "n_seeds": 20,
+      "role": "confirm",
+      "evidence": "results/*-H30-mouse-*-confirm-*.json",
+      "finding": "findings.md #4",
+      "wall_clock_s_approx": 3,
+      "runner_up": {
+        "variant": "H35",
+        "pct_mean": 92.9018,
+        "pct_std": 0.0000,
+        "n_seeds": 3,
+        "note": "exact tie; mouse is saturated and is a non-inferiority check only"
+      }
+    }
+  },
+  "targets": {
+    "connectome": {
+      "reference_pct": 84.6147,
+      "reference_source": "data/best_solution (35,463,823 / 41,912,141); independently reached by Vahidi 2025 (arXiv:2506.13799) with greedy + bounded-span insertion + SCC, no MIP",
+      "gap_to_reference_pp": 0.7046,
+      "note": "This is a REFERENCE, not a bound. Beating it is the stretch goal. It must never appear inside any algorithm."
+    }
+  }
+}
