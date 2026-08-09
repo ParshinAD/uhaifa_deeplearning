@@ -114,6 +114,23 @@ run_with_timeout() {
 CAFF=""
 command -v caffeinate >/dev/null 2>&1 && CAFF="caffeinate -i"
 
+# ── preflight: headless auth ──────────────────────────────────────────────────
+# Headless runs authenticate from .claude/settings.local.json (CLAUDE_CODE_OAUTH_TOKEN), which is
+# gitignored and therefore absent from a fresh worktree. Fail loudly now rather than burning the
+# daily budget on a crash loop of "Not logged in".
+if [ ! -f "$ROOT/.claude/settings.local.json" ]; then
+  log "HALT: $ROOT/.claude/settings.local.json is missing — headless claude will not be logged in."
+  log "  Copy it from the original checkout (it is gitignored and holds CLAUDE_CODE_OAUTH_TOKEN)."
+  exit 1
+fi
+if ! "$CLAUDE_BIN" -p "reply with OK" --dangerously-skip-permissions < /dev/null 2>&1 \
+     | grep -qi "ok"; then
+  log "HALT: headless auth check failed (expected a reply). Refresh CLAUDE_CODE_OAUTH_TOKEN in"
+  log "  $ROOT/.claude/settings.local.json, then restart the driver."
+  exit 1
+fi
+log "preflight: headless auth OK"
+
 # ── main loop ─────────────────────────────────────────────────────────────────
 cycle=0
 while true; do
@@ -141,11 +158,13 @@ while true; do
 
   start_s=$(date +%s)
   # shellcheck disable=SC2086
+  # stdin from /dev/null: headless claude waits ~3s for piped input otherwise, and a detached
+  # nohup'd driver has no terminal to read from.
   run_with_timeout "$CYCLE_TIMEOUT_S" \
     $CAFF "$CLAUDE_BIN" -p "$CYCLE_PROMPT" \
       --dangerously-skip-permissions \
       $MODEL_ARG \
-      > "$cycle_log" 2>&1
+      < /dev/null > "$cycle_log" 2>&1
   rc=$?
   end_s=$(date +%s)
   dur=$((end_s - start_s))
