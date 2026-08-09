@@ -9,7 +9,7 @@
 campaign:
   name: phase7-autonomous
   branch: auto/campaign
-  sandbox_root: /Users/abed359/IdeaProjects/university/mfas_autoresearch
+  sandbox_root: D:/1/bot/UHaifa/deep_learning/mfas_autoresearch
   # Everything below this path is writable by the campaign. Nothing above it ever is.
   repo_subdir: nn_backward_connections
 
@@ -48,7 +48,7 @@ runtime:
   max_wall_clock_s_per_run: 3600      # user-set: "quality first, but within about an hour"
   # Soft warning band — the cycle should flag (not kill) a variant crossing this.
   warn_wall_clock_s_per_run: 1200
-  # Only ONE heavy training/refinement process at a time: single Apple MPS device.
+  # Only ONE heavy training/refinement process at a time: single GPU (RTX 4060, 8 GB).
   max_concurrent_heavy_runs: 1
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -155,8 +155,10 @@ reference:
 # another machine, together with campaign.sandbox_root above. See autoresearch/PORTING.md and
 # queue item P01 (hardware re-baseline), which is a prerequisite for any cycle on new hardware.
 environment:
-  machine: "MacBook (Apple Silicon, MPS)"
-  python: /opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
-  claude_config_dir: /Users/abed359/.claude-personal
+  machine: "Windows 10 laptop, NVIDIA RTX 4060 Laptop GPU (CUDA), Git Bash"
+  python: /c/ProgramData/anaconda3/envs/allen/python.exe
+  claude_config_dir: default           # `claude /login` on this box writes to ~/.claude
   device: auto                        # MPS -> CUDA -> CPU; discrete score always on CPU
-  torch: "2.8.0"
+  torch: "2.8.0+cu128"
+  python_version: "3.9.25"            # 3.9.23 on the MacBook; numpy/scipy/pandas pins unchanged
+  shell: "Git Bash (MSYS2) — driver.sh and the guard hook run under it, not WSL"

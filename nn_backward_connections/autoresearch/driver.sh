@@ -30,8 +30,10 @@ DRIVER_LOG="$LOGDIR/driver.log"
 mkdir -p "$LOGDIR"
 
 # ── config ────────────────────────────────────────────────────────────────────
-PY="${MFAS_PY:-/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python}"
-export CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-personal}"
+PY="${MFAS_PY:-/c/ProgramData/anaconda3/envs/allen/python.exe}"
+# CLAUDE_CONFIG_DIR is left at the CLI default here: on this box `claude /login` wrote the
+# credentials to ~/.claude, and forcing a non-existent config dir makes every headless cycle
+# start out "Not logged in". Export it before starting the driver if you keep a separate profile.
 CLAUDE_BIN="${CLAUDE_BIN:-claude}"
 CYCLE_PROMPT="${CYCLE_PROMPT:-/research-cycle}"
 CYCLE_TIMEOUT_S="${CYCLE_TIMEOUT_S:-21600}"      # 6 h, matches campaign.yaml max_cycle_wall_clock_h
@@ -121,18 +123,16 @@ elif command -v systemd-inhibit >/dev/null 2>&1; then
 fi
 
 # ── preflight: headless auth ──────────────────────────────────────────────────
-# Headless runs authenticate from .claude/settings.local.json (CLAUDE_CODE_OAUTH_TOKEN), which is
-# gitignored and therefore absent from a fresh worktree. Fail loudly now rather than burning the
+# Headless runs need credentials. On the MacBook those came from .claude/settings.local.json
+# (CLAUDE_CODE_OAUTH_TOKEN); on this box they come from an interactive `claude /login`, which
+# writes to the CLI's own config dir. Either is fine — so the check that matters is the live one
+# below: does a headless invocation actually answer? Fail loudly now rather than burning the
 # daily budget on a crash loop of "Not logged in".
-if [ ! -f "$ROOT/.claude/settings.local.json" ]; then
-  log "HALT: $ROOT/.claude/settings.local.json is missing — headless claude will not be logged in."
-  log "  Copy it from the original checkout (it is gitignored and holds CLAUDE_CODE_OAUTH_TOKEN)."
-  exit 1
-fi
 if ! "$CLAUDE_BIN" -p "reply with OK" --dangerously-skip-permissions < /dev/null 2>&1 \
      | grep -qi "ok"; then
-  log "HALT: headless auth check failed (expected a reply). Refresh CLAUDE_CODE_OAUTH_TOKEN in"
-  log "  $ROOT/.claude/settings.local.json, then restart the driver."
+  log "HALT: headless auth check failed (expected a reply). Run \`claude\` interactively and"
+  log "  \`/login\` (or refresh CLAUDE_CODE_OAUTH_TOKEN in $ROOT/.claude/settings.local.json),"
+  log "  then restart the driver."
   exit 1
 fi
 log "preflight: headless auth OK"

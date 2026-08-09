@@ -7,6 +7,12 @@
 # Input : JSON on stdin (PreToolUse), with .tool_input.file_path
 # Block : exit 2 + reason on stderr (Claude Code convention)
 # Allow : exit 0
+#
+# PORT NOTE (Windows): every pattern below is written with '/' separators, and the sandbox
+# check tested for a leading '/'. Claude Code on native Windows hands over
+# 'D:\repo\src\mfas\metrics.py', so on the unported hook NOTHING matched and the guard
+# silently allowed every edit — verified by a probe Edit against src/mfas/metrics.py.
+# `canon()` below folds '\' -> '/' and maps 'D:/x' to the Git-Bash spelling '/d/x'.
 set -euo pipefail
 
 JQ="${MFAS_JQ:-/usr/bin/jq}"
@@ -17,6 +23,11 @@ FILE_PATH="$(printf '%s' "$INPUT" | "$JQ" -r '.tool_input.file_path // empty' 2>
 
 # No file path (non-file tool) -> nothing to protect.
 [ -z "$FILE_PATH" ] && exit 0
+
+# Optional forensic trace (set MFAS_HOOK_LOG to a writable path) — proves the hook fired.
+if [ -n "${MFAS_HOOK_LOG:-}" ]; then
+  printf '%s\n' "$FILE_PATH" >> "$MFAS_HOOK_LOG" 2>/dev/null || true
+fi
 
 # Frozen files, as repo-relative suffixes. Matching on suffix handles both absolute and
 # relative paths the tool might present.
@@ -31,8 +42,18 @@ FROZEN=(
   "eval/frozen_guard.py"
 )
 
-# Normalize: strip a leading "./"
-norm="${FILE_PATH#./}"
+# Normalize separators, strip a leading "./", and give a Windows drive path its Git-Bash
+# spelling so both spellings of the same file compare equal.
+canon() {
+  local p="${1//\\//}"
+  p="${p#./}"
+  case "$p" in
+    [A-Za-z]:/*) p="/$(printf '%s' "${p%%:*}" | tr '[:upper:]' '[:lower:]')/${p#*:/}" ;;
+  esac
+  printf '%s' "$p"
+}
+
+norm="$(canon "$FILE_PATH")"
 
 for f in "${FROZEN[@]}"; do
   # match exact path or any path ending in "/<frozen>"
@@ -68,16 +89,28 @@ if [[ "$norm" == autoresearch/sota.json ]] || [[ "$norm" == */autoresearch/sota.
   exit 2
 fi
 
-# Sandbox containment: the campaign runs in a git worktree and must never write outside it.
+# Sandbox containment: the campaign runs in one checkout and must never write outside it.
 # The original repository is read-only reference material. Temp dirs stay allowed so ordinary
-# tooling keeps working.
-if [ -n "${CLAUDE_PROJECT_DIR:-}" ] && [[ "$FILE_PATH" == /* ]]; then
-  case "$FILE_PATH" in
-    "$CLAUDE_PROJECT_DIR"/*|/tmp/*|/private/tmp/*|/var/folders/*|/private/var/folders/*)
-      ;;
-    *)
-      echo "BLOCKED: '$FILE_PATH' is OUTSIDE the campaign sandbox ($CLAUDE_PROJECT_DIR). The autonomous campaign may not write to the original repository or anywhere else on disk. See autoresearch/CAMPAIGN.md § 'The five things this campaign must never do'." >&2
-      exit 2
+# tooling keeps working. Both sides are canonicalized, so 'D:\...' and '/d/...' compare equal.
+# CLAUDE_PROJECT_DIR is not guaranteed to reach the hook process on every platform, and a
+# missing root would silently disable containment — so fall back to this script's own location
+# (.claude/hooks/ -> campaign root), which is always correct.
+SANDBOX_ROOT="${CLAUDE_PROJECT_DIR:-}"
+if [ -z "$SANDBOX_ROOT" ]; then
+  SANDBOX_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+fi
+if [ -n "$SANDBOX_ROOT" ]; then
+  root="$(canon "$SANDBOX_ROOT")"
+  case "$norm" in
+    /*|[A-Za-z]:/*)
+      case "$norm" in
+        "$root"/*|/tmp/*|/private/tmp/*|/var/folders/*|/private/var/folders/*|/c/users/*/appdata/local/temp/*)
+          ;;
+        *)
+          echo "BLOCKED: '$FILE_PATH' is OUTSIDE the campaign sandbox ($SANDBOX_ROOT). The autonomous campaign may not write to the original repository or anywhere else on disk. See autoresearch/CAMPAIGN.md § 'The five things this campaign must never do'." >&2
+          exit 2
+          ;;
+      esac
       ;;
   esac
 fi
