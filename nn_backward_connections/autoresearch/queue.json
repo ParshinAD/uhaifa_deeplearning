@@ -2,6 +2,7 @@
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
   "updated": "2026-08-09",
   "next_free_id": "H42",
+  "next_free_protocol_id": "P04",
   "items": [
     {
       "id": "P01",
@@ -26,7 +27,7 @@
     {
       "id": "P02",
       "title": "The screen seeds are inert for deterministic variants — is 3x the compute buying anything?",
-      "status": "proposed",
+      "status": "done",
       "priority": 1,
       "kind": "protocol",
       "axis": "measurement",
@@ -40,7 +41,31 @@
         "src/mfas/baseline/rocket.py:168 (make_init_positions is skipped when init_positions is given)"
       ],
       "est_cost": "cheap (minutes; mouse + one microns pair)",
-      "expected_pp": "n/a — this buys throughput, not score, and on this hardware throughput is the binding constraint: microns runs at 3214 s here vs 706 s on MPS, so a 3-seed screen is 3.2 h and a 5-seed confirm 5.3 h. At 1 seed for deterministic variants a full cycle drops from ~8.5 h to ~2.5 h, i.e. from one cycle a day to four."
+      "expected_pp": "n/a — this buys throughput, not score, and on this hardware throughput is the binding constraint: microns runs at 3214 s here vs 706 s on MPS, so a 3-seed screen is 3.2 h and a 5-seed confirm 5.3 h. At 1 seed for deterministic variants a full cycle drops from ~8.5 h to ~2.5 h, i.e. from one cycle a day to four.",
+      "outcome": "ADOPTED 2026-08-09 as a protocol amendment (PROTOCOL.md § Phase-7.4, campaign.yaml seed_policy). The screen's seed count is now a property of the VARIANT: classifier-deterministic variants run 1 seed on the primaries, everything else 3, mouse always 3 as the tripwire; confirm_seeds unchanged. Made operative by autoresearch/seed_class.py (static call-graph, fail-safe to 'rng') + autoresearch/seed_plan.py + `sweep.sh --auto-seeds`, pinned by tests/test_seed_class.py and tests/test_seed_plan.py. The queue item's own '~8.5 h to ~2.5 h' estimate was WRONG — it assumed the confirm stage shrank too; the measured screen-only saving is 3.17 h -> 1.06 h. See experiments/log.md P02.",
+      "corrections": [
+        "The item's expected saving assumed confirm shrank as well. It does not, deliberately: re-running a deterministic variant at 5 confirm seeds re-establishes DEVICE repeatability, which is the only variance source left, and keeps every promotion-path CI off a 1-seed pool.",
+        "The item's step 3 asked only that the classification be RECORDED per variant. That is necessary but not sufficient — a policy nobody executes is not a policy, so the classification is now applied mechanically by seed_plan.py/--auto-seeds rather than by an agent remembering to."
+      ]
+    },
+    {
+      "id": "P03",
+      "title": "Cycle handoff: the previous cycle was still writing when the driver launched the next one",
+      "status": "proposed",
+      "priority": 1,
+      "kind": "infrastructure",
+      "axis": "campaign lifecycle",
+      "hypothesis": "The driver can start cycle N+1 while cycle N is still writing to the worktree, so two cycles briefly share the sandbox. Observed 2026-08-09 during P02: autoresearch/waitfor.sh (21:13:27) and .claude/agents/verifier.md (21:15:37) appeared AFTER the P02 cycle's preflight `git status` (~21:12) and were not its work.",
+      "rationale": "CAMPAIGN.md is explicit that cycles must be disjoint - two writers to sota.json/state.json/queue.json/log.md do not merge mechanically. This overlap was benign (docs and helper scripts only; no GPU run, no results/*.json, stopped at 21:15), but the same race on a cycle-end write would silently lose or interleave a record. Related and possibly the same root cause: the previous cycle died WITHOUT writing experiments/log.md or state.json despite having produced all of P02's artifacts, so P02 had to be reconstructed from files on disk. P01 already fixed the watchdog's inability to kill a native Windows child (kill_tree); this is the complementary question of whether the driver waits for a cycle to finish WRITING, not just for its process to exit.",
+      "method": "1) Read driver.sh's lock acquisition/release and the cycle-exit path; determine whether .lock/cycle_pid is cleared before or after the cycle's final writes, and whether a cycle that exits non-zero (or is killed) leaves the lock in a state the next cycle accepts. 2) Reproduce with a stub cycle that sleeps past its own lock release. 3) If confirmed, make the handoff strictly sequential (release the lock only after the cycle's commit) and make an unclean exit visible - a cycle that produced artifacts but no log.md entry should leave a marker the next cycle finds, rather than being discovered by mtime archaeology.",
+      "kill_condition": "If driver.sh already serializes correctly and the observed writes are explained by something else (e.g. an unrelated interactive session), record the real explanation and close - the observation stands either way and the explanation belongs in the log.",
+      "prior_evidence": [
+        "experiments/log.md P02 (2026-08-09), section 'Infrastructure observation'",
+        "experiments/log.md P01 defect 5 (watchdog could not kill a native Windows child)",
+        "autoresearch/CAMPAIGN.md § Hardware ('One machine at a time')"
+      ],
+      "est_cost": "cheap (reading driver.sh + a stub-cycle reproduction; no GPU)",
+      "expected_pp": "n/a - protects the record rather than the metric"
     },
     {
       "id": "H36",

@@ -135,6 +135,14 @@ These govern the evaluation harness built under `src/mfas/`, `eval/`, `tests/`.
    re-runnable command. NEVER fabricate, estimate, or hand-edit a number.
 4. **Pin and log seeds.** Use ≥3 seeds for any comparison; report mean ± std. A gain within
    noise (overlapping std) is NOT a gain.
+   *Qualified 2026-08-09 (P02), screen stage only.* The rule exists so no verdict rests on a
+   single sample of a **stochastic** process. A variant that never draws from its `seed` is not
+   such a process: `init_positions` comes from deterministic greedy-FAS, so `make_init_positions`
+   is unreachable and seeds 42/123/999 are one sample taken three times, bit-identically. For
+   those, and only on the screen, the primaries run 1 seed — decided mechanically by
+   `autoresearch/seed_class.py`, which is fail-safe toward "stochastic", and corroborated by the
+   3 mouse runs, which stay. **`confirm` still runs ≥5 seeds for every variant**, so no promoted
+   number ever rests on one run. See `experiments/PROTOCOL.md § Phase-7.4`.
 5. **One git commit per experiment**; results must be reproducible via `git checkout` + the
    logged command.
 6. **Never hardcode or peek at the target metric inside any algorithm.** The discrete

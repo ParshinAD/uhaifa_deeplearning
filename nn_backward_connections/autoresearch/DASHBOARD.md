@@ -1,8 +1,8 @@
 # Campaign dashboard
 
-*Generated 2026-08-09 20:44 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-09 22:14 by `autoresearch/dashboard.py` — do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 1 · **mode:** `incremental` · **consecutive kills:** 0
+**Phase:** `quality` · **cycle:** 2 · **mode:** `incremental` · **consecutive kills:** 0
 
 ## Progress — connectome (Phase 1 target)
 
@@ -21,12 +21,13 @@
 | microns | **H30** | 83.2063 ± 0.0 | 3 | ~3240s | findings.md #4 (re-baselined on CUDA, P01 2026-08-09) |
 | mouse | **H30** | 92.9018 ± 0.0 | 3 | ~6s | findings.md #4 (re-baselined on CUDA, P01 2026-08-09) |
 
-## Queue — 9 proposed / 10 total
+## Queue — 9 proposed / 11 total
 
 | # | id | title | status |
 |---|---|---|---|
 | 0 | `P01` | HARDWARE RE-BASELINE â€” re-measure the champions on this machine before any c | done |
-| 1 | `P02` | The screen seeds are inert for deterministic variants â€” is 3x the compute bu | proposed |
+| 1 | `P02` | The screen seeds are inert for deterministic variants â€” is 3x the compute bu | done |
+| 1 | `P03` | Cycle handoff: the previous cycle was still writing when the driver launched t | proposed |
 | 1 | `H36` | SCC-decomposed recursive bounded-span insertion (the Vahidi route) | proposed |
 | 2 | `H37` | Cycle-triggered under-relaxation (fix the microns regression, make H35 a gener | proposed |
 | 3 | `H38` | Gauss-Seidel / block-sequential exact-gain sift | proposed |
@@ -40,11 +41,12 @@
 
 | cycle | item | verdict | note |
 |---|---|---|---|
-| 1 | `P01` | **None** | Port MacBook/MPS -> Windows/RTX 4060 (CUDA). 12 runs, 3 seeds x (H35 connectome, |
+| 2 | `P02` | **keep** | Protocol amendment, no algorithm change. Established BOTH legs: (A) a static cal |
+| 1 | `P01` | **done** | Port MacBook/MPS -> Windows/RTX 4060 (CUDA). 12 runs, 3 seeds x (H35 connectome, |
 
 ## Evidence
 
-- `results/*.json`: **277** run records across **17** variants
+- `results/*.json`: **279** run records across **17** variants
 - killed mechanisms on record: **15** (+7 deferred, 7 meta-rules)
 - literature notes: **0**
 

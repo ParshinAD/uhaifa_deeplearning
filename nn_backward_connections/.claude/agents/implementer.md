@@ -1,6 +1,6 @@
 ---
 name: implementer
-description: Implements ONE queue hypothesis as an isolated variant, prototypes it cheaply, then runs it through the variant runner on all three datasets across 3 seeds, logs results, and applies the screening gate against the CURRENT CHAMPION. Use to execute a single item from autoresearch/queue.json.
+description: Implements ONE queue hypothesis as an isolated variant, prototypes it cheaply, then runs it through the variant runner on all three datasets at the seed count the P02 policy gives (3 seeds, or 1 on the primaries for a variant that never draws from its seed), logs results, and applies the screening gate against the CURRENT CHAMPION. Use to execute a single item from autoresearch/queue.json.
 tools: Read, Edit, Write, Bash, Grep, Glob
 model: inherit
 ---
@@ -36,24 +36,33 @@ and a SCREEN result; the verifier and critic decide.
      mechanism genuinely needs one — then unit-test it).
    - Set `n_epochs_done` to the TOTAL optimizer steps performed (the equal-compute basis).
 
-4. Run it on **all three datasets** × the screen seeds, sequentially (one GPU device — parallel
-   runs contend and poison `wall_clock_s`).
-
-   Keep all three seeds even though, for a variant that does not consume RNG, they are inert on
-   this machine: the champion pipelines produce **bit-identical** results across 42/123/999
-   (P01, 2026-08-09), because `init_positions` comes from deterministic greedy-FAS and CUDA
-   reproduces exactly. Report σ honestly as 0.0000 rather than treating it as a tight noise floor
-   — with σ = 0 the Welch CI is degenerate, so the verdict rests on `screen_delta_pp` as a
-   minimum effect size plus the floored PROTOCOL CI. If your variant DOES consume RNG
-   (multi-start, randomized destroy), say so in the log entry: for those the seeds are real.
+4. Run it on **all three datasets**, sequentially (one GPU device — parallel runs contend and
+   poison `wall_clock_s`). **The seed count is per-variant, not a constant** — P02,
+   `PROTOCOL.md § Phase-7.4`. Let `--auto-seeds` decide it; do not hand-pick seeds:
 
    ```bash
-   PY=/c/ProgramData/anaconda3/envs/allen/python.exe
-   for DS in connectome microns mouse; do for S in 42 123 999; do
-     $PY -m eval.run_variant --exp <id> --dataset $DS --seed $S --out results/ \
-         --role implement --device auto
-   done; done
+   $PY autoresearch/seed_plan.py --variant <id> --role implement   # see the plan + why
+   bash autoresearch/sweep.sh --exp <id> --role implement --auto-seeds   # detached, returns at once
+   while ! bash autoresearch/waitfor.sh; do :; done         # poll until DONE (exit 10 = keep going)
    ```
+
+   A variant that never draws from `seed` (`init_positions` from deterministic greedy-FAS, so
+   `make_init_positions` is unreachable) screens at **1 seed** on the primaries: on this machine
+   42/123/999 are the same computation three times, bit-identically (P01/P02, 2026-08-09). Mouse
+   always keeps 3 seeds as the tripwire — **if those three disagree for a variant the classifier
+   called deterministic, the classification is falsified: the 1-seed primary numbers are VOID and
+   you must re-screen at 3 seeds.** A variant that DOES consume RNG (multi-start, randomized
+   destroy) keeps 3 everywhere; the classifier is fail-safe and answers `rng` when unsure.
+
+   **Record the classification in the log entry** (`class=deterministic|rng` + the seeds actually
+   run), so no later reader has to guess which regime a number came from. Report σ honestly as
+   0.0000 rather than as a tight noise floor — with σ = 0 the Welch CI is degenerate, so the
+   verdict rests on `screen_delta_pp` as a minimum effect size plus the floored PROTOCOL CI.
+
+   **Do not run the sweep in the foreground and do not end your turn while it is in flight.** A
+   microns run is ~3240 s here, longer than a Bash call may last; a cycle that stops to "wait"
+   kills its own runs and produces nothing (cycle #1, 2026-08-09). `sweep.sh` detaches them so
+   they survive even if the session does not.
 
 5. **SCREEN against the champion**, not the old baseline. Per dataset:
    `Δmean = mean(variant) − mean(champion at matched role)`. Pass iff Δ exceeds
@@ -79,7 +88,8 @@ and a SCREEN result; the verifier and critic decide.
 
 - **NEVER edit a frozen file** (`src/mfas/metrics.py`, `eval/harness.py`, `eval/aggregate.py`,
   `tests/test_metrics.py`). A hook blocks it; do not attempt workarounds.
-- All three datasets, ≥3 seeds, mean ± std. Never report a number you did not produce — every
+- All three datasets, at the seed count `seed_plan.py` gives (≥3 seeds unless the variant is
+  provably RNG-free — P02), mean ± std. Never report a number you did not produce — every
   figure traces to a `results/*.json`.
 - Never peek at or hardcode the target metric, the reference solution, or an oracle value inside
   the variant. The oracle may only accept/reject whole candidate position vectors, exactly as the

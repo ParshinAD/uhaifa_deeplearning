@@ -29,6 +29,15 @@ writes its own JSON) and you return your verdict as your final message.
    (connectome 5, microns 5, mouse 20), `--role confirm`. Make sure matched-seed champion numbers
    exist at the same role; generate them if they do not. Runs are **sequential** — one GPU device.
 
+   ```bash
+   bash autoresearch/sweep.sh --exp <id> --role confirm --seeds "42 123 999 7 31415"
+   while ! bash autoresearch/waitfor.sh; do :; done
+   ```
+
+   A confirm is ~5.3 h here (microns alone is 3240 s/run), far longer than any single Bash call.
+   Launch it detached with `sweep.sh` and poll with `waitfor.sh` — **never end your turn while a
+   sweep is in flight**, or the runs die with your session and the whole confirm is lost.
+
 4. **The test.** Per dataset compute `Δ = mean_variant − mean_champion`, the Welch standard error
    `SE = sqrt(s_v²/n_v + s_c²/n_c)` and the 95% CI lower bound `Δ − 1.96·SE`. Also report the
    conservative PROTOCOL form `SE = s_champion·sqrt(2/n)` for continuity with `findings.md`.

@@ -57,18 +57,37 @@ subgraph. Minutes of CPU, no large-graph compute. Write the outcome to
 is what made Phase 6 cheap.
 
 **Screen.** Use the `implementer` subagent. Isolated module `src/mfas/experiments/<id>.py`,
-3 seeds (42/123/999) × 3 datasets (connectome, microns, mouse), `--role implement`, compared to
-the **champion** from `sota.json`:
+3 datasets (connectome, microns, mouse), `--role implement`, compared to the **champion** from
+`sota.json`. The **seed count is per variant** (P02, `PROTOCOL.md § Phase-7.4`): a variant that
+never draws from `seed` screens at 1 seed on the primaries, everything else at 3, and mouse
+always at 3 as the tripwire. `--auto-seeds` decides it — do not hand-pick seeds:
 
 ```bash
-for DS in connectome microns mouse; do for S in 42 123 999; do
-  $PY -m eval.run_variant --exp <id> --dataset $DS --seed $S --out results/ --role implement --device auto
-done; done
+$PY autoresearch/seed_plan.py --variant <id> --role implement          # the plan, and why
+bash autoresearch/sweep.sh --exp <id> --role implement --auto-seeds    # detached; returns at once
+while ! bash autoresearch/waitfor.sh; do :; done                       # poll until it prints DONE
 ```
 
+Record `class=deterministic|rng` and the seeds actually run in the log entry. If the three mouse
+runs disagree for a variant classified deterministic, the classification is falsified: the
+primary numbers are **void** and it must be re-screened at 3 seeds.
+
+**Never run a sweep in the foreground, and never end your turn while one is in flight.** A
+microns run is ~3240 s on this machine — longer than a single Bash call may last. Cycle #1
+(2026-08-09) learned this the expensive way: it started microns in the foreground-ish, stopped its
+turn to avoid GPU contention, the headless session exited, the child died with it, and ~50 minutes
+of GPU time produced no result. `sweep.sh` detaches the runs so they survive even if your session
+does, and `waitfor.sh` blocks in bounded slices (exit 10 = still running, call again) so you keep
+your turn. If you ever come back to a cycle and find `autoresearch/.sweep/log` already complete,
+those results are real — use them rather than re-running.
+
 Pass iff `Δ > screen_delta_pp` on **both primaries** (connectome, microns) and mouse is
-non-inferior. Run these **sequentially** — one GPU device; parallel runs contend and poison
-`wall_clock_s`.
+non-inferior. The sweep runs **sequentially** by construction — one GPU device; parallel runs
+contend and poison `wall_clock_s`.
+
+Note `screen_delta_pp` is a **minimum effect size**, not 2σ: the champion pipelines are
+deterministic here (σ = 0), so a Welch CI on these seeds is degenerate. See `experiments/log.md`
+P01 and the `significance.<ds>.degenerate` audit check.
 
 **Confirm.** Only if the screen passed. Use the `verifier` subagent (read-only on source, generates
 its own runs at `--role confirm`, confirm seeds from `campaign.yaml`). Pass iff the Welch 95% CI
@@ -118,6 +137,13 @@ Verdict is one of **keep / kill / iterate**, per the ladder. Then:
   written down with its revival condition.
 - Never report a number you did not produce; never keep a number the audit contradicts.
 - Sequential heavy runs only. One GPU device (RTX 4060).
+- **A cycle that stops mid-sweep loses the sweep.** Launch with `autoresearch/sweep.sh` (detached)
+  and poll with `autoresearch/waitfor.sh` until DONE. Ending your turn to "wait" is the single
+  most expensive mistake available here — see the note in the screen section.
+- **Finish the bookkeeping even if the science is unfinished.** Before you stop for any reason,
+  update `state.json` / `queue.json`, append what you learned to `experiments/log.md`, and COMMIT.
+  An interrupted cycle that committed its partial result is resumable; one that did not leaves the
+  next cycle a dirty tree and no record of what was already established.
 - Keep every run under the `runtime.max_wall_clock_s_per_run` budget (3600 s). A variant that
   cannot answer in an hour is not a usable algorithm — kill it or make it cheaper.
 - Scratch goes to `dr_tmp/` (gitignored). Anything that matters gets promoted to its track home.

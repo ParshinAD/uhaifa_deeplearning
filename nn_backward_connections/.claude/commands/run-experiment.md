@@ -16,6 +16,9 @@ Do this in order, stopping early if a stage fails:
    isolated variant `src/mfas/experiments/<id>.py`, run it via `eval/run_variant.py` on BOTH
    datasets × 3 standard seeds (42/123/999), append the Implementer (screen) block to
    `experiments/log.md`, and flip the item's status in `experiments/backlog.md`.
+   - This is the pre-Phase-7 workflow (two datasets, backlog.md). Inside the **autonomous
+     campaign** use `/research-cycle` instead, where the screen seed count comes from
+     `autoresearch/seed_plan.py` per variant rather than being a flat 3 (P02).
    - If the SCREEN fails (`Δmean ≤ 2×std` on either dataset), record decision **kill** (or
      **iterate** if the idea is salvageable) and skip to step 5.
 

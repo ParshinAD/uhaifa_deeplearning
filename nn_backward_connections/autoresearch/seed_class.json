@@ -1,0 +1,421 @@
+{
+  "_doc": "Mechanical seed-dependence classification (queue item P02). verdict='deterministic' is a NECESSARY condition for the 1-seed screen; CAMPAIGN.md also requires the cheap mouse probe to corroborate it. Regenerate: python autoresearch/seed_class.py --all --out <this file>",
+  "variants": {
+    "baseline_multistart": {
+      "variant": "baseline_multistart",
+      "verdict": "rng",
+      "screen_seeds_required": 3,
+      "rng_evidence": [
+        "mfas.baseline.rocket.make_init_positions: np.random.RandomState() line 89",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 103",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 112",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 92",
+        "mfas.baseline.rocket.make_init_positions: rng.uniform() line 94",
+        "mfas.baseline.rocket.run_rocket: torch.randn() line 166"
+      ],
+      "unresolved_calls": [],
+      "functions_walked": 10,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.make_init_positions",
+        "mfas.baseline.rocket.run_rocket",
+        "mfas.baseline.rocket.run_rocket.discrete_score",
+        "mfas.experiments.baseline_multistart._k",
+        "mfas.experiments.baseline_multistart.run",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "baseline_passthrough": {
+      "variant": "baseline_passthrough",
+      "verdict": "rng",
+      "screen_seeds_required": 3,
+      "rng_evidence": [
+        "mfas.baseline.rocket.make_init_positions: np.random.RandomState() line 89",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 103",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 112",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 92",
+        "mfas.baseline.rocket.make_init_positions: rng.uniform() line 94",
+        "mfas.baseline.rocket.run_rocket: torch.randn() line 166"
+      ],
+      "unresolved_calls": [],
+      "functions_walked": 9,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.make_init_positions",
+        "mfas.baseline.rocket.run_rocket",
+        "mfas.baseline.rocket.run_rocket.discrete_score",
+        "mfas.experiments.baseline_passthrough.run",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H01": {
+      "variant": "H01",
+      "verdict": "rng",
+      "screen_seeds_required": 3,
+      "rng_evidence": [
+        "mfas.baseline.rocket.make_init_positions: np.random.RandomState() line 89",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 103",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 112",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 92",
+        "mfas.baseline.rocket.make_init_positions: rng.uniform() line 94",
+        "mfas.baseline.rocket.run_rocket: torch.randn() line 166"
+      ],
+      "unresolved_calls": [],
+      "functions_walked": 9,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.make_init_positions",
+        "mfas.baseline.rocket.run_rocket",
+        "mfas.baseline.rocket.run_rocket.discrete_score",
+        "mfas.experiments.H01.run",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H02": {
+      "variant": "H02",
+      "verdict": "deterministic",
+      "screen_seeds_required": 1,
+      "rng_evidence": [],
+      "unresolved_calls": [],
+      "functions_walked": 11,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.run_rocket",
+        "mfas.baseline.rocket.run_rocket.discrete_score",
+        "mfas.experiments.H02._init_positions_from_order",
+        "mfas.experiments.H02.greedy_fas_order",
+        "mfas.experiments.H02.greedy_fas_order.remove",
+        "mfas.experiments.H02.run",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H03": {
+      "variant": "H03",
+      "verdict": "rng",
+      "screen_seeds_required": 3,
+      "rng_evidence": [
+        "mfas.baseline.rocket.make_init_positions: np.random.RandomState() line 89",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 103",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 112",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 92",
+        "mfas.baseline.rocket.make_init_positions: rng.uniform() line 94",
+        "mfas.experiments.H03.run: torch.randn() line 144"
+      ],
+      "unresolved_calls": [],
+      "functions_walked": 9,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.make_init_positions",
+        "mfas.experiments.H03._make_h03_beta_schedule",
+        "mfas.experiments.H03.run",
+        "mfas.experiments.H03.run.discrete_score",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H04": {
+      "variant": "H04",
+      "verdict": "rng",
+      "screen_seeds_required": 3,
+      "rng_evidence": [
+        "mfas.baseline.rocket.make_init_positions: np.random.RandomState() line 89",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 103",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 112",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 92",
+        "mfas.baseline.rocket.make_init_positions: rng.uniform() line 94",
+        "mfas.experiments.H04.run: torch.randn() line 195"
+      ],
+      "unresolved_calls": [],
+      "functions_walked": 12,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.make_init_positions",
+        "mfas.experiments.H04._barycenter_candidate_ranks",
+        "mfas.experiments.H04._build_csr",
+        "mfas.experiments.H04._ranks_to_positions",
+        "mfas.experiments.H04.run",
+        "mfas.experiments.H04.run.discrete_score",
+        "mfas.experiments.H04.run.discrete_score_arr",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H05": {
+      "variant": "H05",
+      "verdict": "rng",
+      "screen_seeds_required": 3,
+      "rng_evidence": [
+        "mfas.baseline.rocket.make_init_positions: np.random.RandomState() line 89",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 103",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 112",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 92",
+        "mfas.baseline.rocket.make_init_positions: rng.uniform() line 94",
+        "mfas.experiments.H05.run: torch.randn() line 145"
+      ],
+      "unresolved_calls": [],
+      "functions_walked": 8,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.make_init_positions",
+        "mfas.experiments.H05.run",
+        "mfas.experiments.H05.run.discrete_score",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H06": {
+      "variant": "H06",
+      "verdict": "rng",
+      "screen_seeds_required": 3,
+      "rng_evidence": [
+        "mfas.baseline.rocket.make_init_positions: np.random.RandomState() line 89",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 103",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 112",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 92",
+        "mfas.baseline.rocket.make_init_positions: rng.uniform() line 94",
+        "mfas.experiments.H06.run: torch.randn() line 174"
+      ],
+      "unresolved_calls": [],
+      "functions_walked": 8,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.make_init_positions",
+        "mfas.experiments.H06.run",
+        "mfas.experiments.H06.run.discrete_score",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H09": {
+      "variant": "H09",
+      "verdict": "rng",
+      "screen_seeds_required": 3,
+      "rng_evidence": [
+        "mfas.baseline.rocket.make_init_positions: np.random.RandomState() line 89",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 103",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 112",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 92",
+        "mfas.baseline.rocket.make_init_positions: rng.uniform() line 94",
+        "mfas.baseline.rocket.run_rocket: torch.randn() line 166",
+        "mfas.experiments.H09._symmetric_jitter: np.random.SeedSequence() line 95",
+        "mfas.experiments.H09._symmetric_jitter: np.random.default_rng() line 95"
+      ],
+      "unresolved_calls": [],
+      "functions_walked": 10,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.make_init_positions",
+        "mfas.baseline.rocket.run_rocket",
+        "mfas.baseline.rocket.run_rocket.discrete_score",
+        "mfas.experiments.H09._symmetric_jitter",
+        "mfas.experiments.H09.run",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H11": {
+      "variant": "H11",
+      "verdict": "rng",
+      "screen_seeds_required": 3,
+      "rng_evidence": [
+        "mfas.baseline.rocket.make_init_positions: np.random.RandomState() line 89",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 103",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 112",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 92",
+        "mfas.baseline.rocket.make_init_positions: rng.uniform() line 94",
+        "mfas.experiments.H11.run: torch.randn() line 159"
+      ],
+      "unresolved_calls": [],
+      "functions_walked": 8,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.make_init_positions",
+        "mfas.experiments.H11.run",
+        "mfas.experiments.H11.run.discrete_score",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H13": {
+      "variant": "H13",
+      "verdict": "rng",
+      "screen_seeds_required": 3,
+      "rng_evidence": [
+        "mfas.baseline.rocket.make_init_positions: np.random.RandomState() line 89",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 103",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 112",
+        "mfas.baseline.rocket.make_init_positions: rng.randn() line 92",
+        "mfas.baseline.rocket.make_init_positions: rng.uniform() line 94",
+        "mfas.experiments.H13.run: batch_rng.choice() line 190",
+        "mfas.experiments.H13.run: np.random.RandomState() line 146",
+        "mfas.experiments.H13.run: torch.randn() line 154"
+      ],
+      "unresolved_calls": [],
+      "functions_walked": 8,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.make_init_positions",
+        "mfas.experiments.H13.run",
+        "mfas.experiments.H13.run.discrete_score",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H16": {
+      "variant": "H16",
+      "verdict": "deterministic",
+      "screen_seeds_required": 1,
+      "rng_evidence": [],
+      "unresolved_calls": [],
+      "functions_walked": 10,
+      "reachable": [
+        "mfas.experiments.H02._init_positions_from_order",
+        "mfas.experiments.H02.greedy_fas_order",
+        "mfas.experiments.H02.greedy_fas_order.remove",
+        "mfas.experiments.H16._monotone_beta_schedule",
+        "mfas.experiments.H16.run",
+        "mfas.experiments.H16.run.discrete_score",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H19": {
+      "variant": "H19",
+      "verdict": "deterministic",
+      "screen_seeds_required": 1,
+      "rng_evidence": [],
+      "unresolved_calls": [],
+      "functions_walked": 12,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.experiments.H02.greedy_fas_order",
+        "mfas.experiments.H02.greedy_fas_order.remove",
+        "mfas.experiments.H19._greedy_fas_order",
+        "mfas.experiments.H19._init_positions",
+        "mfas.experiments.H19._soft_rank",
+        "mfas.experiments.H19.run",
+        "mfas.experiments.H19.run.discrete_score",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_positions"
+      ]
+    },
+    "H30": {
+      "variant": "H30",
+      "verdict": "deterministic",
+      "screen_seeds_required": 1,
+      "rng_evidence": [],
+      "unresolved_calls": [],
+      "functions_walked": 16,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.run_rocket",
+        "mfas.baseline.rocket.run_rocket.discrete_score",
+        "mfas.experiments.H02._init_positions_from_order",
+        "mfas.experiments.H02.greedy_fas_order",
+        "mfas.experiments.H02.greedy_fas_order.remove",
+        "mfas.experiments.H30.run",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_order",
+        "mfas.metrics.score_from_positions",
+        "mfas.refine.insertion.build_sift_edges",
+        "mfas.refine.insertion.jacobi_best_gaps",
+        "mfas.refine.insertion.jacobi_rebuild",
+        "mfas.refine.insertion.sift"
+      ]
+    },
+    "H31": {
+      "variant": "H31",
+      "verdict": "rng",
+      "screen_seeds_required": 3,
+      "rng_evidence": [
+        "mfas.refine.lns.ils_lns: np.random.RandomState() line 162",
+        "mfas.refine.lns.ils_lns: rng.choice() line 191",
+        "mfas.refine.lns.ils_lns: rng.choice() line 193",
+        "mfas.refine.lns.ils_lns: rng.random_sample() line 186",
+        "mfas.refine.lns.ils_lns: rng.shuffle() line 194"
+      ],
+      "unresolved_calls": [],
+      "functions_walked": 20,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.run_rocket",
+        "mfas.baseline.rocket.run_rocket.discrete_score",
+        "mfas.experiments.H02._init_positions_from_order",
+        "mfas.experiments.H02.greedy_fas_order",
+        "mfas.experiments.H02.greedy_fas_order.remove",
+        "mfas.experiments.H31.run",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_order",
+        "mfas.metrics.score_from_positions",
+        "mfas.refine.insertion.build_sift_edges",
+        "mfas.refine.insertion.jacobi_best_gaps",
+        "mfas.refine.insertion.jacobi_rebuild",
+        "mfas.refine.insertion.sift",
+        "mfas.refine.lns._apply_victim_reinsertions_jacobi",
+        "mfas.refine.lns.apply_victim_reinsertions",
+        "mfas.refine.lns.back_edge_weight",
+        "mfas.refine.lns.ils_lns"
+      ]
+    },
+    "H35": {
+      "variant": "H35",
+      "verdict": "deterministic",
+      "screen_seeds_required": 1,
+      "rng_evidence": [],
+      "unresolved_calls": [],
+      "functions_walked": 16,
+      "reachable": [
+        "mfas.baseline.rocket.make_beta_schedule",
+        "mfas.baseline.rocket.run_rocket",
+        "mfas.baseline.rocket.run_rocket.discrete_score",
+        "mfas.experiments.H02._init_positions_from_order",
+        "mfas.experiments.H02.greedy_fas_order",
+        "mfas.experiments.H02.greedy_fas_order.remove",
+        "mfas.experiments.H35.run",
+        "mfas.metrics._as_sum_dtype",
+        "mfas.metrics._ff_weight",
+        "mfas.metrics.pct",
+        "mfas.metrics.score_from_order",
+        "mfas.metrics.score_from_positions",
+        "mfas.refine.insertion.build_sift_edges",
+        "mfas.refine.insertion.jacobi_best_gaps",
+        "mfas.refine.underrelax.sift_underrelaxed",
+        "mfas.refine.underrelax.underrelaxed_rebuild"
+      ]
+    }
+  }
+}

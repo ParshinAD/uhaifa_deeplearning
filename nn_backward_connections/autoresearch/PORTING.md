@@ -205,6 +205,53 @@ Expect the *scores* to land close to the MPS numbers (same algorithm, same seeds
 identical, and the *σ* to be genuinely different. Both outcomes are normal; an identical score to
 four decimals across devices would be the surprising result.
 
+### 6b. Device-determinism check (P02) — required before the 1-seed screen is allowed
+
+The screen may run **1 seed** for variants the classifier calls deterministic (PROTOCOL.md
+§ Phase-7.4), and that permission rests on a property of the *device*, not of the code: that
+repeating a seed reproduces bit-identically. Establish it on the new machine, once, by re-running
+one seed per primary dataset in a **fresh process** and comparing the position vectors:
+
+```bash
+$PY -m eval.run_variant --exp H35 --dataset connectome --seed 42 --out results/ --role verify --device auto
+$PY -m eval.run_variant --exp H30 --dataset microns    --seed 42 --out results/ --role verify --device auto
+$PY experiments/analyze_p02.py       # compares role=implement vs role=verify, bit-for-bit
+```
+
+Use `--role verify` so these diagnostic runs never pool into the champion's `implement`
+evidence. If the vectors are **not** bit-identical, the accelerator injects run-to-run noise
+here: keep the screen at 3 seeds, and treat the observed spread as device noise rather than seed
+variance (that is what it was on MPS — see `experiments/log.md` P01/P02).
+
+Also re-run the cheap classifier corroboration, which covers every variant in ~5 minutes:
+
+```bash
+$PY autoresearch/seed_class.py --all --out autoresearch/seed_class.json
+$PY experiments/proto_p02_determinism.py      # 16 variants x 3 runs on mouse
+PYTHONPATH=src $PY -m pytest tests/test_seed_class.py tests/test_seed_plan.py -q
+```
+
+**Then record the answer in `campaign.yaml`, per dataset — the check does not apply itself.**
+`seed_policy.device_determinism_verified.<ds>` starts at `false` on a new machine, and a dataset
+may only appear with a reduced seed list under `seed_policy.screen_seeds_by_class.deterministic`
+once its flag is `true`. `tests/test_seed_plan.py` enforces exactly that coupling, so a config
+claiming a 1-seed screen without the evidence fails the suite rather than quietly saving an hour
+it has not earned. Both keys move together, or neither moves:
+
+```yaml
+seed_policy:
+  screen_seeds_by_class:
+    deterministic:
+      connectome: [42]            # <- reduce only after the flag below is true
+      microns: [42, 123, 999]
+  device_determinism_verified:
+    connectome: true
+    microns: false                # <- until its repeat run lands
+```
+
+Verify the result with `$PY autoresearch/seed_plan.py --variant H35 --role implement`, which
+prints the plan the sweep will actually execute.
+
 ---
 
 ## 7. Start

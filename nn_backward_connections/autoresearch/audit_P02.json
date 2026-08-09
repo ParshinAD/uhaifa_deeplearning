@@ -1,0 +1,138 @@
+{
+  "variant": "H35",
+  "comparator": "H30",
+  "per_dataset": {
+    "mouse": {
+      "variant": "H35",
+      "comparator": "H30",
+      "variant_stats": {
+        "n": 3,
+        "mean": 92.90180243040469,
+        "std": 0.0,
+        "seeds": [
+          42,
+          123,
+          999
+        ],
+        "files": [
+          "20260809T174004Z-H35-mouse-s42-implement-f0b547.json",
+          "20260809T174011Z-H35-mouse-s123-implement-f0b547.json",
+          "20260809T174018Z-H35-mouse-s999-implement-f0b547.json"
+        ],
+        "max_wall_s": 5.284426689147949,
+        "grad_steps": [
+          5000
+        ],
+        "commits": [
+          "c4199932"
+        ],
+        "roles": [
+          "implement"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "comparator_stats": {
+        "n": 3,
+        "mean": 92.90180243040469,
+        "std": 0.0,
+        "seeds": [
+          42,
+          123,
+          999
+        ],
+        "files": [
+          "20260809T142849Z-H30-mouse-s42-implement-ff2174.json",
+          "20260809T142856Z-H30-mouse-s123-implement-ff2174.json",
+          "20260809T142905Z-H30-mouse-s999-implement-ff2174.json"
+        ],
+        "max_wall_s": 6.086867094039917,
+        "grad_steps": [
+          5000
+        ],
+        "commits": [
+          "6948c9d4"
+        ],
+        "roles": [
+          "implement"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "delta_pp": 0.0,
+      "welch_se": 0.0,
+      "welch_ci_lower": 0.0,
+      "protocol_se": 0.21424870283543532,
+      "protocol_ci_lower": -0.4199274575574532
+    }
+  },
+  "checks": [
+    {
+      "check": "frozen.manifest",
+      "status": "PASS",
+      "detail": "SHA-256 manifest matches all frozen files"
+    },
+    {
+      "check": "frozen.git",
+      "status": "PASS",
+      "detail": "no frozen path modified in the working tree"
+    },
+    {
+      "check": "leakage",
+      "status": "PASS",
+      "detail": "no oracle value or reference solution in 8 algorithm file(s)"
+    },
+    {
+      "check": "leakage.dataset_keying",
+      "status": "WARN",
+      "detail": "dataset-name keying present (legitimate for compute budgets, but the cycle must state WHAT it keys):\n    src\\mfas\\experiments\\H35.py:79: cfg = RocketConfig(epochs=_EPOCHS.get(g.name, RocketConfig.epochs))\n    src\\mfas\\experiments\\H35.py:100: max_sweeps=_MAX_SWEEPS.get(g.name, 40), time_budget_s=sift_budget)\n    src\\mfas\\io.py:300: node_ids=g.node_ids, name=np.array(g.name))"
+    },
+    {
+      "check": "device",
+      "status": "INFO",
+      "detail": "counting only runs measured on 'NVIDIA GeForce RTX 4060 Laptop GPU' (sota.json is machine-specific; see CAMPAIGN.md \u00a7 Hardware)"
+    },
+    {
+      "check": "comparator.connectome",
+      "status": "WARN",
+      "detail": "no runs found for comparator H30 on connectome"
+    },
+    {
+      "check": "runs.microns",
+      "status": "WARN",
+      "detail": "no runs found for H35 on microns"
+    },
+    {
+      "check": "significance.mouse.degenerate",
+      "status": "WARN",
+      "detail": "zero variance in a pool (variant std=0.0000, comparator std=0.0000): the pipeline is deterministic on this device, so the Welch CI is degenerate (SE=0 makes any positive delta 'significant'). Use the PROTOCOL CI, floored at baseline_sigma_pp=0.2624, and the screen_delta_pp minimum effect size. See experiments/log.md P01."
+    },
+    {
+      "check": "significance.mouse",
+      "status": "INFO",
+      "detail": "H35 92.9018+/-0.0000 (n=3, seeds=[42, 123, 999]) vs H30 92.9018+/-0.0000 (n=3) | delta=+0.0000 pp, Welch CI_lo=+0.0000, PROTOCOL CI_lo=-0.4199"
+    },
+    {
+      "check": "inventory.mouse",
+      "status": "INFO",
+      "detail": "3 run(s) for H35: 20260809T174004Z-H35-mouse-s42-implement-f0b547.json, 20260809T174011Z-H35-mouse-s123-implement-f0b547.json, 20260809T174018Z-H35-mouse-s999-implement-f0b547.json"
+    },
+    {
+      "check": "runtime.mouse",
+      "status": "PASS",
+      "detail": "max wall 5s within budget"
+    },
+    {
+      "check": "compute.mouse",
+      "status": "PASS",
+      "detail": "equal gradient budget ([5000]) vs H30"
+    },
+    {
+      "check": "rescore",
+      "status": "PASS",
+      "detail": "6 run(s) re-scored with the frozen oracle, all exact"
+    }
+  ]
+}

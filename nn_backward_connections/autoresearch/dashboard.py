@@ -108,7 +108,11 @@ def main() -> int:
         A("| cycle | item | verdict | note |")
         A("|---|---|---|---|")
         for h in hist[-12:][::-1]:
-            A(f"| {h.get('cycle')} | `{h.get('item')}` | **{h.get('verdict')}** | "
+            # The cycle writes this key as `outcome` (keep/kill/iterate/done); `verdict` was
+            # never written by anything, so this column read "None" for every cycle ever run.
+            # Accept both, and say "-" rather than "None" if a future entry omits it.
+            verdict = h.get("outcome") or h.get("verdict") or "-"
+            A(f"| {h.get('cycle')} | `{h.get('item')}` | **{verdict}** | "
               f"{str(h.get('note', ''))[:80]} |")
         A("")
 

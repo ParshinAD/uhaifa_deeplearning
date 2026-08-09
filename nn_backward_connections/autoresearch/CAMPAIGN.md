@@ -45,7 +45,8 @@ plan        read state.json + queue.json + killed.json + sota.json -> pick ONE i
 novelty     distinct from killed.json? if it shares an axis, name the revival condition
 prototype   cheap proxies (mouse, hard synthetic, SCC subgraph). Minutes, CPU. Most ideas die here.
 implement   isolated module src/mfas/experiments/<id>.py; nothing else changes
-screen      3 seeds x 3 datasets, role=implement, vs the CHAMPION
+screen      3 datasets, role=implement, vs the CHAMPION. Seed count is PER VARIANT (--auto-seeds):
+            1 seed on the primaries if it never draws from `seed`, 3 otherwise; mouse always 3.
 verify      independent re-run, confirm seeds, Welch CI            [only if screen passes]
 critic      red-team + autoresearch/audit.py                       [only if confirm passes]
 decide      keep | kill | iterate -> experiments/log.md
@@ -62,7 +63,7 @@ with the revival condition — because the kill index is what keeps the campaign
 |---|---|---|
 | novelty | is this materially different from what is already dead? | free |
 | prototype | does the mechanism show signal on a cheap proxy? | minutes |
-| screen | does it beat the champion on 3 seeds x 3 datasets? | ~1 h |
+| screen | does it beat the champion on 3 datasets, at its own seed count? | ~1-3 h |
 | confirm | does the 95% CI lower bound clear 0 on both primaries? | ~3-6 h |
 | critic | does it survive an adversary who wants it to be wrong? | minutes |
 

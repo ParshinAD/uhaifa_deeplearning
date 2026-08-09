@@ -2,17 +2,17 @@
   "_doc": "Mutable campaign state. The driver reads it to decide whether to start a cycle; the cycle updates it at the end. A fresh session with no context can resume the campaign from this file alone.",
   "campaign": "phase7-autonomous",
   "phase": "quality",
-  "cycle": 1,
+  "cycle": 2,
   "started": "2026-08-09",
-  "last_cycle_at": "2026-08-09T17:40:00Z",
-  "last_cycle_outcome": "P01 done — hardware re-baseline on CUDA; champions re-measured, sota.json and campaign.yaml updated",
+  "last_cycle_at": "2026-08-09T18:20:00Z",
+  "last_cycle_outcome": "P02 KEEP - protocol amendment: the screen's seed count is now a property of the variant (1 seed on both primaries for variants that never draw from `seed`, 3 otherwise, mouse always 3). Screen cost 3.17 h -> 1.06 h. No algorithm, no champion, sota.json untouched.",
   "current_item": null,
   "consecutive_kills": 0,
-  "cycles_since_literature_scan": 0,
+  "cycles_since_literature_scan": 1,
   "mode": "incremental",
-  "wall_clock_h_today": 0.0,
-  "wall_clock_h_total": 0.0,
-  "day": null,
+  "wall_clock_h_today": 1.3,
+  "wall_clock_h_total": 1.3,
+  "day": "2026-08-09",
   "history": [
     {
       "cycle": 1,
@@ -20,9 +20,16 @@
       "outcome": "done",
       "at": "2026-08-09",
       "note": "Port MacBook/MPS -> Windows/RTX 4060 (CUDA). 12 runs, 3 seeds x (H35 connectome, H30 microns, H30 mouse, H35 mouse). All champions re-measured; every seed bit-identical (sigma = 0). Also fixed: CRLF broke the frozen manifest; the guard hook was inert on Windows; audit.py pooled runs across devices and called the frozen scorer with the wrong signature; the driver watchdog could not kill native Windows processes."
+    },
+    {
+      "cycle": 2,
+      "item": "P02",
+      "outcome": "keep",
+      "at": "2026-08-09",
+      "note": "Protocol amendment, no algorithm change. Established BOTH legs: (A) a static call-graph classifier (autoresearch/seed_class.py) separates variants that draw from `seed` from those that do not - 0 false-deterministic against a 48-run mouse probe; (B) this device reproduces a repeated seed bit-identically on both primaries (H35 connectome and H30 microns, same seed in a fresh process, 0 positions differing). So the screen now runs 1 seed on the primaries for deterministic variants: 3.17 h -> 1.06 h. Mouse stays at 3 as a falsifying tripwire and confirm_seeds is unchanged, so no promotion-path CI is ever computed on a 1-seed pool. Made operative by seed_plan.py + `sweep.sh --auto-seeds`, pinned by tests/test_seed_plan.py. Corrected the prior analysis's circular claim that protocol_se was unchanged (it is comparator-only by construction; the honest widening at n=1 is +41.4%). Filed P03 after observing an overlapping cycle handoff."
     }
   ],
   "machine": "Windows 10 laptop, NVIDIA RTX 4060 Laptop GPU (CUDA), Git Bash",
   "hardware_rebaseline_done": true,
-  "notes": "P01 done 2026-08-09 on the new machine; the campaign may now run cycles. Two things a resuming session must know. (1) The champion pipelines are DETERMINISTIC here: they take a seed but never draw from it, so seeds 42/123/999 give bit-identical positions and sigma = 0. A Welch CI built on those seeds is degenerate (SE = 0), so a verdict needs delta > screen_delta_pp AND the floored PROTOCOL CI; audit.py emits significance.<ds>.degenerate when this applies. (2) microns costs 3240 s/run here (706 s on MPS), so a 3-seed screen is ~3.2 h and a 5-seed confirm ~5.3 h; max_cycle_wall_clock_h was raised 6 -> 10 and driver CYCLE_TIMEOUT_S 21600 -> 36000 so cycles are not killed mid-confirm. Queue item P02 (priority 1) asks whether the inert seeds can be dropped for deterministic variants, which would cut a cycle from ~8.5 h to ~2.5 h. IF THIS CHECKOUT IS MOVED AGAIN: set hardware_rebaseline_done=false, update `machine` and environment.device_tag, and re-run P01 — sota.json is machine-specific (see autoresearch/PORTING.md)."
+  "notes": "P01 + P02 done 2026-08-09. Three things a resuming session must know. (1) SEED POLICY (P02): the screen's seed count is per variant, not a constant - run `python autoresearch/seed_plan.py --variant <id> --role implement` and launch with `bash autoresearch/sweep.sh --exp <id> --role implement --auto-seeds`. Deterministic variants (H02/H16/H19/H30/H35 today) screen at 1 seed on connectome and microns; everything else at 3; mouse always 3, and if its 3 runs disagree for a deterministic-classified variant the primary numbers are VOID. confirm_seeds is unchanged. Rule: PROTOCOL.md § Phase-7.4; config: campaign.yaml seed_policy. (2) These pipelines take a seed but never draw from it, so sigma = 0 and a Welch CI built on those seeds is degenerate (SE = 0). A verdict needs delta > screen_delta_pp AND the floored PROTOCOL CI; audit.py emits significance.<ds>.degenerate when this applies. (3) microns costs ~3230 s/run here (706 s on MPS); max_cycle_wall_clock_h stays 10 because an rng-classified variant still needs ~8.5 h to confirm. IF THIS CHECKOUT IS MOVED AGAIN: set hardware_rebaseline_done=false, set seed_policy.device_determinism_verified.* to false and restore 3 seeds there, update `machine` and environment.device_tag, and re-run P01 - sota.json is machine-specific (see autoresearch/PORTING.md, incl. § 6b)."
 }

@@ -1,0 +1,318 @@
+{
+  "_doc": "P02 evidence bundle: primary-dataset repeat runs (device determinism), classifier-vs-ground-truth cross-check, and the 1-seed/3-seed statistical equivalence computed with audit.py's own functions. Regenerate: python experiments/analyze_p02.py",
+  "device_tag": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "repeat_checks": [
+    {
+      "variant": "H35",
+      "dataset": "connectome",
+      "n_implement": 1,
+      "n_verify_repeat": 1,
+      "implement_file": "20260809T142912Z-H35-connectome-s42-implement-8f52fb.json",
+      "verify_file": "20260809T175722Z-H35-connectome-s42-verify-8f52fb.json",
+      "implement_pct": 83.91351804242117,
+      "verify_pct": 83.91351804242117,
+      "implement_score": 35169952.0,
+      "verify_score": 35169952.0,
+      "implement_wall_s": 591.4,
+      "verify_wall_s": 533.1,
+      "score_identical": true,
+      "implement_digest": "853a638421b5f850",
+      "verify_digest": "853a638421b5f850",
+      "positions_bit_identical": true,
+      "n_positions_differing": 0,
+      "status": "OK"
+    },
+    {
+      "variant": "H30",
+      "dataset": "microns",
+      "n_implement": 1,
+      "n_verify_repeat": 1,
+      "implement_file": "20260809T145818Z-H30-microns-s42-implement-954bab.json",
+      "verify_file": "20260809T181503Z-H30-microns-s42-verify-954bab.json",
+      "implement_pct": 83.20625676071326,
+      "verify_pct": 83.20625676071326,
+      "implement_score": 12814227.0,
+      "verify_score": 12814227.0,
+      "implement_wall_s": 3214.1,
+      "verify_wall_s": 3206.2,
+      "score_identical": true,
+      "implement_digest": "9867e0b191cfe2f3",
+      "verify_digest": "9867e0b191cfe2f3",
+      "positions_bit_identical": true,
+      "n_positions_differing": 0,
+      "status": "OK"
+    }
+  ],
+  "classifier_vs_truth": {
+    "rows": [
+      {
+        "variant": "baseline_passthrough",
+        "classifier": "rng",
+        "observed_mouse": "rng",
+        "device_deterministic": true,
+        "seed_inert_mouse": false,
+        "verdict": "agree"
+      },
+      {
+        "variant": "baseline_multistart",
+        "classifier": "rng",
+        "observed_mouse": "rng",
+        "device_deterministic": true,
+        "seed_inert_mouse": false,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H01",
+        "classifier": "rng",
+        "observed_mouse": "rng",
+        "device_deterministic": true,
+        "seed_inert_mouse": false,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H02",
+        "classifier": "det",
+        "observed_mouse": "det",
+        "device_deterministic": true,
+        "seed_inert_mouse": true,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H03",
+        "classifier": "rng",
+        "observed_mouse": "rng",
+        "device_deterministic": true,
+        "seed_inert_mouse": false,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H04",
+        "classifier": "rng",
+        "observed_mouse": "rng",
+        "device_deterministic": true,
+        "seed_inert_mouse": false,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H05",
+        "classifier": "rng",
+        "observed_mouse": "rng",
+        "device_deterministic": true,
+        "seed_inert_mouse": false,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H06",
+        "classifier": "rng",
+        "observed_mouse": "rng",
+        "device_deterministic": true,
+        "seed_inert_mouse": false,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H09",
+        "classifier": "rng",
+        "observed_mouse": "rng",
+        "device_deterministic": true,
+        "seed_inert_mouse": false,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H11",
+        "classifier": "rng",
+        "observed_mouse": "rng",
+        "device_deterministic": true,
+        "seed_inert_mouse": false,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H13",
+        "classifier": "rng",
+        "observed_mouse": "rng",
+        "device_deterministic": true,
+        "seed_inert_mouse": false,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H16",
+        "classifier": "det",
+        "observed_mouse": "det",
+        "device_deterministic": true,
+        "seed_inert_mouse": true,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H19",
+        "classifier": "det",
+        "observed_mouse": "det",
+        "device_deterministic": true,
+        "seed_inert_mouse": true,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H30",
+        "classifier": "det",
+        "observed_mouse": "det",
+        "device_deterministic": true,
+        "seed_inert_mouse": true,
+        "verdict": "agree"
+      },
+      {
+        "variant": "H31",
+        "classifier": "rng",
+        "observed_mouse": "det",
+        "device_deterministic": true,
+        "seed_inert_mouse": true,
+        "verdict": "conservative (static rng, mouse looked det)"
+      },
+      {
+        "variant": "H35",
+        "classifier": "det",
+        "observed_mouse": "det",
+        "device_deterministic": true,
+        "seed_inert_mouse": true,
+        "verdict": "agree"
+      }
+    ],
+    "false_deterministic": [],
+    "conservative_disagreements": [
+      "H31"
+    ],
+    "n_device_nondeterministic": 0,
+    "pass": true
+  },
+  "stat_equivalence": [
+    {
+      "dataset": "connectome",
+      "variant": "H35",
+      "sigma_floor_pp": 0.0189,
+      "comparator_n": 3,
+      "pools": {
+        "screen_3_seeds": {
+          "n": 3,
+          "seeds": [
+            42,
+            123,
+            999
+          ],
+          "mean_pct": 83.91351804242117,
+          "std_pp": 0.0,
+          "delta_pp": 0.0,
+          "welch_se": 0.0,
+          "welch_ci_lower": 0.0,
+          "protocol_se": 0.015431785379534022,
+          "protocol_ci_lower": -0.030246299343886684,
+          "protocol_se_if_variant_n_entered": 0.015431785379534022,
+          "protocol_ci_lower_if_variant_n_entered": -0.030246299343886684
+        },
+        "screen_1_seed": {
+          "n": 1,
+          "seeds": [
+            42
+          ],
+          "mean_pct": 83.91351804242117,
+          "std_pp": 0.0,
+          "delta_pp": 0.0,
+          "welch_se": 0.0,
+          "welch_ci_lower": 0.0,
+          "protocol_se": 0.015431785379534022,
+          "protocol_ci_lower": -0.030246299343886684,
+          "protocol_se_if_variant_n_entered": 0.021823840175367853,
+          "protocol_ci_lower_if_variant_n_entered": -0.042774726743720994
+        }
+      },
+      "screen_verdict_identical": true,
+      "protocol_se_unchanged_but_comparator_only": true,
+      "protocol_se_widening_at_n1_pct": 41.4,
+      "status": "OK"
+    },
+    {
+      "dataset": "microns",
+      "variant": "H30",
+      "sigma_floor_pp": 0.0006,
+      "comparator_n": 3,
+      "pools": {
+        "screen_3_seeds": {
+          "n": 3,
+          "seeds": [
+            42,
+            123,
+            999
+          ],
+          "mean_pct": 83.20625676071326,
+          "std_pp": 0.0,
+          "delta_pp": 0.0,
+          "welch_se": 0.0,
+          "welch_ci_lower": 0.0,
+          "protocol_se": 0.0004898979485566356,
+          "protocol_ci_lower": -0.0009601999791710057,
+          "protocol_se_if_variant_n_entered": 0.0004898979485566356,
+          "protocol_ci_lower_if_variant_n_entered": -0.0009601999791710057
+        },
+        "screen_1_seed": {
+          "n": 1,
+          "seeds": [
+            42
+          ],
+          "mean_pct": 83.20625676071326,
+          "std_pp": 0.0,
+          "delta_pp": 0.0,
+          "welch_se": 0.0,
+          "welch_ci_lower": 0.0,
+          "protocol_se": 0.0004898979485566356,
+          "protocol_ci_lower": -0.0009601999791710057,
+          "protocol_se_if_variant_n_entered": 0.0006928203230275508,
+          "protocol_ci_lower_if_variant_n_entered": -0.0013579278331339996
+        }
+      },
+      "screen_verdict_identical": true,
+      "protocol_se_unchanged_but_comparator_only": true,
+      "protocol_se_widening_at_n1_pct": 41.4,
+      "status": "OK"
+    }
+  ],
+  "savings": {
+    "per_run_mean_wall_s": {
+      "connectome": {
+        "variant": "H35",
+        "n": 3,
+        "mean_wall_s": 567.8
+      },
+      "microns": {
+        "variant": "H30",
+        "n": 3,
+        "mean_wall_s": 3230.6
+      },
+      "mouse": {
+        "variant": "H30",
+        "n": 3,
+        "mean_wall_s": 5.8
+      }
+    },
+    "screen_seeds_in_force": {
+      "connectome": 1,
+      "microns": 1,
+      "mouse": 3
+    },
+    "screen_seeds_if_flat_3": {
+      "connectome": 3,
+      "microns": 3,
+      "mouse": 3
+    },
+    "device_determinism_pending": [],
+    "screen_3_seeds_h": 3.17,
+    "screen_1_seed_h": 1.06,
+    "screen_saving_h": 2.11,
+    "screen_saving_pct": 66.6,
+    "confirm_h_unchanged": 5.31,
+    "cycle_killed_at_screen_h": [
+      3.17,
+      1.06
+    ],
+    "cycle_reaching_confirm_h": [
+      8.48,
+      6.37
+    ],
+    "note": "mouse stays at 3 seeds (it costs ~6 s/run, so there is nothing to save and it is the cheap corroborating determinism probe). confirm_seeds unchanged. Seed counts come from campaign.yaml seed_policy, so a dataset still awaiting its device-determinism evidence is costed at 3 seeds here."
+  }
+}

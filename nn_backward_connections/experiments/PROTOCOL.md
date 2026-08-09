@@ -313,6 +313,60 @@ Two failure modes it exists to catch, both already observed in this repo:
   the comparator down by commit.
 - **Prose drift** — a number quoted in a document that no longer matches the JSONs behind it.
 
+### 4. The screen's seed count is a property of the VARIANT, not a constant (P02, 2026-08-09)
+
+Phases 3–6 screened every variant at 3 seeds (42/123/999). That was correct when every pipeline
+started from a random init. It stopped being correct at H02: the champion pipelines take a `seed`
+and **never draw from it** — `init_positions` comes from deterministic greedy-FAS, so
+`make_init_positions`, the only RNG consumer in `run_rocket`, is never reached
+(`src/mfas/baseline/rocket.py:168`). On CUDA, where the device also reproduces bit-identically,
+seeds 42/123/999 are the *same computation three times*. On microns (3240 s/run) that is 108
+minutes of screen wall-clock buying nothing.
+
+**The rule.** A variant is classified once, mechanically, by
+`autoresearch/seed_class.py --variant <id>`, which walks every function reachable from the
+variant's `run()` and looks for an RNG draw:
+
+| classification | screen seeds, connectome + microns | screen seeds, mouse | confirm seeds |
+|---|---|---|---|
+| `deterministic` | **1** (seed 42) | 3 | unchanged (full `confirm_seeds`) |
+| `rng` | 3 (42/123/999) | 3 | unchanged (full `confirm_seeds`) |
+
+Four constraints make this safe, and none of them is optional:
+
+1. **Static, not empirical, and fail-safe.** The classifier answers `rng` on any call path it
+   cannot resolve. A false `rng` costs wall-clock; a false `deterministic` silently discards real
+   variance and corrupts a verdict, so every ambiguity resolves toward the expensive answer. Its
+   behaviour is pinned by `tests/test_seed_class.py`, not left to a script nobody re-checks.
+2. **Static classification OVERRIDES the empirical probe, in one direction only.** A variant may
+   look seed-inert on a proxy and still draw — H31 does (`RandomState(seed + 7919)`), but on mouse
+   its LNS stage never beats the sift, so best-by-oracle returns the deterministic sift vector and
+   the seed leaves no trace. The mouse probe may therefore *escalate* a variant to 3 seeds; it may
+   never de-escalate one to 1.
+3. **Mouse stays at 3 seeds as a standing tripwire.** It costs ~6 s/run, so there is nothing to
+   save, and three mouse runs that are not identical falsify a `deterministic` classification
+   before any expensive number is quoted. A 1-seed screen whose mouse runs disagree is void.
+4. **`confirm_seeds` is unchanged.** Confirm is where a promotion happens, and re-running a
+   deterministic variant at 5 seeds is not information-free: it re-establishes *device*
+   repeatability, which is a genuinely non-zero source of variance and the only one left here.
+
+**What is and is not proven equivalent.** The screen verdict is the point-estimate rule
+`Δ > screen_delta_pp`, a function of the pool mean; for a variant with bit-identical runs the
+1-seed and 3-seed means are equal exactly, so the screen verdict is provably unchanged. That is
+the whole claim. It does **not** extend to confidence intervals: `audit.protocol_se()` is
+`max(σ_c, floor)·√(2/n_c)` — comparator-only — so its value is unchanged at n_v=1 by construction,
+not by evidence. Were a CI ever computed on a 1-seed pool its SE would be ~41% wider
+(`√(1/1+1/3)` vs `√(2/3)`). Keeping the full `confirm_seeds` is what guarantees no CI in a
+promotion path is ever computed on a 1-seed pool.
+
+**Device-determinism is a precondition, established per machine.** The rule rests on the device
+reproducing a repeated seed bit-identically. That is a property of the hardware, not of the code,
+so it is re-established on every port — the procedure is `autoresearch/PORTING.md § 6b`. If it
+fails, the screen stays at 3 seeds and the observed spread is device noise, not seed variance.
+
+**Every log entry must record the classification** of the variant it reports, so no later reader
+has to guess which regime a number came from.
+
 ### Isolation
 
 The campaign runs in a worktree at `../../mfas_autoresearch` on branch `auto/campaign`, with

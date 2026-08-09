@@ -92,6 +92,50 @@ datasets:
     screen_seeds: [42, 123, 999]
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Seed policy — how many screen seeds a variant actually needs (P02, 2026-08-09).
+# Full rationale and the four safety constraints: PROTOCOL.md § Phase-7.4.
+#
+# The champion pipelines take a `seed` and never draw from it (init_positions comes from
+# deterministic greedy-FAS, so make_init_positions is never reached), and this device reproduces
+# a repeated seed bit-identically. For such a variant, screening at 42/123/999 runs the same
+# computation three times — 108 min of pure waste per microns screen.
+# ─────────────────────────────────────────────────────────────────────────────
+seed_policy:
+  enabled: true
+  # The classifier is the authority. Static call-graph walk from the variant's run();
+  # fail-safe (unresolvable call -> "rng"); pinned by tests/test_seed_class.py.
+  classifier: autoresearch/seed_class.py
+  classification_cache: autoresearch/seed_class.json   # regenerate: --all --out <this>
+  screen_seeds_by_class:
+    deterministic:
+      # Primaries drop to one seed; mouse never does — see standing_tripwire below.
+      connectome: [42]
+      microns: [42]
+      mouse: [42, 123, 999]
+    rng:
+      connectome: [42, 123, 999]
+      microns: [42, 123, 999]
+      mouse: [42, 123, 999]
+  # Mouse costs ~6 s/run, so 3 seeds there are free and act as the corroborating probe.
+  # If they are NOT identical for a variant the classifier called deterministic, the
+  # classification is falsified: the 1-seed primary numbers are VOID and the variant is
+  # re-screened at 3 seeds. The probe may escalate; it may never de-escalate.
+  standing_tripwire: mouse_3_seeds_must_agree_for_deterministic
+  # Confirm is deliberately untouched. Re-running a deterministic variant at 5 seeds is not
+  # information-free: it re-establishes DEVICE repeatability, the only variance source left.
+  # It is also what guarantees no CI in a promotion path is computed on a 1-seed pool, where
+  # audit.protocol_se() (comparator-only, sqrt(2/n_c)) would understate the SE by ~41%.
+  confirm_seeds_unchanged: true
+  # Device determinism is a PRECONDITION and a property of the hardware, not the code.
+  # Re-establish it on every port: autoresearch/PORTING.md § 6b. If it fails -> stay at 3 seeds.
+  device_determinism_verified:
+    # Same seed, fresh process, hours apart: position vectors compared bit-for-bit, 0 entries
+    # differing. This is a property of the DEVICE and must be re-established on every port.
+    connectome: true      # H35 s42 implement vs verify, bit-identical (P02)
+    microns: true         # H30 s42 implement vs verify, bit-identical (P02)
+    evidence: experiments/outputs/proto_P02_primaries.json
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Comparator policy — Phase-7 change vs Phase 3-6.
 # Variants are now judged against the CURRENT CHAMPION (autoresearch/sota.json), not the
 # original random-init baseline. Beating a superseded baseline is not progress.
@@ -118,7 +162,9 @@ gates:
       the proxy is known to under-represent. Budget: minutes, CPU.
   - id: screen
     what: >
-      Real harness, 3 seeds (42/123/999) x 3 datasets, role=implement, vs champion.
+      Real harness, role=implement, 3 datasets, vs champion. Seed count per dataset comes from
+      seed_policy below, NOT from a fixed 3: run `python autoresearch/seed_class.py --variant
+      <id>` first and record the verdict in the log entry.
       Pass iff delta > screen_delta_pp on BOTH primaries and mouse non-inferior.
   - id: confirm
     what: >
@@ -142,11 +188,14 @@ budget:
   max_cycles: 200                     # hard backstop on total research cycles
   max_wall_clock_h_per_day: 12
   # Raised 6 -> 10 at the P01 re-baseline (2026-08-09), together with driver.sh CYCLE_TIMEOUT_S.
-  # Measured here: a screen (3 seeds x 3 datasets) is ~3.2 h and a confirm (5 seeds x 3 datasets)
-  # ~5.3 h, so a cycle that reaches confirm needs ~8.5 h. At the old 6 h cap the driver would have
-  # killed every such cycle mid-confirm — i.e. no variant could ever have been confirmed on this
-  # machine, silently, forever. This is a consequence of microns taking 3214 s/run here vs 706 s
-  # on MPS; it should come back down once queue item P02 settles the seed question.
+  # Measured here: a 3-seed screen is ~3.2 h and a confirm (5 seeds x 3 datasets) ~5.3 h, so a
+  # cycle that reaches confirm needs ~8.5 h. At the old 6 h cap the driver would have killed every
+  # such cycle mid-confirm — i.e. no variant could ever have been confirmed on this machine,
+  # silently, forever. This is a consequence of microns taking 3214 s/run here vs 706 s on MPS.
+  # KEPT at 10 h after P02 (2026-08-09). The 1-seed screen cuts a deterministic variant's screen
+  # to ~1.1 h and a full confirming cycle to ~6.4 h, but this is a BACKSTOP, not a target: an
+  # rng-classified variant still screens at 3 seeds (~8.5 h to confirm), so lowering the cap would
+  # resume killing exactly the cycles P01 raised it to protect.
   max_cycle_wall_clock_h: 10          # a single cycle is killed past this
   min_free_disk_gb: 50                # driver refuses to start below this
   results_dir_max_gb: 20

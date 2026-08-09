@@ -49,3 +49,8 @@ autoresearch/logs/
 autoresearch/.lock/
 autoresearch/.budget
 autoresearch/STOP
+
+# Detached-sweep runtime state (autoresearch/sweep.sh + waitfor.sh): pid/plan/log scratch,
+# recreated on every launch. Never part of the record — the record is results/*.json.
+autoresearch/.sweep/
+autoresearch/.lock/

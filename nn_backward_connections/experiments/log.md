@@ -2234,3 +2234,143 @@ Evidence: `results/20260809T*-{H35,H30}-*-implement-*.json` (12 runs).
 comparator is now measured on the device that will judge every future variant. Two constraints
 inherited by every later cycle: verdicts cannot rest on the Welch CI alone (σ = 0), and microns
 dominates the wall-clock (3240 s/run) until P02 settles the seed question.
+
+## 2026-08-09 — P02: the screen's seed count is a property of the VARIANT — KEEP (protocol amendment)
+
+Not a score hypothesis. P01 found that the champion pipelines take a `seed` and never draw from
+it, so seeds 42/123/999 were running the same computation three times. This cycle establishes
+whether that is safe to act on, and — if so — makes it operative. **It changes no algorithm and
+no champion; `sota.json` is untouched.** What it changes is what a screen costs.
+
+### How the ladder maps for a `kind: protocol` item
+
+The rungs are the same; what they test is not. There is no variant to score, so "screen" and
+"confirm" are replaced by the two claims the amendment actually rests on — that the classification
+is correct (leg A), and that the device reproduces (leg B). The kill condition is P02's own, from
+`queue.json`: *any deterministic-classified variant that differs across seeds on any dataset.*
+
+| rung | what it tested here | outcome |
+|---|---|---|
+| novelty | shares an axis with anything in `killed.json`? | **PASS** — no killed entry is on the `measurement` axis (7 meta-rules + 22 variants, all algorithmic) |
+| prototype | 16 variants × 3 runs on mouse, seeds (42, 42, 123) | **PASS** — 0 false-deterministic, 0 device-nondeterministic |
+| leg A (classification) | static classifier vs the 48-run mouse ground truth | **PASS** — 15/16 agree, 1 conservative disagreement (H31), 0 dangerous |
+| leg B (device) | same seed, fresh process, both primaries, bit-for-bit | **PASS** — 0 positions differing on either |
+| critic/audit | `audit.py`, frozen manifest, full suite | **PASS** — exit 0, 6/6 re-scored exact, 75 tests green |
+
+### Leg B — device determinism on both primaries (the permission the whole amendment rests on)
+
+A repeat of the *same* seed in a *fresh process*, hours after the original, compared bit-for-bit:
+
+| dataset | variant | implement run | repeat run (`--role verify`) | pct | positions |
+|---|---|---|---|---|---|
+| connectome | H35 | `20260809T142912Z-…-s42-implement-8f52fb` (591.4 s) | `20260809T175722Z-…-s42-verify-8f52fb` (533.1 s) | 83.9135 = 83.9135 | **identical**, sha `853a638421b5f850`, 0/136,648 differing |
+| microns | H30 | `20260809T145818Z-…-s42-implement-954bab` (3214.1 s) | `20260809T181503Z-…-s42-verify-954bab` (3206.2 s) | 83.2063 = 83.2063 | **identical**, sha `9867e0b191cfe2f3`, 0/67,534 differing |
+
+Scores match exactly (35,169,952 and 12,814,227). `--role verify` keeps these diagnostics out of
+the champion's `implement` pool. This is a property of the **device**, not of the code, so it is
+re-established on every port — `PORTING.md § 6b`, and `campaign.yaml` now carries a per-dataset
+`device_determinism_verified` flag that `tests/test_seed_plan.py` refuses to let outrun its
+evidence.
+
+### Leg A — the classifier, and why it is static rather than empirical
+
+`autoresearch/seed_class.py` walks every function reachable from a variant's `run()` and reports
+an RNG draw. It is not a grep, and that is load-bearing: `mfas/refine/insertion.py` holds both the
+RNG-free `sift` (used by H30/H35) and a seeded `sift_gauss_seidel_ref` that nothing calls, so a
+file-level scan misclassifies **every champion we have**. It also models the one branch that
+matters — `run_rocket` reached *with* `init_positions` cannot enter its own `torch.randn` /
+`make_init_positions` arm — which is exactly what separates H30/H35 from `baseline_passthrough`.
+
+Cross-checked against the 48-run mouse probe (16 variants × 3 runs at seeds 42, 42, 123):
+**0 false-deterministic**, the only failure that matters. One conservative disagreement, H31:
+it *does* draw (`RandomState(seed + 7919)`), but on mouse its LNS stage never beats the sift, so
+best-by-oracle returns the deterministic sift vector and the seed leaves no trace. That is why the
+static verdict overrides the empirical one, and why the probe may only ever **escalate**.
+
+Determinism is not a property of "our pipelines" as a class — it is per variant. Of the 16:
+`H02, H16, H19, H30, H35` deterministic; the other 11 keep 3 seeds.
+
+### What is proven equivalent — and what is not
+
+The screen verdict is a point-estimate rule, `Δ > screen_delta_pp`, so it depends on the pool
+mean and nothing else. With bit-identical runs the 1-seed and 3-seed means are equal exactly:
+connectome 83.9135 both, microns 83.2063 both, std 0.0000 both. **That is the entire claim.**
+
+The prior cycle's analysis also reported `protocol_se` unchanged and concluded the extra seeds
+were "provably informationless". That inference is circular and is corrected here:
+`audit.protocol_se(comparator, floor)` is `max(sigma_c, floor)*sqrt(2/n_c)` — a function of the
+**comparator** pool alone — so it cannot see the variant's `n`. Its constancy is a tautology, not
+evidence. Computed honestly, `sqrt(1/1 + 1/3)` vs `sqrt(2/3)` is **+41.4%**: a CI on a 1-seed pool
+would be meaningfully wider. `analyze_p02.py` now reports that number explicitly rather than
+hiding it behind an `identical=true`. It costs nothing because **`confirm_seeds` is unchanged**,
+so no CI in a promotion path is ever computed on a 1-seed pool.
+
+### The rule, and the four things that keep it honest
+
+| classification | connectome | microns | mouse | confirm |
+|---|---|---|---|---|
+| `deterministic` | **1** | **1** | 3 | unchanged (5 / 5 / 20) |
+| `rng` | 3 | 3 | 3 | unchanged |
+
+1. **Fail-safe.** Any call the classifier cannot resolve answers `rng`. A false `rng` costs
+   wall-clock; a false `deterministic` corrupts a verdict.
+2. **Mouse never drops.** At ~6 s/run there is nothing to save, and three disagreeing mouse runs
+   falsify a `deterministic` classification before any expensive number is quoted. A 1-seed screen
+   whose mouse runs disagree is **void**.
+3. **Confirm untouched.** Re-running a deterministic variant at 5 seeds is not information-free —
+   it re-establishes *device* repeatability, the only variance source left here.
+4. **Operative, not remembered.** `seed_plan.py` + `sweep.sh --auto-seeds` apply the policy
+   mechanically. A protocol that depends on an agent recalling it at 3 a.m. is not a protocol.
+
+### What it buys (from logged wall-clocks on this device, not estimates)
+
+Per-run means: connectome 567.8 s, microns 3230.6 s, mouse 5.8 s.
+
+| | 3 seeds | policy | saving |
+|---|---|---|---|
+| screen | 3.17 h | **1.06 h** | −2.11 h (−66.6%) |
+| cycle killed at screen (the common case) | 3.17 h | **1.06 h** | 3× the hypotheses per night |
+| cycle reaching confirm | 8.48 h | 6.37 h | confirm 5.31 h, unchanged |
+
+The queue item's own estimate — "~8.5 h to ~2.5 h" — was **wrong**: it assumed confirm shrank too.
+Corrected in `queue.json`. `max_cycle_wall_clock_h` stays at 10: an `rng` variant still needs
+~8.5 h, so lowering it would resume killing exactly the cycles P01 raised it to protect.
+
+### Infrastructure observation (not acted on — filed as P03)
+
+Two files, `autoresearch/waitfor.sh` (21:13:27) and `.claude/agents/verifier.md` (21:15:37), were
+written **after** this cycle's preflight `git status` at ~21:12 and are not this cycle's work — the
+previous cycle was still writing while the driver launched this one. The overlap touched only docs
+and helper scripts, no GPU run and no `results/*.json`, and stopped at 21:15. But the lock is
+supposed to make cycles disjoint, and the previous cycle also died without writing `log.md` or
+`state.json` (which is why P02 was resumed from artifacts here rather than started). Filed as
+**P03**; not diagnosed in this cycle because it is a driver-lifecycle question, not a P02 one.
+
+### Decision: KEEP — adopted as a protocol amendment
+
+`PROTOCOL.md § Phase-7.4` is the rule; `campaign.yaml seed_policy` is the machine-readable form;
+`CLAUDE.md` invariant #4 is qualified in place (screen stage only, deterministic variants only,
+confirm still >= 5 seeds) rather than silently violated. `consecutive_kills` stays 0 — this is
+neither a kill nor a champion change.
+
+**Every future log entry must record `class=deterministic|rng` and the seeds actually run.**
+
+### Reproduce
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+# leg B — device determinism (the two runs this cycle added; ~63 min total)
+PYTHONPATH=src $PY -m eval.run_variant --exp H35 --dataset connectome --seed 42 --out results/ --role verify --device auto
+PYTHONPATH=src $PY -m eval.run_variant --exp H30 --dataset microns    --seed 42 --out results/ --role verify --device auto
+# leg A — classification + the 48-run mouse probe
+$PY autoresearch/seed_class.py --all --out autoresearch/seed_class.json
+$PY experiments/proto_p02_determinism.py                 # writes experiments/outputs/proto_P02.json
+$PY experiments/analyze_p02.py                           # writes experiments/outputs/proto_P02_primaries.json
+# the policy, applied
+$PY autoresearch/seed_plan.py --variant H35 --role implement
+PYTHONPATH=src $PY -m pytest tests/ -q                   # 75 passed
+PYTHONPATH=src $PY autoresearch/audit.py --variant H35 --comparator H30 --role implement --comparator-role implement
+```
+Evidence: `experiments/outputs/proto_P02.json` (48 mouse runs),
+`experiments/outputs/proto_P02_primaries.json`,
+`results/20260809T175722Z-H35-connectome-s42-verify-8f52fb.json`,
+`results/20260809T181503Z-H30-microns-s42-verify-954bab.json`, `autoresearch/audit_P02.json`.
