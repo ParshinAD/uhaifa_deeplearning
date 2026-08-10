@@ -27,7 +27,7 @@
 set -uo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 
-EXP=""; ROLE="implement"; DATASETS="connectome,microns,mouse"; SEEDS="42 123 999"; AUTO=0
+EXP=""; ROLE="implement"; DATASETS="connectome,microns,mouse"; SEEDS=""; AUTO=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --exp)         EXP="$2"; shift 2 ;;
@@ -61,9 +61,34 @@ if [ "$AUTO" -eq 1 ]; then
     echo "REFUSED: seed_plan.py failed for $EXP; re-run without --auto-seeds to force 3 seeds" >&2
     rm -f "$PLAN"; exit 2
   fi
-else
+elif [ -n "$SEEDS" ]; then
   : > "$PLAN"
   for DS in ${DATASETS//,/ }; do echo "$DS $SEEDS" >> "$PLAN"; done
+else
+  # No --seeds and no --auto-seeds: take the seed list for this ROLE from campaign.yaml, per
+  # dataset. Fixed 2026-08-10 (queue item P06). The old default was a hardcoded "42 123 999" for
+  # every role, so `--role confirm` silently ran a 3-seed confirm where campaign.yaml asks for 5
+  # on the primaries and 20 on mouse — a quietly weakened promotion gate. Cycle #5 only reached
+  # 5/5/20 because it noticed and ran the remainder by hand. Refuse rather than guess.
+  if ! "$PY" - "$ROLE" "$DATASETS" > "$PLAN" <<'PYEOF'
+import sys, yaml
+role, datasets = sys.argv[1], sys.argv[2].split(",")
+# sweep.sh cd's to the campaign root before running this.
+cfg = yaml.safe_load(open("autoresearch/campaign.yaml"))
+key = "confirm_seeds" if role == "confirm" else "screen_seeds"
+for ds in [d.strip() for d in datasets if d.strip()]:
+    entry = (cfg.get("datasets") or {}).get(ds) or {}
+    seeds = entry.get(key)
+    if not seeds:
+        sys.stderr.write(f"campaign.yaml datasets.{ds}.{key} is missing\n")
+        raise SystemExit(1)
+    print(ds, " ".join(str(s) for s in seeds))
+PYEOF
+  then
+    echo "REFUSED: could not read the $ROLE seed list from campaign.yaml. Pass --seeds explicitly" >&2
+    echo "  if you really mean to override the protocol." >&2
+    rm -f "$PLAN"; exit 2
+  fi
 fi
 
 : > "$LOG"

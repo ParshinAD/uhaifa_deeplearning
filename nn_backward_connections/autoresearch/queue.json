@@ -260,9 +260,9 @@
     },
     {
       "id": "P06",
-      "title": "Run records discard per-stage timings, and sweep.sh --role confirm ignores confirm_seeds",
+      "title": "Run records discard per-stage timings (sweep.sh confirm_seeds part is fixed)",
       "status": "proposed",
-      "priority": 2,
+      "priority": 1,
       "kind": "infrastructure",
       "axis": "measurement / provenance",
       "hypothesis": "Two independent gaps, both found while auditing H42, both of which force a cycle to INFER numbers it should be able to READ. (a) eval/run_variant.py does not persist history.attrs into results/*.json, so per-stage scores and timings - which every multi-stage variant since H30 computes at runtime - are discarded. H42's central runtime claim ('the +107 s on microns is entirely stage 4') therefore rests on an inference from stages 1-3 being byte-identical, not on a measurement, and no auditor can check it. (b) sweep.sh --role confirm does not read campaign.yaml confirm_seeds; it silently defaults to '42 123 999', so a confirm launched the obvious way runs 3 seeds instead of 5/5/20 and looks complete.",
@@ -275,7 +275,8 @@
         "autoresearch/sweep.sh (SEEDS default '42 123 999')"
       ],
       "est_cost": "cheap (no GPU for (b); one re-run to verify (a) changes no score)",
-      "expected_pp": "n/a - restores auditability of runtime and seed-count claims"
+      "expected_pp": "n/a - restores auditability of runtime and seed-count claims",
+      "progress": "PART (b) FIXED 2026-08-10, before any further cycle ran: sweep.sh no longer carries a hardcoded '42 123 999'. With no --seeds and no --auto-seeds it now reads the seed list for the ROLE from campaign.yaml per dataset (confirm -> confirm_seeds 5/5/20, implement -> screen_seeds), and REFUSES to launch if that list cannot be read rather than guessing. Verified end-to-end with a deliberately failing variant id: the plan came out as the full 20-seed mouse confirm and the sweep reported DONE rc=1 without writing results. This does not retroactively affect H42 — cycle 5 caught the shortfall itself and topped the pools up to 5/5/20, which is what audit.py counted. PART (a) IS STILL OPEN and is now the whole of this item: results/*.json still discards history.attrs, so per-stage timings remain an inference rather than a measurement."
     }
   ]
 }
