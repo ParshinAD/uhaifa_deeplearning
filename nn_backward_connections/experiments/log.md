@@ -3045,3 +3045,216 @@ One imprecision, not material: the hypothesis says "the sift is ~88% of the cost
 
 **Not** covered by this note: an adversarial reading of the mechanism itself, and the P05 runtime
 risk below, which remains open and blocking.
+
+---
+
+## 2026-08-11 — P05: arm the run-level wall-clock guard — ITERATE (guard landed; microns leg unverified)
+
+Cycle 6. `kind: infrastructure`, priority 0, escalated to **BLOCKING** by cycle 5. Not a score
+hypothesis: **no algorithm changed, `sota.json` is untouched, and no champion moved.** What
+changed is that the 3600 s runtime invariant is now enforced by something instead of hoped for.
+
+The cycle did not finish. The microns verification run was killed 13 minutes in by an external
+actor (see "How this cycle ended"), so the one dataset P05 exists to protect is the one dataset
+still unverified. The verdict is **ITERATE**, not done.
+
+### The defect, precisely
+
+Every stage of the champion pipeline already accepts a wall-clock budget and already stops
+cleanly at a safe boundary — `run_rocket` checks `time_limit` each epoch, `sift_underrelaxed`
+checks `time_budget_s` each sweep, `alternate_scc_sift` checks it each alternation cycle and
+passes the remainder down to its inner sift. The machinery was complete and correct.
+
+It was never **armed**. `autoresearch/sweep.sh` invokes `eval/run_variant.py` with no
+`--time-limit`, so `time_limit=None` reached every variant and every one of those checks was a
+dead branch — `H42.run` even derives its stage budgets as `None if time_limit is None else ...`.
+A run therefore had no upper bound of any kind; it stopped when its fixed cycle counts ran out,
+whenever that happened to be. P05 was filed as "stage 4 has no wall-clock guard"; the true scope
+is wider and simpler — *nothing in the harness passed a deadline to anything*.
+
+### How the ladder maps for this item
+
+There is no variant to score, so the score rungs are replaced by the two claims the change
+actually rests on: that the guard **fires** when it should, and that it **does not fire** when it
+should not (or every confirmed number in `sota.json` stops reproducing).
+
+| rung | what it tested here | outcome |
+|---|---|---|
+| novelty | shares an axis with anything in `killed.json`? | **PASS** — all 7 meta-rules and 14 killed entries are algorithmic; nothing on the runtime-safety axis |
+| prototype | measure the overhead the deadline cannot see | **PASS** — `experiments/outputs/proto_P05.json`, 2 min CPU |
+| fires | forced small deadline on mouse | **PASS** — truncation detected and recorded exactly |
+| does-not-fire (mouse) | 3 seeds, guard armed | **PASS** — 3/3 at 92.917014, guard never reached |
+| does-not-fire (connectome) | seed 42, guard armed, vs stored confirm vector | **PASS** — **bit-identical**, 0/136,648 differing |
+| does-not-fire (microns) | seed 42 | **NOT RUN** — killed at 13 min; see below |
+| audit regression | `audit.py` on the existing champion evidence | **PASS** — exit 0, pre-P05 records WARN not FAIL |
+
+### Prototype — why `reserve_s` is a measurement, not a guess
+
+The deadline a variant enforces and the wall clock the cap governs are **not the same clock**.
+`results/*.json` `wall_clock_s` is measured around the whole `variant.run(...)` call; a variant's
+`time_limit` is consumed from the start of `run_rocket`, i.e. *after* `greedy_fas_order`, and the
+runner re-scores and saves *after* the call returns. Both ends sit outside the guard.
+
+`experiments/outputs/proto_P05.json` (CPU, 2 min):
+
+| dataset | prologue (greedy-FAS + init) | epilogue (re-score + save) | total outside the deadline |
+|---|---|---|---|
+| mouse | 0.09 s | 0.001 s | **0.10 s** |
+| microns | 35.88 s | 0.156 s | **36.04 s** |
+| connectome | 20.46 s | 0.067 s | **20.53 s** |
+
+Plus the **abort granularity**: a stage only notices the deadline at its own boundary, so a run
+can overshoot by one stage-3 sweep plus one stage-4 cycle. `reserve_s = 150` covers all three:
+deadline **3450 s**, worst case `3450 + 36 + ~60 + ~18 = ~3564 s`, inside the 3600 s cap. Both
+margins are pinned by `tests/test_runtime_guard.py`, so a later edit to `reserve_s` or to the cap
+that would silently start truncating microns fails in 0.2 s instead of in a 57-minute GPU run.
+
+### The guard fires, and says exactly what it cut
+
+`H42` on mouse at `--time-limit 3` (scratch dir `dr_tmp/guardtest/`, deliberately not `results/`):
+
+```
+RUNTIME GUARD BOUND: this run is DEGRADED and is not comparable to a clean run:
+  {'stage4_alternation': {'done': 1, 'requested': 32}, 'stage3_sift': {'done': 2, 'requested': 40}}
+DONE score=8.5104 pct=92.9179% epochs=2159 wall=3.8s
+```
+
+Rocket cut at 2,159 of 5,000 epochs, stage 3 at 2 of 40 sweeps, stage 4 at 1 of 32 cycles;
+`degraded: true`; total wall 3.84 s against a 3.0 s deadline, i.e. 0.84 s of granularity
+overshoot, consistent with the reserve model.
+
+Note this degraded run scored **92.9179 > the champion's 92.9170**. "Degraded" means *not the
+configured computation*, not *worse*. That is exactly why the flag has to be structural
+(requested vs done) rather than a score comparison.
+
+One subtlety worth recording: `sift_underrelaxed` stops early **both** when the clock runs out and
+when it reaches a true fixed point. Calling the second one degraded would have flagged every mouse
+run forever — the clean mouse run converges at 5 of 40 sweeps. So a stage is only reported as
+truncated when it carries an explicit `*_converged: false`; `alternate_scc_sift`, whose loop
+breaks on the clock and nothing else, needs no such flag and is exact.
+
+### The guard does not fire — connectome is bit-identical
+
+| | cycle 5 confirm (s42) | this cycle, guard armed (s42, `--role verify`) |
+|---|---|---|
+| pct | 84.154095 | **84.154095** |
+| score | 35,270,783 | **35,270,783** |
+| stage 3 | 40/40 sweeps | 40/40 |
+| stage 4 | 77/77 cycles | 77/77 |
+| positions | sha `b56aa222bedfe958` | sha `b56aa222bedfe958`, **0/136,648 differing** |
+
+Mouse, 3 seeds with the guard armed: 92.917014 on all three, guard never reached. The tripwire
+holds and the P02 deterministic classification is unaffected.
+
+Run ids: `20260810T214020Z-H42-connectome-s42-verify-f41d7e`,
+`20260810T21{3945,3955,4005}Z-H42-mouse-s{42,123,999}-verify-ea0edb`.
+
+### THE FINDING THIS CYCLE DID NOT EXPECT — the machine is ~20% slower under normal load
+
+The connectome verification above is bit-identical in **result** and 20% longer in **wall clock**:
+
+| | connectome wall |
+|---|---|
+| cycle 5 confirm, 5 runs, overnight (05:23-10:35) | 1226.5 / 1228.6 / 1231.3 / 1233.6 / 1238.3 s — **spread 1.0%** |
+| cycle 6 verify, same seed, same result, 00:40-01:05 | **1483.9 s — +20.5% on the mean** |
+
+Cycle 5's own five-run spread was 1%, so this is not run-to-run jitter. Nothing of mine was
+competing (one Python process, checked); the difference is ordinary desktop load — IntelliJ at
+2.9 GB working set, Discord, Telegram, a compositor — because the campaign runs on somebody's
+actual laptop rather than on a quiet box.
+
+Scaled to microns, whose confirmed walls are 3397.8-3418.0 s, a 20% slowdown is **~4100 s against
+a 3600 s hard cap**. The consequences are worth stating plainly:
+
+1. **The champion's microns configuration does not satisfy the runtime invariant on a loaded
+   machine.** This is a fact about H42, not about the guard. `sota.json`'s microns row was
+   measured in a quiet window and is not reproducible in a busy one.
+2. **P05 was under-stated, not over-stated.** Cycle 5 escalated it on a 182 s (5.1%) margin. The
+   real margin is negative under conditions that occur on an ordinary afternoon.
+3. **Armed is strictly safer than unarmed, so the guard stays on** despite the microns leg being
+   unverified. Unguarded, today's microns run overruns the cap and is inadmissible after ~68
+   minutes of GPU. Guarded, it comes back at ~3486 s, truncated, flagged `degraded`, and
+   `audit.py` FAILs it. Both outcomes block promotion; only one wastes an hour and risks a silent
+   cap violation.
+
+### How this cycle ended
+
+At 01:18:22, 13 minutes into the microns verification run, the run was killed and this line was
+appended to `autoresearch/.sweep/log`:
+
+```
+=== OPERATOR ABORT 01:18:22  H42/microns/seed42 verify killed by user request; connectome/s42 result already written ===
+```
+
+Observed facts, independent of that annotation: no Python process remained, no microns
+`results/*.json` was written, and the `.sweep/running` marker was removed without `.sweep/done`
+being written — i.e. the runner was killed externally rather than exiting. I did not verify who
+wrote the line, and I did not restart the run: relaunching a ~57-minute GPU job that somebody has
+just killed, on a machine they are visibly using, is not a decision an unattended cycle should
+take on its own. The bookkeeping was completed and committed instead.
+
+### Verdict — ITERATE
+
+The guard is implemented, unit-tested (17 new tests, suite 123 green), armed by default, and
+verified on two of three datasets. The third is the one the item was filed for, so P05 is **not**
+done. It stays open at priority 0 with exactly one thing left: the microns non-binding check.
+
+`consecutive_kills` is left at 0. P05 is not a falsified hypothesis — its mechanism works and is
+in production; the escalation counter exists to detect that *score* hunting has stalled, and
+inflating it with an infrastructure item would fire divergent mode for the wrong reason.
+
+### What landed
+
+| file | change |
+|---|---|
+| `eval/runtime_guard.py` | **new** — resolves the deadline, and summarises guard state for the record |
+| `eval/run_variant.py` | arms the deadline when no `--time-limit` is given; records `runtime_guard` and `variant_attrs` |
+| `autoresearch/campaign.yaml` | `runtime.guard` block (`enabled`, `reserve_s`) with the sizing derivation |
+| `autoresearch/audit.py` | `runtime_guard.<ds>` check — FAIL on a truncated run, WARN on a pre-P05 unguarded one |
+| `src/mfas/experiments/H42.py` | provenance keys only (`*_requested`, `sift_converged`) + docstring; **computation byte-identical**, proven by the bit-identical connectome vector |
+| `tests/test_runtime_guard.py` | **new**, 17 tests including two sizing pins |
+
+**P06(a) landed with it, deliberately.** P05's "was this run truncated?" is answered by
+requested-vs-done counts in `history.attrs`, and `run_variant.py` was throwing `history.attrs`
+away — the exact gap P06(a) filed. Fixing them separately would have paid the same ~78 minutes of
+verification GPU twice for one deliverable. Per-stage scores and timings are now persisted in
+`results/*.json` as `variant_attrs`, so H42's runtime attribution stops being an inference: this
+cycle's connectome run reports stage 3 = 134.4 s and stage 4 = 697.3 s **as measurements**.
+
+### Reproduce
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+
+# prototype (CPU, ~2 min)
+PYTHONPATH=src $PY dr_tmp/proto_P05.py                  # -> experiments/outputs/proto_P05.json
+
+# unit tests including the sizing pins
+PYTHONPATH=src $PY -m pytest tests/test_runtime_guard.py -q      # 17 passed
+PYTHONPATH=src $PY -m pytest tests/ -q                           # 123 passed
+
+# guard fires (scratch dir, ~4 s)
+PYTHONPATH=src $PY -m eval.run_variant --exp H42 --dataset mouse --seed 42 \
+    --out dr_tmp/guardtest/ --role implement --time-limit 3
+
+# guard does NOT fire (mouse ~8 s/seed; connectome ~25 min)
+for S in 42 123 999; do PYTHONPATH=src $PY -m eval.run_variant --exp H42 \
+    --dataset mouse --seed $S --out results/ --role verify; done
+bash autoresearch/sweep.sh --exp H42 --role verify --datasets connectome --seeds 42
+while ! bash autoresearch/waitfor.sh; do :; done
+
+# audit regression on the existing champion evidence (must stay exit 0)
+$PY autoresearch/audit.py --variant H42 --comparator H36 --role confirm \
+    --comparator-role confirm --out dr_tmp/audit_P05_regression.json
+```
+
+### STILL OPEN — for the next cycle, in order
+
+1. **P05 microns leg (priority 0).** One run: `H42 / microns / seed 42 / --role verify`, guard
+   armed, on an idle machine. If bit-identical to the stored confirm vector, P05 closes. If the
+   guard binds, that does **not** falsify the guard — it confirms finding 3 above, and P07 becomes
+   the blocking item instead. Run it when the machine is quiet.
+2. **P07 (new, priority 0).** H42's microns configuration does not fit 3600 s under load. That
+   needs a cheaper microns run, not a different guard.
+3. `sota.json`'s `wall_clock_s_approx` values are quiet-machine numbers. They are honest as
+   recorded, but they are not what a run costs on a working laptop.

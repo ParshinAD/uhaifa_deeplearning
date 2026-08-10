@@ -46,6 +46,30 @@ from eval.harness import build_record, config_hash, _repo_relpath  # noqa: E402
 # (closes the Bash-write bypass the PreToolUse hook cannot catch).
 from eval.frozen_guard import verify_frozen_manifest  # noqa: E402
 
+# Runtime gate (P05): arm the wall-clock deadline the variants already honour but that
+# nothing was ever passing them. See eval/runtime_guard.py.
+from eval import runtime_guard  # noqa: E402
+
+
+def _jsonable(obj):
+    """Coerce numpy/pandas scalars and containers into JSON-serialisable Python.
+
+    Variant provenance (``history.attrs``) is written by many different modules and freely
+    mixes numpy scalars, lists of dicts and plain floats. One tolerant coercion here is
+    cheaper than a convention every variant has to remember.
+    """
+    if isinstance(obj, dict):
+        return {str(k): _jsonable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_jsonable(v) for v in obj]
+    if isinstance(obj, np.ndarray):
+        return _jsonable(obj.tolist())
+    if isinstance(obj, np.generic):
+        return obj.item()
+    if isinstance(obj, (str, bool, int, float)) or obj is None:
+        return obj
+    return repr(obj)
+
 
 def load_variant(exp_id: str):
     """Import the variant module ``src/mfas/experiments/<exp_id>.py``."""
@@ -80,6 +104,21 @@ def run(exp_id: str, dataset: str, seed: int, out: Path, role: str,
     torch_device, dev_name = select_device(device)
     logger.info(f"  device={dev_name} | variant={exp_id} role={role}")
 
+    # ── Runtime gate (P05) ───────────────────────────────────────────────────
+    # An explicit --time-limit wins; otherwise fill the hole that left every run
+    # unbounded. On an idle machine this deadline is never reached, so scores are
+    # unchanged and bit-identical — verified before it was switched on.
+    guard_plan = runtime_guard.resolve(dataset, time_limit)
+    time_limit = guard_plan["time_limit_s"]
+    if guard_plan["source"] == "campaign":
+        logger.info(f"  runtime guard: deadline={time_limit:.0f}s "
+                    f"(cap {guard_plan['cap_s']:.0f}s - reserve {guard_plan['reserve_s']:.0f}s)")
+    elif guard_plan["source"] == "unavailable":
+        logger.warning("  runtime guard: UNARMED — campaign.yaml runtime budget unreadable; "
+                       "this run has no wall-clock bound (recorded as source=unavailable)")
+    else:
+        logger.info(f"  runtime guard: source={guard_plan['source']} limit={time_limit}")
+
     t0 = time.time()
     result = variant.run(g, seed=seed, device=torch_device, time_limit=time_limit)
     wall = time.time() - t0
@@ -110,6 +149,29 @@ def run(exp_id: str, dataset: str, seed: int, out: Path, role: str,
     # stays logged for reference but is NOT the comparison basis (MPS timing is non-det).
     record["budget_basis"] = "total_grad_steps"
     record["total_grad_steps"] = int(result.n_epochs_done)
+
+    # Per-stage provenance (queue item P06a). Every multi-stage variant since H30 computes
+    # its stage scores and timings at runtime and stashes them in ``history.attrs`` — and
+    # every one of them was thrown away here, which is why H42's runtime attribution had to
+    # be INFERRED from stages 1-3 being byte-identical rather than read off a measurement.
+    # Persisting it is additive: the frozen schema is untouched and aggregate.py ignores it.
+    # P05 needs it too — "did the deadline truncate a stage?" is answered by the requested
+    # vs done counts recorded here, and nowhere else.
+    attrs = dict(getattr(result.history, "attrs", {}) or {})
+    record["variant_attrs"] = _jsonable(attrs)
+
+    # Runtime guard state (P05). A truncated run is valid but NOT comparable to a clean
+    # one; this block is what stops it being pooled into a mean unnoticed.
+    record["runtime_guard"] = runtime_guard.summarise(
+        guard_plan, wall_clock_s=wall,
+        variant_wall_s=getattr(result, "wall_clock_s", None), attrs=attrs)
+    if record["runtime_guard"]["degraded"]:
+        logger.warning(f"[{run_id}] RUNTIME GUARD BOUND: this run is DEGRADED and is not "
+                       f"comparable to a clean run: "
+                       f"{record['runtime_guard']['stages_truncated'] or 'deadline reached'}")
+    if record["runtime_guard"]["over_cap"]:
+        logger.warning(f"[{run_id}] wall {wall:.0f}s EXCEEDS the "
+                       f"{guard_plan['cap_s']:.0f}s cap")
 
     json_path = out / f"{run_id}.json"
     with open(json_path, "w") as f:

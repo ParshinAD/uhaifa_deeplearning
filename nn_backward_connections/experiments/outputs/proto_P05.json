@@ -1,0 +1,49 @@
+{
+  "item": "P05",
+  "what": "prologue/epilogue timings that sit OUTSIDE the variant's own time_limit clock; used to size the runner's reserve_s",
+  "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "rows": [
+    {
+      "dataset": "mouse",
+      "n_nodes": 148,
+      "n_edges": 583,
+      "load_s": 0.0009961128234863281,
+      "prologue_s": 0.09493207931518555,
+      "greedy_fas_s": 0.0009965896606445312,
+      "init_positions_s": 0.09393548965454102,
+      "epilogue_s": 0.0010151863098144531,
+      "rescore_s": 0.0,
+      "save_s": 0.0010151863098144531,
+      "unguarded_overhead_s": 0.095947265625,
+      "greedy_pct": 90.12629794323948
+    },
+    {
+      "dataset": "microns",
+      "n_nodes": 67534,
+      "n_edges": 10436569,
+      "load_s": 0.398151159286499,
+      "prologue_s": 35.8801794052124,
+      "greedy_fas_s": 35.8801794052124,
+      "init_positions_s": 0.0,
+      "epilogue_s": 0.15610551834106445,
+      "rescore_s": 0.155104398727417,
+      "save_s": 0.001001119613647461,
+      "unguarded_overhead_s": 36.03628492355347,
+      "greedy_pct": 79.3686163429024
+    },
+    {
+      "dataset": "connectome",
+      "n_nodes": 136648,
+      "n_edges": 5657719,
+      "load_s": 11.856688261032104,
+      "prologue_s": 20.458011388778687,
+      "greedy_fas_s": 20.456015825271606,
+      "init_positions_s": 0.001995563507080078,
+      "epilogue_s": 0.06729912757873535,
+      "rescore_s": 0.0662994384765625,
+      "save_s": 0.0009996891021728516,
+      "unguarded_overhead_s": 20.525310516357422,
+      "greedy_pct": 68.91342773446004
+    }
+  ]
+}

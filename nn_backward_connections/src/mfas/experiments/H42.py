@@ -41,10 +41,18 @@ Sizing (Q1), and why the shipped counts are what they are
 * **microns** — ships **5 cycles** (~87.6 s), which is *less* stage-4 wall-clock than H36's
   3 cycles spend (92.8 s), so the run does not get longer: ~3309 s vs the champion's 3314 s.
   The curve is still rising here (10 cycles -> +0.0146 pp) but 10 cycles puts the run at
-  ~3396 s, i.e. flush against the 3400 s warn band. Queue item **P05** is open precisely
-  because microns has ~8% margin and stage 4 has no wall-clock guard; spending that margin
-  before P05 lands would make the runtime invariant depend on the machine being idle.
-  Deliberately left on the table — see log.md.
+  ~3396 s, i.e. flush against the 3400 s warn band. Queue item **P05** was open precisely
+  because microns has ~8% margin and stage 4 had no wall-clock guard; spending that margin
+  would make the runtime invariant depend on the machine being idle. Deliberately left on
+  the table — see log.md.
+
+  **P05 (2026-08-11) found that margin is already gone.** The guard now exists
+  (``eval/runtime_guard.py``), but the same cycle measured this machine running ~20% slower
+  under ordinary desktop load than it did when H42 was confirmed overnight: connectome
+  1231.7 s -> 1483.9 s for a **bit-identical** result. Scaled to microns that is ~4100 s
+  against a 3600 s cap. The microns configuration below therefore does not fit the runtime
+  invariant on a loaded machine. The guard turns that from a silent cap overrun into a
+  flagged, truncated run; it cannot make the configuration fit. See queue item **P07**.
 * **mouse** — measured exhaustively over a 9-point (sweeps, cycles) grid
   (``experiments/outputs/proto_H42_mouse.json``): **every** arm from (8, 8) to (1, 128)
   returns exactly 92.917014, the champion value. Mouse is saturated and cannot distinguish
@@ -54,7 +62,11 @@ Determinism
 -----------
 Stage 4 is sized by CYCLE COUNT, never by a wall-clock budget. A time-sized stage 4 would
 make the cycle count depend on machine load, which would destroy the bit-reproducibility
-that ``sota.json`` (std = 0) and the P02 one-seed screen policy both rest on.
+that ``sota.json`` (std = 0) and the P02 one-seed screen policy both rest on. The P05 guard
+keeps that distinction: it is an ABORT at a stage boundary, not a sizing rule, so on a
+machine fast enough to finish the configured work it changes nothing (verified bit-identical
+on connectome and mouse, 2026-08-11). When it does fire, the run is marked ``degraded`` in
+``results/*.json`` and ``audit.py`` FAILs it rather than letting it be pooled into a mean.
 
 Leakage-safety
 --------------
@@ -154,6 +166,10 @@ def run(g: GraphData, seed: int, device, time_limit: Optional[float] = None
     hist.attrs["sift_best_score"] = sift_score
     hist.attrs["sift_best_pct"] = pct(sift_score, total)
     hist.attrs["n_sift_sweeps"] = len(sweep_log)
+    # P05: how many were ASKED for, and whether a short log means convergence rather than
+    # the wall-clock guard cutting the stage off. Provenance only — nothing below reads it.
+    hist.attrs["sift_sweeps_requested"] = _MAX_SWEEPS.get(g.name, 40)
+    hist.attrs["sift_converged"] = bool(sweep_log and sweep_log[-1]["n_movers"] == 0)
     hist.attrs["sift_time_s"] = sift_time_s
     hist.attrs["sift_alpha"] = _ALPHA
     hist.attrs["sift_k_full"] = _K_FULL
@@ -161,6 +177,9 @@ def run(g: GraphData, seed: int, device, time_limit: Optional[float] = None
     hist.attrs["alt_best_pct"] = pct(alt_score, total)
     hist.attrs["alt_increment_pp"] = pct(alt_score, total) - pct(sift_score, total)
     hist.attrs["n_alt_cycles"] = len(alt_log)
+    # P05: alternate_scc_sift's loop breaks on the time budget and nothing else, so
+    # n_alt_cycles < alt_cycles_requested is an EXACT signal that the guard truncated it.
+    hist.attrs["alt_cycles_requested"] = _ALT_CYCLES.get(g.name, 32)
     hist.attrs["alt_time_s"] = alt_time_s
     hist.attrs["alt_min_block"] = _MIN_BLOCK
     hist.attrs["alt_sift_sweeps"] = _ALT_SIFT_SWEEPS.get(g.name, 2)

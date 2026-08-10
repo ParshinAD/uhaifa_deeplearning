@@ -470,6 +470,29 @@ def main() -> int:
         else:
             rep.add(f"runtime.{ds}", "PASS", f"max wall {v['max_wall_s']:.0f}s within budget")
 
+        # Runtime guard (P05). The cap above is only meaningful if something enforced it,
+        # and a run the guard TRUNCATED did less work than it was configured to do — it is
+        # valid but not comparable, so pooling it into a champion mean is exactly the kind
+        # of silent error this auditor exists to make impossible. Hence FAIL, not WARN.
+        # Records written before P05 carry no guard block at all; those only WARN, so this
+        # check cannot retroactively invalidate the existing champion evidence.
+        degraded = [r["_file"] for r in v_runs
+                    if (r.get("runtime_guard") or {}).get("degraded")]
+        unguarded = [r["_file"] for r in v_runs
+                     if not (r.get("runtime_guard") or {}).get("armed")]
+        if degraded:
+            rep.add(f"runtime_guard.{ds}", "FAIL",
+                    f"{len(degraded)}/{len(v_runs)} runs were TRUNCATED by the wall-clock "
+                    f"guard and are not comparable to clean runs: {degraded}")
+        elif unguarded:
+            rep.add(f"runtime_guard.{ds}", "WARN",
+                    f"{len(unguarded)}/{len(v_runs)} runs carry no armed runtime guard "
+                    f"(pre-P05 records, or campaign.yaml was unreadable) — their wall clock "
+                    f"was unbounded: {unguarded[:3]}{' ...' if len(unguarded) > 3 else ''}")
+        else:
+            rep.add(f"runtime_guard.{ds}", "PASS",
+                    f"all {len(v_runs)} runs ran under an armed deadline, none truncated")
+
         # Equal-compute basis
         if len(v["grad_steps"]) > 1:
             rep.add(f"compute.{ds}", "WARN",

@@ -55,6 +55,42 @@ runtime:
   # Only ONE heavy training/refinement process at a time: single GPU (RTX 4060, 8 GB).
   max_concurrent_heavy_runs: 1
 
+  # ── The guard that makes the cap above real (P05, 2026-08-11) ──────────────────────
+  # Until this landed the cap was an ASPIRATION: sweep.sh passes no --time-limit, so every
+  # variant received time_limit=None and every internal wall-clock check (rocket per epoch,
+  # sift per sweep, stage-4 per alternation cycle) was a dead branch. A run had no upper
+  # bound at all. That was survivable at H36's 3314 s; H42 spends the margin (microns
+  # 3398-3418 s, 5.1% under the cap), so the next slow machine overruns instead of degrading.
+  #
+  # eval/runtime_guard.py hands variant.run() a deadline of
+  #     max_wall_clock_s_per_run - reserve_s
+  # whenever the caller passes no explicit --time-limit.
+  #
+  # It is an ABORT, never a SIZING rule: the cycle counts stay fixed constants, so on an
+  # idle machine the deadline is never reached and every confirmed number reproduces
+  # bit-for-bit. A time-DERIVED cycle count would have destroyed exactly that (see H42).
+  guard:
+    enabled: true
+    # reserve_s covers the three things the deadline cannot see, all measured in
+    # experiments/outputs/proto_P05.json (2026-08-11):
+    #   1. prologue  — greedy-FAS + init tensor, BEFORE run_rocket starts its clock:
+    #                  microns 35.9 s, connectome 20.5 s, mouse 0.1 s
+    #   2. epilogue  — the runner's frozen re-score + np.save, AFTER run() returns: <0.2 s
+    #   3. abort granularity — a stage only sees the deadline at its own boundary, so a run
+    #                  may overshoot by one stage-3 sweep plus one stage-4 cycle
+    # 150 s covers all three on every dataset: deadline 3450 s, worst case
+    # 3450 + 36 + ~60 + ~18 = ~3564 s, inside the 3600 s cap.
+    #
+    # HONEST COST, stated because it is thin: microns' variant-internal time is 3382 s
+    # against the 3450 s deadline — 68 s, i.e. 2.0% of slack. A machine >2% slower than
+    # this one trips the guard on microns and produces a TRUNCATED run: valid (stage 4 is
+    # monotone and best-by-oracle) but lower-scoring and not comparable. Such runs are
+    # flagged `degraded` in the record and by audit.py's runtime_guard check, so they can
+    # never be pooled into a mean unnoticed. Widening the 2% needs microns to get cheaper
+    # (Phase 2 / S01), not a different guard.
+    reserve_s:
+      default: 150
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Datasets — character and per-dataset gates. Extends PROTOCOL.md § Phase-5.
 # ─────────────────────────────────────────────────────────────────────────────

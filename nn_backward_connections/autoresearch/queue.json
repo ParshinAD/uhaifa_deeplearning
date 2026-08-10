@@ -1,8 +1,8 @@
 {
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
-  "updated": "2026-08-10",
+  "updated": "2026-08-11",
   "next_free_id": "H43",
-  "next_free_protocol_id": "P07",
+  "next_free_protocol_id": "P08",
   "items": [
     {
       "id": "P01",
@@ -145,7 +145,30 @@
       ],
       "est_cost": "cheap code change; ~1 h of GPU to verify the guard does not bind",
       "expected_pp": "n/a - protects the runtime invariant",
+      "progress": "2026-08-11 (cycle 6): THE GUARD IS BUILT, ARMED AND VERIFIED ON 2 OF 3 DATASETS. Root cause was wider than filed: every stage already honoured a wall-clock budget (rocket per epoch, sift per sweep, alternate_scc_sift per cycle) and NOTHING EVER PASSED ONE - sweep.sh calls run_variant with no --time-limit, so time_limit=None made every check a dead branch. eval/runtime_guard.py now resolves a deadline of max_wall_clock_s_per_run - reserve_s (3600 - 150 = 3450 s) whenever the caller gives none; reserve_s is sized from experiments/outputs/proto_P05.json (prologue+epilogue outside the deadline: microns 36.0 s, connectome 20.5 s, mouse 0.1 s) plus the abort granularity, and both margins are pinned by tests/test_runtime_guard.py. It is an ABORT at a stage boundary, never a sizing rule, so the H42 determinism constraint is respected. VERIFIED: guard fires and records exactly what it cut (forced 3 s deadline on mouse -> rocket 2159/5000, sift 2/40, stage4 1/32, degraded=true); guard does NOT fire on connectome (seed 42 bit-identical to the stored confirm vector, 0/136,648 differing, sha b56aa222bedfe958) or mouse (3/3 at 92.917014). audit.py gained a runtime_guard check (FAIL on a truncated run, WARN on pre-P05 records) and still exits 0 on the existing champion evidence.",
+      "still_open": "THE MICRONS LEG. One run - H42 / microns / seed 42 / --role verify, guard armed, on an IDLE machine - to show the deadline does not bind. It was launched and killed 13 minutes in by an external actor (see experiments/log.md 2026-08-11, 'How this cycle ended'); the cycle did not restart it. Until that run exists, the dataset this item was filed to protect is the one dataset unverified, so P05 stays at priority 0.",
+      "reframed_by_evidence": "2026-08-11 (cycle 6): the margin this item was filed to protect IS ALREADY NEGATIVE. The connectome verification returned a bit-identical result in 1483.9 s against cycle 5's 1226.5-1238.3 s (spread 1.0%) - the machine runs ~20% slower under ordinary desktop load. Scaled to microns' 3397.8-3418.0 s that is ~4100 s against a 3600 s cap. So the guard cannot make microns fit; it can only convert a silent cap overrun into a flagged, truncated, audit-FAILing run. Making microns fit is a separate item - P07.",
       "escalated": "2026-08-10 (cycle 5, H42). No longer housekeeping. H42 spent the margin this item was filed to protect: microns crossed the warn band on 5/5 confirm runs (max 3418 s, 182 s / 5.1% under the 3600 s hard cap), where H36 sat at 3265-3314 s. The next microns variant that adds ANY stage-4 work overruns the cap on a loaded machine. Additional constraint discovered by H42: the guard must NOT size stage 4 by wall-clock, because a time-sized cycle count depends on machine load and would destroy the bit-reproducibility that sota.json (std = 0) and the P02 one-seed screen policy both rest on. It must degrade deterministically - e.g. a fixed cycle count with a wall-clock ABORT that is recorded in the run record - not a time-driven cycle count."
+    },
+    {
+      "id": "P07",
+      "title": "BLOCKING: the champion's microns configuration does not fit 3600 s on a loaded machine",
+      "status": "proposed",
+      "priority": 0,
+      "kind": "infrastructure",
+      "axis": "runtime safety",
+      "hypothesis": "H42's microns run does not satisfy the campaign's own runtime invariant under ordinary conditions. Its confirmed walls (3397.8-3418.0 s) were measured overnight on a quiet machine. Measured 2026-08-11 under ordinary desktop load, the SAME connectome computation returning a BIT-IDENTICAL result took 1483.9 s against cycle 5's 1226.5-1238.3 s: +20.5%, where cycle 5's own five-run spread was 1.0%. Scaled to microns that is ~4100 s against a 3600 s hard cap. So the microns configuration is inside the budget only when nobody is using the laptop.",
+      "rationale": "The 3600 s rule exists so that an algorithm that cannot answer within an hour is out of scope; a configuration that satisfies it only on an idle machine satisfies it by luck. P05 fixed the DETECTION side of this - the run now aborts at a stage boundary, is flagged `degraded` and is FAILed by audit.py instead of silently overrunning - but a guard cannot make an over-budget configuration fit. Left alone, the consequence is concrete and blocking: every future microns run on a working machine returns truncated and audit-FAILing, so no variant can be promoted on microns at all, whatever its score. Note this is NOT an argument for weakening the cap or the guard - it is an argument that microns' compute allocation was sized against an unrepresentative measurement.",
+      "method": "1) Re-measure the champion's microns wall on an idle machine AND under representative load, >=2 runs each, to replace the single 20% data point with a spread (cheap in wall-clock terms, expensive in hours - schedule it). 2) Attribute the cost with the per-stage timings that now land in results/*.json (variant_attrs, P06a): microns is 80,000 Rocket epochs against connectome's 20,000, so stage 1 is the obvious suspect and stage 4 is only ~88 s of ~3400. 3) The cheapest honest lever is queue item S01 - if the gradient phase is largely ceremonial, cutting microns' epochs restores the margin at no score cost, and S01 is explicitly allowed to run during Phase 1 as SIZING. 4) Any change to the shipped microns configuration is a normal variant and goes through the full ladder; do NOT hand-edit constants into the champion.",
+      "kill_condition": "If a repeat measurement on an idle machine shows the 20% figure was an artefact of one contended window - i.e. microns' wall stays within a few percent of 3400 s across repeated runs under realistic load - then the margin is thinner than comfortable but real, and this closes with the measured spread recorded. The observation stands either way.",
+      "prior_evidence": [
+        "experiments/log.md 2026-08-11 (P05), section 'THE FINDING THIS CYCLE DID NOT EXPECT'",
+        "results/20260810T214020Z-H42-connectome-s42-verify-f41d7e.json (1483.9 s, bit-identical result)",
+        "results/*-H42-connectome-*-confirm-*.json (1226.5-1238.3 s, spread 1.0%)",
+        "autoresearch/campaign.yaml runtime.max_wall_clock_s_per_run = 3600"
+      ],
+      "est_cost": "cheap to measure (2-4 microns runs, ~1 h each); the fix is S01-shaped and is a normal variant",
+      "expected_pp": "n/a - restores the runtime invariant, and unblocks promotion on microns"
     },
     {
       "id": "H37",
@@ -261,7 +284,7 @@
     {
       "id": "P06",
       "title": "Run records discard per-stage timings (sweep.sh confirm_seeds part is fixed)",
-      "status": "proposed",
+      "status": "done",
       "priority": 1,
       "kind": "infrastructure",
       "axis": "measurement / provenance",
@@ -276,6 +299,7 @@
       ],
       "est_cost": "cheap (no GPU for (b); one re-run to verify (a) changes no score)",
       "expected_pp": "n/a - restores auditability of runtime and seed-count claims",
+      "status_note": "2026-08-11 (cycle 6): PART (a) IS NOW DONE TOO, so this item is closed. It landed inside the P05 cycle deliberately: P05's central question - 'did the wall-clock guard truncate this run?' - is answered by requested-vs-done stage counts that live in history.attrs, which run_variant.py was discarding. Splitting them would have paid the same ~78 min of verification GPU twice for one deliverable. eval/run_variant.py now persists history.attrs to results/*.json as `variant_attrs` (via a tolerant numpy/pandas coercion), additive only - the frozen schema and aggregate.py are untouched, and the mouse + connectome re-runs it was verified against are bit-identical to the champion. Per-stage timings are measurements from here on: the cycle-6 connectome run reports stage 3 = 134.4 s and stage 4 = 697.3 s directly. Step 2 of the method (audit.py reporting per-stage wall-clock) was NOT done - audit.py gained the runtime_guard check instead, which was what P05 needed; per-stage reporting is now cheap for any cycle that wants it, since the data is on disk.",
       "progress": "PART (b) FIXED 2026-08-10, before any further cycle ran: sweep.sh no longer carries a hardcoded '42 123 999'. With no --seeds and no --auto-seeds it now reads the seed list for the ROLE from campaign.yaml per dataset (confirm -> confirm_seeds 5/5/20, implement -> screen_seeds), and REFUSES to launch if that list cannot be read rather than guessing. Verified end-to-end with a deliberately failing variant id: the plan came out as the full 20-seed mouse confirm and the sweep reported DONE rc=1 without writing results. This does not retroactively affect H42 — cycle 5 caught the shortfall itself and topped the pools up to 5/5/20, which is what audit.py counted. PART (a) IS STILL OPEN and is now the whole of this item: results/*.json still discards history.attrs, so per-stage timings remain an inference rather than a measurement."
     }
   ]
