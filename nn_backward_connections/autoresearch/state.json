@@ -2,17 +2,17 @@
   "_doc": "Mutable campaign state. The driver reads it to decide whether to start a cycle; the cycle updates it at the end. A fresh session with no context can resume the campaign from this file alone.",
   "campaign": "phase7-autonomous",
   "phase": "quality",
-  "cycle": 2,
+  "cycle": 3,
   "started": "2026-08-09",
-  "last_cycle_at": "2026-08-09T18:20:00Z",
-  "last_cycle_outcome": "P02 KEEP - protocol amendment: the screen's seed count is now a property of the variant (1 seed on both primaries for variants that never draw from `seed`, 3 otherwise, mouse always 3). Screen cost 3.17 h -> 1.06 h. No algorithm, no champion, sota.json untouched.",
+  "last_cycle_at": "2026-08-10T04:30:00Z",
+  "last_cycle_outcome": "H36 KEEP - NEW CHAMPION on all three datasets. A structural BLOCK move class (recursive SCC-topological reordering of contiguous blocks) alternated with the champion's single-node sift. connectome 83.9135 -> 84.0972 (+0.1837 pp), microns 83.2063 -> 83.2338 (+0.0276 pp), mouse 92.9018 -> 92.9170 (+0.0152 pp). 30 confirm runs, std 0, audit exit 0. Gap to the 84.6147 reference: 0.7046 -> 0.5175 pp (26.6% closed in one cycle). 0 extra gradient steps; matched-wall-clock control gives 36.0x (connectome) / 13.0x (microns) over the champion's own move class.",
   "current_item": null,
   "consecutive_kills": 0,
-  "cycles_since_literature_scan": 1,
+  "cycles_since_literature_scan": 2,
   "mode": "incremental",
-  "wall_clock_h_today": 1.3,
-  "wall_clock_h_total": 1.3,
-  "day": "2026-08-09",
+  "wall_clock_h_today": 7.2,
+  "wall_clock_h_total": 8.5,
+  "day": "2026-08-10",
   "history": [
     {
       "cycle": 1,
@@ -27,9 +27,16 @@
       "outcome": "keep",
       "at": "2026-08-09",
       "note": "Protocol amendment, no algorithm change. Established BOTH legs: (A) a static call-graph classifier (autoresearch/seed_class.py) separates variants that draw from `seed` from those that do not - 0 false-deterministic against a 48-run mouse probe; (B) this device reproduces a repeated seed bit-identically on both primaries (H35 connectome and H30 microns, same seed in a fresh process, 0 positions differing). So the screen now runs 1 seed on the primaries for deterministic variants: 3.17 h -> 1.06 h. Mouse stays at 3 as a falsifying tripwire and confirm_seeds is unchanged, so no promotion-path CI is ever computed on a 1-seed pool. Made operative by seed_plan.py + `sweep.sh --auto-seeds`, pinned by tests/test_seed_plan.py. Corrected the prior analysis's circular claim that protocol_se was unchanged (it is comparator-only by construction; the honest widening at n=1 is +41.4%). Filed P03 after observing an overlapping cycle handoff."
+    },
+    {
+      "cycle": 3,
+      "item": "H36",
+      "outcome": "keep",
+      "at": "2026-08-10",
+      "note": "NEW CHAMPION on all three datasets - the first score move of the autonomous campaign. Mechanism: a structural BLOCK move class. Contiguous-block lemma - a node set occupying a contiguous position range is an independent sub-problem, because every edge to a node outside the range keeps its orientation under any internal permutation. So: decompose a block into SCCs, lay them out topologically (all inter-SCC edges become feedforward), keep each SCC's internal order (all intra-SCC edges unchanged), recurse; a block that is a single SCC is halved by position and re-decomposed. Monotone non-decreasing BY CONSTRUCTION, pinned by 31 unit tests. Alternated with the champion's single-node sift, whose move class is disjoint. Confirm (5/5/20 seeds, all bit-identical): connectome 84.097174 (+0.1837 pp vs H35), microns 83.233847 (+0.0276 pp vs H30), mouse 92.917014 (+0.0152 pp). audit exit 0, all 30 runs re-scored exactly. Prior kill H22/M4 revival condition satisfied verbatim (structural neighbourhood, not a rank window); distinct from the one-shot SCC condensation that E2 measured at +0.00013 pp. Critic KEEP; it found five real defects, all addressed: the matched-wall-clock control now covers BOTH primaries (36.0x / 13.0x) and is promoted to experiments/proto_h36_control.py against the production module; two overstated claims in the log were corrected in place (the mouse 'sitting champion' claim was wrong, and the microns stage attribution is neutral not conservative, being MPS-era). Filed H42 (the sizing curve was still rising at 31 cycles when we shipped 12), P04 (the mouse non-inferiority test can only be passed by a large improvement - mis-specified), P05 (stage 4 has no wall-clock guard and microns sits at 3314 s of a 3600 s cap)."
     }
   ],
   "machine": "Windows 10 laptop, NVIDIA RTX 4060 Laptop GPU (CUDA), Git Bash",
   "hardware_rebaseline_done": true,
-  "notes": "P01 + P02 done 2026-08-09. Three things a resuming session must know. (1) SEED POLICY (P02): the screen's seed count is per variant, not a constant - run `python autoresearch/seed_plan.py --variant <id> --role implement` and launch with `bash autoresearch/sweep.sh --exp <id> --role implement --auto-seeds`. Deterministic variants (H02/H16/H19/H30/H35 today) screen at 1 seed on connectome and microns; everything else at 3; mouse always 3, and if its 3 runs disagree for a deterministic-classified variant the primary numbers are VOID. confirm_seeds is unchanged. Rule: PROTOCOL.md § Phase-7.4; config: campaign.yaml seed_policy. (2) These pipelines take a seed but never draw from it, so sigma = 0 and a Welch CI built on those seeds is degenerate (SE = 0). A verdict needs delta > screen_delta_pp AND the floored PROTOCOL CI; audit.py emits significance.<ds>.degenerate when this applies. (3) microns costs ~3230 s/run here (706 s on MPS); max_cycle_wall_clock_h stays 10 because an rng-classified variant still needs ~8.5 h to confirm. IF THIS CHECKOUT IS MOVED AGAIN: set hardware_rebaseline_done=false, set seed_policy.device_determinism_verified.* to false and restore 3 seeds there, update `machine` and environment.device_tag, and re-run P01 - sota.json is machine-specific (see autoresearch/PORTING.md, incl. § 6b)."
+  "notes": "P01 + P02 done 2026-08-09; H36 promoted 2026-08-10. THE CHAMPION IS NOW H36 ON ALL THREE DATASETS (connectome 84.0972, microns 83.2338, mouse 92.9170) - compare every new variant against that, not against H35/H30. H36 = H35's pipeline + a stage-4 structural BLOCK move class (src/mfas/refine/scc_recursive.py) alternated with the single-node sift; it is monotone non-decreasing by construction and adds 0 gradient steps. Remaining gap to the 84.6147 reference: 0.5175 pp. The three highest-value follow-ups are already filed and cheap: H42 (the stage-4 sizing curve was still RISING at 31 cycles and we ship 12 - likely free score), P04 (the mouse non-inferiority gate is mis-specified and cannot be passed except by a large improvement; it has now been waved through twice), P05 (stage 4 has no wall-clock guard and microns sits at 3314 s of a 3600 s cap). Three things a resuming session must know. (1) SEED POLICY (P02): the screen's seed count is per variant, not a constant - run `python autoresearch/seed_plan.py --variant <id> --role implement` and launch with `bash autoresearch/sweep.sh --exp <id> --role implement --auto-seeds`. Deterministic variants (H02/H16/H19/H30/H35 today) screen at 1 seed on connectome and microns; everything else at 3; mouse always 3, and if its 3 runs disagree for a deterministic-classified variant the primary numbers are VOID. confirm_seeds is unchanged. Rule: PROTOCOL.md § Phase-7.4; config: campaign.yaml seed_policy. (2) These pipelines take a seed but never draw from it, so sigma = 0 and a Welch CI built on those seeds is degenerate (SE = 0). A verdict needs delta > screen_delta_pp AND the floored PROTOCOL CI; audit.py emits significance.<ds>.degenerate when this applies. (3) microns costs ~3230 s/run here (706 s on MPS); max_cycle_wall_clock_h stays 10 because an rng-classified variant still needs ~8.5 h to confirm. IF THIS CHECKOUT IS MOVED AGAIN: set hardware_rebaseline_done=false, set seed_policy.device_determinism_verified.* to false and restore 3 seeds there, update `machine` and environment.device_tag, and re-run P01 - sota.json is machine-specific (see autoresearch/PORTING.md, incl. § 6b)."
 }

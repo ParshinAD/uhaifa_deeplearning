@@ -11,73 +11,94 @@
     "finding": "findings.md section that documents it",
     "wall_clock_s_approx": "approximate per-run wall clock; recompute from JSONs before quoting"
   },
-  "updated": "2026-08-09",
-  "updated_by": "update_sota.py --variant H30 --dataset mouse",
+  "updated": "2026-08-10",
+  "updated_by": "update_sota.py --variant H36 --dataset mouse",
   "datasets": {
     "connectome": {
-      "champion": "H35",
-      "pipeline": "H02 greedy-FAS warm-start -> run_rocket(20k) -> under-relaxed two-phase exact-gain sift (alpha=0.7, k_full=6, max_sweeps=40)",
-      "pct_mean": 83.9135,
+      "champion": "H36",
+      "pipeline": "H02 greedy-FAS warm-start -> run_rocket -> under-relaxed exact-gain sift (H35) -> alternating recursive SCC-topological block refinement <-> short under-relaxed sift (stage 4)",
+      "pct_mean": 84.0972,
       "pct_std": 0.0,
-      "n_seeds": 3,
+      "n_seeds": 5,
       "seeds": [
+        7,
         42,
         123,
-        999
+        999,
+        31415
       ],
-      "role": "implement",
-      "evidence": "results/*-H35-connectome-*-implement-*.json",
-      "finding": "findings.md #5 (re-baselined on CUDA, P01 2026-08-09)",
-      "wall_clock_s_approx": 591,
+      "role": "confirm",
+      "evidence": "results/*-H36-connectome-*-confirm-*.json",
+      "finding": "findings.md #6 (H36, 2026-08-10)",
+      "wall_clock_s_approx": 840,
       "runner_up": {
         "champion": "H35",
-        "pct_mean": 83.9101,
-        "pct_std": 0.006,
+        "pct_mean": 83.9135,
+        "pct_std": 0.0,
         "n_seeds": 3
       }
     },
     "microns": {
-      "champion": "H30",
-      "pipeline": "H02 greedy-FAS warm-start -> run_rocket(80k) -> Jacobi full-range exact-gain sift (max_sweeps=12)",
-      "pct_mean": 83.2063,
+      "champion": "H36",
+      "pipeline": "H02 greedy-FAS warm-start -> run_rocket -> under-relaxed exact-gain sift (H35) -> alternating recursive SCC-topological block refinement <-> short under-relaxed sift (stage 4)",
+      "pct_mean": 83.2338,
       "pct_std": 0.0,
-      "n_seeds": 3,
+      "n_seeds": 5,
       "seeds": [
+        7,
         42,
         123,
-        999
+        999,
+        31415
       ],
-      "role": "implement",
-      "evidence": "results/*-H30-microns-*-implement-*.json",
-      "finding": "findings.md #4 (re-baselined on CUDA, P01 2026-08-09)",
-      "wall_clock_s_approx": 3240,
+      "role": "confirm",
+      "evidence": "results/*-H36-microns-*-confirm-*.json",
+      "finding": "findings.md #6 (H36, 2026-08-10)",
+      "wall_clock_s_approx": 3314,
       "runner_up": {
         "champion": "H30",
-        "pct_mean": 83.2069,
-        "pct_std": 0.0012,
-        "n_seeds": 5
+        "pct_mean": 83.2063,
+        "pct_std": 0.0,
+        "n_seeds": 3
       }
     },
     "mouse": {
-      "champion": "H30",
-      "pipeline": "H02 -> run_rocket(5k) -> Jacobi full-range exact-gain sift",
-      "pct_mean": 92.9018,
+      "champion": "H36",
+      "pipeline": "H02 greedy-FAS warm-start -> run_rocket -> under-relaxed exact-gain sift (H35) -> alternating recursive SCC-topological block refinement <-> short under-relaxed sift (stage 4)",
+      "pct_mean": 92.917,
       "pct_std": 0.0,
-      "n_seeds": 3,
-      "role": "implement",
-      "evidence": "results/*-H30-mouse-*-implement-*.json",
-      "finding": "findings.md #4 (re-baselined on CUDA, P01 2026-08-09)",
-      "wall_clock_s_approx": 6,
+      "n_seeds": 20,
+      "role": "confirm",
+      "evidence": "results/*-H36-mouse-*-confirm-*.json",
+      "finding": "findings.md #6 (H36, 2026-08-10)",
+      "wall_clock_s_approx": 5,
       "runner_up": {
         "champion": "H30",
         "pct_mean": 92.9018,
         "pct_std": 0.0,
-        "n_seeds": 20
+        "n_seeds": 3
       },
       "seeds": [
+        7,
         42,
         123,
-        999
+        999,
+        1111,
+        1234,
+        1414,
+        1618,
+        1732,
+        2222,
+        2236,
+        2718,
+        3333,
+        4444,
+        5555,
+        6666,
+        7777,
+        8888,
+        9999,
+        31415
       ]
     }
   },

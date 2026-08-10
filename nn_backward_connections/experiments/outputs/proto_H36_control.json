@@ -1,0 +1,41 @@
+{
+  "_doc": "Matched-wall-clock control for H36 stage 4, on both primary datasets. Control = the champion's OWN move class (more under-relaxed sift sweeps). Treatment = the shipped stage-4 block/node alternation. Same starting order, same machine, matched wall-clock, 0 gradient steps in both arms.",
+  "date": "2026-08-10",
+  "variant": "H36",
+  "refiner": "mfas.refine.scc_recursive (production module, not a copy)",
+  "arms": {
+    "connectome": {
+      "champion_pct": 83.91351804242117,
+      "control": {
+        "n_sweeps": 120,
+        "final_pct": 83.91861680366078,
+        "delta_pp": 0.005098761239608507,
+        "wall_s": 348.5871522426605
+      },
+      "treatment": {
+        "n_cycles": 12,
+        "final_pct": 84.09717365667385,
+        "delta_pp": 0.18365561425267174,
+        "wall_s": 305.00366401672363
+      },
+      "ratio": 36.01965372019914
+    },
+    "microns": {
+      "champion_pct": 83.20625676071326,
+      "control": {
+        "n_sweeps": 15,
+        "final_pct": 83.2082372085633,
+        "delta_pp": 0.0019804478500446976,
+        "wall_s": 99.50433349609375
+      },
+      "treatment": {
+        "n_cycles": 3,
+        "final_pct": 83.23197660967718,
+        "delta_pp": 0.025719848963916547,
+        "wall_s": 89.49285387992859
+      },
+      "ratio": 12.986885245847834
+    }
+  },
+  "conclusion": "On BOTH primaries, at matched wall-clock from the same starting order, the champion's own single-node move class recovers a small fraction of what the block move class recovers. The gain is the move class, not the compute."
+}

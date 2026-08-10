@@ -20,7 +20,10 @@ _ROOT = _HERE.parent
 
 def _load(name: str) -> dict:
     p = _HERE / name
-    return json.loads(p.read_text()) if p.exists() else {}
+    # Explicit UTF-8: this box's default codec is cp1251, which cannot round-trip
+    # the em-dashes and arrows the campaign's JSON prose contains (same class of
+    # Windows-portability defect as the CRLF/frozen-manifest bug fixed in P01).
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
 
 
 def _bar(frac: float, width: int = 32) -> str:
@@ -37,7 +40,7 @@ def main() -> int:
     variants: dict = {}
     for f in run_files:
         try:
-            d = json.loads(Path(f).read_text())
+            d = json.loads(Path(f).read_text(encoding="utf-8"))
         except Exception:
             continue
         variants.setdefault(d.get("experiment_id") or d.get("algo"), []).append(d)
@@ -141,7 +144,7 @@ def main() -> int:
     A("")
 
     out = _HERE / "DASHBOARD.md"
-    out.write_text("\n".join(L) + "\n")
+    out.write_text("\n".join(L) + "\n", encoding="utf-8")
     print(f"wrote {out.relative_to(_ROOT)}  ({len(L)} lines)")
     return 0
 

@@ -1,8 +1,8 @@
 {
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
-  "updated": "2026-08-09",
-  "next_free_id": "H42",
-  "next_free_protocol_id": "P04",
+  "updated": "2026-08-10",
+  "next_free_id": "H43",
+  "next_free_protocol_id": "P06",
   "items": [
     {
       "id": "P01",
@@ -70,8 +70,9 @@
     {
       "id": "H36",
       "title": "SCC-decomposed recursive bounded-span insertion (the Vahidi route)",
-      "status": "proposed",
+      "status": "confirmed",
       "priority": 1,
+      "outcome": "KEEP / CHAMPION on all three datasets, 2026-08-10 (cycle 3). Built as a recursive SCC-topological BLOCK move class (src/mfas/refine/scc_recursive.py) alternated with the champion's single-node sift (src/mfas/experiments/H36.py stage 4). Confirm: connectome 84.0972 (+0.1837 pp vs H35), microns 83.2338 (+0.0276 pp vs H30), mouse 92.9170 (+0.0152 pp). 30 runs, std 0, audit exit 0. Matched-wall-clock control on BOTH primaries shows 36.0x / 13.0x over the champion's own move class, so the gain is the move class and not the added CPU. Gap to the 84.6147 reference: 0.7046 -> 0.5175 pp. NOT converged: the connectome curve is still rising at 31 cycles (+0.214 pp) and ships at 12 -> see H42. See findings.md #6 and experiments/log.md 2026-08-10.",
       "axis": "discrete refinement / decomposition",
       "hypothesis": "Condensing the graph into SCCs, ordering the condensation DAG topologically, and then recursively applying exact-gain insertion WITHIN the giant SCC (rather than over the whole line) recovers a large part of the remaining 0.70 pp to the 84.6147% reference, at bounded cost.",
       "rationale": "Vahidi 2025 reaches 84.61% on this exact graph with cheap greedy + bounded-span insertion + SCC and NO MIP, so the residual is demonstrably reachable by combinatorial means. Our H22 kill only falsified RANK-window locality (killed.json M4); a structural (SCC) neighbourhood is a different object. dr_tmp/FINDINGS_underrelaxation.md E2 warns that a ONE-SHOT SCC split recovers ~nothing (inter-SCC edges 1.50%, giant SCC 92.82%) — so the hypothesis is specifically the RECURSIVE within-giant-SCC form.",
@@ -84,6 +85,63 @@
       ],
       "est_cost": "medium (SCC via scipy.csgraph is cheap; the recursion is the work)",
       "expected_pp": "connectome: up to +0.7 (the whole residual) if the Vahidi mechanism transfers; honest estimate +0.1 to +0.4"
+    },
+    {
+      "id": "H42",
+      "title": "Size up the stage-4 alternation budget - the curve was still rising when we cut it",
+      "status": "proposed",
+      "priority": 1,
+      "axis": "discrete refinement / compute allocation",
+      "hypothesis": "H36 ships 12 alternation cycles on connectome because that was the knee of the cost/benefit curve at a moment when the CYCLE's budget was the binding constraint, not the ALGORITHM's. The measured curve was still climbing: +0.192 pp @ 12 cycles / 340 s, +0.214 pp @ 31 / 803 s. The connectome run has ~2700 s of unused headroom under the 3600 s cap, so raising the count is free score with no new mechanism.",
+      "rationale": "This is the cheapest remaining gain in the campaign: no new code, one constant. The honest question it must answer is where the curve actually flattens - the increments were still ~+0.0007 pp/cycle at cycle 30, so there may be meaningfully more than +0.02 pp left. Microns is the opposite case and must be treated separately: it has only ~290 s of headroom (3314 s of 3600 s), so its cycle count cannot rise without either a cheaper inner sift or P05's wall-clock guard.",
+      "method": "1) Continue the connectome alternation from the stored H36 champion order well past 31 cycles (CPU only, no GPU) until the per-cycle increment is below the 0.012 pp minimum effect size for several consecutive cycles; plot score vs wall-clock. 2) Pick the largest cycle count whose TOTAL run fits comfortably under the warn band, leaving margin for a loaded machine. 3) Re-screen and re-confirm as a normal variant against the H36 champion. 4) Do NOT raise microns until P05 lands.",
+      "kill_condition": "If the connectome curve flattens below the 0.012 pp minimum effect size before the runtime budget binds, the shipped 12 cycles are already at the practical optimum and this closes with a measured saturation curve.",
+      "prior_evidence": [
+        "experiments/outputs/proto_H36.json (sizing: +0.128 @ 4, +0.192 @ 12, +0.214 @ 31)",
+        "experiments/log.md 2026-08-10 (H36)",
+        "findings.md #6 'Honest limits'"
+      ],
+      "est_cost": "cheap to size (CPU only, from stored positions); a normal screen+confirm to promote",
+      "expected_pp": "connectome +0.02 to +0.10 beyond H36; microns 0 until P05"
+    },
+    {
+      "id": "P04",
+      "title": "The mouse non-inferiority test is mis-specified - it can only be passed by a large improvement",
+      "status": "proposed",
+      "priority": 2,
+      "kind": "protocol",
+      "axis": "measurement",
+      "hypothesis": "The mouse gate cannot do its job as written. audit.py floors sigma at baseline_sigma_pp = 0.2624 pp (the RANDOM-INIT baseline's dispersion on a 148-node graph); with n_comparator = 3 that is SE = 0.2142 pp, so a PROTOCOL CI lower bound above -0.26 requires delta > +0.1599 pp. A NON-INFERIORITY test is therefore passable only by a large IMPROVEMENT, which is backwards: the floor's conservative direction is correct for the primaries (where the risk is a false positive) and inverted for a non-inferiority check (where the risk is an undetected regression).",
+      "rationale": "Observed twice now and waved through both times, which is how a rule quietly stops meaning anything. P02: audit_P02.json mouse protocol_ci_lower = -0.4199, KEEP at delta = 0.0000. H36 (2026-08-10): -0.4047 at delta = +0.0152 pp over 20 seeds with zero dispersion. PROTOCOL.md's decision table does have a 'both primaries confirm, mouse does not' row ('GENERAL WIN with mouse caveat'), so neither cycle was wrong to keep - but a gate whose failure is routine and expected is not a gate, and the next cycle should not have to re-derive that argument from scratch.",
+      "method": "1) Decide what the mouse gate is actually FOR - detecting a regression on a tiny near-saturated graph - and write the test that detects that: e.g. a one-sided bound on the point estimate against -0.26 pp, or a floor taken from the CHAMPION's dispersion rather than the random-init baseline's, or an equivalence-style test with the floor applied in the non-inferior direction only. 2) Whatever is chosen, verify it against the historical record: it must not retroactively kill H30/H35/H36, and it MUST fire on a genuine mouse regression (construct one and check). 3) Encode it in campaign.yaml + PROTOCOL.md + audit.py's significance block so no future cycle argues it by hand.",
+      "kill_condition": "If no defensible re-specification both clears the historical champions and fires on a synthetic regression, keep the current rule but document in PROTOCOL.md that the mouse PROTOCOL CI is advisory and the decision-table row is the operative rule.",
+      "prior_evidence": [
+        "experiments/log.md 2026-08-10 (H36), section 'The one number that does NOT pass'",
+        "autoresearch/audit_P02.json (mouse protocol_ci_lower = -0.4199, KEEP)",
+        "autoresearch/audit_H36.json (mouse protocol_ci_lower = -0.4047)",
+        "experiments/PROTOCOL.md Phase-5 decision table"
+      ],
+      "est_cost": "cheap (no GPU; arithmetic plus a synthetic-regression check)",
+      "expected_pp": "n/a - protects the verdict rule"
+    },
+    {
+      "id": "P05",
+      "title": "Stage 4 is not self-limiting: microns runs 3314 s of a 3600 s cap with no wall-clock guard",
+      "status": "proposed",
+      "priority": 2,
+      "kind": "infrastructure",
+      "axis": "runtime safety",
+      "hypothesis": "H36's stage 4 is a fixed CYCLE COUNT, and sweep.sh passes no --time-limit, so when time_limit is None the refinement has no wall-clock guard at all. On microns the run is already 3314 s against a 3600 s hard cap - about 8% margin. A loaded machine, a thermal throttle or a background job does not degrade the run, it OVERRUNS the cap, and the run then fails on usability grounds after burning ~55 minutes of GPU time.",
+      "rationale": "The 3600 s rule exists so that an algorithm that cannot answer within an hour is out of scope. A variant that satisfies it only on an idle machine satisfies it by luck. The fix is cheap and belongs in the refiner, not in each variant: alternate_scc_sift already accepts time_budget_s and honours it - what is missing is a DEFAULT budget derived from the runtime cap when the caller passes nothing. This must not change any confirmed number: a default that never binds on an idle machine leaves H36's 30 confirmed runs bit-identical, and that must be verified, not assumed.",
+      "method": "1) Give H36 (and any future refinement stage) a default stage-4 wall-clock budget = campaign.yaml runtime.warn_wall_clock_s_per_run minus the elapsed run time, so the refinement degrades gracefully instead of overrunning. 2) Re-run H36 on microns and connectome at seed 42 and assert the score is UNCHANGED on an idle machine (the guard must not bind). 3) Only then make it the default. 4) Consider also having sweep.sh pass an explicit --time-limit so the guard is exercised rather than dormant.",
+      "kill_condition": "If measurement shows the microns wall-clock is stable enough across repeated runs that the margin is not at risk, record the measured spread and close - the observation stands either way.",
+      "prior_evidence": [
+        "experiments/log.md 2026-08-10 (H36), runtime section (microns max wall 3314 s)",
+        "autoresearch/audit_H36.json (runtime.microns)",
+        "autoresearch/campaign.yaml runtime.max_wall_clock_s_per_run = 3600, warn = 3400"
+      ],
+      "est_cost": "cheap code change; ~1 h of GPU to verify the guard does not bind",
+      "expected_pp": "n/a - protects the runtime invariant"
     },
     {
       "id": "H37",

@@ -17,12 +17,24 @@ from .lns import (
     back_edge_weight,
     ils_lns,
 )
+from .scc_recursive import (
+    DEFAULT_SPLIT_FRACS,
+    SccRecursiveRefiner,
+    alternate_scc_sift,
+    scc_recursive_refine,
+    topo_order_labels,
+)
 from .underrelax import (
     sift_underrelaxed,
     underrelaxed_rebuild,
 )
 
 __all__ = [
+    "DEFAULT_SPLIT_FRACS",
+    "SccRecursiveRefiner",
+    "alternate_scc_sift",
+    "scc_recursive_refine",
+    "topo_order_labels",
     "build_sift_edges",
     "jacobi_best_gaps",
     "jacobi_rebuild",

@@ -2374,3 +2374,403 @@ Evidence: `experiments/outputs/proto_P02.json` (48 mouse runs),
 `experiments/outputs/proto_P02_primaries.json`,
 `results/20260809T175722Z-H35-connectome-s42-verify-8f52fb.json`,
 `results/20260809T181503Z-H30-microns-s42-verify-954bab.json`, `autoresearch/audit_P02.json`.
+
+---
+
+## 2026-08-10 — H36: recursive SCC-topological BLOCK refinement (the Vahidi route)
+
+- **Cycle:** 3 (phase 7, quality). Mode: incremental. `consecutive_kills` was 0.
+- **Item:** `queue.json` H36, priority 1.
+- **Classification:** `class=deterministic` (`autoresearch/seed_class.py --variant H36`).
+  Screen seeds actually run: connectome `[42]`, microns `[42]`, mouse `[42,123,999]`.
+  Confirm seeds: connectome/microns `[42,123,999,7,31415]`, mouse 20 seeds.
+  **Tripwire held:** the 3 mouse screen runs were bit-identical (92.917014 each), so the
+  1-seed primary numbers are not void.
+- **Device:** Windows 10 / NVIDIA RTX 4060 Laptop GPU (CUDA), torch 2.8.0+cu128, Python 3.9.25.
+
+### Hypothesis
+
+The residual gap to the 84.6147% reference lives *inside* the giant SCC and is a **joint**
+rearrangement — a set of nodes that only pays off when moved together. Every refiner in this
+campaign moves ONE node at a time and is blind to such a move by construction. Adding a
+structural **block** move class and alternating it with the champion's single-node sift should
+reach a joint fixed point that neither move class reaches alone.
+
+### Novelty gate — PASS, under a named revival condition
+
+H36 shares the *discrete local search* axis with **H22** (killed). H22's revival condition is
+explicit: *"The window is replaced by a STRUCTURAL neighbourhood (SCC / block), not a rank
+window. That is queue item H36."* Meta-rule **M4** states the same requirement. The block here
+is defined by strong connectivity, not rank distance, so the condition is satisfied verbatim.
+
+Also distinct from the one-shot SCC condensation already falsified in
+`dr_tmp/FINDINGS_underrelaxation.md` E2 (+0.00013 pp): that split the graph once at the top
+level, where the giant SCC holds 92.82% of the nodes. This *re-decomposes strict subgraphs* of
+the giant SCC, where strong connectivity is far weaker.
+
+### The mechanism, and why it is monotone
+
+**Contiguous-block lemma.** If a node set occupies a contiguous range of positions, permuting
+those nodes among themselves cannot change the orientation of any edge with an endpoint outside
+the range — the outside endpoint is either before every position in the range or after every
+one. So each contiguous block is an independent sub-problem.
+
+Within a block: decompose the induced subgraph into SCCs, lay them out in a topological order of
+the condensation (ties broken by the incoming order), keep each SCC's nodes in their current
+relative order, recurse. Every inter-SCC edge becomes feedforward (an edge back from B to A
+would have merged them), and every intra-SCC edge keeps its orientation — so **the block's
+contribution is non-decreasing and the whole pass is monotone in the exact score, by
+construction**. A block that is a single SCC is cut in half by position and recursed into; the
+halves are strict subgraphs, so they decompose again. That is what makes it recursive rather
+than one-shot. Pinned by `tests/test_refine_scc_recursive.py` (31 tests, incl. monotonicity over
+random graphs and starting orders).
+
+### Prototype gate — PASS (CPU only, no GPU, no gradient steps)
+
+All proxies start from **stored champion positions**, so this rung cost no GPU time.
+
+| proxy | champion | H36 refinement | delta |
+|---|---|---|---|
+| mouse (from a champion-style sift) | 92.507675 | 92.643455 | +0.1358 pp |
+| hard synthetic (`gap.make_hard_synthetic_graph`) | 64.407341 | 67.864913 | +3.4576 pp |
+| **connectome, from the stored H35 champion order** | 83.913518 | 84.127112 | **+0.2136 pp** (31 cycles, 803 s) |
+
+Sizing (connectome): +0.128 pp @ 4 cycles / 105 s -> +0.192 @ 12 / 340 s -> +0.214 @ 31 / 803 s.
+Still rising at 31 — 12 cycles is the knee of the cost/benefit curve, **not** convergence.
+
+**The extra-compute control** (CAMPAIGN.md "a gain that is really extra compute"). Stage 4 adds
+0 gradient steps but real wall-clock, so the honest question is whether the champion's OWN move
+class gets there given the same time. From the same starting order, matched at ~342 s:
+
+*Extended after the critic's review, which correctly noted the first draft controlled only the
+connectome.* Re-run on **both primaries** with the PRODUCTION refiner (not a scratch copy) by
+`experiments/proto_h36_control.py` -> `experiments/outputs/proto_H36_control.json`:
+
+| dataset | matched wall | champion's OWN move class (more sift sweeps) | the new BLOCK move class | ratio |
+|---|---|---|---|---|
+| connectome | ~340 s | +0.0051 pp (120 sweeps, 349 s) | **+0.1837 pp** (12 cycles, 305 s) | **36.0x** |
+| microns | ~95 s | +0.0020 pp (15 sweeps, 100 s) | **+0.0257 pp** (3 cycles, 89 s) | **13.0x** |
+
+The gain is the new move class, not the compute — on both primaries. Note the microns control is
+worth +0.0020 pp, i.e. pure extra sift compute only just reaches that dataset's 0.002 pp minimum
+effect size, while H36 clears it 14x.
+
+**Cross-check worth recording.** Stage 4 applied to the *stored* champion order reaches
+**84.097174%** on connectome — bit-identical to the full H36 pipeline's confirm value. Stages 1-3
+are deterministic and reproduce the champion order, and stage 4 is deterministic on top of it, so
+the two paths must agree; that they do to the last digit is an independent check on both the
+production refiner and the 30 confirm runs.
+
+Evidence: `experiments/outputs/proto_H36.json` (sizing + first control),
+`experiments/outputs/proto_H36_control.json` (both-primaries control, production module).
+
+### Screen (role=implement, vs the CHAMPION per dataset)
+
+| dataset | H36 | champion | delta | gate | verdict | wall |
+|---|---|---|---|---|---|---|
+| connectome | 84.097174 | 83.9135 (H35) | **+0.1837 pp** | > 0.012 | PASS (15x) | 836 s |
+| microns | 83.233847 | 83.2063 (H30) | **+0.0276 pp** | > 0.002 | PASS (14x) | 3182 s |
+| mouse (n=3, identical) | 92.917014 | 92.9018 (H30) | +0.0152 pp | non-inferior | PASS | 5 s |
+
+### Confirm (role=confirm, 30 runs, independent processes)
+
+| dataset | n | mean | std | delta vs champion | Welch CI_lo | PROTOCOL CI_lo | max wall |
+|---|---|---|---|---|---|---|---|
+| connectome | 5 | 84.097174 | 0.0000 | **+0.1837** | +0.1837 | **+0.1534** | 840 s |
+| microns | 5 | 83.233847 | 0.0000 | **+0.0276** | +0.0276 | **+0.0266** | 3314 s |
+| mouse | 20 | 92.917014 | 0.0000 | +0.0152 | +0.0152 | -0.4047 | 5 s |
+
+Every confirm run reproduced its screen value **exactly**, and all 5 connectome / 5 microns /
+20 mouse runs are bit-identical within their dataset — the `deterministic` classification and
+this device's repeatability both re-established (P02 leg B).
+
+**Both primaries pass on every rule that applies:** Welch CI_lo > 0, PROTOCOL CI_lo > 0 (sigma
+floored at `baseline_sigma_pp`), and delta far above `screen_delta_pp`.
+
+### The one number that does NOT pass, stated plainly
+
+The **mouse PROTOCOL CI lower bound is -0.4047**, below the -0.26 non-inferiority threshold.
+
+*This paragraph was rewritten after the critic's review.* The first draft argued from first
+principles that the rule was broken — which is precisely the move a variant's own author should
+not be trusted to make, and the shape of the Q01 failure this campaign already survived once. The
+verdict does not rest on that argument. It rests on two things that are checkable:
+
+1. **`PROTOCOL.md` already has a decision-table row for this exact case.** Both primaries confirm
+   and mouse does not clear its bar -> **"GENERAL WIN with mouse caveat" -> findings.md +
+   caveats**. Not a kill. The rule anticipated this; the cycle did not need to reinterpret it.
+2. **The precedent is on the record.** `autoresearch/audit_P02.json` shows mouse
+   `protocol_ci_lower = -0.4199` and P02 was KEEP — at delta = 0.0000, *worse* than H36's
+   +0.0152. So this bar has already been passed over once, on weaker evidence.
+
+The mechanical reason it cannot be met: the PROTOCOL CI floors sigma at
+`baseline_sigma_pp = 0.2624 pp` — the *random-init baseline's* dispersion on a 148-node graph.
+With n_comparator = 3 that gives SE = 0.2142 pp, so certifying "not worse" would require
+delta > **+0.1599 pp** — a non-inferiority test passable only by a large *improvement*. The floor
+exists to stop sigma=0 manufacturing significance on the **primaries**, where the risk is a false
+positive; on a non-inferiority test the conservative direction is the opposite one. (Correction to
+the first draft: the claim that "no variant has ever met that bar, including the sitting champion"
+was **wrong** — H35's mouse promotion predates the floored CI entirely, so the champion was never
+tested against it.)
+
+Measured mouse result: delta = **+0.0152 pp**, positive, 20 seeds, zero dispersion — the
+observable the test exists to catch (a regression) is absent. Verdict taken under the decision
+table's `GENERAL WIN with mouse caveat` row; **filed as P04** so the rule is fixed in
+`campaign.yaml`/`PROTOCOL.md` rather than re-litigated every cycle.
+
+### Mechanical audit — PASS (exit 0)
+
+```
+$PY autoresearch/audit.py --variant H36 --comparator champion \
+    --role confirm --comparator-role implement --out autoresearch/audit_H36.json
+```
+- `frozen.manifest` / `frozen.git` PASS; `leakage` PASS over 9 algorithm files;
+  `rescore` PASS — **all 30 runs re-scored exactly** with the frozen oracle.
+- `compute.*` PASS: equal gradient budget vs the champion on every dataset
+  (connectome 20k, microns 80k, mouse 5k). Stage 4 adds **0** optimizer steps.
+- `runtime.*` PASS on all three; the binding one is microns at 3314 s, inside both the 3600 s
+  hard cap and the 3400 s warn band.
+- 4 WARNs, all expected: 3 x `significance.*.degenerate` (sigma=0, the known P01 condition —
+  which is why the PROTOCOL CI is quoted above), and 1 x `leakage.dataset_keying`.
+
+**What the dataset keying keys** (the WARN asks the cycle to state it): `_EPOCHS` = the gradient
+budget (inherited from H35/H30, unchanged); `_MAX_SWEEPS` = H35's stage-3 sweep cap (unchanged);
+`_ALT_CYCLES` / `_ALT_SIFT_SWEEPS` = the **wall-clock budget** for stage 4, sized from the
+measured cost curve so microns stays under 3600 s. None of these keys on the target metric, and
+no dataset gets a different *algorithm* — only a different compute allowance.
+
+**Comparator hygiene.** The champion has no `confirm`-role runs on this device (`sota.json`
+records it at role=`implement`, from P01), so the audit compares H36@confirm against
+champion@implement. Safe and stated: P02 established the champion's implement and verify runs are
+bit-identical on this device, and H36's own implement and confirm runs agree to the last digit
+(84.097174 / 83.233847). The device tag restricted the pool to this GPU, so no MPS-era record was
+pooled in.
+
+**Disclosure.** One extra `results/*.json` exists for mouse s42 role=implement: a smoke test run
+by hand before the sweep, at the same commit and config, value identical (92.917014). It is
+pooled with the sweep's mouse runs and changes neither mean nor std.
+
+### Stage attribution (no double-counting)
+
+Stage 4's increment is credited as (H36 - champion), not as the whole pipeline. Stages 1-3 are
+byte-for-byte H35, so H36 - H35 isolates stage 4.
+
+*Corrected after the critic's review.* The first draft claimed that on **microns** the base (H35)
+scores 0.0019 pp *below* the H30 champion, so crediting stage 4 with (H36 - H30) under-states it —
+"the conservative direction". That 0.0019 pp is an **MPS-era** number: no H35 microns run exists
+on this device, and the prototype's C2 arm points the other way. The honest statement is that the
+microns attribution is **roughly neutral, not conservative**. It is not load-bearing either way:
+the verdict is (H36 - champion), measured on this device, on both primaries.
+
+### Mission status
+
+Connectome champion 83.9135 -> **84.0972**. Gap to the 84.6147 reference: 0.7046 -> **0.5175 pp**
+(26.6% of it closed in one cycle). Phase-1 exit criteria are **not** met (84.0972 < 84.6147), so
+the campaign continues in Phase 1 — no human checkpoint triggered.
+
+### Reproduce
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY -m pytest tests/ -q                       # 106 passed
+$PY autoresearch/seed_class.py --variant H36                 # -> deterministic
+$PY autoresearch/seed_plan.py  --variant H36 --role implement
+# prototype rung (CPU only, from stored champion positions)
+$PY dr_tmp/proto_H36.py connectome
+$PY dr_tmp/proto_H36c.py connectome                          # saturation sizing
+$PY dr_tmp/proto_H36d.py                                     # extra-compute control
+# screen + confirm (detached; poll with waitfor.sh until DONE)
+bash autoresearch/sweep.sh --exp H36 --role implement --auto-seeds
+bash autoresearch/sweep.sh --exp H36 --role confirm  --auto-seeds
+$PY autoresearch/audit.py --variant H36 --comparator champion \
+    --role confirm --comparator-role implement --out autoresearch/audit_H36.json
+```
+Evidence: `experiments/outputs/proto_H36.json`, `autoresearch/audit_H36.json`,
+`results/*-H36-*-confirm-*.json` (30 runs), `src/mfas/refine/scc_recursive.py`,
+`src/mfas/experiments/H36.py`, `tests/test_refine_scc_recursive.py`.
+
+#### Critic verdict
+
+Adjudicated 2026-08-10. Read-only pass over the source, the 36 H36 `results/*.json`, the
+prototype JSON, `campaign.yaml`, `PROTOCOL.md` and `killed.json`; the reported audit command was
+re-run and reproduces `autoresearch/audit_H36.json` **bit-identically at exit 0**
+(`per_dataset` and `checks` compare equal). Independent stress tests were written against the new
+refiner. Nothing outside this block was modified.
+
+**1. Frozen integrity — PASS.** `git status --porcelain` shows only `autoresearch/state.json`,
+`experiments/log.md` and `src/mfas/refine/__init__.py` modified; none is frozen. The
+`refine/__init__.py` diff is +12 lines of re-exports, no logic. `frozen.manifest` and `frozen.git`
+PASS; `eval/frozen.sha256` matches all four frozen paths.
+
+**2. Metric leakage — PASS.** `SccRecursiveRefiner` never touches the oracle at all: every branch
+in `_refine` / `_apply_topo` / `_split` / `topo_order_labels` is decided from `src`, `tgt`, `pos`
+and `labels`. Weights are not even read by the block move — which is *stronger* than required. The
+only oracle call sites in the new module are `scc_recursive.py:316, 327` plus the score returned
+by `sift_underrelaxed`, and all three feed a bare `if s > best_score: best_score, best_rank = ...`;
+the working vector `rank` advances regardless of the oracle, so no move is steered. No
+`data/best_solution`, no hardcoded 35,463,823 / 84.6147. The auditor's leakage scan does cover the
+new file (`audit.py:299-303` globs the whole `mfas/refine` package once `H36.py` imports from it).
+Dataset keying (`_EPOCHS`, `_MAX_SWEEPS`, `_ALT_CYCLES`, `_ALT_SIFT_SWEEPS`) is compute budget
+only — no dataset takes a different code path. Accepted.
+
+**3. Monotonicity of the block move — PASS, and this was the check I most expected to break.**
+The line-by-line argument holds and I could not construct a counterexample:
+- *4,400 randomised graphs* (n 2-1200; sparse / dense / self-loops / duplicate edges / one giant
+  cycle-plus-chords / layered DAG with back edges; `min_block` 1-100; `split_frac` 0.01-0.99;
+  int and `exp(N(0,6))` float weights): **0 monotonicity violations**, output always a valid
+  permutation, caller's array never mutated.
+- The "edges crossing the cut are DROPPED in `_split`" worry is unfounded. I instrumented
+  `_refine` over 300 graphs and asserted at *every* recursion level that `eidx` is **exactly** the
+  induced edge set of `[lo, hi)` — neither a superset nor a subset. It always was. A cut-crossing
+  edge is not in either half's induced subgraph and its orientation is invariant under any
+  permutation inside a half, so discarding it is correct, not lossy.
+- Block bounds check out: `starts = lo + cumsum(sizes[order_lab])[:-1]` prepended with 0 is
+  off-by-one-free; `bounds = searchsorted(intra_rank[o], arange(n_lab+1))` partitions intra edges
+  correctly; `mid = lo + max(1, min(nb-1, ...))` keeps both halves non-empty so the recursion
+  strictly decreases and terminates. `seq[lo:hi] = seq[lo:hi][new_local]` copies (fancy indexing),
+  so no aliasing.
+- `pytest tests/ -q` → **106 passed**, as claimed.
+
+**4. Novelty vs the kill index — PASS.** `killed.json` H22 `revival_if` names H36 *verbatim*
+("STRUCTURAL neighbourhood (SCC / block), not a rank window. That is queue item H36"), and M4
+states the same. The halving in `_split` is a divide-and-conquer device for finding sub-structure,
+not the move class: the top-level block is `[0, n)` and an SCC can be relocated the full length of
+the line. Decisive empirically — M4's measured prediction was ≤0 pp for any window W≥100; this
+returns +0.1837 pp, so it is demonstrably not the same object. The E2 "one-shot condensation =
++0.00013 pp" distinction is also real: `probe_scc`/E2 split once at the top where the giant SCC is
+92.82% of nodes, whereas `part2` of the prototype shows the recursion still gaining at round 13
+(83.9299 → 83.9718 with the block move alone), i.e. the gain comes from strict subgraphs.
+
+**5. Significance — PASS on both primaries (not GRAPH-DEPENDENT).** Re-derived from the JSONs:
+connectome Δ = +0.18366 pp, PROTOCOL CI_lo **+0.1534** (15.3× `screen_delta_pp` 0.012);
+microns Δ = +0.02759 pp, PROTOCOL CI_lo **+0.0266** (13.8× `screen_delta_pp` 0.002). The Welch CI
+is degenerate (σ = 0) and the cycle correctly does not lean on it. **No cherry-picking:** the
+auditor's inventory lists 5 / 5 / 20 runs and every one is reported; all runs within a dataset
+carry a single `pct` literal (`84.09717365667385`, `83.23384667190933`, `92.91701410211007`), and
+the three `role=implement` screen runs carry the *same* literals — implement and confirm agree to
+the last bit on all three datasets, which is the strongest available evidence that the pool is not
+a selected subset.
+
+**6. The mouse PROTOCOL CI — PASS, but NOT on the reasoning the entry gives.** I am unwilling to
+let a variant's own cycle declare a gate it failed to be a broken rule; that is exactly the shape
+of a Q01-style self-serving rationalisation. Two independent things rescue it:
+- *The protocol already has a row for this case.* `PROTOCOL.md` § "Full decision table":
+  `microns CI>0 ✓ | connectome CI>0 ✓ | mouse non-inf ✗` → **"GENERAL WIN with mouse caveat →
+  findings.md + caveats"**. So even taking the −0.4047 at face value as a FAIL, the protocol's own
+  disposition is *keep with a caveat*, not kill. The entry should have cited this instead of
+  arguing the rule is wrong; the outcome is the same but the standing is far better.
+- *The "applied to nothing else" claim verifies.* `autoresearch/audit_P02.json` mouse
+  `protocol_ci_lower = −0.4199` and P02 was a KEEP one cycle earlier, at Δ = 0.0000 — strictly
+  worse than H36's Δ = +0.0152. Refusing H36 on this gate would be a rule applied to one cycle and
+  not the one immediately before it.
+- On the merits the rule *is* mis-specified — a −0.26 threshold against a floored SE of 0.2142
+  makes "not worse" require Δ > +0.16, i.e. non-inferiority strictly harder than superiority, and
+  `audit.py:243-253`'s own docstring scopes the floor to false positives. Filing **P04** is the
+  right procedural response and should be done before the next mouse verdict.
+- Overstatement flagged: "*including the sitting champion*" is not quite true. H35's mouse
+  promotion (2026-06-23) predates the floored CI entirely and was never tested against it, and
+  H30-vs-baseline on mouse (+0.83 pp) would clear it comfortably. Immaterial to the verdict, but
+  do not repeat the claim.
+- Substance: Δ = +0.0152 pp is **positive**, exact, over 20 bit-identical seeds. The observable
+  the gate exists to catch — a regression — is absent.
+
+**7. Compute fairness — the stated basis FAILS; the evidence actually presented PASSES.** Stating
+it plainly, as asked: `budget_basis = total_grad_steps` is **not** a defensible fairness basis for
+a variant of this class. H36 spends +249 s (+42%) on connectome and +74 s on microns at exactly
+zero optimizer steps, so `compute.connectome/microns/mouse = PASS` in the audit is *vacuous* — it
+matches a quantity H36 deliberately does not spend. The load-bearing evidence is the C1 control
+(`dr_tmp/proto_H36d.py` → `proto_H36.json § part4`), and that control is genuinely fair: same
+starting order (the H35 champion `_positions.npy`), the champion's own move class at its own
+configuration (`k_full=6, alpha=0.7`), 120 sweeps, 342 s, same machine, same process → **+0.0051 pp
+against +0.1924 pp at 340 s**. 37.7×. That settles connectome. **Gap: there is no matched-wall
+control on microns.** The +0.0276 pp microns claim inherits its fairness from an extrapolation of
+the connectome curve (~0.0015 pp/100 s ⇒ ~+0.001 pp for microns' 74 s), which is plausible but
+unmeasured. Recommend `campaign.yaml` add a matched-wall-clock control as a required rung for any
+variant that adds non-gradient compute, and that it be run per primary.
+
+**8. Moving comparator — PASS.** Each comparator pool is one variant, one role, one commit, one
+device: connectome H35 @ `c4199932`, microns H30 @ `c4199932`, mouse H30 @ `6948c9d4`, all three
+`role=implement`, all `NVIDIA GeForce RTX 4060 Laptop GPU`. No `comparator_homogeneity.*` check
+fired (they are emitted only on WARN/FAIL). **No MPS record leaked in** — I confirmed the one
+tempting candidate, `20260622T131203Z-H30-microns-s999-implement-954bab.json`, is `Apple MPS`
+(83.2067) and is absent from the pooled file list; `device_tag` excluded it. The confirm-vs-confirm
+comparison the critic protocol prefers is impossible here — I ran it and the auditor returns
+"no runs found for comparator" on all three datasets — so `--comparator-role implement` is the only
+available comparison, and H36's own implement/confirm identity is direct corroboration that the
+role does not move the number on this device.
+
+**9. Runtime honesty — PASS, with a fragility that must be recorded.** All five microns confirm
+walls: 3265.4 / 3309.7 / 3313.6 / 3313.5 / 3313.9 s. That is 286 s (7.9%) under the 3600 s hard
+cap and 86 s under the 3400 s warn band — inside both, but only just. Honestly reported, and stage
+4's non-gradient time is folded into `wall_clock_s` (`H36.py:175`). But: `sweep.sh` passes no
+`--time-limit`, so `time_limit=None` → `alt_budget=None` → **stage 4 is not self-limiting**. On a
+loaded or thermally throttled machine H36 does not degrade gracefully; it simply overruns the cap.
+H36 consumed 21% of the champion's remaining microns headroom (360 s → 286 s). Two consequences
+for the campaign: (a) the next microns-touching variant has almost no room left, and (b) if a
+future run *is* given a `--time-limit`, H36's microns score becomes machine-load-dependent, since
+truncating stage 4 lowers it. Recommend the driver pass an explicit `--time-limit 3600` so
+overruns degrade instead of failing, and that H36's score then be re-established under it.
+
+**10. Reproducibility — PASS with four defects, one of which should be fixed before promotion.**
+Every headline number traces to a `results/*.json` or `proto_H36.json`; `rescore` PASS on all 30
+runs; the confirm connectome value `84.09717365667385` matches `part3` cycle 11 `after_sift_pct` to
+the last digit, which is a genuinely strong end-to-end consistency check (stages 1-3 are
+deterministic and reproduce the stored H35 order exactly). Defects:
+- **(a) `git_commit` is `9d43b977…+dirty` on all 36 H36 runs, and `9d43b977` (P02) does not contain
+  `H36.py` or `scc_recursive.py`.** No `git checkout` reproduces these runs as the record stands.
+  The `+dirty` suffix is systemic in this campaign (H30/H35 carry it too), but it is materially
+  worse here because the *algorithm itself* was untracked at run time. **Blocking-ish:** the cycle
+  must commit the exact source before `sota.json` is touched, and a later reader has no mechanical
+  guarantee that the committed source equals the run source.
+- **(b) All four prototype scripts live in gitignored `dr_tmp/`.** `.gitignore`'s own comment says
+  keepers "must be promoted, not left here, so they stay reproducible-by-checkout". The C1 control
+  is the single most load-bearing fairness artefact in this cycle and it is not
+  reproducible-by-checkout. Promote `proto_H36d.py` (at minimum) into a tracked location.
+- **(c) The log's prototype table quotes endpoint values (mouse 92.507675 → 92.643455; synthetic
+  64.407341 → 67.864913) that are NOT in the tracked `proto_H36.json`** — it carries only the
+  deltas in `summary`. They trace only to gitignored `dr_tmp/proto_H36_out.json`.
+- **(d) The "H35 scores 0.0019 pp below H30 on microns" attribution argument is MPS-era.** Both
+  records (`20260622T2*-H35-microns-*`, 83.2045) are `Apple MPS`; **there is no H35 microns run on
+  this device**. Same-device internally, so the direction is credible, but it has not been
+  re-established on CUDA and should not be quoted as if it had. Non-load-bearing: the headline
+  microns claim is H36-vs-H30 end-to-end on this device and stands without it. Note the prototype
+  actually points the other way — C2 (H30 order + stage 4) reaches 83.23198 vs H36's 83.23385, so
+  on this device the H35 base looks ~0.002 pp *better*, making the attribution roughly neutral
+  rather than conservative.
+- **(e) cosmetic:** "0.7046 → 0.5175 (26.6%)" mixes the MPS-era champion (83.9101) into the old gap
+  while using the CUDA value for the new one. On consistent CUDA numbers it is 0.7012 → 0.5175 =
+  26.2%. Also, `hist.attrs` is dropped by `eval/harness.py`, so the per-stage split (pure Rocket /
+  sift / alternation) is not persisted in any `results/*.json` — CLAUDE.md's "report the pure Rocket
+  score separately" is satisfied only in the source, not the record. Systemic (H30/H35 identical),
+  filed here as an observation.
+
+**Double counting — PASS.** Stage 4 is credited as (H36 − champion), stages 1-3 are byte-for-byte
+H35, and the microns attribution errs toward under-claiming (see 10d). No stage is credited twice.
+
+### Recommendation: **KEEP**
+
+The mechanism is real, structurally novel under a revival condition that names it explicitly,
+monotone by an argument I verified analytically and could not break over 4,400 adversarial graphs,
+and the gain survives the one control that actually matters for a zero-gradient-step variant
+(matched wall-clock against the champion's own move class, 37.7×). Both primaries clear their
+gates by 14-15× the minimum effect size, with implement/confirm bit-identity ruling out selection.
+
+**Conditions before `sota.json` is written:** commit the H36 source (defect 10a); promote
+`proto_H36d.py` out of `dr_tmp/` (10b); record the promotion as **"GENERAL WIN with mouse caveat"**
+per `PROTOCOL.md`'s own decision table rather than as a clean three-dataset win; file P04.
+
+**Where this is fragile — what would falsify it later:**
+1. **Microns has no matched-wall-clock control.** If H30 given +74 s of its own sift on microns
+   recovers ≳0.028 pp, the microns leg of this win is compute, not mechanism. Measure it.
+2. **Runtime.** microns sits 286 s under a hard 3600 s cap with no self-limiting. Any slowdown
+   (machine load, thermals, a larger dataset, a future `--time-limit`) turns the microns score into
+   a load-dependent quantity. The next variant that touches microns has essentially no headroom.
+3. **The curve was still rising at 31 cycles.** 12 cycles is a budget choice made *on the
+   evaluation graph using the target metric*. That is the campaign's standing norm, not an H36
+   defect, but there is no held-out graph, so the +0.1837 pp is a point on a tuned curve. H42
+   (sizing up) will test whether the mechanism or the budget is doing the work.
+4. **`min_block=32` and `DEFAULT_SPLIT_FRACS` are untuned magic.** If the gain collapses under a
+   different `min_block` or split schedule, the effect is narrower than the "structural move class"
+   story claims.
+5. **Provenance.** If the committed source ever fails to reproduce `84.09717365667385` from a
+   clean checkout at 5 seeds, the whole cycle is void — the `+dirty` commits give no protection.

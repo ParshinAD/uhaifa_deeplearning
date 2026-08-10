@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260810T031152Z-H36-mouse-s2236-confirm-74c6f1",
+  "algo": "H36",
+  "dataset": "mouse",
+  "seed": 2236,
+  "score": 8.510302935524168,
+  "pct": 92.91701410211007,
+  "wall_clock_s": 5.111996173858643,
+  "git_commit": "9d43b977eea807ebe30fef82c5bc81b9d6fe1a61+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "74c6f1c4d299",
+  "timestamp": "2026-08-10T03:11:58Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results\\20260810T031152Z-H36-mouse-s2236-confirm-74c6f1_positions.npy",
+  "experiment_id": "H36",
+  "role": "confirm",
+  "hypothesis": "The residual gap lives inside the giant SCC as a JOINT rearrangement that no single-node move can reach. Adding a structural block move class (recursive SCC-topological reordering of contiguous blocks) and alternating it with the champion's exact-gain sift reaches a joint fixed point neither reaches alone, beating the champion on both primaries at 0 extra gradient steps.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}

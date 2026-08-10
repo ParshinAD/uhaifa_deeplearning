@@ -1,52 +1,54 @@
 # Campaign dashboard
 
-*Generated 2026-08-09 22:14 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-10 06:54 by `autoresearch/dashboard.py` â€” do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 2 · **mode:** `incremental` · **consecutive kills:** 0
+**Phase:** `quality` Â· **cycle:** 3 Â· **mode:** `incremental` Â· **consecutive kills:** 0
 
-## Progress — connectome (Phase 1 target)
+## Progress â€” connectome (Phase 1 target)
 
 ```
   bootstrap  83.9101%
-  now        83.9135%   ································    0.5% of the way
+  now        84.0972%   â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆÂ·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·   26.6% of the way
   target     84.6147%   (reference solution / Vahidi 2025)
-  remaining  +0.7012 pp
+  remaining  +0.5175 pp
 ```
 
 ## Champions
 
 | dataset | champion | score | n | wall/run | evidence |
 |---|---|---|---|---|---|
-| connectome | **H35** | 83.9135 ± 0.0 | 3 | ~591s | findings.md #5 (re-baselined on CUDA, P01 2026-08-09) |
-| microns | **H30** | 83.2063 ± 0.0 | 3 | ~3240s | findings.md #4 (re-baselined on CUDA, P01 2026-08-09) |
-| mouse | **H30** | 92.9018 ± 0.0 | 3 | ~6s | findings.md #4 (re-baselined on CUDA, P01 2026-08-09) |
+| connectome | **H36** | 84.0972 Â± 0.0 | 5 | ~840s | findings.md #6 (H36, 2026-08-10) |
+| microns | **H36** | 83.2338 Â± 0.0 | 5 | ~3314s | findings.md #6 (H36, 2026-08-10) |
+| mouse | **H36** | 92.917 Â± 0.0 | 20 | ~5s | findings.md #6 (H36, 2026-08-10) |
 
-## Queue — 9 proposed / 11 total
+## Queue â€” 11 proposed / 14 total
 
 | # | id | title | status |
 |---|---|---|---|
-| 0 | `P01` | HARDWARE RE-BASELINE â€” re-measure the champions on this machine before any c | done |
-| 1 | `P02` | The screen seeds are inert for deterministic variants â€” is 3x the compute bu | done |
+| 0 | `P01` | HARDWARE RE-BASELINE â€” re-measure the champions on this machine before any cyc | done |
+| 1 | `P02` | The screen seeds are inert for deterministic variants â€” is 3x the compute buyi | done |
 | 1 | `P03` | Cycle handoff: the previous cycle was still writing when the driver launched t | proposed |
-| 1 | `H36` | SCC-decomposed recursive bounded-span insertion (the Vahidi route) | proposed |
+| 1 | `H36` | SCC-decomposed recursive bounded-span insertion (the Vahidi route) | confirmed |
+| 1 | `H42` | Size up the stage-4 alternation budget - the curve was still rising when we cu | proposed |
+| 2 | `P04` | The mouse non-inferiority test is mis-specified - it can only be passed by a l | proposed |
+| 2 | `P05` | Stage 4 is not self-limiting: microns runs 3314 s of a 3600 s cap with no wall | proposed |
 | 2 | `H37` | Cycle-triggered under-relaxation (fix the microns regression, make H35 a gener | proposed |
 | 3 | `H38` | Gauss-Seidel / block-sequential exact-gain sift | proposed |
 | 4 | `H39` | Alternating discrete <-> continuous refinement with a frozen scale (A-ALT) | proposed |
 | 5 | `H40` | Structure-aware destroy operator for ruin-and-recreate (revives H31 under its  | proposed |
 | 6 | `H41` | Segment / block moves instead of single-node re-insertion | proposed |
-| 7 | `S01` | PHASE-2 SIZING (speed): how much Rocket does the pipeline actually need? | proposed |
-| 8 | `L01` | Literature scan: post-2024 FAS / linear-arrangement / connectome-ordering meth | proposed |
 
 ## Recent cycles
 
 | cycle | item | verdict | note |
 |---|---|---|---|
+| 3 | `H36` | **keep** | NEW CHAMPION on all three datasets - the first score move of the autonomous camp |
 | 2 | `P02` | **keep** | Protocol amendment, no algorithm change. Established BOTH legs: (A) a static cal |
 | 1 | `P01` | **done** | Port MacBook/MPS -> Windows/RTX 4060 (CUDA). 12 runs, 3 seeds x (H35 connectome, |
 
 ## Evidence
 
-- `results/*.json`: **279** run records across **17** variants
+- `results/*.json`: **315** run records across **18** variants
 - killed mechanisms on record: **15** (+7 deferred, 7 meta-rules)
 - literature notes: **0**
 

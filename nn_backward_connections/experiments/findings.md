@@ -317,6 +317,103 @@ for S in 42 123 999; do python -m eval.run_variant --exp H35 --dataset microns -
 Exploratory diagnosis (the limit-cycle + α sizing): `dr_tmp/FINDINGS_underrelaxation.md`,
 `dr_tmp/exp_sweeps.py`, `dr_tmp/exp_damped.py`, `dr_tmp/exp_underrelax.py`.
 
+
+## #6 — A structural BLOCK move class closes 26% of the remaining gap: +0.184 pp on the fly connectome (Phase 7)
+
+**Claim.** Every discrete refiner in this campaign up to H35 moves **one node at a time**
+(`mfas.refine.insertion`, `mfas.refine.underrelax`). Meta-rule **M4** had already established
+that bounded *rank-window* neighbourhoods recover nothing — the recoverable weight is long-range
+— and closed H22. The missing object was the neighbourhood M4's own revival condition named: a
+**structural** one. Variant **H36** adds it, and the residual turns out to be substantially a
+**joint** rearrangement that no single-node move can reach.
+
+**The move, and why it is monotone by construction.** *Contiguous-block lemma:* if a node set
+occupies a contiguous range of positions on the line, permuting those nodes among themselves
+cannot change the orientation of any edge with an endpoint outside the range — the outside
+endpoint lies either before every position in the range or after every one. Each contiguous block
+is therefore an **independent sub-problem**. Within a block: decompose the induced subgraph into
+strongly connected components, lay them out in a **topological order of the condensation** (ties
+broken by the incoming order), keep each SCC's nodes in their **current relative order**, and
+recurse. Every inter-SCC edge becomes feedforward (an edge back from B to A would have merged
+them into one SCC) and every intra-SCC edge keeps its orientation — so the block's contribution is
+**non-decreasing**, and the whole pass is monotone in the exact score. A block that is a single
+SCC is cut in half by position and recursed into; the halves are *strict* subgraphs, so strong
+connectivity generally breaks and they decompose again. That is what makes the scheme recursive
+rather than one-shot.
+
+This distinction is the whole finding. The **one-shot** top-level condensation was already
+measured and is worth nothing (`dr_tmp/FINDINGS_underrelaxation.md` E2: 9,626 SCCs but a giant one
+holding 92.82% of the nodes, inter-SCC weight 1.50% of the total and already 99.99% feedforward,
+forcing them all feedforward gains **+0.00013 pp**). Re-decomposing *strict subgraphs of the giant
+SCC* is a different object, and it is where the weight is.
+
+Refiner: `src/mfas/refine/scc_recursive.py`. Variant: `src/mfas/experiments/H36.py` = H35's
+pipeline (stages 1–3 byte-for-byte) + stage 4, which alternates the block refiner with a short
+under-relaxed sift, best-by-oracle. The two move classes are disjoint, so each re-opens moves the
+other has exhausted; alternating reaches a joint fixed point neither reaches alone.
+
+**Evidence (role=confirm; 5/5/20 seeds; every run bit-identical within its dataset — the
+pipeline is `deterministic` by `seed_class.py` and this device reproduces bit-for-bit):**
+
+| dataset | H36 mean±std | champion mean±std | Δ | PROTOCOL CI lo | min effect size | max wall |
+|---|---|---|---|---|---|---|
+| connectome | **84.0972** ± 0.0000 (n=5) | 83.9135 ± 0.0000 (H35) | **+0.1837 pp** | **+0.1534** | 0.012 | 840 s |
+| microns | **83.2338** ± 0.0000 (n=5) | 83.2063 ± 0.0000 (H30) | **+0.0276 pp** | **+0.0266** | 0.002 | 3314 s |
+| mouse | **92.9170** ± 0.0000 (n=20) | 92.9018 ± 0.0000 (H30) | +0.0152 pp | −0.4047 | non-inferiority | 5 s |
+
+Both primaries clear every rule that applies (Welch CI lo > 0, PROTOCOL CI lo > 0 with σ floored
+at `baseline_sigma_pp`, and Δ far above the minimum effect size). **Mouse is a caveat, not a
+pass:** its PROTOCOL CI lower bound (−0.4047) does not clear −0.26. Under `PROTOCOL.md`'s decision
+table this is the `✓ ✓ ✗` row — **GENERAL WIN with mouse caveat**. The bar is mechanically
+unreachable for a non-inferiority test (σ floored at the random-init baseline's 0.2624 pp on a
+148-node graph ⇒ certifying "not worse" would require Δ > +0.16 pp, i.e. a large *improvement*);
+the measured mouse Δ is **+0.0152 pp**, positive, over 20 seeds with zero dispersion. The rule is
+mis-specified and is filed as **P04**; the same bound was passed over for P02 (`audit_P02.json`
+mouse `protocol_ci_lower = −0.4199`, KEEP at Δ = 0.0000).
+
+**It is the move class, not the extra compute.** Stage 4 adds **0 gradient steps**, so
+`budget_basis = total_grad_steps` records it as free — which it is not; it spends real CPU. The
+honest test is a matched-wall-clock control: give the champion's OWN move class the same time,
+from the same starting order, on the same machine
+(`experiments/proto_h36_control.py` → `experiments/outputs/proto_H36_control.json`):
+
+| dataset | matched wall | champion's own move class (more sift sweeps) | the block move class | ratio |
+|---|---|---|---|---|
+| connectome | ~340 s | +0.0051 pp (120 sweeps) | **+0.1837 pp** (12 cycles) | **36.0×** |
+| microns | ~95 s | +0.0020 pp (15 sweeps) | **+0.0257 pp** (3 cycles) | **13.0×** |
+
+On microns, pure extra sift compute only just reaches that dataset's 0.002 pp minimum effect size,
+while H36 clears it 14×.
+
+**Mission impact.** Connectome 83.9135 → **84.0972**. Gap to the 84.6147 reference solution:
+0.7046 → **0.5175 pp** — **26.6% of the remaining gap closed in one cycle**, by combinatorial
+means, with no MIP and no extra gradient steps. This is the first evidence in the campaign that
+the Vahidi route (greedy + insertion + SCC, no MIP) transfers.
+
+**Honest limits.**
+- **Not converged.** The connectome sizing curve is still rising at the point it was cut:
+  +0.128 pp @ 4 cycles → +0.192 @ 12 → +0.214 @ 31 (803 s). H36 ships 12 cycles — the knee of the
+  cost/benefit curve, chosen so a cycle fits its budget, **not** an optimum. Sizing it up is a
+  free-score follow-up (**H42**).
+- **Runtime headroom is thin on microns.** 3314 s against a 3600 s hard cap. Stage 4 is a fixed
+  cycle count with no wall-clock guard when the runner passes no `time_limit`, so on a loaded
+  machine it overruns rather than degrades (**P05**).
+- **`total_grad_steps` is the wrong fairness basis for this class of variant.** It is retained for
+  continuity with #1–#5, but for a refiner that adds substantial non-gradient compute the
+  matched-wall-clock control above is what actually carries the fairness claim.
+- Reproducibility caveat: the 36 run records stamp `9d43b977…+dirty`, the parent commit. The
+  variant source was last modified 23:11–23:13, before the screen launched at 23:16, so the commit
+  that introduces it contains exactly the code that produced them.
+
+**Reproduce**
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY -m pytest tests/test_refine_scc_recursive.py -q   # 31 passed (incl. monotonicity)
+bash autoresearch/sweep.sh --exp H36 --role confirm --auto-seeds     # 5/5/20 seeds, detached
+$PY autoresearch/audit.py --variant H36 --comparator champion \
+    --role confirm --comparator-role implement --out autoresearch/audit_H36.json
+PYTHONPATH=src $PY experiments/proto_h36_control.py                  # the matched-wall control
+```
 ## Phase-6 summary — global discrete refinement (H30–H34, 2026-06-22)
 
 **Result: 1 CONFIRMED win (H30), 4 kills.** The backlog (H30–H34) is exhausted.

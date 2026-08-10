@@ -1,0 +1,538 @@
+{
+  "_doc": "H36 prototype gate (rung 2) \u2014 recursive SCC-topological BLOCK refinement. All numbers below are CPU-only and start from STORED champion positions (no GPU, no gradient steps). Produced by dr_tmp/proto_H36{,b,c,d}.py.",
+  "variant": "H36",
+  "date": "2026-08-09",
+  "gate": "prototype",
+  "machine": "Windows 10 / RTX 4060 Laptop GPU (CUDA); CPU-only for this gate",
+  "reproduce": [
+    "PY=/c/ProgramData/anaconda3/envs/allen/python.exe",
+    "$PY dr_tmp/proto_H36.py mouse      # cheap proxy: mouse",
+    "$PY dr_tmp/proto_H36.py synth      # cheap proxy: gap.make_hard_synthetic_graph",
+    "$PY dr_tmp/proto_H36.py connectome # real graph, from the stored H35 champion order",
+    "$PY dr_tmp/proto_H36c.py connectome  # saturation sizing",
+    "$PY dr_tmp/proto_H36d.py            # matched-wall-clock control + microns ship config"
+  ],
+  "part1_proxies": {
+    "connectome_from_champion": {
+      "champion_pct": 83.91351804242117,
+      "refined_pct": 83.94574498114997,
+      "delta_pp": 0.03222693872879745,
+      "source": "results\\20260809T142912Z-H35-connectome-s42-implement-8f52fb_positions.npy",
+      "log": [
+        {
+          "round": -1,
+          "pct": 83.91351804242117,
+          "wall": 0.0
+        },
+        {
+          "round": 0,
+          "pct": 83.92992617580667,
+          "wall": 2.6851727962493896,
+          "split_frac": 0.5,
+          "n_scc_calls": 830,
+          "n_topo_blocks": 477,
+          "n_reordered": 477
+        },
+        {
+          "round": 1,
+          "pct": 83.93943654656057,
+          "wall": 2.904000997543335,
+          "split_frac": 0.382,
+          "n_scc_calls": 1101,
+          "n_topo_blocks": 620,
+          "n_reordered": 513
+        },
+        {
+          "round": 2,
+          "pct": 83.94574498114997,
+          "wall": 2.7980453968048096,
+          "split_frac": 0.618,
+          "n_scc_calls": 1328,
+          "n_topo_blocks": 745,
+          "n_reordered": 593
+        }
+      ]
+    }
+  },
+  "part2_saturation_and_alternation": {
+    "champion_pct": 83.91351804242117,
+    "source": "results/20260809T142912Z-H35-connectome-s42-implement-8f52fb_positions.npy",
+    "scc_only": {
+      "final_pct": 83.97184958888165,
+      "delta_pp": 0.058331546460479444,
+      "wall_s": 44.18722200393677,
+      "log": [
+        {
+          "round": 0,
+          "pct": 83.92992617580667,
+          "n_reordered": 477,
+          "cum_wall": 2.708261013031006
+        },
+        {
+          "round": 1,
+          "pct": 83.93943654656057,
+          "n_reordered": 513,
+          "cum_wall": 5.634162187576294
+        },
+        {
+          "round": 2,
+          "pct": 83.94574498114997,
+          "n_reordered": 593,
+          "cum_wall": 8.485161066055298
+        },
+        {
+          "round": 3,
+          "pct": 83.95142591260131,
+          "n_reordered": 760,
+          "cum_wall": 12.225853443145752
+        },
+        {
+          "round": 4,
+          "pct": 83.95679189951188,
+          "n_reordered": 813,
+          "cum_wall": 15.546962976455688
+        },
+        {
+          "round": 5,
+          "pct": 83.9605330589053,
+          "n_reordered": 726,
+          "cum_wall": 18.332961559295654
+        },
+        {
+          "round": 6,
+          "pct": 83.96254918115493,
+          "n_reordered": 772,
+          "cum_wall": 21.323242664337158
+        },
+        {
+          "round": 7,
+          "pct": 83.96539561173932,
+          "n_reordered": 773,
+          "cum_wall": 24.19800066947937
+        },
+        {
+          "round": 8,
+          "pct": 83.96684149349468,
+          "n_reordered": 947,
+          "cum_wall": 28.066097021102905
+        },
+        {
+          "round": 9,
+          "pct": 83.96852835554262,
+          "n_reordered": 964,
+          "cum_wall": 31.483098030090332
+        },
+        {
+          "round": 10,
+          "pct": 83.96943262812559,
+          "n_reordered": 801,
+          "cum_wall": 34.32809853553772
+        },
+        {
+          "round": 11,
+          "pct": 83.9703249709911,
+          "n_reordered": 832,
+          "cum_wall": 37.35109758377075
+        },
+        {
+          "round": 12,
+          "pct": 83.97115527932587,
+          "n_reordered": 813,
+          "cum_wall": 40.2842230796814
+        },
+        {
+          "round": 13,
+          "pct": 83.97184958888165,
+          "n_reordered": 938,
+          "cum_wall": 44.18722200393677
+        }
+      ]
+    },
+    "alternating": {
+      "final_pct": 84.04155969984926,
+      "delta_pp": 0.12804165742808493,
+      "wall_s": 104.45663619041443,
+      "log": [
+        {
+          "cycle": 0,
+          "after_scc_pct": 83.92992617580667,
+          "after_sift_pct": 83.97223611172714,
+          "working_pct": 83.97223611172714,
+          "cum_wall": 25.669848918914795
+        },
+        {
+          "cycle": 1,
+          "after_scc_pct": 83.9835311682121,
+          "after_sift_pct": 84.0041671934631,
+          "working_pct": 84.0041671934631,
+          "cum_wall": 51.67369627952576
+        },
+        {
+          "cycle": 2,
+          "after_scc_pct": 84.01101723722489,
+          "after_sift_pct": 84.02663800925846,
+          "working_pct": 84.02663800925846,
+          "cum_wall": 77.54134607315063
+        },
+        {
+          "cycle": 3,
+          "after_scc_pct": 84.03174392832855,
+          "after_sift_pct": 84.04155969984926,
+          "working_pct": 84.04155969984926,
+          "cum_wall": 104.45663619041443
+        }
+      ]
+    }
+  },
+  "part3_sizing": {
+    "connectome": {
+      "champion_pct": 83.91351804242117,
+      "final_pct": 84.12711247559508,
+      "delta_pp": 0.2135944331739097,
+      "wall_s": 802.6215107440948,
+      "n_cycles": 31,
+      "log": [
+        {
+          "cycle": 0,
+          "after_scc_pct": 83.92992617580667,
+          "after_sift_pct": 83.97223611172714,
+          "t_scc_s": 2.7066843509674072,
+          "t_sift_s": 23.107060432434082,
+          "cum_wall_s": 25.814744472503662,
+          "cum_delta_pp": 0.0587180693059679
+        },
+        {
+          "cycle": 1,
+          "after_scc_pct": 83.9835311682121,
+          "after_sift_pct": 84.0041671934631,
+          "t_scc_s": 2.899001359939575,
+          "t_sift_s": 23.0918447971344,
+          "cum_wall_s": 51.80559062957764,
+          "cum_delta_pp": 0.09064915104193005
+        },
+        {
+          "cycle": 2,
+          "after_scc_pct": 84.01101723722489,
+          "after_sift_pct": 84.02663800925846,
+          "t_scc_s": 2.8229870796203613,
+          "t_sift_s": 23.012885332107544,
+          "cum_wall_s": 77.64146304130554,
+          "cum_delta_pp": 0.11311996683728864
+        },
+        {
+          "cycle": 3,
+          "after_scc_pct": 84.03174392832855,
+          "after_sift_pct": 84.04155969984926,
+          "t_scc_s": 3.8201136589050293,
+          "t_sift_s": 23.0892493724823,
+          "cum_wall_s": 104.55082607269287,
+          "cum_delta_pp": 0.12804165742808493
+        },
+        {
+          "cycle": 4,
+          "after_scc_pct": 84.04532949056455,
+          "after_sift_pct": 84.05547690823047,
+          "t_scc_s": 3.346013069152832,
+          "t_sift_s": 22.95778250694275,
+          "cum_wall_s": 130.85462164878845,
+          "cum_delta_pp": 0.1419588658093005
+        },
+        {
+          "cycle": 5,
+          "after_scc_pct": 84.05845217976338,
+          "after_sift_pct": 84.06521155767251,
+          "t_scc_s": 2.817546844482422,
+          "t_sift_s": 22.938120126724243,
+          "cum_wall_s": 156.61028861999512,
+          "cum_delta_pp": 0.15169351525133834
+        },
+        {
+          "cycle": 6,
+          "after_scc_pct": 84.06738753813603,
+          "after_sift_pct": 84.07422088029337,
+          "t_scc_s": 2.9660003185272217,
+          "t_sift_s": 22.948238611221313,
+          "cum_wall_s": 182.52452754974365,
+          "cum_delta_pp": 0.16070283787219353
+        },
+        {
+          "cycle": 7,
+          "after_scc_pct": 84.0758814969629,
+          "after_sift_pct": 84.08052454299579,
+          "t_scc_s": 2.9320905208587646,
+          "t_sift_s": 22.9143226146698,
+          "cum_wall_s": 208.37094068527222,
+          "cum_delta_pp": 0.1670065005746153
+        },
+        {
+          "cycle": 8,
+          "after_scc_pct": 84.08218038777832,
+          "after_sift_pct": 84.0873173241138,
+          "t_scc_s": 3.992999792098999,
+          "t_sift_s": 23.021518230438232,
+          "cum_wall_s": 235.38545870780945,
+          "cum_delta_pp": 0.1737992816926237
+        },
+        {
+          "cycle": 9,
+          "after_scc_pct": 84.08867969784698,
+          "after_sift_pct": 84.09229440223538,
+          "t_scc_s": 3.4780023097991943,
+          "t_sift_s": 23.135850191116333,
+          "cum_wall_s": 261.999311208725,
+          "cum_delta_pp": 0.1787763598142078
+        },
+        {
+          "cycle": 10,
+          "after_scc_pct": 84.09327741095355,
+          "after_sift_pct": 84.09512890310232,
+          "t_scc_s": 2.909987449645996,
+          "t_sift_s": 23.06971764564514,
+          "cum_wall_s": 287.9790163040161,
+          "cum_delta_pp": 0.18161086068114685
+        },
+        {
+          "cycle": 11,
+          "after_scc_pct": 84.09582082671463,
+          "after_sift_pct": 84.09717365667385,
+          "t_scc_s": 3.0995984077453613,
+          "t_sift_s": 23.068963766098022,
+          "cum_wall_s": 314.1475784778595,
+          "cum_delta_pp": 0.18365561425267174
+        },
+        {
+          "cycle": 12,
+          "after_scc_pct": 84.09808270114381,
+          "after_sift_pct": 84.1059539287196,
+          "t_scc_s": 2.935366630554199,
+          "t_sift_s": 22.98660898208618,
+          "cum_wall_s": 340.07056164741516,
+          "cum_delta_pp": 0.19243588629842634
+        },
+        {
+          "cycle": 13,
+          "after_scc_pct": 84.10664108044493,
+          "after_sift_pct": 84.10860709788126,
+          "t_scc_s": 3.948906183242798,
+          "t_sift_s": 23.00687026977539,
+          "cum_wall_s": 367.02633810043335,
+          "cum_delta_pp": 0.19508905546008748
+        },
+        {
+          "cycle": 14,
+          "after_scc_pct": 84.10922028535836,
+          "after_sift_pct": 84.11104314618525,
+          "t_scc_s": 3.4410006999969482,
+          "t_sift_s": 23.047905683517456,
+          "cum_wall_s": 393.51524448394775,
+          "cum_delta_pp": 0.19752510376407884
+        },
+        {
+          "cycle": 15,
+          "after_scc_pct": 84.11137002044347,
+          "after_sift_pct": 84.11296860258224,
+          "t_scc_s": 2.9400012493133545,
+          "t_sift_s": 23.04706072807312,
+          "cum_wall_s": 419.50230646133423,
+          "cum_delta_pp": 0.19945056016106832
+        },
+        {
+          "cycle": 16,
+          "after_scc_pct": 84.11331695033189,
+          "after_sift_pct": 84.11408045224891,
+          "t_scc_s": 3.094356060028076,
+          "t_sift_s": 23.013997793197632,
+          "cum_wall_s": 445.61066031455994,
+          "cum_delta_pp": 0.20056240982773943
+        },
+        {
+          "cycle": 17,
+          "after_scc_pct": 84.11450753613374,
+          "after_sift_pct": 84.11534023041199,
+          "t_scc_s": 2.974031686782837,
+          "t_sift_s": 22.96154522895813,
+          "cum_wall_s": 471.5462372303009,
+          "cum_delta_pp": 0.20182218799081397
+        },
+        {
+          "cycle": 18,
+          "after_scc_pct": 84.11570527976608,
+          "after_sift_pct": 84.11689586556793,
+          "t_scc_s": 3.968000888824463,
+          "t_sift_s": 22.893384218215942,
+          "cum_wall_s": 498.4076223373413,
+          "cum_delta_pp": 0.20337782314675223
+        },
+        {
+          "cycle": 19,
+          "after_scc_pct": 84.1173897558705,
+          "after_sift_pct": 84.11908377574889,
+          "t_scc_s": 3.4369957447052,
+          "t_sift_s": 23.20818543434143,
+          "cum_wall_s": 525.0528035163879,
+          "cum_delta_pp": 0.20556573332771677
+        },
+        {
+          "cycle": 20,
+          "after_scc_pct": 84.11936054519381,
+          "after_sift_pct": 84.12006201258008,
+          "t_scc_s": 2.8851609230041504,
+          "t_sift_s": 23.025654792785645,
+          "cum_wall_s": 550.9636192321777,
+          "cum_delta_pp": 0.20654397015890424
+        },
+        {
+          "cycle": 21,
+          "after_scc_pct": 84.12022187079396,
+          "after_sift_pct": 84.12072530487049,
+          "t_scc_s": 3.1162045001983643,
+          "t_sift_s": 22.971614360809326,
+          "cum_wall_s": 577.0514380931854,
+          "cum_delta_pp": 0.20720726244931598
+        },
+        {
+          "cycle": 22,
+          "after_scc_pct": 84.12093288195418,
+          "after_sift_pct": 84.12173217302356,
+          "t_scc_s": 2.992894172668457,
+          "t_sift_s": 22.928773403167725,
+          "cum_wall_s": 602.9731056690216,
+          "cum_delta_pp": 0.2082141306023857
+        },
+        {
+          "cycle": 23,
+          "after_scc_pct": 84.12194452199424,
+          "after_sift_pct": 84.12276528655504,
+          "t_scc_s": 3.916250705718994,
+          "t_sift_s": 23.128084659576416,
+          "cum_wall_s": 630.017441034317,
+          "cum_delta_pp": 0.20924724413386286
+        },
+        {
+          "cycle": 24,
+          "after_scc_pct": 84.12306114354789,
+          "after_sift_pct": 84.1237721547081,
+          "t_scc_s": 3.530999183654785,
+          "t_sift_s": 22.932908296585083,
+          "cum_wall_s": 656.4813485145569,
+          "cum_delta_pp": 0.21025411228693258
+        },
+        {
+          "cycle": 25,
+          "after_scc_pct": 84.12386997839123,
+          "after_sift_pct": 84.1242350277453,
+          "t_scc_s": 2.983001232147217,
+          "t_sift_s": 11.54987359046936,
+          "cum_wall_s": 671.0142233371735,
+          "cum_delta_pp": 0.21071698532412597
+        },
+        {
+          "cycle": 26,
+          "after_scc_pct": 84.12447600803786,
+          "after_sift_pct": 84.12496512645346,
+          "t_scc_s": 3.1540000438690186,
+          "t_sift_s": 23.043609619140625,
+          "cum_wall_s": 697.2118330001831,
+          "cum_delta_pp": 0.21144708403228663
+        },
+        {
+          "cycle": 27,
+          "after_scc_pct": 84.12503431881468,
+          "after_sift_pct": 84.12552820911726,
+          "t_scc_s": 2.9910013675689697,
+          "t_sift_s": 22.961520433425903,
+          "cum_wall_s": 723.164354801178,
+          "cum_delta_pp": 0.2120101666960892
+        },
+        {
+          "cycle": 28,
+          "after_scc_pct": 84.12561410308292,
+          "after_sift_pct": 84.12591473196275,
+          "t_scc_s": 3.978093147277832,
+          "t_sift_s": 22.98904800415039,
+          "cum_wall_s": 750.1314959526062,
+          "cum_delta_pp": 0.21239668954157764
+        },
+        {
+          "cycle": 29,
+          "after_scc_pct": 84.12625114999494,
+          "after_sift_pct": 84.12663290095345,
+          "t_scc_s": 3.4776217937469482,
+          "t_sift_s": 23.075136184692383,
+          "cum_wall_s": 776.6842539310455,
+          "cum_delta_pp": 0.21311485853227907
+        },
+        {
+          "cycle": 30,
+          "after_scc_pct": 84.12677128567591,
+          "after_sift_pct": 84.12711247559508,
+          "t_scc_s": 2.9669880867004395,
+          "t_sift_s": 22.970268726348877,
+          "cum_wall_s": 802.6215107440948,
+          "cum_delta_pp": 0.2135944331739097
+        }
+      ]
+    }
+  },
+  "part4_control_and_microns_config": {
+    "C1_sift_only_control": {
+      "champion_pct": 83.91351804242117,
+      "final_pct": 83.91861680366078,
+      "delta_pp": 0.005098761239608507,
+      "wall_s": 342.4851303100586,
+      "n_sweeps": 120,
+      "note": "matched-wall-clock control vs the alternation's +0.192 pp at 340 s"
+    },
+    "C2_microns_ship": {
+      "champion_pct": 83.20625676071326,
+      "final_pct": 83.23197660967718,
+      "delta_pp": 0.025719848963916547,
+      "wall_s": 94.63331484794617,
+      "n_cycles": 3,
+      "log": [
+        {
+          "cycle": 0,
+          "after_scc_pct": 83.21182798777993,
+          "after_sift_pct": 83.21940563578318,
+          "t_scc_s": 4.937209129333496,
+          "t_sift_s": 26.52656078338623,
+          "cum_wall_s": 31.463769912719727,
+          "cum_delta_pp": 0.013148875069916244
+        },
+        {
+          "cycle": 1,
+          "after_scc_pct": 83.22328861222357,
+          "after_sift_pct": 83.22736638681316,
+          "t_scc_s": 4.603932619094849,
+          "t_sift_s": 26.471742391586304,
+          "cum_wall_s": 62.53944492340088,
+          "cum_delta_pp": 0.02110962609989997
+        },
+        {
+          "cycle": 2,
+          "after_scc_pct": 83.22955461935565,
+          "after_sift_pct": 83.23197660967718,
+          "t_scc_s": 5.75911283493042,
+          "t_sift_s": 26.334757089614868,
+          "cum_wall_s": 94.63331484794617,
+          "cum_delta_pp": 0.025719848963916547
+        }
+      ]
+    }
+  },
+  "summary": {
+    "mouse_delta_pp": 0.13578016963982975,
+    "hard_synthetic_delta_pp": 3.457572604294768,
+    "connectome_from_champion_delta_pp_31_cycles": 0.213594,
+    "connectome_from_champion_delta_pp_12_cycles": 0.192436,
+    "microns_from_champion_delta_pp_3_cycles_ship_config": 0.025719848963916547,
+    "EXTRA_COMPUTE_CONTROL": {
+      "question": "The alternation adds 0 gradient steps but ~342 s of non-gradient wall-clock. Does the CHAMPION's OWN move class reach the same place given the same extra wall-clock?",
+      "champion_own_move_class_342s_delta_pp": 0.005098761239608507,
+      "new_block_move_class_340s_delta_pp": 0.192436,
+      "ratio": 37.7,
+      "conclusion": "The gain is the new BLOCK move class, not the extra compute: at matched wall-clock from the same starting order, 120 more under-relaxed sift sweeps buy +0.0051 pp against +0.1924 pp."
+    },
+    "verdict": "PROTOTYPE PASS \u2014 proceed to screen."
+  }
+}
