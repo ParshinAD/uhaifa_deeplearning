@@ -3016,3 +3016,32 @@ cycle #5 (07:08:38). This cycle's own preflight `git status` at ~07:09 saw a cle
 the sandbox for ~5.4 minutes. Benign here (a docs file, and the content is correct — it is the
 "never end your turn mid-job" lesson), and it has been committed as part of this cycle. But the
 same race on `sota.json` or `log.md` would interleave records that do not merge mechanically.
+
+### Operator verification of H42 (2026-08-10, outside the cycle)
+
+Cycle 5 recorded that the `critic` subagent was not run and the checklist was self-administered.
+That is the one gate H42 did not pass independently, so the mechanical half was re-done from
+outside the cycle. This note records what was and was not checked; it does **not** substitute for
+an adversarial critic on the parts a human would want red-teamed.
+
+Checked and **confirmed**:
+- Frozen manifest intact; all 30 confirm runs re-scored by the frozen oracle, exact.
+- Numbers re-derived from `results/*.json` independently of the cycle's arithmetic: connectome
+  84.1541 (n=5), microns 83.2409 (n=5), mouse 92.9170 (n=20), all σ = 0.
+- Judged against the **real predecessor** H36, not against itself — note that
+  `--comparator champion` now resolves to H42 and reports Δ = 0, which proves nothing. Against
+  H36: connectome **+0.0569 pp** (PROTOCOL CI_lo **+0.0335**), microns **+0.0070 pp**
+  (CI_lo **+0.0063**), mouse non-inferior. Both clear `screen_delta_pp` and both clear the
+  σ-floored PROTOCOL CI, not merely the degenerate Welch one.
+- Equal gradient budget on every dataset (20000 / 80000 / 5000) — the gain is not bought compute.
+- Every prototype figure quoted in the entry above matches `experiments/outputs/proto_H42.json`
+  exactly, at a genuinely matched budget (arm walls 1201.5 / 1200.9 / 1201.6 s), and the shipped
+  77-cycle score sits 0.0047 pp below the 143-cycle arm — consistent with the stated reason for
+  shipping 77.
+
+One imprecision, not material: the hypothesis says "the sift is ~88% of the cost". That is the
+**sweeps=4** share (87.2%); at the shipped H36 split (sweeps=8) it is 93.1%, and at sweeps=2 it is
+77.5%. The argument is unaffected — it is stronger at the split being replaced.
+
+**Not** covered by this note: an adversarial reading of the mechanism itself, and the P05 runtime
+risk below, which remains open and blocking.
