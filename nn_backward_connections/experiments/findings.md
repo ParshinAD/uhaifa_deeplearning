@@ -414,6 +414,67 @@ $PY autoresearch/audit.py --variant H36 --comparator champion \
     --role confirm --comparator-role implement --out autoresearch/audit_H36.json
 PYTHONPATH=src $PY experiments/proto_h36_control.py                  # the matched-wall control
 ```
+## #7 — Stage 4's inner sift was oversized: re-allocating the SAME seconds is worth +0.043 pp (Phase 7)
+
+**Claim.** H36's stage 4 alternates a recursive SCC **block** refiner with a short under-relaxed
+**node** sift. The block step is cheap (~3 s on connectome) and the sift is expensive (~23 s at
+the shipped 8 sweeps) — the sift is **~88% of every cycle's cost**. That split was never sized;
+it was inherited. Cutting the inner sift to **2 sweeps** and spending the freed seconds on *more
+alternations* reaches a strictly better order **at the same wall-clock**, because the two move
+classes are disjoint and it is the *alternation* — not the depth of either step — that pays.
+
+**The controlled comparison.** Three connectome arms, identical 1200 s budget, same stored
+stage-3 order, same production refiner (`experiments/outputs/proto_H42.json`):
+
+| inner sift | cycles bought | final |
+|---|---|---|
+| 8 sweeps (H36 ship split) | 47 | 84.1333 |
+| 4 sweeps | 85 | 84.1353 |
+| **2 sweeps** | **143** | **84.1588** |
+
+Same seconds, **+0.0255 pp** for the cheaper inner step. Stronger: at the wall-clock H36
+*actually spends today* (317.7 s), 2 sweeps reaches 84.1400 in 309.7 s — **+0.0428 pp for
+fewer seconds**, so the effect cannot be attributed to extra compute under any accounting.
+
+**Honest decomposition of the shipped +0.0569 pp on connectome.** H42 ships 77 cycles, which
+costs 392 s more per run than H36. Of the total gain:
+- **+0.0428 pp is pure re-allocation** — available at equal-or-less wall-clock;
+- **+0.0141 pp is the extra 392 s** of sizing on top.
+
+Both are real, but only the first is a free lunch, and the record should not blur them.
+
+**Sizing.** The connectome curve saturates: per-cycle increments fall to ~+0.00002 pp by cycle
+140. H42 stops at 77 because continuing to the measured end (143 cycles) adds **+0.0047 pp** —
+*below the dataset's own 0.012 pp minimum effect size* — for another 555 s/run.
+
+**Evidence (role=confirm; 5/5/20 seeds; every run bit-identical within its dataset):**
+
+| dataset | H42 mean±std | champion (H36) | Δ | min effect size | max wall |
+|---|---|---|---|---|---|
+| connectome | **84.154095** ± 0.000000 (n=5) | 84.097174 ± 0.000000 | **+0.056921 pp** | 0.012 | 1238 s |
+| microns | **83.240853** ± 0.000000 (n=5) | 83.233847 ± 0.000000 | **+0.007006 pp** | 0.002 | — |
+| mouse | 92.917014 ± 0.000000 (n=20) | 92.917014 ± 0.000000 | +0.000000 pp | non-inf | 6 s |
+
+0 extra gradient steps, so the `budget_basis = total_grad_steps` comparison stays matched —
+the same accounting under which H30, H35 and H36 were promoted.
+
+**Honest limits.**
+1. **Microns now crosses the runtime warn band** (3398–3418 s vs H36's 3265–3314 s, against a
+   3400 s warn and a 3600 s hard cap). Admissible — the cap is the admissibility rule and holds
+   with ~5% margin — but admissible *on an idle machine*. Queue item **P05** (stage 4 has no
+   wall-clock guard) is now load-bearing, not housekeeping.
+2. The microns leg buys **+0.0070 pp for +107 s**. That is a poor exchange rate compared to
+   connectome's, and it was taken only because the screen gate requires both primaries.
+3. **Stage attribution is inferred, not measured.** `results/*.json` does not persist
+   `history.attrs`, so per-stage timings are discarded at the end of every run. The claim that
+   the +107 s is entirely stage 4 rests on stages 1–3 being byte-identical and deterministic,
+   not on a timing record. Filed as **P06**.
+4. The prototype's **microns** arm started from H30's stage-3 order rather than H35's, so its
+   absolute scores and per-cycle costs did not transfer to production — which is exactly why
+   the microns runtime was mis-predicted as flat. The connectome arm, which did start from the
+   production order, reproduced production to six figures.
+
+
 ## Phase-6 summary — global discrete refinement (H30–H34, 2026-06-22)
 
 **Result: 1 CONFIRMED win (H30), 4 kills.** The backlog (H30–H34) is exhausted.

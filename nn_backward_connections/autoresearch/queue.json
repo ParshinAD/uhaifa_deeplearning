@@ -2,7 +2,7 @@
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
   "updated": "2026-08-10",
   "next_free_id": "H43",
-  "next_free_protocol_id": "P06",
+  "next_free_protocol_id": "P07",
   "items": [
     {
       "id": "P01",
@@ -65,7 +65,8 @@
         "autoresearch/CAMPAIGN.md § Hardware ('One machine at a time')"
       ],
       "est_cost": "cheap (reading driver.sh + a stub-cycle reproduction; no GPU)",
-      "expected_pp": "n/a - protects the record rather than the metric"
+      "expected_pp": "n/a - protects the record rather than the metric",
+      "evidence_upgraded": "2026-08-10 (cycle 5): REPRODUCED WITH TIMESTAMPS, no longer mtime archaeology. .claude/commands/research-cycle.md was written at 07:14:01 with cycle-#4-authored content - 6m23s AFTER driver.log recorded 'cycle #4 finished OK' (07:07:38) and 5m23s after it started cycle #5 (07:08:38); cycle #5's own preflight git status at ~07:09 saw a clean tree. Two cycles shared the sandbox for ~5.4 minutes. Benign this time (a docs file), but it proves the driver releases the lock before the cycle's last writes land."
     },
     {
       "id": "H36",
@@ -89,7 +90,7 @@
     {
       "id": "H42",
       "title": "Size up the stage-4 alternation budget - the curve was still rising when we cut it",
-      "status": "proposed",
+      "status": "confirmed",
       "priority": 1,
       "axis": "discrete refinement / compute allocation",
       "hypothesis": "H36 ships 12 alternation cycles on connectome because that was the knee of the cost/benefit curve at a moment when the CYCLE's budget was the binding constraint, not the ALGORITHM's. The measured curve was still climbing: +0.192 pp @ 12 cycles / 340 s, +0.214 pp @ 31 / 803 s. The connectome run has ~2700 s of unused headroom under the 3600 s cap, so raising the count is free score with no new mechanism.",
@@ -102,13 +103,14 @@
         "findings.md #6 'Honest limits'"
       ],
       "est_cost": "cheap to size (CPU only, from stored positions); a normal screen+confirm to promote",
-      "expected_pp": "connectome +0.02 to +0.10 beyond H36; microns 0 until P05"
+      "expected_pp": "connectome +0.02 to +0.10 beyond H36; microns 0 until P05",
+      "outcome": "KEEP / CHAMPION on all three datasets, 2026-08-10 (cycle 5). Two constants only: the stage-4 inner sift drops to 2 sweeps and the cycle counts are re-sized {connectome 12->77, microns 3->5, mouse 8->32}. Confirm (5/5/20 seeds, all bit-identical): connectome 84.1541 (+0.0569 pp vs H36), microns 83.2409 (+0.0070 pp), mouse 92.9170 (+0.0000). audit exit 0. THE MECHANISM IS ALLOCATION, NOT COMPUTE: at an identical 1200 s budget the cheap inner sift buys +0.0255 pp over the ship split, and at H36's OWN shipped stage-4 wall (317.7 s) it reaches 84.1400 in 309.7 s - better in fewer seconds. Honest split of the shipped connectome gain: +0.0428 pp is free re-allocation, +0.0141 pp is the extra 394 s. COST: microns now crosses the 3400 s warn band on 5/5 runs (3398-3418 s vs H36's 3265-3314), 182 s under the hard cap - see P05, now load-bearing. Gap to reference 0.5175 -> 0.4606 pp. Q1 answered: the connectome curve saturates at ~143 cycles; past 77 the remaining +0.0047 pp is below the 0.012 pp minimum effect size. See findings.md #7 and experiments/log.md."
     },
     {
       "id": "P04",
       "title": "The mouse non-inferiority test is mis-specified - it can only be passed by a large improvement",
       "status": "proposed",
-      "priority": 2,
+      "priority": 3,
       "kind": "protocol",
       "axis": "measurement",
       "hypothesis": "The mouse gate cannot do its job as written. audit.py floors sigma at baseline_sigma_pp = 0.2624 pp (the RANDOM-INIT baseline's dispersion on a 148-node graph); with n_comparator = 3 that is SE = 0.2142 pp, so a PROTOCOL CI lower bound above -0.26 requires delta > +0.1599 pp. A NON-INFERIORITY test is therefore passable only by a large IMPROVEMENT, which is backwards: the floor's conservative direction is correct for the primaries (where the risk is a false positive) and inverted for a non-inferiority check (where the risk is an undetected regression).",
@@ -122,13 +124,14 @@
         "experiments/PROTOCOL.md Phase-5 decision table"
       ],
       "est_cost": "cheap (no GPU; arithmetic plus a synthetic-regression check)",
-      "expected_pp": "n/a - protects the verdict rule"
+      "expected_pp": "n/a - protects the verdict rule",
+      "narrowed": "2026-08-10 (cycle 5, H42): the diagnosis in this item is WIDER THAN THE DEFECT. The mouse non-inferiority bound PASSED for H42 (protocol_ci_lower = -0.1626 > -0.26) with no change to the test. What changed is the COMPARATOR POOL: protocol_se scales as sqrt(2/n_c), so a 3-seed comparator gives SE = 0.2142 pp (bound -0.42, unpassable) while H36's 20-seed mouse pool gives SE = 0.0830 (bound -0.1626, passable). P02 and H36 both failed it because they were compared against 3-seed mouse pools, not because the statistic is mis-specified. Mouse costs ~5 s/run, so the cheap fix is to REQUIRE a 20-seed comparator pool on mouse before quoting the bound. Re-scope the item to that, and verify it still fires on a synthetic regression."
     },
     {
       "id": "P05",
-      "title": "Stage 4 is not self-limiting: microns runs 3314 s of a 3600 s cap with no wall-clock guard",
+      "title": "BLOCKING: stage 4 has no wall-clock guard and microns now runs 3398-3418 s against a 3400 s warn band",
       "status": "proposed",
-      "priority": 2,
+      "priority": 0,
       "kind": "infrastructure",
       "axis": "runtime safety",
       "hypothesis": "H36's stage 4 is a fixed CYCLE COUNT, and sweep.sh passes no --time-limit, so when time_limit is None the refinement has no wall-clock guard at all. On microns the run is already 3314 s against a 3600 s hard cap - about 8% margin. A loaded machine, a thermal throttle or a background job does not degrade the run, it OVERRUNS the cap, and the run then fails on usability grounds after burning ~55 minutes of GPU time.",
@@ -141,7 +144,8 @@
         "autoresearch/campaign.yaml runtime.max_wall_clock_s_per_run = 3600, warn = 3400"
       ],
       "est_cost": "cheap code change; ~1 h of GPU to verify the guard does not bind",
-      "expected_pp": "n/a - protects the runtime invariant"
+      "expected_pp": "n/a - protects the runtime invariant",
+      "escalated": "2026-08-10 (cycle 5, H42). No longer housekeeping. H42 spent the margin this item was filed to protect: microns crossed the warn band on 5/5 confirm runs (max 3418 s, 182 s / 5.1% under the 3600 s hard cap), where H36 sat at 3265-3314 s. The next microns variant that adds ANY stage-4 work overruns the cap on a loaded machine. Additional constraint discovered by H42: the guard must NOT size stage 4 by wall-clock, because a time-sized cycle count depends on machine load and would destroy the bit-reproducibility that sota.json (std = 0) and the P02 one-seed screen policy both rest on. It must degrade deterministically - e.g. a fixed cycle count with a wall-clock ABORT that is recorded in the run record - not a time-driven cycle count."
     },
     {
       "id": "H37",
@@ -253,6 +257,25 @@
       "goal": "Read Vahidi 2025 (arXiv:2506.13799) in full and extract its exact insertion/SCC mechanics; then sweep for newer FAS heuristics, and for adjacent literature (rank aggregation, minimum linear arrangement, DAG learning, topological ordering under noise) that carries transferable move classes.",
       "output": "autoresearch/lit/<date>-<topic>.md with concrete, falsifiable transfer ideas appended to this queue.",
       "est_cost": "cheap"
+    },
+    {
+      "id": "P06",
+      "title": "Run records discard per-stage timings, and sweep.sh --role confirm ignores confirm_seeds",
+      "status": "proposed",
+      "priority": 2,
+      "kind": "infrastructure",
+      "axis": "measurement / provenance",
+      "hypothesis": "Two independent gaps, both found while auditing H42, both of which force a cycle to INFER numbers it should be able to READ. (a) eval/run_variant.py does not persist history.attrs into results/*.json, so per-stage scores and timings - which every multi-stage variant since H30 computes at runtime - are discarded. H42's central runtime claim ('the +107 s on microns is entirely stage 4') therefore rests on an inference from stages 1-3 being byte-identical, not on a measurement, and no auditor can check it. (b) sweep.sh --role confirm does not read campaign.yaml confirm_seeds; it silently defaults to '42 123 999', so a confirm launched the obvious way runs 3 seeds instead of 5/5/20 and looks complete.",
+      "rationale": "(a) is a provenance hole in the one direction the campaign is currently spending its budget - stage-4 refinement - and it defeats audit.py's whole purpose of re-deriving claims mechanically. (b) is a live foot-gun: cycle 5 hit it, noticed only because it had just read the config, and had to top up the missing seeds in two extra sweeps. A cycle that did not notice would have promoted a champion on a 3-seed confirm while believing it ran the configured 5/5/20, and audit.py would have reported n=3 without anything flagging that as wrong.",
+      "method": "1) Persist history.attrs (or an explicit stages[] block: name, score, pct, wall_s) into results/*.json. It is additive - do NOT touch the frozen scorer or harness contract - and verify a re-scored run is unchanged. 2) Have audit.py report per-stage wall-clock when present, so runtime attribution becomes a check rather than a narrative. 3) Make sweep.sh --role confirm read confirm_seeds from campaign.yaml per dataset (it already does per-dataset seeds for --auto-seeds, so the plan format supports it), and make an explicit --seeds with role=confirm either an error or a loud warning. 4) Consider having audit.py FAIL when a confirm pool is smaller than the configured confirm_seeds.",
+      "kill_condition": "Not really killable - (b) is a demonstrated defect. If (a) turns out to bloat results/*.json beyond results_dir_max_gb, store the stage block in a sidecar keyed by run id instead.",
+      "prior_evidence": [
+        "experiments/log.md 2026-08-10 (H42), sections 'The prototype's microns leg did NOT transfer' and 'Reproduce'",
+        "autoresearch/audit_H42.json (runtime.microns)",
+        "autoresearch/sweep.sh (SEEDS default '42 123 999')"
+      ],
+      "est_cost": "cheap (no GPU for (b); one re-run to verify (a) changes no score)",
+      "expected_pp": "n/a - restores auditability of runtime and seed-count claims"
     }
   ]
 }

@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260810T072409Z-H42-connectome-s999-confirm-f41d7e",
+  "algo": "H42",
+  "dataset": "connectome",
+  "seed": 999,
+  "score": 35270783.0,
+  "pct": 84.15409511053134,
+  "wall_clock_s": 1226.5418727397919,
+  "git_commit": "1865372bc7a7b2814c27ef6e97785f41886cc6fb+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "f41d7ef84c12",
+  "timestamp": "2026-08-10T07:44:47Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results\\20260810T072409Z-H42-connectome-s999-confirm-f41d7e_positions.npy",
+  "experiment_id": "H42",
+  "role": "confirm",
+  "hypothesis": "H36's stage-4 inner sift was never sized: it costs ~88% of a cycle, so the shipped split buys few expensive cycles where it could buy many cheap ones. Cutting the inner sift to 2 sweeps and spending the freed seconds on more alternations beats the champion on both primaries at the SAME OR LOWER wall-clock and 0 extra gradient steps.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

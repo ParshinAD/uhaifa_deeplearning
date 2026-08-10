@@ -56,6 +56,13 @@ subgraph. Minutes of CPU, no large-graph compute. Write the outcome to
 `experiments/outputs/proto_<id>.json`. If the mechanism shows no signal, kill it here: this rung
 is what made Phase 6 cheap.
 
+If a prototype will take more than a few minutes, it gets the same treatment as a sweep: launch
+it **detached** (`setsid python dr_tmp/proto_<id>.py … </dev/null > dr_tmp/proto_<id>.out 2>&1 &`)
+and then **poll** it — never end your turn waiting. Record it in `state.json.current_item_note`
+(what, where the output lands, when it started) before you do anything else, so a cycle that dies
+anyway is resumed rather than duplicated. Cycle #4 skipped that step and nearly had two copies of
+the same 75-minute CPU prototype racing each other.
+
 **Screen.** Use the `implementer` subagent. Isolated module `src/mfas/experiments/<id>.py`,
 3 datasets (connectome, microns, mouse), `--role implement`, compared to the **champion** from
 `sota.json`. The **seed count is per variant** (P02, `PROTOCOL.md § Phase-7.4`): a variant that
@@ -137,9 +144,22 @@ Verdict is one of **keep / kill / iterate**, per the ladder. Then:
   written down with its revival condition.
 - Never report a number you did not produce; never keep a number the audit contradicts.
 - Sequential heavy runs only. One GPU device (RTX 4060).
-- **A cycle that stops mid-sweep loses the sweep.** Launch with `autoresearch/sweep.sh` (detached)
-  and poll with `autoresearch/waitfor.sh` until DONE. Ending your turn to "wait" is the single
-  most expensive mistake available here — see the note in the screen section.
+- **Never end your turn while any job is running — this applies to EVERY rung, not just the
+  screen.** There is no "I'll resume when it reports": your turn ending ends the session, and a
+  new cycle starts from files. This has now cost two cycles. Cycle #1 lost a ~50 min microns run
+  outright. Cycle #4 (2026-08-10) reached the H42 prototype rung, launched five arms of ~75 min
+  CPU, wrote "I'm waiting on the H42 prototype", and stopped — it survived only because the job
+  happened to be detached, and it left `current_item` unset so the next cycle nearly started a
+  duplicate against it.
+  - Anything longer than a few minutes — sweeps AND prototypes AND ad-hoc scripts — must be
+    launched **detached** (`autoresearch/sweep.sh`, or `setsid`/`nohup … </dev/null &` for a
+    one-off) so it outlives the session, and then **polled in a loop** (`autoresearch/waitfor.sh`,
+    or repeated bounded `sleep`+check calls) so you keep your turn.
+  - Before launching, check whether the job is **already running** — a duplicate CPU-bound
+    prototype contends with the original and corrupts both timings.
+- **Set `current_item` the moment you pick an item, not at the end.** It is the only thing that
+  tells the next cycle to resume rather than restart. If you launch a long job, record in
+  `current_item_note` what was launched, where its output lands, and when it started.
 - **Finish the bookkeeping even if the science is unfinished.** Before you stop for any reason,
   update `state.json` / `queue.json`, append what you learned to `experiments/log.md`, and COMMIT.
   An interrupted cycle that committed its partial result is resumable; one that did not leaves the

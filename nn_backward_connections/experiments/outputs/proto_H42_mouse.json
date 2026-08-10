@@ -1,0 +1,91 @@
+{
+  "_doc": "H42 mouse leg \u2014 stage-4 (sift_sweeps, n_cycles) grid on the mouse tripwire dataset. Stages 1-3 run once and shared by every arm, so arms differ only in stage 4. CPU only.",
+  "variant": "H42",
+  "gate": "prototype",
+  "date": "2026-08-10",
+  "dataset": "mouse",
+  "seed": 42,
+  "champion_pct": 92.917,
+  "ship_config_H36": {
+    "sift_sweeps": 8,
+    "n_cycles": 8
+  },
+  "stage3_pct": 92.90180243040469,
+  "reproduce": [
+    "/c/ProgramData/anaconda3/envs/allen/python.exe dr_tmp/proto_H42_mouse.py"
+  ],
+  "arms": [
+    {
+      "sift_sweeps": 8,
+      "n_cycles": 8,
+      "n_cycles_done": 8,
+      "wall_s": 0.008988380432128906,
+      "final_pct": 92.91701410211007,
+      "delta_vs_champion_pp": 1.4102110071689822e-05
+    },
+    {
+      "sift_sweeps": 8,
+      "n_cycles": 32,
+      "n_cycles_done": 32,
+      "wall_s": 0.03500080108642578,
+      "final_pct": 92.91701410211007,
+      "delta_vs_champion_pp": 1.4102110071689822e-05
+    },
+    {
+      "sift_sweeps": 4,
+      "n_cycles": 8,
+      "n_cycles_done": 8,
+      "wall_s": 0.007997512817382812,
+      "final_pct": 92.91701410211007,
+      "delta_vs_champion_pp": 1.4102110071689822e-05
+    },
+    {
+      "sift_sweeps": 4,
+      "n_cycles": 32,
+      "n_cycles_done": 32,
+      "wall_s": 0.03400063514709473,
+      "final_pct": 92.91701410211007,
+      "delta_vs_champion_pp": 1.4102110071689822e-05
+    },
+    {
+      "sift_sweeps": 2,
+      "n_cycles": 8,
+      "n_cycles_done": 8,
+      "wall_s": 0.00900125503540039,
+      "final_pct": 92.91701410211007,
+      "delta_vs_champion_pp": 1.4102110071689822e-05
+    },
+    {
+      "sift_sweeps": 2,
+      "n_cycles": 32,
+      "n_cycles_done": 32,
+      "wall_s": 0.034011125564575195,
+      "final_pct": 92.91701410211007,
+      "delta_vs_champion_pp": 1.4102110071689822e-05
+    },
+    {
+      "sift_sweeps": 2,
+      "n_cycles": 64,
+      "n_cycles_done": 64,
+      "wall_s": 0.0679936408996582,
+      "final_pct": 92.91701410211007,
+      "delta_vs_champion_pp": 1.4102110071689822e-05
+    },
+    {
+      "sift_sweeps": 2,
+      "n_cycles": 128,
+      "n_cycles_done": 128,
+      "wall_s": 0.14299607276916504,
+      "final_pct": 92.91701410211007,
+      "delta_vs_champion_pp": 1.4102110071689822e-05
+    },
+    {
+      "sift_sweeps": 1,
+      "n_cycles": 128,
+      "n_cycles_done": 128,
+      "wall_s": 0.13401126861572266,
+      "final_pct": 92.91701410211007,
+      "delta_vs_champion_pp": 1.4102110071689822e-05
+    }
+  ]
+}

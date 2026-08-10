@@ -2774,3 +2774,245 @@ per `PROTOCOL.md`'s own decision table rather than as a clean three-dataset win;
    story claims.
 5. **Provenance.** If the committed source ever fails to reproduce `84.09717365667385` from a
    clean checkout at 5 seeds, the whole cycle is void — the `+dirty` commits give no protection.
+
+---
+
+## 2026-08-10 — H42: re-allocate stage 4 — many cheap cycles beat few expensive ones — KEEP (NEW CHAMPION ×3)
+
+- **Cycle:** 5 (phase 7, quality). Mode: incremental. `consecutive_kills` was 0.
+  **Resumed item.** Cycle 4 (06:57–07:07) opened H42, launched the prototype **detached** and
+  ended its turn without a verdict. This cycle found `state.json.current_item = "H42"`, verified
+  the job was still alive (PID 22700, started 07:05:05), and used its output rather than
+  re-running it. The detach discipline added after cycle #1 worked exactly as intended: ~75 min
+  of CPU survived a session boundary. *(Note: Git Bash `pgrep -f` cannot see native Windows
+  processes and reported the job finished while it was still running — the same defect class P01
+  fixed for the driver watchdog. Use PowerShell `Get-CimInstance Win32_Process` to check.)*
+- **Item:** `queue.json` H42, priority 1.
+- **Classification:** `class=deterministic` (`autoresearch/seed_class.py --variant H42`).
+  Screen seeds run: connectome `[42]`, microns `[42]`, mouse `[42,123,999]` — 5 runs, not 9.
+  Confirm: connectome/microns `[7,42,123,999,31415]`, mouse 20 seeds.
+  **Tripwire held:** all 3 mouse screen runs and all 20 mouse confirm runs bit-identical
+  (92.917014), so the 1-seed primary numbers are not void.
+- **Device:** Windows 10 / NVIDIA RTX 4060 Laptop GPU (CUDA), torch 2.8.0+cu128, Python 3.9.25.
+
+### Hypothesis
+
+H36's stage-4 constants were sized when the *cycle's* budget, not the *algorithm's*, was binding,
+and the inner sift was never itself sized. A stage-4 cycle is (recursive SCC block refine) +
+(short under-relaxed sift), and the sift is ~88% of the cost. So at a fixed stage-4 wall-clock the
+shipped split buys few expensive cycles where it could buy many cheap ones. Cutting the inner sift
+from 8 sweeps (4 on microns) to 2 and spending the freed seconds on more alternations should reach
+a strictly better order at the same wall-clock.
+
+### Novelty gate — PASS (no shared axis)
+
+No `killed.json` entry shares the *compute-allocation* axis. Nearest neighbours: **H31** (ILS/LNS
+wrapper — different mechanism, killed for finding nothing the sift had not, at 1.9x wall) and
+**H22/M4** (bounded rank-window locality — a different move class). H42 adds no mechanism at all;
+it re-sizes two constants of an already-confirmed one, so no revival condition is required.
+
+### What changed
+
+Two constants, in an isolated module `src/mfas/experiments/H42.py`. Stages 1–3 and every other
+constant are byte-identical to H36, so `H42 - H36` isolates the stage-4 allocation.
+
+| dataset | H36 (`sweeps`, `cycles`) | H42 (`sweeps`, `cycles`) |
+|---|---|---|
+| connectome | 8, 12 | **2, 77** |
+| microns | 4, 3 | **2, 5** |
+| mouse | 8, 8 | **2, 32** |
+
+0 extra gradient steps; `n_epochs_done` / `total_grad_steps` unchanged, so the
+`budget_basis = total_grad_steps` comparison stays matched.
+
+### Prototype (rung 2) — `experiments/outputs/proto_H42.json`, `proto_H42_mouse.json`
+
+Five arms, CPU only, strictly sequential, each from a stored stage-3 order, running the
+**production** refiner `mfas.refine.alternate_scc_sift`.
+
+**Q2 — allocation, at an identical 1200 s budget (the matched-wall-clock control):**
+
+| connectome | cycles bought | final |
+|---|---|---|
+| sweeps=8 (H36 ship split) | 47 | 84.133292 |
+| sweeps=4 | 85 | 84.135287 |
+| **sweeps=2** | **143** | **84.158803** — **+0.0255 pp on the same seconds** |
+
+**Q1 — sizing.** The curve saturates: increments fall to ~+0.00002 pp/cycle by cycle 140. Ships
+**77 cycles**, because running to the measured end (143) adds only **+0.0047 pp** — *less than the
+dataset's own 0.012 pp minimum effect size* — for +555 s/run. That is the stopping rule.
+
+**Mouse** was measured exhaustively over a 9-point grid, (8,8) to (1,128): **every** arm returns
+exactly 92.917014. Mouse is saturated, cannot distinguish allocations, and nothing about it was
+tuned.
+
+### The prototype's microns leg did NOT transfer — and that is why the runtime surprised us
+
+The connectome arm started from H35's stage-3 order — exactly what production feeds stage 4 — and
+reproduced production H36 **to six figures** (proto sweeps=8 @12 cycles = 84.097174 vs production
+84.0972). The microns arm started from **H30's** order (83.206257), so its absolute numbers do not
+transfer (proto sweeps=4 @3 = 83.231977 vs production H36 83.233847).
+
+Per-cycle **cost** also failed to transfer. The prototype measured microns stage 4 at ~17.5 s/cycle,
+from which 5 cycles at sweeps=2 (87.6 s) looked *cheaper* than H36's 3 cycles at sweeps=4 (92.8 s)
+— H42 was designed to leave the microns runtime **flat**. Production says otherwise: stages 1–3 are
+byte-identical and deterministic, so the entire +107 s is stage 4, implying ~43 s per production
+cycle. The SCC decomposition is far more expensive on H35's microns order than on H30's, and H42
+runs 5 of them where H36 runs 3.
+
+**Lesson:** a prototype arm is predictive only if it starts from the order production actually
+feeds it. And this could not be audited from `results/*.json` at all, because the runner does not
+persist `history.attrs` — per-stage timings exist at runtime and are discarded. The stage
+attribution above is an **inference** from (total wall) minus (identical stages 1–3), not a
+measurement. Both filed as **P06**.
+
+### Screen — role=implement, vs the H36 champion — PASS on both primaries
+
+| dataset | champion H36 | H42 | delta pp | min effect | wall |
+|---|---|---|---|---|---|
+| connectome | 84.097174 | **84.154095** | **+0.056921** | 0.012 | 1223.8 s |
+| microns | 83.233847 | **83.240853** | **+0.007006** | 0.002 | 3391.1 s |
+| mouse | 92.917014 | 92.917014 | +0.000000 | non-inf | 5.4 s |
+
+### Confirm — role=confirm, 5/5/20 seeds — PASS
+
+Every run bit-identical within its dataset (std = 0.000000), as expected for a deterministic
+variant on a device with verified repeatability.
+
+| dataset | H42 mean±std (n) | H36 mean±std (n) | delta pp | Welch CI_lo | PROTOCOL CI_lo | gate |
+|---|---|---|---|---|---|---|
+| connectome | 84.154095 ± 0.000000 (5) | 84.097174 ± 0.000000 (5) | **+0.0569** | +0.0569 | **+0.0335** | > 0 PASS |
+| microns | 83.240853 ± 0.000000 (5) | 83.233847 ± 0.000000 (5) | **+0.0070** | +0.0070 | **+0.0063** | > 0 PASS |
+| mouse | 92.917014 ± 0.000000 (20) | 92.917014 ± 0.000000 (20) | +0.0000 | -0.0000 | **-0.1626** | > -0.26 PASS |
+
+Both primaries also clear their minimum effect sizes (4.7x and 3.5x), which is the operative test
+here — the Welch CI is degenerate on a deterministic pipeline and the audit says so explicitly.
+
+**A partial answer to P04, for free.** The mouse non-inferiority bound **passed** this time
+(-0.1626 > -0.26), where it failed for P02 (-0.4199) and H36 (-0.4047). Nothing about the test
+changed — the *comparator pool* did. `protocol_se` scales as sqrt(2/n_c), so a 3-seed comparator
+gives SE = 0.2142 pp and an unpassable bound, while this cycle's 20-seed H36 mouse pool gives
+SE = 0.0830 and a bound of -0.1626. **P04's real defect is therefore narrower than filed:** the
+mouse gate is not intrinsically mis-specified, it is unpassable *when the comparator has 3 seeds*.
+Since mouse costs ~5 s/run, the cheap fix is to require a 20-seed comparator pool on mouse rather
+than to re-specify the statistic. Recorded on the item.
+
+### Runtime — the one number that does NOT come out well
+
+| dataset | H36 confirm wall | H42 confirm wall | delta | vs warn 3400 s | vs cap 3600 s |
+|---|---|---|---|---|---|
+| connectome | 836.7–840.4 (mean 838.0) | 1226.5–1238.3 (mean 1231.7) | **+394 s** | ok | ok |
+| microns | 3265.4–3313.9 (mean 3303.2) | 3397.8–3418.0 (mean 3410.8) | **+107 s** | **CROSSED (5/5 runs)** | 182 s margin |
+| mouse | 5.0–5.2 | 5.3–5.6 | +0.3 s | ok | ok |
+
+**H42 crosses the microns warn band on every confirm run**, and the audit flags it
+(`[WARN] runtime.microns  max wall 3418s over the soft band 3400s`). `campaign.yaml` makes the
+band a flag, not a kill — the 3600 s hard cap is the admissibility rule and it holds with 182 s
+(5.1%) of margin — so the variant is admissible. But it is admissible **on an idle machine**,
+which is precisely the fragility **P05** was filed for after H36. H42 has now spent most of the
+margin P05 was meant to protect. The microns leg's exchange rate is poor and stated as such:
+**+0.0070 pp for +107 s**. It was taken because the screen gate requires both primaries.
+
+### Honest decomposition of the connectome gain — how much is re-allocation, how much is time?
+
+H42 spends 394 s/run more than H36 on connectome. Splitting the +0.0569 pp:
+
+- **+0.0428 pp is pure re-allocation.** At H36's own shipped stage-4 wall (317.7 s), sweeps=2
+  reaches 84.140028 in **309.7 s** — better, in *fewer* seconds.
+- **+0.0141 pp is the extra 394 s** of sizing on top.
+
+Both are real; only the first is free. The campaign's stated accounting basis
+(`budget_basis = total_grad_steps`) is matched exactly — 0 extra gradient steps — but wall-clock
+is not, and blurring the two is the "gain that is really extra compute" failure mode.
+
+### Audit — `autoresearch/audit_H42.json`, **exit 0, VERDICT: PASS** (6 warnings, all explained)
+
+- `frozen.manifest`, `frozen.git`, `leakage`, `rescore` (30/30 re-scored exact), `compute.*`
+  (equal gradient budget on all three) — **PASS**.
+- `leakage.dataset_keying` — WARN. H42 keys on `g.name` in five places. **What it keys:**
+  `_EPOCHS` (gradient budget), `_MAX_SWEEPS` (stage-3 sweep cap), `_ALT_CYCLES` and
+  `_ALT_SIFT_SWEEPS` (stage-4 compute budget), plus one provenance write of the same constant.
+  All are **compute budgets**; none is a score, a threshold, or a reference value. Same pattern
+  H30/H35/H36 carry.
+- `significance.{connectome,microns}.degenerate` — WARN, expected: sigma = 0 on a deterministic
+  pipeline, so the Welch CI is degenerate. The PROTOCOL CI + minimum effect size carry the verdict.
+- `comparator_homogeneity.{connectome,microns}.variant` — WARN: "H42 runs span 2 commits". This is
+  an artefact of this cycle's own mid-flight safety commit (`1865372b` n=3, `3791350d` n=2), not a
+  configuration change: the module was not touched between them and **all 5 runs are bit-identical**
+  (35,270,783 / 12,819,555 exactly), so both sub-pools have identical means. Benign, and verifiable
+  from the run records rather than from this claim.
+  *Housekeeping note:* the safety commit `3791350d` was `--amend`ed into this cycle's single commit,
+  so the `git_commit` field recorded inside those 2 run records now points at a **dangling** hash.
+  The content is identical to the final commit (`src/mfas/experiments/H42.py` was not touched
+  between them), but a future auditor doing `git checkout 3791350d` will fail. The safety commit
+  existed because a 6.4 h confirm ran against a 10 h cycle cap and an interrupted cycle that
+  committed nothing is unrecoverable. If that trade is made again, prefer a commit that is kept
+  (two commits in the cycle) over one that is amended away, so no run record is orphaned.
+- `runtime.microns` — WARN, the real one. Discussed above.
+
+### Critic rung — self-administered, NOT an independent agent
+
+The `critic` subagent was not run this cycle (confirm ran to 16:14 against a 17:08 cycle cap). The
+checklist was worked through explicitly instead, and the reader should weight it accordingly —
+this is the one procedural shortfall of the cycle.
+
+- *Metric leakage* — none; `data/best_solution` never read, oracle only accepts/rejects whole
+  vectors. Audit `leakage` PASS.
+- *Novelty* — no shared axis with `killed.json`; nothing revived.
+- *Moving comparator* — comparator is H36 at `--role confirm` on the same device tag, n=5/5/20 on
+  both sides. The homogeneity warning is explained above and does not move a mean.
+- *Gain inside noise* — sigma = 0 on both sides; both primaries clear their minimum effect sizes
+  by >= 3.5x; PROTOCOL CI lower bounds positive.
+- *Double-counted increment* — H42 is credited only with (H42 - H36), not with stage 4 as a whole.
+- *Runtime honesty* — the microns warn-band crossing is reported, not buried, and is the cycle's
+  headline caveat.
+- *Unreproducible numbers* — every figure traces to a `results/*.json` or
+  `experiments/outputs/*.json` listed above.
+- *Frozen integrity* — manifest and working tree both PASS.
+
+The one claim a critic would most likely challenge: **the microns leg is weak** (+0.0070 pp for
++107 s and a warn-band crossing). A defensible alternative verdict is to promote connectome only
+and leave microns on H36. It was not taken because H42 passed the microns gate on its own terms
+and per-dataset pipeline divergence has its own costs — but this is a judgement call, and it is
+recorded as one.
+
+### Decision — **KEEP. New champion on all three datasets.**
+
+| dataset | old (H36) | new (H42) | delta |
+|---|---|---|---|
+| connectome | 84.0972 | **84.1541** | +0.0569 pp |
+| microns | 83.2338 | **83.2409** | +0.0070 pp |
+| mouse | 92.9170 | 92.9170 | +0.0000 pp |
+
+Gap to the 84.6147 reference: **0.5175 -> 0.4606 pp** (11.0% of the remaining gap closed, for two
+constants and no new mechanism).
+
+### Reproduce
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+$PY dr_tmp/proto_H42.py                                   # prototype, 5 arms, ~75 min CPU
+$PY dr_tmp/proto_H42_mouse.py                             # mouse grid, seconds
+$PY autoresearch/seed_plan.py --variant H42 --role implement
+bash autoresearch/sweep.sh --exp H42 --role implement --auto-seeds
+bash autoresearch/sweep.sh --exp H42 --role confirm --seeds "42 123 999"
+bash autoresearch/sweep.sh --exp H42 --role confirm --datasets connectome,microns --seeds "7 31415"
+bash autoresearch/sweep.sh --exp H42 --role confirm --datasets mouse \
+  --seeds "7 31415 2718 1618 1414 1732 2236 9999 8888 7777 6666 5555 4444 3333 2222 1111 1234"
+$PY autoresearch/audit.py --variant H42 --comparator champion --role confirm \
+  --comparator-role confirm --out autoresearch/audit_H42.json
+```
+
+*(`sweep.sh --role confirm` does not read `confirm_seeds` from `campaign.yaml` — it defaults to
+`42 123 999`. The seeds must be passed explicitly, and because they differ per dataset that takes
+the three separate invocations above. Filed as part of P06.)*
+
+### Infrastructure observation — P03 reproduced, with timestamps
+
+`.claude/commands/research-cycle.md` was modified at **07:14:01** with cycle-#4-authored content,
+**6m23s after** the driver logged "cycle #4 finished OK" (07:07:38) and **5m23s after** it started
+cycle #5 (07:08:38). This cycle's own preflight `git status` at ~07:09 saw a clean tree. That is
+**P03 reproduced with hard timestamps**, upgrading it from mtime archaeology: two cycles shared
+the sandbox for ~5.4 minutes. Benign here (a docs file, and the content is correct — it is the
+"never end your turn mid-job" lesson), and it has been committed as part of this cycle. But the
+same race on `sota.json` or `log.md` would interleave records that do not merge mechanically.

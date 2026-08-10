@@ -1,0 +1,399 @@
+{
+  "variant": "H42",
+  "comparator": "champion",
+  "per_dataset": {
+    "connectome": {
+      "variant": "H42",
+      "comparator": "H36",
+      "variant_stats": {
+        "n": 5,
+        "mean": 84.15409511053134,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260810T064240Z-H42-connectome-s42-confirm-f41d7e.json",
+          "20260810T070327Z-H42-connectome-s123-confirm-f41d7e.json",
+          "20260810T072409Z-H42-connectome-s999-confirm-f41d7e.json",
+          "20260810T103830Z-H42-connectome-s7-confirm-f41d7e.json",
+          "20260810T105922Z-H42-connectome-s31415-confirm-f41d7e.json"
+        ],
+        "max_wall_s": 1238.253127336502,
+        "grad_steps": [
+          20000
+        ],
+        "commits": [
+          "1865372b",
+          "3791350d"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "comparator_stats": {
+        "n": 5,
+        "mean": 84.09717365667385,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260809T212429Z-H36-connectome-s42-confirm-59b701.json",
+          "20260809T213842Z-H36-connectome-s123-confirm-59b701.json",
+          "20260809T215251Z-H36-connectome-s999-confirm-59b701.json",
+          "20260809T220702Z-H36-connectome-s7-confirm-59b701.json",
+          "20260809T222112Z-H36-connectome-s31415-confirm-59b701.json"
+        ],
+        "max_wall_s": 840.3605124950409,
+        "grad_steps": [
+          20000
+        ],
+        "commits": [
+          "9d43b977"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "delta_pp": 0.05692145385749825,
+      "welch_se": 0.0,
+      "welch_ci_lower": 0.05692145385749825,
+      "protocol_se": 0.011953409555436475,
+      "protocol_ci_lower": 0.03349277112884276
+    },
+    "microns": {
+      "variant": "H42",
+      "comparator": "H36",
+      "variant_stats": {
+        "n": 5,
+        "mean": 83.24085291200831,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260810T074449Z-H42-microns-s42-confirm-f91b66.json",
+          "20260810T084129Z-H42-microns-s123-confirm-f91b66.json",
+          "20260810T093826Z-H42-microns-s999-confirm-f91b66.json",
+          "20260810T112007Z-H42-microns-s7-confirm-f91b66.json",
+          "20260810T121650Z-H42-microns-s31415-confirm-f91b66.json"
+        ],
+        "max_wall_s": 3418.017822742462,
+        "grad_steps": [
+          80000
+        ],
+        "commits": [
+          "1865372b",
+          "3791350d"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "comparator_stats": {
+        "n": 5,
+        "mean": 83.23384667190933,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260809T223522Z-H36-microns-s42-confirm-113614.json",
+          "20260809T232950Z-H36-microns-s123-confirm-113614.json",
+          "20260810T002502Z-H36-microns-s999-confirm-113614.json",
+          "20260810T012018Z-H36-microns-s7-confirm-113614.json",
+          "20260810T021534Z-H36-microns-s31415-confirm-113614.json"
+        ],
+        "max_wall_s": 3313.8556282520294,
+        "grad_steps": [
+          80000
+        ],
+        "commits": [
+          "9d43b977"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "delta_pp": 0.007006240098974104,
+      "welch_se": 0.0,
+      "welch_ci_lower": 0.007006240098974104,
+      "protocol_se": 0.0003794733192202055,
+      "protocol_ci_lower": 0.006262472393302501
+    },
+    "mouse": {
+      "variant": "H42",
+      "comparator": "H36",
+      "variant_stats": {
+        "n": 20,
+        "mean": 92.91701410211006,
+        "std": 1.4580029302424492e-14,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          1111,
+          1234,
+          1414,
+          1618,
+          1732,
+          2222,
+          2236,
+          2718,
+          3333,
+          4444,
+          5555,
+          6666,
+          7777,
+          8888,
+          9999,
+          31415
+        ],
+        "files": [
+          "20260810T103527Z-H42-mouse-s42-confirm-ea0edb.json",
+          "20260810T103534Z-H42-mouse-s123-confirm-ea0edb.json",
+          "20260810T103542Z-H42-mouse-s999-confirm-ea0edb.json",
+          "20260810T103608Z-H42-mouse-s7-confirm-ea0edb.json",
+          "20260810T103615Z-H42-mouse-s31415-confirm-ea0edb.json",
+          "20260810T103622Z-H42-mouse-s2718-confirm-ea0edb.json",
+          "20260810T103630Z-H42-mouse-s1618-confirm-ea0edb.json",
+          "20260810T103637Z-H42-mouse-s1414-confirm-ea0edb.json",
+          "20260810T103644Z-H42-mouse-s1732-confirm-ea0edb.json",
+          "20260810T103652Z-H42-mouse-s2236-confirm-ea0edb.json",
+          "20260810T103659Z-H42-mouse-s9999-confirm-ea0edb.json",
+          "20260810T103706Z-H42-mouse-s8888-confirm-ea0edb.json",
+          "20260810T103714Z-H42-mouse-s7777-confirm-ea0edb.json",
+          "20260810T103721Z-H42-mouse-s6666-confirm-ea0edb.json",
+          "20260810T103729Z-H42-mouse-s5555-confirm-ea0edb.json",
+          "20260810T103736Z-H42-mouse-s4444-confirm-ea0edb.json",
+          "20260810T103743Z-H42-mouse-s3333-confirm-ea0edb.json",
+          "20260810T103751Z-H42-mouse-s2222-confirm-ea0edb.json",
+          "20260810T103758Z-H42-mouse-s1111-confirm-ea0edb.json",
+          "20260810T103805Z-H42-mouse-s1234-confirm-ea0edb.json"
+        ],
+        "max_wall_s": 5.560224533081055,
+        "grad_steps": [
+          5000
+        ],
+        "commits": [
+          "1865372b"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "comparator_stats": {
+        "n": 20,
+        "mean": 92.91701410211006,
+        "std": 1.4580029302424492e-14,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          1111,
+          1234,
+          1414,
+          1618,
+          1732,
+          2222,
+          2236,
+          2718,
+          3333,
+          4444,
+          5555,
+          6666,
+          7777,
+          8888,
+          9999,
+          31415
+        ],
+        "files": [
+          "20260810T031050Z-H36-mouse-s42-confirm-74c6f1.json",
+          "20260810T031057Z-H36-mouse-s123-confirm-74c6f1.json",
+          "20260810T031104Z-H36-mouse-s999-confirm-74c6f1.json",
+          "20260810T031111Z-H36-mouse-s7-confirm-74c6f1.json",
+          "20260810T031118Z-H36-mouse-s31415-confirm-74c6f1.json",
+          "20260810T031125Z-H36-mouse-s2718-confirm-74c6f1.json",
+          "20260810T031132Z-H36-mouse-s1618-confirm-74c6f1.json",
+          "20260810T031139Z-H36-mouse-s1414-confirm-74c6f1.json",
+          "20260810T031145Z-H36-mouse-s1732-confirm-74c6f1.json",
+          "20260810T031152Z-H36-mouse-s2236-confirm-74c6f1.json",
+          "20260810T031159Z-H36-mouse-s9999-confirm-74c6f1.json",
+          "20260810T031206Z-H36-mouse-s8888-confirm-74c6f1.json",
+          "20260810T031213Z-H36-mouse-s7777-confirm-74c6f1.json",
+          "20260810T031220Z-H36-mouse-s6666-confirm-74c6f1.json",
+          "20260810T031227Z-H36-mouse-s5555-confirm-74c6f1.json",
+          "20260810T031234Z-H36-mouse-s4444-confirm-74c6f1.json",
+          "20260810T031241Z-H36-mouse-s3333-confirm-74c6f1.json",
+          "20260810T031248Z-H36-mouse-s2222-confirm-74c6f1.json",
+          "20260810T031255Z-H36-mouse-s1111-confirm-74c6f1.json",
+          "20260810T031302Z-H36-mouse-s1234-confirm-74c6f1.json"
+        ],
+        "max_wall_s": 5.169001340866089,
+        "grad_steps": [
+          5000
+        ],
+        "commits": [
+          "9d43b977"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "delta_pp": 0.0,
+      "welch_se": 4.610610094765733e-15,
+      "welch_ci_lower": -9.036795785740837e-15,
+      "protocol_se": 0.08297816580281828,
+      "protocol_ci_lower": -0.16263720497352382
+    }
+  },
+  "checks": [
+    {
+      "check": "frozen.manifest",
+      "status": "PASS",
+      "detail": "SHA-256 manifest matches all frozen files"
+    },
+    {
+      "check": "frozen.git",
+      "status": "PASS",
+      "detail": "no frozen path modified in the working tree"
+    },
+    {
+      "check": "leakage",
+      "status": "PASS",
+      "detail": "no oracle value or reference solution in 9 algorithm file(s)"
+    },
+    {
+      "check": "leakage.dataset_keying",
+      "status": "WARN",
+      "detail": "dataset-name keying present (legitimate for compute budgets, but the cycle must state WHAT it keys):\n    src\\mfas\\experiments\\H42.py:108: cfg = RocketConfig(epochs=_EPOCHS.get(g.name, RocketConfig.epochs))\n    src\\mfas\\experiments\\H42.py:127: max_sweeps=_MAX_SWEEPS.get(g.name, 40), time_budget_s=sift_budget)\n    src\\mfas\\experiments\\H42.py:135: n_cycles=_ALT_CYCLES.get(g.name, 32),\n    src\\mfas\\experiments\\H42.py:136: sift_sweeps=_ALT_SIFT_SWEEPS.get(g.name, 2),\n    src\\mfas\\experiments\\H42.py:166: hist.attrs[\"alt_sift_sweeps\"] = _ALT_SIFT_SWEEPS.get(g.name, 2)\n    src\\mfas\\io.py:300: node_ids=g.node_ids, name=np.array(g.name))"
+    },
+    {
+      "check": "device",
+      "status": "INFO",
+      "detail": "counting only runs measured on 'NVIDIA GeForce RTX 4060 Laptop GPU' (sota.json is machine-specific; see CAMPAIGN.md \u00a7 Hardware)"
+    },
+    {
+      "check": "significance.connectome.degenerate",
+      "status": "WARN",
+      "detail": "zero variance in a pool (variant std=0.0000, comparator std=0.0000): the pipeline is deterministic on this device, so the Welch CI is degenerate (SE=0 makes any positive delta 'significant'). Use the PROTOCOL CI, floored at baseline_sigma_pp=0.0189, and the screen_delta_pp minimum effect size. See experiments/log.md P01."
+    },
+    {
+      "check": "significance.connectome",
+      "status": "INFO",
+      "detail": "H42 84.1541+/-0.0000 (n=5, seeds=[7, 42, 123, 999, 31415]) vs H36 84.0972+/-0.0000 (n=5) | delta=+0.0569 pp, Welch CI_lo=+0.0569, PROTOCOL CI_lo=+0.0335"
+    },
+    {
+      "check": "inventory.connectome",
+      "status": "INFO",
+      "detail": "5 run(s) for H42: 20260810T064240Z-H42-connectome-s42-confirm-f41d7e.json, 20260810T070327Z-H42-connectome-s123-confirm-f41d7e.json, 20260810T072409Z-H42-connectome-s999-confirm-f41d7e.json, 20260810T103830Z-H42-connectome-s7-confirm-f41d7e.json, 20260810T105922Z-H42-connectome-s31415-confirm-f41d7e.json"
+    },
+    {
+      "check": "comparator_homogeneity.connectome.variant",
+      "status": "WARN",
+      "detail": "H42 runs span 2 commits \u2014 the same id may denote different configurations. Restrict by role/commit before quoting a delta. Breakdown: 1865372b: n=3, mean=84.1541; 3791350d: n=2, mean=84.1541"
+    },
+    {
+      "check": "runtime.connectome",
+      "status": "PASS",
+      "detail": "max wall 1238s within budget"
+    },
+    {
+      "check": "compute.connectome",
+      "status": "PASS",
+      "detail": "equal gradient budget ([20000]) vs H36"
+    },
+    {
+      "check": "significance.microns.degenerate",
+      "status": "WARN",
+      "detail": "zero variance in a pool (variant std=0.0000, comparator std=0.0000): the pipeline is deterministic on this device, so the Welch CI is degenerate (SE=0 makes any positive delta 'significant'). Use the PROTOCOL CI, floored at baseline_sigma_pp=0.0006, and the screen_delta_pp minimum effect size. See experiments/log.md P01."
+    },
+    {
+      "check": "significance.microns",
+      "status": "INFO",
+      "detail": "H42 83.2409+/-0.0000 (n=5, seeds=[7, 42, 123, 999, 31415]) vs H36 83.2338+/-0.0000 (n=5) | delta=+0.0070 pp, Welch CI_lo=+0.0070, PROTOCOL CI_lo=+0.0063"
+    },
+    {
+      "check": "inventory.microns",
+      "status": "INFO",
+      "detail": "5 run(s) for H42: 20260810T074449Z-H42-microns-s42-confirm-f91b66.json, 20260810T084129Z-H42-microns-s123-confirm-f91b66.json, 20260810T093826Z-H42-microns-s999-confirm-f91b66.json, 20260810T112007Z-H42-microns-s7-confirm-f91b66.json, 20260810T121650Z-H42-microns-s31415-confirm-f91b66.json"
+    },
+    {
+      "check": "comparator_homogeneity.microns.variant",
+      "status": "WARN",
+      "detail": "H42 runs span 2 commits \u2014 the same id may denote different configurations. Restrict by role/commit before quoting a delta. Breakdown: 1865372b: n=3, mean=83.2409; 3791350d: n=2, mean=83.2409"
+    },
+    {
+      "check": "runtime.microns",
+      "status": "WARN",
+      "detail": "max wall 3418s over the soft band 3400s (budget 3600s)"
+    },
+    {
+      "check": "compute.microns",
+      "status": "PASS",
+      "detail": "equal gradient budget ([80000]) vs H36"
+    },
+    {
+      "check": "significance.mouse",
+      "status": "INFO",
+      "detail": "H42 92.9170+/-0.0000 (n=20, seeds=[7, 42, 123, 999, 1111, 1234, 1414, 1618, 1732, 2222, 2236, 2718, 3333, 4444, 5555, 6666, 7777, 8888, 9999, 31415]) vs H36 92.9170+/-0.0000 (n=20) | delta=+0.0000 pp, Welch CI_lo=-0.0000, PROTOCOL CI_lo=-0.1626"
+    },
+    {
+      "check": "inventory.mouse",
+      "status": "INFO",
+      "detail": "20 run(s) for H42: 20260810T103527Z-H42-mouse-s42-confirm-ea0edb.json, 20260810T103534Z-H42-mouse-s123-confirm-ea0edb.json, 20260810T103542Z-H42-mouse-s999-confirm-ea0edb.json, 20260810T103608Z-H42-mouse-s7-confirm-ea0edb.json, 20260810T103615Z-H42-mouse-s31415-confirm-ea0edb.json, 20260810T103622Z-H42-mouse-s2718-confirm-ea0edb.json, 20260810T103630Z-H42-mouse-s1618-confirm-ea0edb.json, 20260810T103637Z-H42-mouse-s1414-confirm-ea0edb.json, 20260810T103644Z-H42-mouse-s1732-confirm-ea0edb.json, 20260810T103652Z-H42-mouse-s2236-confirm-ea0edb.json, 20260810T103659Z-H42-mouse-s9999-confirm-ea0edb.json, 20260810T103706Z-H42-mouse-s8888-confirm-ea0edb.json, 20260810T103714Z-H42-mouse-s7777-confirm-ea0edb.json, 20260810T103721Z-H42-mouse-s6666-confirm-ea0edb.json, 20260810T103729Z-H42-mouse-s5555-confirm-ea0edb.json, 20260810T103736Z-H42-mouse-s4444-confirm-ea0edb.json, 20260810T103743Z-H42-mouse-s3333-confirm-ea0edb.json, 20260810T103751Z-H42-mouse-s2222-confirm-ea0edb.json, 20260810T103758Z-H42-mouse-s1111-confirm-ea0edb.json, 20260810T103805Z-H42-mouse-s1234-confirm-ea0edb.json"
+    },
+    {
+      "check": "runtime.mouse",
+      "status": "PASS",
+      "detail": "max wall 6s within budget"
+    },
+    {
+      "check": "compute.mouse",
+      "status": "PASS",
+      "detail": "equal gradient budget ([5000]) vs H36"
+    },
+    {
+      "check": "rescore",
+      "status": "PASS",
+      "detail": "30 run(s) re-scored with the frozen oracle, all exact"
+    }
+  ]
+}

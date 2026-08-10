@@ -12,12 +12,12 @@
     "wall_clock_s_approx": "approximate per-run wall clock; recompute from JSONs before quoting"
   },
   "updated": "2026-08-10",
-  "updated_by": "update_sota.py --variant H36 --dataset mouse",
+  "updated_by": "update_sota.py --variant H42 --dataset mouse",
   "datasets": {
     "connectome": {
-      "champion": "H36",
-      "pipeline": "H02 greedy-FAS warm-start -> run_rocket -> under-relaxed exact-gain sift (H35) -> alternating recursive SCC-topological block refinement <-> short under-relaxed sift (stage 4)",
-      "pct_mean": 84.0972,
+      "champion": "H42",
+      "pipeline": "H02 greedy-FAS warm-start -> run_rocket -> under-relaxed exact-gain sift (H35) -> alternating recursive SCC-topological block refinement <-> SHORT 2-sweep under-relaxed sift, re-allocated cycle counts (stage 4)",
+      "pct_mean": 84.1541,
       "pct_std": 0.0,
       "n_seeds": 5,
       "seeds": [
@@ -28,20 +28,20 @@
         31415
       ],
       "role": "confirm",
-      "evidence": "results/*-H36-connectome-*-confirm-*.json",
-      "finding": "findings.md #6 (H36, 2026-08-10)",
-      "wall_clock_s_approx": 840,
+      "evidence": "results/*-H42-connectome-*-confirm-*.json",
+      "finding": "findings.md #7 (H42, 2026-08-10)",
+      "wall_clock_s_approx": 1238,
       "runner_up": {
-        "champion": "H35",
-        "pct_mean": 83.9135,
+        "champion": "H36",
+        "pct_mean": 84.0972,
         "pct_std": 0.0,
-        "n_seeds": 3
+        "n_seeds": 5
       }
     },
     "microns": {
-      "champion": "H36",
-      "pipeline": "H02 greedy-FAS warm-start -> run_rocket -> under-relaxed exact-gain sift (H35) -> alternating recursive SCC-topological block refinement <-> short under-relaxed sift (stage 4)",
-      "pct_mean": 83.2338,
+      "champion": "H42",
+      "pipeline": "H02 greedy-FAS warm-start -> run_rocket -> under-relaxed exact-gain sift (H35) -> alternating recursive SCC-topological block refinement <-> SHORT 2-sweep under-relaxed sift, re-allocated cycle counts (stage 4)",
+      "pct_mean": 83.2409,
       "pct_std": 0.0,
       "n_seeds": 5,
       "seeds": [
@@ -52,31 +52,31 @@
         31415
       ],
       "role": "confirm",
-      "evidence": "results/*-H36-microns-*-confirm-*.json",
-      "finding": "findings.md #6 (H36, 2026-08-10)",
-      "wall_clock_s_approx": 3314,
+      "evidence": "results/*-H42-microns-*-confirm-*.json",
+      "finding": "findings.md #7 (H42, 2026-08-10)",
+      "wall_clock_s_approx": 3418,
       "runner_up": {
-        "champion": "H30",
-        "pct_mean": 83.2063,
+        "champion": "H36",
+        "pct_mean": 83.2338,
         "pct_std": 0.0,
-        "n_seeds": 3
+        "n_seeds": 5
       }
     },
     "mouse": {
-      "champion": "H36",
-      "pipeline": "H02 greedy-FAS warm-start -> run_rocket -> under-relaxed exact-gain sift (H35) -> alternating recursive SCC-topological block refinement <-> short under-relaxed sift (stage 4)",
+      "champion": "H42",
+      "pipeline": "H02 greedy-FAS warm-start -> run_rocket -> under-relaxed exact-gain sift (H35) -> alternating recursive SCC-topological block refinement <-> SHORT 2-sweep under-relaxed sift, re-allocated cycle counts (stage 4)",
       "pct_mean": 92.917,
       "pct_std": 0.0,
       "n_seeds": 20,
       "role": "confirm",
-      "evidence": "results/*-H36-mouse-*-confirm-*.json",
-      "finding": "findings.md #6 (H36, 2026-08-10)",
-      "wall_clock_s_approx": 5,
+      "evidence": "results/*-H42-mouse-*-confirm-*.json",
+      "finding": "findings.md #7 (H42, 2026-08-10)",
+      "wall_clock_s_approx": 6,
       "runner_up": {
-        "champion": "H30",
-        "pct_mean": 92.9018,
+        "champion": "H36",
+        "pct_mean": 92.917,
         "pct_std": 0.0,
-        "n_seeds": 3
+        "n_seeds": 20
       },
       "seeds": [
         7,
