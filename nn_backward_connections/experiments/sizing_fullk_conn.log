@@ -1,0 +1,9 @@
+[connectome] seed=42 n=136,648 m=5,657,719 self_loops=0 H35 order = 83.90348%  (20260622T213942Z-H35-connectome-s42-implement-8f52fb_positions.npy)
+  [S1] realized +0.04293 pp from 5203 moves (independent sum +0.06809 pp); median span 4773 ranks; 311.9s + 336.2s
+  [S2] s=    64: gain +0.00090 pp (topo 321 + small 58); ceiling 0.0783 pp; 0.4s
+  [S2] s=   256: gain +0.00235 pp (topo 754 + small 229); ceiling 0.1484 pp; 0.3s
+  [S2] s=  1024: gain +0.00368 pp (topo 1346 + small 198); ceiling 0.4081 pp; 0.4s
+  [S2] s=  4096: gain +0.00494 pp (topo 1858 + small 212); ceiling 1.3299 pp; 0.3s
+  [S2] s= 16384: gain +0.00178 pp (topo 722 + small 25); ceiling 4.0845 pp; 0.3s
+
+[done] wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/experiments/outputs/collective_moves_fullk_connectome_s42.json

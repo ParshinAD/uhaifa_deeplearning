@@ -1,0 +1,125 @@
+[connectome] n=136,648 m=5,657,719 self_loops=0 H35 order = 83.91510%  (20260622T214719Z-H35-connectome-s123-implement-8f52fb_positions.npy)
+  [S1] realized +0.01788 pp from 925 moves (independent sum +0.02605 pp); median span 6280 ranks; 53.4s + 60.1s
+  [S2] s=    64: gain +0.00171 pp (topo 659 + small 57); ceiling 0.0761 pp; 0.4s
+  [S2] s=   256: gain +0.00262 pp (topo 886 + small 211); ceiling 0.1532 pp; 0.3s
+  [S2] s=  1024: gain +0.00462 pp (topo 1690 + small 248); ceiling 0.4173 pp; 0.4s
+  [S2] s=  4096: gain +0.00503 pp (topo 1986 + small 121); ceiling 1.3615 pp; 0.3s
+  [S2] s= 16384: gain +0.00171 pp (topo 688 + small 27); ceiling 4.1166 pp; 0.3s
+  [ITER] round 1: S1 +0.01788 pp (925 moves) + S2@0 +0.00539 pp -> cumulative +0.02327 pp (59.6s)
+  [ITER] round 2: S1 +0.00997 pp (522 moves) + S2@2048 +0.00401 pp -> cumulative +0.03725 pp (61.2s)
+  [ITER] round 3: S1 +0.00752 pp (388 moves) + S2@0 +0.00418 pp -> cumulative +0.04895 pp (63.6s)
+  [ITER] round 4: S1 +0.00439 pp (285 moves) + S2@2048 +0.00316 pp -> cumulative +0.05649 pp (66.0s)
+  [ITER] round 5: S1 +0.00302 pp (201 moves) + S2@0 +0.00207 pp -> cumulative +0.06158 pp (65.5s)
+  [ITER] round 6: S1 +0.00336 pp (174 moves) + S2@2048 +0.00134 pp -> cumulative +0.06628 pp (65.5s)
+{
+ "connectome-s123": {
+  "h35_pct": 83.91510469484248,
+  "positions": "20260622T214719Z-H35-connectome-s123-implement-8f52fb_positions.npy",
+  "S1_only_pp": 0.01788264646275169,
+  "S2_best_pp": 0.005027182934892302,
+  "iter_block_size": 4096,
+  "iter_total_pp": 0.0662791242279892,
+  "iter_after_pct": 83.98138381907047,
+  "per_round_cum_pp": [
+   0.023270106864738786,
+   0.03725173572020575,
+   0.04894763071158784,
+   0.05649436997265303,
+   0.061581201494812686,
+   0.0662791242279892
+  ],
+  "iter_seconds": 381.4
+ }
+}
+[connectome] n=136,648 m=5,657,719 self_loops=0 H35 order = 83.91169%  (20260622T215545Z-H35-connectome-s999-implement-8f52fb_positions.npy)
+  [S1] realized +0.01994 pp from 959 moves (independent sum +0.06278 pp); median span 8321 ranks; 64.7s + 55.6s
+  [S2] s=    64: gain +0.00082 pp (topo 250 + small 93); ceiling 0.0769 pp; 0.3s
+  [S2] s=   256: gain +0.00226 pp (topo 781 + small 165); ceiling 0.1524 pp; 0.3s
+  [S2] s=  1024: gain +0.00438 pp (topo 1572 + small 263); ceiling 0.4090 pp; 0.4s
+  [S2] s=  4096: gain +0.00549 pp (topo 2015 + small 286); ceiling 1.3605 pp; 0.3s
+  [S2] s= 16384: gain +0.00169 pp (topo 690 + small 18); ceiling 4.1137 pp; 0.3s
+  [ITER] round 1: S1 +0.01994 pp (959 moves) + S2@0 +0.00614 pp -> cumulative +0.02608 pp (52.9s)
+  [ITER] round 2: S1 +0.00807 pp (463 moves) + S2@2048 +0.00419 pp -> cumulative +0.03834 pp (52.6s)
+  [ITER] round 3: S1 +0.00473 pp (306 moves) + S2@0 +0.00315 pp -> cumulative +0.04623 pp (52.2s)
+  [ITER] round 4: S1 +0.00457 pp (246 moves) + S2@2048 +0.00255 pp -> cumulative +0.05334 pp (53.0s)
+  [ITER] round 5: S1 +0.00349 pp (208 moves) + S2@0 +0.00190 pp -> cumulative +0.05874 pp (53.0s)
+  [ITER] round 6: S1 +0.00284 pp (163 moves) + S2@2048 +0.00114 pp -> cumulative +0.06272 pp (52.0s)
+{
+ "connectome-s999": {
+  "h35_pct": 83.9116880237638,
+  "positions": "20260622T215545Z-H35-connectome-s999-implement-8f52fb_positions.npy",
+  "S1_only_pp": 0.019939329751729934,
+  "S2_best_pp": 0.005490055972086943,
+  "iter_block_size": 4096,
+  "iter_total_pp": 0.06272168248336443,
+  "iter_after_pct": 83.97440970624717,
+  "per_round_cum_pp": [
+   0.02608313424026704,
+   0.038344497838943614,
+   0.04623004107568735,
+   0.053344924564936926,
+   0.058739542797396106,
+   0.06272168248336443
+  ],
+  "iter_seconds": 315.7
+ }
+}
+[mouse] n=148 m=583 self_loops=0 H35 order = 92.90180%  (20260622T213528Z-H35-mouse-s123-implement-f0b547_positions.npy)
+  [S1] realized +0.02675 pp from 3 moves (independent sum +0.02169 pp); median span 40 ranks; 0.0s + 0.0s
+  [S2] s=    64: gain +0.01103 pp (topo 0.00101 + small 0); ceiling 3.1227 pp; 0.0s
+  [ITER] round 1: S1 +0.02675 pp (3 moves) + S2@0 +0.00000 pp -> cumulative +0.02675 pp (0.0s)
+  [ITER] round 2: S1 +0.02716 pp (2 moves) + S2@32 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 3: S1 +0.00000 pp (0 moves) + S2@0 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 4: S1 +0.00000 pp (0 moves) + S2@32 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 5: S1 +0.00000 pp (0 moves) + S2@0 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 6: S1 +0.00000 pp (0 moves) + S2@32 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+{
+ "mouse-s123": {
+  "h35_pct": 92.90180243040469,
+  "positions": "20260622T213528Z-H35-mouse-s123-implement-f0b547_positions.npy",
+  "S1_only_pp": 0.026751096946532826,
+  "S2_best_pp": 0.011027541913561156,
+  "iter_block_size": 64,
+  "iter_total_pp": 0.053911120039569604,
+  "iter_after_pct": 92.95571355044426,
+  "per_round_cum_pp": [
+   0.026751096946532826,
+   0.053911120039569604,
+   0.053911120039569604,
+   0.053911120039569604,
+   0.053911120039569604,
+   0.053911120039569604
+  ],
+  "iter_seconds": 0.0
+ }
+}
+[mouse] n=148 m=583 self_loops=0 H35 order = 92.90180%  (20260622T213533Z-H35-mouse-s999-implement-f0b547_positions.npy)
+  [S1] realized +0.02675 pp from 3 moves (independent sum +0.02169 pp); median span 40 ranks; 0.0s + 0.0s
+  [S2] s=    64: gain +0.01103 pp (topo 0.00101 + small 0); ceiling 3.1227 pp; 0.0s
+  [ITER] round 1: S1 +0.02675 pp (3 moves) + S2@0 +0.00000 pp -> cumulative +0.02675 pp (0.0s)
+  [ITER] round 2: S1 +0.02716 pp (2 moves) + S2@32 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 3: S1 +0.00000 pp (0 moves) + S2@0 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 4: S1 +0.00000 pp (0 moves) + S2@32 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 5: S1 +0.00000 pp (0 moves) + S2@0 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+  [ITER] round 6: S1 +0.00000 pp (0 moves) + S2@32 +0.00000 pp -> cumulative +0.05391 pp (0.0s)
+{
+ "mouse-s999": {
+  "h35_pct": 92.90180243040469,
+  "positions": "20260622T213533Z-H35-mouse-s999-implement-f0b547_positions.npy",
+  "S1_only_pp": 0.026751096946532826,
+  "S2_best_pp": 0.011027541913561156,
+  "iter_block_size": 64,
+  "iter_total_pp": 0.053911120039569604,
+  "iter_after_pct": 92.95571355044426,
+  "per_round_cum_pp": [
+   0.026751096946532826,
+   0.053911120039569604,
+   0.053911120039569604,
+   0.053911120039569604,
+   0.053911120039569604,
+   0.053911120039569604
+  ],
+  "iter_seconds": 0.0
+ }
+}
+DONE

@@ -1,0 +1,26 @@
+[connectome] seed=123 n=136,648 m=5,657,719 self_loops=0 H35 order = 83.91510%  (20260622T214719Z-H35-connectome-s123-implement-8f52fb_positions.npy)
+  [S1] realized +0.01788 pp from 925 moves (independent sum +0.02605 pp); median span 6280 ranks; 53.3s + 58.0s
+  [S2] s=    64: gain +0.00171 pp (topo 659 + small 57); ceiling 0.0761 pp; 0.6s
+  [S2] s=   256: gain +0.00262 pp (topo 886 + small 211); ceiling 0.1532 pp; 0.3s
+  [S2] s=  1024: gain +0.00462 pp (topo 1690 + small 248); ceiling 0.4173 pp; 0.4s
+  [S2] s=  4096: gain +0.00503 pp (topo 1986 + small 121); ceiling 1.3615 pp; 0.3s
+  [S2] s= 16384: gain +0.00171 pp (topo 688 + small 27); ceiling 4.1166 pp; 0.3s
+  [ITER] round 1: S1 +0.01788 pp (925 moves) + S2@0 +0.00539 pp -> cumulative +0.02327 pp (56.1s)
+  [ITER] round 2: S1 +0.00997 pp (522 moves) + S2@2048 +0.00401 pp -> cumulative +0.03725 pp (57.0s)
+  [ITER] round 3: S1 +0.00752 pp (388 moves) + S2@0 +0.00418 pp -> cumulative +0.04895 pp (55.9s)
+  [ITER] round 4: S1 +0.00439 pp (285 moves) + S2@2048 +0.00316 pp -> cumulative +0.05649 pp (57.4s)
+  [ITER] round 5: S1 +0.00302 pp (201 moves) + S2@0 +0.00207 pp -> cumulative +0.06158 pp (57.4s)
+  [ITER] round 6: S1 +0.00336 pp (174 moves) + S2@2048 +0.00134 pp -> cumulative +0.06628 pp (56.3s)
+
+[done] wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/experiments/outputs/collective_moves_sizing_connectome_s123.json
+[connectome] seed=999 n=136,648 m=5,657,719 self_loops=0 H35 order = 83.91169%  (20260622T215545Z-H35-connectome-s999-implement-8f52fb_positions.npy)
+  [S1] realized +0.01994 pp from 959 moves (independent sum +0.06278 pp); median span 8321 ranks; 56.3s + 60.4s
+  [S2] s=    64: gain +0.00082 pp (topo 250 + small 93); ceiling 0.0769 pp; 0.4s
+  [S2] s=   256: gain +0.00226 pp (topo 781 + small 165); ceiling 0.1524 pp; 0.3s
+  [S2] s=  1024: gain +0.00438 pp (topo 1572 + small 263); ceiling 0.4090 pp; 0.4s
+  [S2] s=  4096: gain +0.00549 pp (topo 2015 + small 286); ceiling 1.3605 pp; 0.4s
+  [S2] s= 16384: gain +0.00169 pp (topo 690 + small 18); ceiling 4.1137 pp; 0.3s
+  [ITER] round 1: S1 +0.01994 pp (959 moves) + S2@0 +0.00614 pp -> cumulative +0.02608 pp (57.6s)
+  [ITER] round 2: S1 +0.00807 pp (463 moves) + S2@2048 +0.00419 pp -> cumulative +0.03834 pp (54.7s)
+  [ITER] round 3: S1 +0.00473 pp (306 moves) + S2@0 +0.00315 pp -> cumulative +0.04623 pp (55.4s)
+  [ITER] round 4: S1 +0.00457 pp (246 moves) + S2@2048 +0.00255 pp -> cumulative +0.05334 pp (53.6s)

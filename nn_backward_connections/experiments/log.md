@@ -2387,3 +2387,37 @@ K-sensitivity, (iii) declare the ~2.6× wall breach up front, (iv) run the full 
 verifier → critic cycle on all three datasets ≥3 seeds — the numbers above are a **sizing gate**,
 not a variant result, and a single-seed/one-order sizing figure must never be compared to a
 3-seed screen threshold.
+
+#### Artifact provenance (added 2026-08-13) — where every cited number lives
+
+Audit triggered by "did we save everything to history?". The answer was *mostly*: three figures cited
+above originally traced only to the critic's **gitignored** `dr_tmp/critic_collective/` scratch, which
+violates invariant #3 and `.gitignore`'s own promotion rule. Fixed as follows.
+
+**Committed first-class artifacts (`experiments/outputs/`):**
+
+| claim | artifact |
+|---|---|
+| round-1 sizing, 3 datasets, seed 42 | `collective_moves_sizing.json` |
+| attribution control (1-opt sift first) | `siftfirst_connectome_s42.json`, `siftfirst_microns_s{42,123,999}.json` |
+| connectome seed 123 (uncontrolled) — **re-run, reproduced +0.06628 pp exactly** | `collective_moves_sizing_connectome_s123.json` |
+| full-K S1 pass (+0.04293 pp, the 2.5× truncation evidence) | `collective_moves_fullk_connectome_s42.json` |
+| exact-gain algebra vs brute force | re-runnable: `experiments/diagnostics/verify_collective_moves.py` |
+
+**Preserved-but-not-productionised:** the critic's original scripts and outputs are copied verbatim to
+`experiments/critic_evidence_2026-08-09/` (with a README mapping each file to the claim it backs).
+They keep a hardcoded `ROOT` and will not run unmodified from that directory — they are committed as
+*evidence of what was run*, not as tooling.
+
+**Two gaps remain open — do NOT cite these as reproducible-by-checkout:**
+1. **connectome seed 999** (`+0.06272 pp`): the first-class re-run was started and stopped on request
+   before writing its JSON. That seed's figure rests only on
+   `experiments/critic_evidence_2026-08-09/seed_sweep.json`. The 3-seed aggregate
+   **+0.0637 ± 0.0023 pp (CI_lo +0.0610)** therefore has 2 of 3 seeds as first-class artifacts.
+2. **`experiments/diagnostics/control_1opt_movers.py`** — written and committed but **never executed**;
+   there is no `experiments/outputs/control_1opt_movers.json`. The mover counts (163 / 608 / 0) and the
+   sift-restart recoveries (+0.00328 / +0.00555 / +0.00000 pp) rest on the critic's
+   `oneopt_control.py` / `oneopt_realized.log` in the evidence folder. NOTE these are *independent* of
+   the H36 promote decision, which rests on the committed `siftfirst_*.json` control runs.
+
+Closing commands for both gaps are in `experiments/critic_evidence_2026-08-09/README.md`.
