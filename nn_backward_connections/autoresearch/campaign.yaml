@@ -331,16 +331,52 @@ budget:
   results_dir_max_gb: 20
 
 escalation:
-  # Consecutive kills before the campaign is FORCED out of incremental mode.
+  # ── WHY THIS SECTION WAS REWRITTEN (2026-08-15) ────────────────────────────────────
+  # Divergent mode - the campaign's only escape from incrementalism - had NEVER EXECUTED,
+  # and could not have. It was gated on `consecutive_kills >= 3`, and after 7 cycles that
+  # counter had never left 0. The reason is structural, not luck: 4 of the first 7 cycles
+  # were INFRASTRUCTURE items (P01, P02, P05, P07), which by construction never increment a
+  # kill counter, and the only two science items both passed. A campaign that produces no
+  # kills can never trip a kill-counting trigger. Meanwhile `autoresearch/lit/` did not exist,
+  # `cycles_since_literature_scan` sat at 5 against a threshold of 8, and queue item L01
+  # (the literature scan itself) sat at priority 8, i.e. unreachable.
+  #
+  # So the trigger now counts what ACTUALLY HAPPENS: cycles that did not move the score.
+  # On the real history that fires correctly - cycles 1, 2, 6 and 7 moved no champion, so the
+  # campaign would have been forced to diverge at cycle 7 instead of proposing another
+  # infrastructure item.
+  # ───────────────────────────────────────────────────────────────────────────────────
+
+  # Cycles since the last CHAMPION CHANGE on any dataset, before the campaign is FORCED out
+  # of incremental mode. Counts every cycle - keep, kill, iterate, done, and no-op alike -
+  # because the question this guards is "are we still making progress?", not "did this
+  # particular hypothesis die?". A cycle that promotes a champion resets it to 0.
+  divergent_after_k_cycles_without_score_move: 3
+
+  # Kept as a SECOND, independent trigger rather than deleted: three genuine kills in a row
+  # is still evidence that a design vein is exhausted, and it fires earlier than the counter
+  # above when the campaign IS producing kills. Either condition is sufficient.
   divergent_after_k_kills: 3
+
   divergent_mode: >
     Stop proposing variants of the current design. Run a literature scan (scout), re-read the
     diagnosis (Q01/Q02) and findings, and attack a DIFFERENT level: problem reformulation,
     a different move class, a different decomposition, or an idea imported from an adjacent
     field. Write the reasoning to autoresearch/lit/ before proposing anything.
-  # Force a literature refresh at least this often regardless of outcomes.
-  literature_scan_every_n_cycles: 8
-  # If the queue has fewer than this many viable items, ideate before running anything.
+    An INFRASTRUCTURE item does not satisfy this. If the top of the queue is a P-item when
+    divergent mode is active, take the highest-priority SCIENCE item instead and file the
+    P-item's cost against the next cycle - otherwise the campaign answers "we have stopped
+    making progress" with "let us improve our tooling", which is how the first seven cycles
+    spent 4 of themselves on infrastructure.
+
+  # Force a literature refresh at least this often regardless of outcomes. Lowered 8 -> 5:
+  # at 8 the campaign would have needed to survive longer than its entire history to date
+  # before reading anything external, and the mission target is a published result
+  # (Vahidi 2025) reached by combinatorial means we have not enumerated.
+  literature_scan_every_n_cycles: 5
+
+  # If the queue has fewer than this many viable SCIENCE items (P-items do not count -
+  # tooling debt is not a research agenda), ideate before running anything.
   min_queue_depth: 3
 
 # ─────────────────────────────────────────────────────────────────────────────

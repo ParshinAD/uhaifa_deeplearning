@@ -36,14 +36,34 @@ from the last stage that has artifacts on disk rather than starting a new one.
 
 ## 2. Choose the mode
 
-- `consecutive_kills >= 3` → **divergent mode** (see CAMPAIGN.md § Escalation). Do not propose a
-  variant of the current design. Scout the literature, re-read `experiments/diagnosis.md` Q01/Q02,
-  and attack a different level (move class / decomposition / formulation). Write your reasoning to
-  `autoresearch/lit/` *before* proposing anything.
-- `cycles_since_literature_scan >= 8` → run a **literature scan** first (scout subagent).
-- fewer than 3 viable queue items → **ideate** first (ideator subagent), deduping against
-  `killed.json`.
+- **`cycles_since_score_move >= 3` → divergent mode.** This is the trigger that matters and it is
+  new (2026-08-15). It counts cycles since any champion last changed, on any dataset — keep, kill,
+  iterate, done and no-op alike. Increment it at the end of every cycle; reset it to 0 only when
+  you promote a champion. If the field is missing from `state.json`, derive it from `history` and
+  write it.
+- `consecutive_kills >= 3` → **divergent mode** as well (second, independent trigger).
+- `cycles_since_literature_scan >= 5` → run a **literature scan** first (scout subagent).
+- fewer than 3 viable **science** items in the queue → **ideate** first (ideator subagent),
+  deduping against `killed.json`. P-items do not count toward queue depth: tooling debt is not a
+  research agenda.
 - otherwise → **incremental mode**: take the top-priority `status: proposed` item.
+
+**Divergent mode means: stop proposing variants of the current design.** Scout the literature,
+re-read `experiments/diagnosis.md` Q01/Q02, and attack a different level — move class,
+decomposition, or the problem formulation itself. Write your reasoning to `autoresearch/lit/`
+before proposing anything.
+
+**An infrastructure item does not satisfy divergent mode.** If the top of the queue is a P-item
+while divergence is active, take the highest-priority SCIENCE item instead. Otherwise the campaign
+answers "we have stopped making progress" with "let us improve our tooling" — which is exactly how
+the first seven cycles spent four of themselves on infrastructure while `consecutive_kills` sat at
+0 and divergent mode never once executed.
+
+> Why the old trigger could never fire: it counted consecutive kills, and this campaign does not
+> produce kills. Four of the first seven cycles were infrastructure items, which by construction
+> never increment a kill counter, and both science items passed. `autoresearch/lit/` did not
+> exist, and L01 — the literature scan itself — sat at priority 8, unreachable. On the real
+> history the new counter fires at cycle 7.
 
 ## 3. Run the gate ladder — never skip a rung
 

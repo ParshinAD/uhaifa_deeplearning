@@ -94,12 +94,82 @@ strictly more CPU. That is the same accounting hole H36 had.
 - `verify_cycle.py` FAILs today on `gates_run` (no past cycle recorded it — that field is new) and
   on cycle 4's missing history entry (a real, permanent hole). Both are expected.
 
-## The structural problem nobody has fixed
+## The structural problem — diagnosed and FIXED, but the counter needs seeding
 
-The campaign's escape from incrementalism — divergent mode — **has never once executed**.
-`consecutive_kills` has never left 0, because 4 of the first 7 cycles were infrastructure items,
-which by construction never increment it. `cycles_since_literature_scan` sits at 5 against a
-threshold of 8. `autoresearch/lit/` does not exist. L01 was at priority 8 and unreachable; it is
-now at 3. But the trigger itself is still wrong: **it counts kills, and this campaign does not
-produce kills.** If you want the campaign to think outside its own box, the counter has to key on
-something that actually happens — cycles without a score move — not on a verdict it never reaches.
+The campaign's escape from incrementalism — divergent mode — **had never once executed**.
+`consecutive_kills` never left 0, because 4 of the first 7 cycles were infrastructure items which
+by construction never increment it, and both science items passed. A campaign that produces no
+kills can never trip a kill-counting trigger. `autoresearch/lit/` does not exist; L01, the
+literature scan itself, sat at priority 8 and was unreachable.
+
+Fixed 2026-08-15 in `campaign.yaml § escalation` and `research-cycle.md § 2`: the primary trigger
+is now **`cycles_since_score_move >= 3`** — cycles since any champion last changed, counting every
+verdict including no-ops. On the real history it fires at cycle 7. `consecutive_kills >= 3` is
+kept as a second, independent trigger. Literature scan forced every 5 cycles rather than 8. And
+**an infrastructure item no longer satisfies divergent mode**: if a P-item is on top while
+divergence is active, take the highest-priority science item instead.
+
+**ACTION REQUIRED:** `state.json` has no `cycles_since_score_move` field yet. Derive it from
+`history` (the last champion change was cycle 5, H42) and write it, or the new trigger reads as
+absent. As of cycle 7 the correct value is **2**, so one more cycle without a score move forces
+divergence.
+
+---
+
+# WHAT TO DO NEXT — read this as the instruction, not as background
+
+The operator's standing direction, verbatim in spirit: **get the best possible result; the
+research method is open.** The process rules in `CAMPAIGN.md` are means, not ends. Treat them in
+two tiers and do not confuse them:
+
+**Tier 1 — never bend these.** They are what makes a number real, and every one of them was
+written after this project got burned:
+- Never fabricate or estimate a figure. Every number traces to a `results/*.json` or
+  `experiments/outputs/*.json`. `autoresearch/verify_cycle.py` now checks this mechanically.
+- Never let the target metric into an algorithm; the reference solution is for measurement only.
+- Never edit a frozen file.
+- Never claim a win inside noise, and never on one dataset.
+- Commit the variant module BEFORE the runs that will be cited as its evidence.
+
+**Tier 2 — everything else is yours to change if it buys a better result.** Gate ordering, seed
+counts, how many cycles a hypothesis gets, whether to prototype at all, whether to run several
+cheap probes in one cycle instead of one expensive ladder. If a rule is costing more than it
+protects, change it and write down why. Two examples already on the table: the confirm stage
+spends ~9.8 h of GPU re-running bit-identical deterministic variants at 5 seeds, which is 47% of
+all in-cycle time the campaign has ever spent; and the campaign is generating infrastructure debt
+2.5x faster than it closes it.
+
+## The immediate agenda, in order
+
+1. **Read the two night logs and finish the analysis.** `dr_tmp/night_run.log` carries the epoch
+   grids; `dr_tmp/night_run2.log` carries the H41 screen. Do not relaunch either script.
+2. **The epoch-sizing question is live and the early read was wrong.** Arms so far on microns:
+   0 -> 83.1115%, 2500 -> 83.12094%, 5000 -> 83.1356%, against a champion of 83.2409% at 80,000.
+   The first two arms suggested the gradient phase was ceremonial; the third shows the curve still
+   climbing (+0.0147 pp for the third 2500 epochs, against +0.0094 for the second). Do not cut
+   microns' epochs on a two-point read. Wait for 10,000 and 20,000 and fit the shape.
+3. **H41 is the live score hypothesis.** Its decisive signal is `variant_attrs.n_segment_moves` in
+   the connectome run record. If it is zero, that is a clean kill for the default ladder and an
+   immediate argument for the extended one — but the extended ladder needs the greedy
+   disjoint-packing rule reconsidered first, not just more rungs. If it fired and the score moved,
+   you still need a matched-wall-clock control on connectome before promotion.
+4. **Then run the driver** (`bash autoresearch/driver.sh`), but supervise its first cycle — see
+   Known-untested above. It is the mechanism for periodic unattended research and it now has a
+   rolling budget, no-op detection and a blocked-mode stop after three no-ops.
+
+## Where the score is most likely to come from
+
+The gap is 0.4606 pp on connectome and it is known reachable — Vahidi 2025 got there with cheap
+greedy + bounded-span insertion + SCC and no MIP. Two facts worth carrying:
+
+- **The champion's two wins are both CPU refinement, not GPU.** `src/mfas/refine/` has zero torch
+  calls. On connectome, stage 3 + stage 4 are 831.7 s of a 1483.9 s run — **56% single-threaded
+  NumPy on a 12-core box.** Nothing in the queue addresses that; S01 sizes only the Rocket half.
+- **connectome has ~2368 s of its 3600 s cap unused**, while microns has ~342 s. Anything that
+  costs connectome time is affordable today; anything that costs microns time is not, until the
+  sizing question is settled.
+
+The constants `min_block=32`, `n_cycles=77`, `sift_sweeps=2` were all tuned on the evaluation
+graphs using the target metric, with no held-out graph. That is not leakage under the project's
+own definition, but "we closed 34.6% of the gap" is a training-set number and should be stated as
+one. A held-out graph would make the claim defensible; nobody has built one.
