@@ -43,8 +43,23 @@ and a SCREEN result; the verifier and critic decide.
    ```bash
    $PY autoresearch/seed_plan.py --variant <id> --role implement   # see the plan + why
    bash autoresearch/sweep.sh --exp <id> --role implement --auto-seeds   # detached, returns at once
-   while ! bash autoresearch/waitfor.sh; do :; done         # poll until DONE (exit 10 = keep going)
+   while :; do                                  # poll — branch on the code, never `while !`
+     bash autoresearch/waitfor.sh; rc=$?
+     case $rc in
+       0)     break ;;                          # finished
+       10)    continue ;;                       # still running -> poll again, do NOT end your turn
+       20|21) echo "sweep aborted/crashed (rc=$rc) — READ its report before deciding"; break ;;
+       2)     echo "nothing was launched"; break ;;
+       *)     echo "unexpected waitfor rc=$rc"; break ;;
+     esac
+   done
    ```
+
+   **Branch on the exit code.** `waitfor.sh` returns 0 done / 10 still running / 2 nothing
+   launched / **20 aborted from outside** / **21 crashed**. 20 and 21 are terminal, so the old
+   `while ! bash autoresearch/waitfor.sh; do :; done` form spins on them forever. On 20/21 read
+   the report: it lists which runs COMPLETED (those results are real — reuse them, never re-run
+   them) and which are still outstanding. Re-launch only the outstanding ones.
 
    A variant that never draws from `seed` (`init_positions` from deterministic greedy-FAS, so
    `make_init_positions` is unreachable) screens at **1 seed** on the primaries: on this machine

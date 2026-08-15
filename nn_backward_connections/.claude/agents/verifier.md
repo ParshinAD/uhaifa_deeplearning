@@ -30,9 +30,25 @@ writes its own JSON) and you return your verdict as your final message.
    exist at the same role; generate them if they do not. Runs are **sequential** — one GPU device.
 
    ```bash
-   bash autoresearch/sweep.sh --exp <id> --role confirm --seeds "42 123 999 7 31415"
-   while ! bash autoresearch/waitfor.sh; do :; done
+   # No --seeds: since P06(b) sweep.sh reads confirm_seeds from campaign.yaml PER DATASET, which
+   # is the protocol. Passing them by hand is how a confirm silently ran at 3 seeds in cycle #5.
+   bash autoresearch/sweep.sh --exp <id> --role confirm
+   while :; do                                  # poll — branch on the code, never `while !`
+     bash autoresearch/waitfor.sh; rc=$?
+     case $rc in
+       0)     break ;;                          # finished
+       10)    continue ;;                       # still running -> poll again, do NOT end your turn
+       20|21) echo "sweep aborted/crashed (rc=$rc) — READ its report before deciding"; break ;;
+       2)     echo "nothing was launched"; break ;;
+       *)     echo "unexpected waitfor rc=$rc"; break ;;
+     esac
+   done
    ```
+
+   **Branch on the exit code.** 0 done / 10 still running / 2 nothing launched / **20 aborted from
+   outside** / **21 crashed**. 20 and 21 are terminal, so a `while ! waitfor` loop spins forever.
+   On 20/21 read the report: runs it lists as COMPLETED wrote real `results/*.json` — reuse them,
+   never re-run them — and only the outstanding ones need re-launching.
 
    A confirm is ~5.3 h here (microns alone is 3240 s/run), far longer than any single Bash call.
    Launch it detached with `sweep.sh` and poll with `waitfor.sh` — **never end your turn while a

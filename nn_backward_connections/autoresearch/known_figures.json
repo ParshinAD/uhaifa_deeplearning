@@ -1,0 +1,10 @@
+{
+  "_doc": "Figures the record legitimately quotes that trace to NO artifact in this checkout. Each needs a written reason. autoresearch/verify_cycle.py FAILs on any score-shaped figure in experiments/log.md that matches neither an artifact nor an entry here, so this file is the campaign's explicit list of numbers it is taking on trust. Keep it SHORT: an entry here is a promise that the number is foreign, not a way to silence the check.",
+  "updated": "2026-08-15",
+  "figures": {
+    "83.9101": "connectome, H35, measured on the PREVIOUS machine (Apple MPS) before the Phase-7 port. It is the campaign's stated bootstrap number and the denominator of the 'gap closed' headline, but no CUDA record on this machine produces it: P01 re-measured the same champion at 83.9135 (results/*-H35-connectome-*-implement-*.json). Quoting 83.9101 is therefore a comparison against a foreign-hardware baseline. Consequence, stated so it is not lost: 0.0034 pp of the campaign's headline +0.2440 pp is a hardware/measurement artifact, and the campaign-attributable figure is +0.2406 pp.",
+    "83.2069": "microns, H30, same MPS-era provenance as 83.9101. P01 re-measured the microns champion on CUDA; use the CUDA figure for any delta that feeds a verdict.",
+    "84.6147": "the downloaded REFERENCE solution's score (Vahidi 2025), read through mfas.analysis.gap for measurement only. It is the mission target, never produced by a run here, and by CAMPAIGN.md rule 4 it must never enter an algorithm.",
+    "82.9161": "the parity anchor: scoring results/rocket_best_positions.npy yields exactly 34,751,902 on total weight 41,912,141. It is pinned by tests/test_metrics.py rather than by a results/*.json record, which is why it has no run artifact."
+  }
+}

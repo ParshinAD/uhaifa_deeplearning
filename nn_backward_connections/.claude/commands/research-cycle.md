@@ -57,11 +57,22 @@ subgraph. Minutes of CPU, no large-graph compute. Write the outcome to
 is what made Phase 6 cheap.
 
 If a prototype will take more than a few minutes, it gets the same treatment as a sweep: launch
-it **detached** (`setsid python dr_tmp/proto_<id>.py … </dev/null > dr_tmp/proto_<id>.out 2>&1 &`)
-and then **poll** it — never end your turn waiting. Record it in `state.json.current_item_note`
-(what, where the output lands, when it started) before you do anything else, so a cycle that dies
-anyway is resumed rather than duplicated. Cycle #4 skipped that step and nearly had two copies of
-the same 75-minute CPU prototype racing each other.
+it **detached**, and then **poll** it — never end your turn waiting.
+
+```bash
+bash autoresearch/detach.sh dr_tmp/proto_<id>.out $PY dr_tmp/proto_<id>.py --arm a
+tail -5 dr_tmp/proto_<id>.out       # poll in a loop until it finishes; keep your turn
+```
+
+Use `detach.sh` rather than writing the launch by hand: on this box `setsid` **does not exist**
+and `nohup <python.exe> &` does **not** outlive the session — only an MSYS `bash -c` wrapper that
+keeps python as its child does (measured 2026-08-15; this file recommended the non-existent
+`setsid` until then). `detach.sh` is that wrapper and nothing else; do not "simplify" it away.
+
+Record the job in `state.json.current_item_note` (what, where the output lands, when it started)
+before you do anything else, so a cycle that dies anyway is resumed rather than duplicated. Cycle
+#4 skipped that step and nearly had two copies of the same 75-minute CPU prototype racing each
+other.
 
 **Screen.** Use the `implementer` subagent. Isolated module `src/mfas/experiments/<id>.py`,
 3 datasets (connectome, microns, mouse), `--role implement`, compared to the **champion** from
@@ -72,21 +83,35 @@ always at 3 as the tripwire. `--auto-seeds` decides it — do not hand-pick seed
 ```bash
 $PY autoresearch/seed_plan.py --variant <id> --role implement          # the plan, and why
 bash autoresearch/sweep.sh --exp <id> --role implement --auto-seeds    # detached; returns at once
-while ! bash autoresearch/waitfor.sh; do :; done                       # poll until it prints DONE
+while :; do                                    # poll — branch on the exit code, never `while !`
+  bash autoresearch/waitfor.sh; rc=$?
+  case $rc in
+    0)     echo "sweep finished"; break ;;     # DONE (rc= inside the output may still be non-zero)
+    10)    continue ;;                         # still running -> poll again, do NOT end your turn
+    20|21) echo "sweep aborted/crashed (rc=$rc) — READ its report"; break ;;
+    2)     echo "nothing was launched"; break ;;
+    *)     echo "unexpected waitfor rc=$rc"; break ;;
+  esac
+done
 ```
+
+`waitfor.sh` exit codes: **0** done, **10** still running (call again), **2** nothing launched,
+**20** aborted from outside, **21** crashed. 20 and 21 are terminal — a `while ! waitfor` loop
+spins on them forever, which is why the loop above branches. On 20/21 the runs it lists as
+COMPLETED wrote **real** `results/*.json`: reuse them and re-launch only the ones it lists as
+NOT DONE. The next `sweep.sh` reclaims a crashed/aborted `.sweep/` automatically — never `rm`
+anything under `autoresearch/.sweep/` by hand.
 
 Record `class=deterministic|rng` and the seeds actually run in the log entry. If the three mouse
 runs disagree for a variant classified deterministic, the classification is falsified: the
 primary numbers are **void** and it must be re-screened at 3 seeds.
 
 **Never run a sweep in the foreground, and never end your turn while one is in flight.** A
-microns run is ~3240 s on this machine — longer than a single Bash call may last. Cycle #1
-(2026-08-09) learned this the expensive way: it started microns in the foreground-ish, stopped its
-turn to avoid GPU contention, the headless session exited, the child died with it, and ~50 minutes
-of GPU time produced no result. `sweep.sh` detaches the runs so they survive even if your session
-does, and `waitfor.sh` blocks in bounded slices (exit 10 = still running, call again) so you keep
-your turn. If you ever come back to a cycle and find `autoresearch/.sweep/log` already complete,
-those results are real — use them rather than re-running.
+microns run is ~3240 s on this machine — longer than a single Bash call may last. `sweep.sh`
+detaches the runs so they survive even if your session does, and `waitfor.sh` blocks in bounded
+slices (exit 10 = still running, call again) so you keep your turn. If you come back to a cycle
+and `waitfor.sh` reports runs as COMPLETED, those results are real — use them rather than
+re-running. See § Lessons that changed the rules for what this cost.
 
 Pass iff `Δ > screen_delta_pp` on **both primaries** (connectome, microns) and mouse is
 non-inferior. The sweep runs **sequentially** by construction — one GPU device; parallel runs
@@ -146,17 +171,14 @@ Verdict is one of **keep / kill / iterate**, per the ladder. Then:
 - Sequential heavy runs only. One GPU device (RTX 4060).
 - **Never end your turn while any job is running — this applies to EVERY rung, not just the
   screen.** There is no "I'll resume when it reports": your turn ending ends the session, and a
-  new cycle starts from files. This has now cost two cycles. Cycle #1 lost a ~50 min microns run
-  outright. Cycle #4 (2026-08-10) reached the H42 prototype rung, launched five arms of ~75 min
-  CPU, wrote "I'm waiting on the H42 prototype", and stopped — it survived only because the job
-  happened to be detached, and it left `current_item` unset so the next cycle nearly started a
-  duplicate against it.
+  new cycle starts from files. (What this has cost is in § Lessons that changed the rules.)
   - Anything longer than a few minutes — sweeps AND prototypes AND ad-hoc scripts — must be
-    launched **detached** (`autoresearch/sweep.sh`, or `setsid`/`nohup … </dev/null &` for a
-    one-off) so it outlives the session, and then **polled in a loop** (`autoresearch/waitfor.sh`,
-    or repeated bounded `sleep`+check calls) so you keep your turn.
+    launched **detached** (`autoresearch/sweep.sh` for sweeps, `autoresearch/detach.sh` for
+    anything else) so it outlives the session, and then **polled in a loop**
+    (`autoresearch/waitfor.sh`, or repeated bounded `tail`/`kill -0` checks) so you keep your turn.
   - Before launching, check whether the job is **already running** — a duplicate CPU-bound
-    prototype contends with the original and corrupts both timings.
+    prototype contends with the original and corrupts both timings. For sweeps, `sweep.sh` checks
+    for you: it refuses while a runner is genuinely alive, and reclaims a dead one by itself.
 - **Set `current_item` the moment you pick an item, not at the end.** It is the only thing that
   tells the next cycle to resume rather than restart. If you launch a long job, record in
   `current_item_note` what was launched, where its output lands, and when it started.
@@ -169,3 +191,35 @@ Verdict is one of **keep / kill / iterate**, per the ladder. Then:
 - Scratch goes to `dr_tmp/` (gitignored). Anything that matters gets promoted to its track home.
 - If you are unsure whether something counts as a win: it does not. Write down why it was
   ambiguous and what measurement would settle it.
+
+### Lessons that changed the rules
+
+Post-mortems live **here**, with their numbers, so the rules above stay short and so a rule can be
+retired when its lesson stops applying. Every figure below is traceable to `results/*.json`,
+`autoresearch/logs/` or `autoresearch/.sweep/`; if you find one that is not, correct it in place
+and say so in `experiments/log.md` — a document that misquotes its own evidence is worth less than
+no document.
+
+- **Cycle #1 (2026-08-09) — ending a turn kills the job.** It ran H35/connectome/verify to
+  completion (533 s, finished 21:06:15; that result was kept and used), started the microns run at
+  ~21:06:30, then ended its turn. The headless session exited at 21:11:01 and took the child with
+  it — **~271 s into microns**, which the next cycle then had to redo: about **524 s** of
+  duplicated GPU time. *(Corrected 2026-08-15: this document claimed "~50 minutes lost outright"
+  until then. The cycle log's "microns has ~50 minutes left" meant time REMAINING, and was
+  misread. The rule stands — it is independently justified by cycles #4 and #7 below — but the
+  cost was ~9 minutes, not ~50.)* → produced `sweep.sh` + `waitfor.sh`.
+- **Cycle #4 (2026-08-10) — bookkeeping is part of the job.** At the H42 prototype rung it
+  launched five arms of ~75 min CPU, wrote "I'm waiting on the H42 prototype", and stopped. It
+  survived only because the job happened to be detached, and it left `current_item` unset, so the
+  next cycle nearly started a duplicate racing the original. → produced the `current_item` /
+  `current_item_note` rules.
+- **2026-08-11 — a killed sweep must not read as "never launched".** An operator killed an
+  H42/microns verify run; the old `.sweep/running`+`.sweep/done` flag pair left NEITHER file, and
+  `waitfor.sh` reported "nothing launched" — indistinguishable from an unstarted sweep, so a
+  resuming cycle could have redone or skipped hours of GPU work. → produced the single atomic
+  `.sweep/status` file, the derived `crashed`/`aborted` states, automatic reclaim, and exit codes
+  20/21 (2026-08-15).
+- **2026-08-15 — the detach recipe named a binary that does not exist.** This file told cycles to
+  use `setsid`, which is not installed under Git Bash; and `nohup <python.exe> &`, the obvious
+  fallback, does not survive a session exit either. Only an MSYS `bash -c` wrapper does. →
+  produced `autoresearch/detach.sh`.
