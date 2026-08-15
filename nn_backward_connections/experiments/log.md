@@ -3370,3 +3370,85 @@ the hypothesis, filed as **H43**.
 * `est_run_wall_s` in the JSON includes greedy-FAS; the table above excludes it, to be
   comparable with `wall_clock_s` as the production harness reports it.
 * No champion moved and `sota.json` was not touched.
+
+---
+
+## 2026-08-16 — marginal value of a second, per stage — derived from artifacts, ZERO new compute
+
+Same night session. This entry runs no experiment at all: it reads `variant_attrs.sift_log` and
+`alt_log`, which P05/P06(a) started persisting, out of run records already on disk. The campaign
+has sized stage 4 (H42) and now the epoch phase (above), but it has never put the stages on a
+common axis. That is what this is.
+
+### Stage 3 is TRUNCATED, not converged, on both primaries — and nobody had looked
+
+`sift_converged` was added by P05 precisely to separate convergence from truncation. In the
+shipped champion it reads:
+
+| dataset | sweeps used / cap | `sift_converged` |
+|---|---|---|
+| connectome | 40 / 40 | **false** |
+| microns | 12 / 12 | **false** |
+| mouse | 5 / 40 | true |
+
+So on both datasets that matter, the champion's stage 3 is stopped by its sweep cap. The caps
+(`_MAX_SWEEPS = {"connectome": 40, "mouse": 40, "microns": 12}`) are binding constraints that
+were inherited, never sized.
+
+### But "truncated" does not mean "worth extending" — the sweep logs say the crawl is slow
+
+Best-score-so-far, from `variant_attrs.sift_log`:
+
+* **connectome**: sweep 20 → 83.89120, sweep 25 → 83.90498, sweep 30 → 83.90844, sweep 39 →
+  83.91352. The last 9 sweeps bought **+0.00508 pp for 29.4 s**. Sweeps 30–39 oscillate, with
+  four of them REJECTED by the under-relaxation (`accepted: false`) and `n_movers` flat at ~300.
+* **microns**: sweeps 5–9 are a dead plateau (five sweeps at exactly 83.20026, four rejected),
+  then 10 and 11 accept. Sweeps 5 → 11 bought **+0.00334 pp for 40.9 s**.
+
+An earlier reading of this session called connectome's stage 3 "effectively converged" and
+microns' "still clearly descending". That contrast is not supported: **both** are in the same
+slow, oscillating crawl, and neither shows a knee. Correcting it here rather than leaving it in
+the record.
+
+### The ranking — pp per second of wall clock, at the margin
+
+All figures are from logged runs (`results/20260810T214020Z-H42-connectome-s42-verify-f41d7e.json`,
+`results/20260815T195540Z-H42-microns-s42-verify-f91b66.json`, and `proto_P07.json` for the
+epoch tail):
+
+| stage, at its margin | Δpp | seconds | **pp / s** |
+|---|---|---|---|
+| microns stage 4 (5 cycles) | +0.03726 | 86.0 | **4.33e-4** |
+| connectome stage 4 (77 cycles) | +0.24058 | 697.3 | 3.45e-4 |
+| connectome stage 3, sweeps 30→39 | +0.00508 | 29.4 | 1.73e-4 |
+| microns stage 3, sweeps 5→11 | +0.00334 | 40.9 | 0.82e-4 |
+| microns Rocket, epochs 20k→80k | +0.01919 | 2337.7 | **0.08e-4** |
+
+Stage 4 is the best marginal use of a second on both datasets — ~2.5x the stage-3 tail on
+connectome, ~5x it on microns, and **54x** the Rocket tail on microns.
+
+Two consequences, and the second one is a saved cycle:
+
+1. It independently confirms **H43** as filed. The trade it proposes — microns Rocket seconds
+   into microns stage-4 cycles — is a move from the worst row of this table to the best row, and
+   the ratio between them is 54:1.
+2. It **pre-empts the obvious neighbouring hypothesis** ("stage 3 is truncated, raise the cap").
+   That idea is worth strictly less per second than H43 on both datasets, so it is NOT queued.
+   Recording the negative here so it is not re-proposed: the cap being binding is real, but the
+   marginal sweep behind it is cheap noise, not a reservoir.
+
+### Whole-stage attribution, for context
+
+| | connectome | microns |
+|---|---|---|
+| greedy-FAS start | 68.9134 | (not separately logged) |
+| pure Rocket | 82.92970 | 83.12806 |
+| + stage 3 | 83.91352 (**+0.98382**) | 83.20359 (+0.07554) |
+| + stage 4 | 84.15410 (+0.24058) | 83.24085 (+0.03726) |
+| stage 3 share of run wall | 134.4 s = **9.1%** | 87.0 s = 2.7% |
+
+On connectome stage 3 delivers +0.98 pp for 9.1% of the run — the single largest contribution of
+any stage, and by a wide margin the cheapest. That is worth stating plainly because the campaign's
+attention has been on stage 4, which costs 5.2x more wall clock for a quarter of the gain. It does
+not follow that stage 3 should be given more sweeps (see the ranking above); it follows that
+stage 3's *design*, not its budget, is where connectome's leverage has always been.

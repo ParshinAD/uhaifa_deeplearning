@@ -19,8 +19,9 @@
     },
     {
       "id": "M4-local-is-empty",
-      "rule": "Bounded-window single-node local search recovers ~0: net recoverable weight within a window is <=0 for W>=100 (W=100 -0.010 pp, W=1000 -0.170, W=5000 -0.405). The recoverable weight is long-range/global. Any local-move proposal must be global-range or structurally decomposed (SCC), not window-bounded.",
-      "evidence": "experiments/outputs/localsearch_sizing.json; H22 kill; H30's W=10 arm ~0"
+      "rule": "NARROWED 2026-08-16 - read the amendment before citing this rule. PROVEN: bounded-window single-node local search is empty for W <= 100 (leakage-safe reachable pool at W=100 is 0.0270 pp of a 0.4606 pp remaining gap; H30's W=10 arm measured ~0). DIRECTIVE, still in force: prefer global-range or structurally decomposed (SCC / block) move classes. NOT PROVEN, and formerly asserted here as if it were: that windows ABOVE 100 are empty. The headline figures this rule used to quote (W=100 -0.010 pp, W=1000 -0.170, W=5000 -0.405) are measure2_gap_flip_distance.net_pp = gain(W) - lose(W) from experiments/size_localsearch.py. That statistic measures how much of the REFERENCE ordering's own rearrangement is short-range - a property of the reference, not a bound on local search. A hill-climb never pays the `lose` term, it declines those moves, so a negative net_pp does not imply nothing is recoverable. The leakage-safe CEILING in the same artifact (measure1_reachable_pool) puts the reachable feedback pool at 0.4141 pp for W=1000 and 2.3225 pp for W=5000, so CAPACITY IS NOT THE BINDING CONSTRAINT above W=100. A ceiling is not an achievable amount - flipping window edges creates new feedback. Do not cite Vahidi 2025 either way: that method is uncapped/global-range, not bounded-span (autoresearch/lit/vahidi-2025.md).",
+      "amended": "2026-08-16",
+      "evidence": "experiments/outputs/localsearch_sizing.json (BOTH measures: measure1 is the ceiling, measure2 is the reference's structure); H22 kill (but see its amended record); H30's W=10 arm ~0; autoresearch/lit/vahidi-2025.md"
     },
     {
       "id": "M5-no-ties",
@@ -134,8 +135,9 @@
       "mechanism": "bounded-window sifting / re-insertion",
       "result_pp": {"connectome": "<=0 for W>=100"},
       "verdict": "killed at the sizing gate (before building)",
-      "why_dead": "See M4 — the recoverable weight is long-range.",
-      "revival_if": "The window is replaced by a STRUCTURAL neighbourhood (SCC / block), not a rank window. That is queue item H36.",
+      "why_dead": "AMENDED 2026-08-16. Originally: 'See M4 - the recoverable weight is long-range.' That kill was taken AT THE SIZING GATE, BEFORE BUILDING, on measure2's net_pp - the statistic M4 has now been narrowed for misreading, because it describes the reference ordering rather than the reach of a hill-climb. By the leakage-safe ceiling in the same artifact a W=1000 window holds 0.4141 pp of reachable feedback against a 0.4606 pp remaining gap. This hypothesis was therefore never falsified by measurement; it was declined on a misread bound and never run.",
+      "revival_if": "EITHER (a) the window is replaced by a STRUCTURAL neighbourhood (SCC / block) rather than a rank window - that is H36, already shipped and confirmed; OR (b) NEW 2026-08-16: it is simply run, because the original evidentiary basis for declining it does not support the conclusion. Any revival must beat the CURRENT champion (connectome 84.1541), not the H30-era baseline this was filed against, and must justify its wall-clock against the measured stage-4 marginal rate of 3.45e-4 pp/s (experiments/log.md 2026-08-16) - a move class that is merely non-empty is not automatically worth its seconds.",
+      "amended": "2026-08-16",
       "evidence": "experiments/outputs/localsearch_sizing.json"
     },
     {

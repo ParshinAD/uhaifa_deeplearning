@@ -8,14 +8,34 @@ then fix this file.
 ## Mission
 
 Raise the exact feedforward percentage on the fly connectome from the current champion
-**83.9101% (H35)** to at least **84.6147%** — the score of the downloaded reference solution,
-independently reached by Vahidi 2025 with cheap greedy + bounded-span insertion + SCC and **no
-MIP** — and then past it. Do not regress MICrONS or mouse. Keep every run under one hour.
+**83.9101% (H35)** to at least **84.6147%** — the score of the downloaded reference solution
+(`data/best_solution/mfas_submission_soroush_35463823.csv.gz`, 35,463,823 / 41,912,141) — and
+then past it. Do not regress MICrONS or mouse. Keep every run under one hour.
 
 Then, and only then, Phase 2: hold that quality and make it fast.
 
-The gap is **0.70 pp**. It is known to be reachable by combinatorial means on this exact graph.
-This is not a fishing expedition.
+The gap is **0.70 pp**, and it is reachable by combinatorial means with **no MIP** — the
+reference solution exists and no MIP produced it. This is not a fishing expedition.
+
+> **CORRECTED 2026-08-16 — this paragraph used to say the target was "independently reached by
+> Vahidi 2025 with cheap greedy + bounded-span insertion + SCC". Three things in that sentence
+> were wrong, and they were steering the queue.** See `autoresearch/lit/vahidi-2025.md`, which
+> retrieved the arXiv HTML *and* the authors' notebooks.
+>
+> 1. **"bounded-span" is not their method.** The words "bounded" and "span" do not occur in the
+>    paper. Their load-bearing move (Alg 2) searches the **entire** rank interval between the two
+>    endpoints of a heavy backward edge — uncapped, and their own table puts mean back-edge
+>    length at 20,536 positions and max at 126,650. The method is global-range and SCC-structural.
+> 2. **84.6147% is not the paper's number.** Vahidi 2025 (arXiv:2506.13799) reports
+>    **35,462,925 = 84.6125%**. Our reference file scores **35,463,823 = 84.61468%** — 898 weight
+>    units more — and the FlyWire leaderboard attributes it to a *later* 2026-01-09 Vahidi–Koutis
+>    entry (SSRN 6221201), which **could not be retrieved** (403, no arXiv version). So the
+>    algorithm that produced the actual target is **unknown to this campaign**.
+> 3. **"Known to be reachable by cheap combinatorial means" overstates the evidence.** The paper
+>    is self-labelled preliminary and publishes no runtime, no iteration counts and no per-stage
+>    intermediate scores; its only executable refinement notebook starts from a ranking that is
+>    *already* at ~84.61%. The target being reachable **without a MIP** is established — a
+>    non-MIP solution file exists. That it is reachable *cheaply* is not.
 
 ## The five things this campaign must never do
 

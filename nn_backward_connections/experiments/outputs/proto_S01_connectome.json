@@ -1,0 +1,52 @@
+{
+  "item": "P07/S01",
+  "what": "Rocket epoch sizing on the shipped H42 pipeline: does the gradient phase buy score, or only wall-clock?",
+  "dataset": "connectome",
+  "seed": 42,
+  "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "champion_pipeline": "H42 (sota.json champion)",
+  "champion_epochs": 20000,
+  "arms": [
+    {
+      "epochs": 0,
+      "pure_pct": 68.91342773446004,
+      "sift_pct": 83.44720686065644,
+      "alt_pct": 83.87974978419737,
+      "final_pct": 83.87974978419737,
+      "final_score": 35155799.0,
+      "n_epochs_done": 0,
+      "n_sift_sweeps": 40,
+      "n_alt_cycles": 77,
+      "t_init_positions_s": 0.08954787254333496,
+      "t_rocket_s": 0.7133259773254395,
+      "t_sift_s": 116.63885498046875,
+      "t_alt_s": 625.7041873931885,
+      "s_per_epoch": null,
+      "est_run_wall_s": 760.1324045658112
+    },
+    {
+      "epochs": 2500,
+      "pure_pct": 81.47536295032029,
+      "sift_pct": 83.65409440667801,
+      "alt_pct": 83.91118458968727,
+      "final_pct": 83.91118458968727,
+      "final_score": 35168974.0,
+      "n_epochs_done": 2500,
+      "n_sift_sweeps": 40,
+      "n_alt_cycles": 77,
+      "t_init_positions_s": 0.0019965171813964844,
+      "t_rocket_s": 49.648346185684204,
+      "t_sift_s": 114.65831804275513,
+      "t_alt_s": 626.1182053089142,
+      "s_per_epoch": 0.01985933847427368,
+      "est_run_wall_s": 807.4133543968201
+    }
+  ],
+  "n_nodes": 136648,
+  "n_edges": 5657719,
+  "t_load_s": 10.847861051559448,
+  "t_greedy_fas_s": 16.986488342285156,
+  "load_notes": [
+    "2026-08-15 continuation: machine IDLE (operator asleep, no game, GPU ~13% at launch). The 2026-08-11 arms in this file were taken under desktop load and their TIMINGS are not comparable with these; their SCORES are deterministic and are."
+  ]
+}

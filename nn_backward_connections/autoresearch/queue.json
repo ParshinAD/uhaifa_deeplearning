@@ -1,7 +1,7 @@
 {
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
   "updated": "2026-08-16",
-  "next_free_id": "H44",
+  "next_free_id": "H47",
   "next_free_protocol_id": "P08",
   "items": [
     {
@@ -284,7 +284,7 @@
       "priority": 0,
       "axis": "compute allocation / discrete refinement",
       "hypothesis": "On microns the last 60,000 Rocket epochs are 71.7% of the run's wall clock and buy only +0.01919 pp, while stage 4 runs at 5 cycles against the ~143 that connectome's stage-4 curve needs to saturate. Moving that budget across the GPU/CPU boundary - 20,000 epochs plus ~140 alternation cycles at the same total wall clock - reaches a strictly better score than the champion's 83.24085, because every score move this campaign has produced came from stage-4 refinement and none from the gradient phase.",
-      "rationale": "Measured tonight, not assumed (experiments/outputs/proto_P07.json, log.md 2026-08-16). The microns epoch curve is convex in log-epochs up to 20,000 (per-doubling increments +0.00942 -> +0.01464 -> +0.02234 -> +0.06375 pp) and then knees hard: the two doublings 20,000 -> 80,000 buy +0.01919 pp between them, at 121.8 s per 0.001 pp. Cutting to 20,000 frees 2,337.7 s of a 3,258.2 s run; at the measured microns stage-4 rate of 17.2 s/cycle (86.00 s / 5 cycles) that is ~136 extra cycles. This is the SAME mechanism that made H42 champion - allocation, not compute - applied across a different boundary: H42 re-allocated WITHIN stage 4, H43 re-allocates FROM the gradient phase INTO it. It also closes P07 by sizing rather than by a guard: the run drops to ~920 s + refinement, so the 3,450 s deadline stops binding on the one dataset where it binds.",
+      "rationale": "Measured tonight, not assumed (experiments/outputs/proto_P07.json, log.md 2026-08-16). The microns epoch curve is convex in log-epochs up to 20,000 (per-doubling increments +0.00942 -> +0.01464 -> +0.02234 -> +0.06375 pp) and then knees hard: the two doublings 20,000 -> 80,000 buy +0.01919 pp between them, at 121.8 s per 0.001 pp. Cutting to 20,000 frees 2,337.7 s of a 3,258.2 s run; at the measured microns stage-4 rate of 17.2 s/cycle (86.00 s / 5 cycles) that is ~136 extra cycles. This is the SAME mechanism that made H42 champion - allocation, not compute - applied across a different boundary: H42 re-allocated WITHIN stage 4, H43 re-allocates FROM the gradient phase INTO it. It also closes P07 by sizing rather than by a guard: the run drops to ~920 s + refinement, so the 3,450 s deadline stops binding on the one dataset where it binds. CORROBORATED 2026-08-16 by a per-stage marginal-value table built from logged runs with zero new compute (experiments/log.md, 'marginal value of a second'): microns stage 4 returns 4.33e-4 pp/s at its margin while the microns Rocket tail returns 0.08e-4 pp/s. H43 moves seconds from the worst row of that table to the best, at a ratio of 54:1. The same table pre-empts the neighbouring 'stage 3 is truncated, raise the cap' idea - the stage-3 tails return 1.73e-4 (connectome) and 0.82e-4 (microns) pp/s, i.e. strictly less than stage 4 - so that variant is deliberately NOT queued.",
       "kill_condition": "If ~140 stage-4 cycles on a 20,000-epoch microns start do not recover the 0.01919 pp that the cut costs, the trade is dead as a SCORE hypothesis and the item degrades to a pure runtime fix for P07 (still worth taking, but it must then be reported as a -0.019 pp regression bought for 2,338 s, never as a win). Cheap decisive probe: run stage 4 from a 20,000-epoch start with n_cycles=200 and log the per-cycle score curve - if it flattens before recovering 0.019 pp, stop there and do not run a confirm.",
       "prior_evidence": [
         "experiments/outputs/proto_P07.json (the five-arm microns epoch grid, 2026-08-16)",
@@ -294,6 +294,64 @@
       ],
       "est_cost": "low - one variant module (two constants), and the sizing probe is a single ~70 min run",
       "expected_pp": "microns +0.00 to +0.06 (the cut costs a KNOWN -0.01919 pp, so the stage-4 gain must exceed that before anything is claimed)",
+      "outcome": ""
+    },
+    {
+      "id": "H44",
+      "title": "Drop the gradient phase on mouse: _EPOCHS['mouse'] = 0 (greedy -> under-relaxed sift reaches a strictly better basin)",
+      "status": "proposed",
+      "priority": 0,
+      "axis": "compute allocation / starting basin",
+      "hypothesis": "On mouse the gradient phase is not neutral, it is HARMFUL. Stage 3 run from the greedy-FAS order reaches the fixed point 93.08288021668459; run from Rocket's order, the same function with the same constants reaches 92.90180243040469. Setting _EPOCHS['mouse'] = 0 therefore scores ~+0.166 pp above the 92.91701410211007 champion, at ~1/1000 of its wall clock.",
+      "rationale": "Found 2026-08-16 by re-reading an observation the campaign had dismissed in one clause (HANDOFF.md: '93.083 vs 92.902 ... does not transfer'). The dismissal compared the Rocket-free arm against the Rocket-start STAGE-3 fixed point, never against the champion. Full evidence trail in dr_tmp/investigation_rocket_free_basin.md. Like-for-like on every axis: same production dataset (proto_H41.py loads load_dataset('mouse')), bit-identical total_weight 9.159036176272162, constants copied from H42, frozen scorer, and BOTH orders are true converged fixed points. It is NOT a cycle-budget artefact: the prototype gave stage 4 7385 cycles (231x production's 32) for delta_pp = 0.0, and proto_H42_mouse.json shows nine stage-4 allocations from (8,8) to (1,128) all returning exactly 92.91701410211007. Corroborated independently and eight weeks earlier by dr_tmp/size_global_discrete.json (sift_fullrange_on_greedy_noRocket = 93.047 / 93.012 / 93.004 over 3 seeds, a different sift). The mechanism is greedy-start X UNDER-RELAXATION specifically: proto_h32_trophic.json's plain-Jacobi greedy_sift control is 92.91630, which does NOT beat the champion. This is the same class of change as H42's - a per-dataset constant in the existing _EPOCHS dict, sized by the epoch grid - not a new mechanism or a dataset-specific branch.",
+      "kill_condition": "PRE-REGISTERED, and it is a 10-second run: add 'mouse' to the PLAN in experiments/proto_P07_sizing.py and check arms[epochs=0].final_pct == 93.08288021668459 and arms[epochs=5000].final_pct == 92.91701410211007. If the epochs=0 arm does not reproduce 93.08288021668459 through the production pipeline, the prototype's number was an artefact of its wall-clock-bound stage 4 and the item is dead.",
+      "prior_evidence": [
+        "dr_tmp/investigation_rocket_free_basin.md (full file-by-file trail, 2026-08-16)",
+        "experiments/outputs/proto_H41.json -> mouse@10s/_setup.stage3_pct = 93.08288021668459",
+        "results/20260810T213945Z-H42-mouse-s42-verify-ea0edb.json -> pct 92.91701410211007, variant_attrs.sift_best_pct 92.90180243040469",
+        "experiments/outputs/proto_H42_mouse.json (9 stage-4 allocations, all 92.91701410211007 - cycle budget cannot explain it)",
+        "dr_tmp/size_global_discrete.json (independent 3-seed corroboration)",
+        "experiments/outputs/proto_h32_trophic.json (plain-Jacobi control 92.91630 - the mechanism needs under-relaxation)"
+      ],
+      "est_cost": "trivial - mouse runs in ~8 s, and epochs=0 runs in ~0.01 s",
+      "expected_pp": "mouse +0.1659 (a measured prototype figure, to be reproduced through the production harness before it is claimed)",
+      "outcome": "NOTE the scope limit, established at the same time: this does NOT generalise. The epochs=0 arms of the sizing grid are production-minus-Rocket and both go the other way - microns 83.11151992749353 vs champion 83.24085291200831 (-0.129 pp), connectome 83.87974978419737 vs 84.15409511053134 (-0.274 pp). The sign of the gradient phase's contribution flips with graph size (mouse n=148). Caveat carried forward: both primary epochs=0 arms hit their stage-3 sweep cap (40 / 12, sized for a Rocket start that converges in 5), so those two deltas are LOWER BOUNDS on a Rocket-free pipeline, not measurements of one."
+    },
+    {
+      "id": "H45",
+      "title": "Exact-gain JOINT PAIR relocation - the move our sift is provably blind to (Vahidi Alg 2, vectorised)",
+      "status": "proposed",
+      "priority": 1,
+      "axis": "discrete refinement / move class",
+      "hypothesis": "The champion's sift relocates nodes INDEPENDENTLY: jacobi_best_gaps takes each node's own argmax over its exact insertion profile total_u(.). It is therefore blind by construction to a move where neither endpoint of a heavy backward edge profits alone but both profit from meeting at a COMMON cut. Maximising total_u(c) + total_v(c) + w_uv over a single shared cut c, batched over the top-K heaviest backward edges and accepted over disjoint intervals, reaches a strictly better fixed point than the champion's stage 3 + stage 4 do.",
+      "rationale": "This is the load-bearing move of the method that produced the reference solution's family (autoresearch/lit/vahidi-2025.md, retrieved from the arXiv HTML AND the authors' notebooks). Their Alg 2 pops the heaviest backward edge (u,v), takes the ENTIRE rank interval between v and u - uncapped - and tries every cut r, re-inserting u and v adjacent at one common cut, with an exact closed-form gain by prefix/suffix sums. We already have every ingredient: jacobi_best_gaps (src/mfas/refine/insertion.py:91) builds the exact piecewise-constant profile per node, and select_disjoint_moves (src/mfas/refine/segment.py:315) is the disjoint acceptance rule. The gap structure supports it: diagnosis.md puts median rank-distance at ~22,580, and the paper's own table gives mean back-edge length 20,536 - this move is global-range, which is exactly what M4's directive asks for. It also satisfies H31's stated revival condition verbatim: a STRUCTURE-AWARE destroy operator (guided by heavy backward edges, not random) with an exact-gain rebuild.",
+      "kill_condition": "PROTOTYPE GATE, cheap and decisive, run BEFORE building anything: over the top-K heaviest backward edges in the champion's connectome order, measure the fraction whose JOINT argmax differs from both independent argmaxes. If that fraction is <1%, the move class is not distinct from the existing sift and the item dies for free. Second gate: if it is distinct but the realised gain per second is below the stage-4 marginal rate of 3.45e-4 pp/s, it loses on allocation even if it works.",
+      "prior_evidence": [
+        "autoresearch/lit/vahidi-2025.md (algorithm retrieved from arXiv:2506.13799 HTML + the authors' notebooks)",
+        "src/mfas/refine/insertion.py:91 jacobi_best_gaps (the exact per-node profile this builds on)",
+        "experiments/diagnosis.md Step 2 (median rank-distance ~22,580; distributed long-range reordering)",
+        "autoresearch/killed.json H31 revival_if (structure-aware destroy + exact-gain rebuild)"
+      ],
+      "est_cost": "medium - prototype gate is minutes; a sweep is estimated ~10-30 s at connectome scale, same register as the existing sift",
+      "expected_pp": "connectome unknown; the move class is the one the reference family relies on, but no transfer figure exists yet",
+      "outcome": ""
+    },
+    {
+      "id": "H46",
+      "title": "Coarse multilevel k-block permutation - generalise the segment swap to k blocks at coarse scales",
+      "status": "proposed",
+      "priority": 2,
+      "axis": "discrete refinement / move class",
+      "hypothesis": "H41's segment move is a 2-block adjacent swap capped at L,d <= 1024 (1.5% of the connectome line). Generalising it to a k-block permutation at COARSE levels - blocks of thousands of nodes - covers the scale at which the diagnosis says the disagreement actually lives, and is still EXACT by the same contiguous-block lemma segment.py already proves.",
+      "rationale": "The contiguous-block lemma in src/mfas/refine/segment.py generalises from 2 blocks to k: partition the line into k contiguous blocks, and one np.bincount over all edges gives the full k x k inter-block weight matrix, so the exact gain of ANY permutation of those blocks is read off that matrix with no rescoring. At small k the optimal permutation is exhaustive (k <= 8 is 40,320). Cost is O(m) per level - seconds at connectome scale - which makes the prototype almost free. Vahidi's Alg 4 is the same idea at a fine scale (their published run uses x=6, l=6, i.e. groups of ~2.9 nodes and a window of ~18 positions); the untested regime is the coarse one, blocks of 3,800-22,775 nodes, which is where diagnosis.md's ~22,580 median rank-distance sits.",
+      "kill_condition": "One O(m) pass: build the k x k matrix at each coarse level from the champion's connectome order and compute the best permutation's exact gain. If the best gain across all levels is below the 0.012 pp minimum effect size, the whole coarse-block family is closed - and it is closed by a measurement that costs seconds, not a screen.",
+      "prior_evidence": [
+        "src/mfas/refine/segment.py (the contiguous-block lemma and the bincount/prefix-sum machinery, already proven exact against the frozen scorer)",
+        "autoresearch/lit/vahidi-2025.md (their Alg 4 - same idea, fine scale only)",
+        "experiments/diagnosis.md Step 2 (rank-distance p25 8,290 / p50 22,580 / p75 54,432)"
+      ],
+      "est_cost": "low - the decisive prototype is one O(m) pass per level",
+      "expected_pp": "unknown; a zero closes the family cheaply, which is most of the value",
       "outcome": ""
     },
     {
