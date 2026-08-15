@@ -7,8 +7,8 @@
   "device_load_note": "machine NOT idle: a game (Slay the Spire 2), Chrome, Discord and Telegram were on the GPU at launch (38% util, 3756/8188 MiB). Scores are deterministic and unaffected; TIMINGS are under load.",
   "n_nodes": 67534,
   "n_edges": 10436569,
-  "t_load_s": 0.4045751094818115,
-  "t_greedy_fas_s": 35.44942665100098,
+  "t_load_s": 0.3899219036102295,
+  "t_greedy_fas_s": 31.285932540893555,
   "champion_pipeline": "H42 (sota.json champion on microns)",
   "champion_epochs": 80000,
   "arms": [
@@ -45,6 +45,60 @@
       "t_alt_s": 94.74756050109863,
       "s_per_epoch": 0.055857043552398684,
       "est_run_wall_s": 362.84838104248047
+    },
+    {
+      "epochs": 5000,
+      "pure_pct": 82.59187638473075,
+      "sift_pct": 82.97747932104014,
+      "alt_pct": 83.13557749891774,
+      "final_pct": 83.13557749891774,
+      "final_score": 12803342.0,
+      "n_epochs_done": 5000,
+      "n_sift_sweeps": 12,
+      "n_alt_cycles": 5,
+      "t_init_positions_s": 0.0871119499206543,
+      "t_rocket_s": 187.9074990749359,
+      "t_sift_s": 85.79679584503174,
+      "t_alt_s": 86.64225149154663,
+      "s_per_epoch": 0.03758149981498718,
+      "est_run_wall_s": 391.7195909023285
+    },
+    {
+      "epochs": 10000,
+      "pure_pct": 82.81725135006481,
+      "sift_pct": 83.06121655210264,
+      "alt_pct": 83.15791435335748,
+      "final_pct": 83.15791435335748,
+      "final_score": 12806782.0,
+      "n_epochs_done": 10000,
+      "n_sift_sweeps": 12,
+      "n_alt_cycles": 5,
+      "t_init_positions_s": 0.0008897781372070312,
+      "t_rocket_s": 376.3858118057251,
+      "t_sift_s": 85.48566961288452,
+      "t_alt_s": 85.40630626678467,
+      "s_per_epoch": 0.03763858118057251,
+      "est_run_wall_s": 578.564610004425
+    },
+    {
+      "epochs": 20000,
+      "pure_pct": 83.03422402189739,
+      "sift_pct": 83.17129698620641,
+      "alt_pct": 83.22166529431371,
+      "final_pct": 83.22166529431371,
+      "final_score": 12816600.0,
+      "n_epochs_done": 20000,
+      "n_sift_sweeps": 12,
+      "n_alt_cycles": 5,
+      "t_init_positions_s": 0.000997781753540039,
+      "t_rocket_s": 750.7026388645172,
+      "t_sift_s": 84.89784932136536,
+      "t_alt_s": 84.89794373512268,
+      "s_per_epoch": 0.03753513194322586,
+      "est_run_wall_s": 951.7853622436523
     }
+  ],
+  "load_notes": [
+    "2026-08-15 continuation: machine IDLE (operator asleep, no game, GPU ~13% at launch). The 2026-08-11 arms in this file were taken under desktop load and their TIMINGS are not comparable with these; their SCORES are deterministic and are."
   ]
 }

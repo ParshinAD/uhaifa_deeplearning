@@ -1,7 +1,7 @@
 {
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
-  "updated": "2026-08-15",
-  "next_free_id": "H43",
+  "updated": "2026-08-16",
+  "next_free_id": "H44",
   "next_free_protocol_id": "P08",
   "items": [
     {
@@ -132,7 +132,7 @@
     {
       "id": "P05",
       "title": "BLOCKING: stage 4 has no wall-clock guard and microns now runs 3398-3418 s against a 3400 s warn band",
-      "status": "proposed",
+      "status": "done",
       "priority": 0,
       "kind": "infrastructure",
       "axis": "runtime safety",
@@ -150,7 +150,8 @@
       "progress": "2026-08-11 (cycle 6): THE GUARD IS BUILT, ARMED AND VERIFIED ON 2 OF 3 DATASETS. Root cause was wider than filed: every stage already honoured a wall-clock budget (rocket per epoch, sift per sweep, alternate_scc_sift per cycle) and NOTHING EVER PASSED ONE - sweep.sh calls run_variant with no --time-limit, so time_limit=None made every check a dead branch. eval/runtime_guard.py now resolves a deadline of max_wall_clock_s_per_run - reserve_s (3600 - 150 = 3450 s) whenever the caller gives none; reserve_s is sized from experiments/outputs/proto_P05.json (prologue+epilogue outside the deadline: microns 36.0 s, connectome 20.5 s, mouse 0.1 s) plus the abort granularity, and both margins are pinned by tests/test_runtime_guard.py. It is an ABORT at a stage boundary, never a sizing rule, so the H42 determinism constraint is respected. VERIFIED: guard fires and records exactly what it cut (forced 3 s deadline on mouse -> rocket 2159/5000, sift 2/40, stage4 1/32, degraded=true); guard does NOT fire on connectome (seed 42 bit-identical to the stored confirm vector, 0/136,648 differing, sha b56aa222bedfe958) or mouse (3/3 at 92.917014). audit.py gained a runtime_guard check (FAIL on a truncated run, WARN on pre-P05 records) and still exits 0 on the existing champion evidence.",
       "still_open": "THE MICRONS LEG. One run - H42 / microns / seed 42 / --role verify, guard armed, on an IDLE machine - to show the deadline does not bind. It was launched and killed 13 minutes in by an external actor (see experiments/log.md 2026-08-11, 'How this cycle ended'); the cycle did not restart it. Until that run exists, the dataset this item was filed to protect is the one dataset unverified, so P05 stays at priority 0.",
       "reframed_by_evidence": "2026-08-11 (cycle 6): the margin this item was filed to protect IS ALREADY NEGATIVE. The connectome verification returned a bit-identical result in 1483.9 s against cycle 5's 1226.5-1238.3 s (spread 1.0%) - the machine runs ~20% slower under ordinary desktop load. Scaled to microns' 3397.8-3418.0 s that is ~4100 s against a 3600 s cap. So the guard cannot make microns fit; it can only convert a silent cap overrun into a flagged, truncated, audit-FAILing run. Making microns fit is a separate item - P07.",
-      "escalated": "2026-08-10 (cycle 5, H42). No longer housekeeping. H42 spent the margin this item was filed to protect: microns crossed the warn band on 5/5 confirm runs (max 3418 s, 182 s / 5.1% under the 3600 s hard cap), where H36 sat at 3265-3314 s. The next microns variant that adds ANY stage-4 work overruns the cap on a loaded machine. Additional constraint discovered by H42: the guard must NOT size stage 4 by wall-clock, because a time-sized cycle count depends on machine load and would destroy the bit-reproducibility that sota.json (std = 0) and the P02 one-seed screen policy both rest on. It must degrade deterministically - e.g. a fixed cycle count with a wall-clock ABORT that is recorded in the run record - not a time-driven cycle count."
+      "escalated": "2026-08-10 (cycle 5, H42). No longer housekeeping. H42 spent the margin this item was filed to protect: microns crossed the warn band on 5/5 confirm runs (max 3418 s, 182 s / 5.1% under the 3600 s hard cap), where H36 sat at 3265-3314 s. The next microns variant that adds ANY stage-4 work overruns the cap on a loaded machine. Additional constraint discovered by H42: the guard must NOT size stage 4 by wall-clock, because a time-sized cycle count depends on machine load and would destroy the bit-reproducibility that sota.json (std = 0) and the P02 one-seed screen policy both rest on. It must degrade deterministically - e.g. a fixed cycle count with a wall-clock ABORT that is recorded in the run record - not a time-driven cycle count.",
+      "outcome": " CLOSED 2026-08-16 (commit a5f1d91): the outstanding microns leg ran on an idle machine - H42/microns/s42, 0 of 67,534 positions differing from the stored confirm vector, guard armed and silent, 3258.2 s. That also corrected the runtime picture: cycle 5's 3397.8-3418.0 s confirm pool was never an idle measurement, so real slack against the 3450 s deadline is 223 s (6.5%), not 68 s (2.0%)."
     },
     {
       "id": "P07",
@@ -275,6 +276,25 @@
       "expected_pp": "score ~0; wall-clock -50% to -90%",
       "note": "Sizing may run during Phase 1 (it is cheap and informative); any CHANGE to the champion pipeline waits for Phase 2.",
       "outcome": "MERGED WITH P07 and started 2026-08-15. S01 asked 'how much Rocket does the pipeline actually need?' and P07 needs exactly that answer on microns, so running them apart would pay the same GPU twice. Extended to CONNECTOME, which S01's own text never covered and which is the mission dataset: it ships 20,000 epochs and uses ~1232 s of the 3600 s cap, so ~2368 s is unused. Arms 0/2500/5000/10000/20000/40000; 40,000 is included because 'the curve was still rising' is precisely the mistake H36 made at stage 4, and ruling it out costs ~500 s. Output: experiments/outputs/proto_S01_connectome.json."
+    },
+    {
+      "id": "H43",
+      "title": "Re-allocate the microns budget: cut Rocket epochs 80,000 -> 20,000 and spend the freed 2,338 s on stage-4 cycles",
+      "status": "proposed",
+      "priority": 0,
+      "axis": "compute allocation / discrete refinement",
+      "hypothesis": "On microns the last 60,000 Rocket epochs are 71.7% of the run's wall clock and buy only +0.01919 pp, while stage 4 runs at 5 cycles against the ~143 that connectome's stage-4 curve needs to saturate. Moving that budget across the GPU/CPU boundary - 20,000 epochs plus ~140 alternation cycles at the same total wall clock - reaches a strictly better score than the champion's 83.24085, because every score move this campaign has produced came from stage-4 refinement and none from the gradient phase.",
+      "rationale": "Measured tonight, not assumed (experiments/outputs/proto_P07.json, log.md 2026-08-16). The microns epoch curve is convex in log-epochs up to 20,000 (per-doubling increments +0.00942 -> +0.01464 -> +0.02234 -> +0.06375 pp) and then knees hard: the two doublings 20,000 -> 80,000 buy +0.01919 pp between them, at 121.8 s per 0.001 pp. Cutting to 20,000 frees 2,337.7 s of a 3,258.2 s run; at the measured microns stage-4 rate of 17.2 s/cycle (86.00 s / 5 cycles) that is ~136 extra cycles. This is the SAME mechanism that made H42 champion - allocation, not compute - applied across a different boundary: H42 re-allocated WITHIN stage 4, H43 re-allocates FROM the gradient phase INTO it. It also closes P07 by sizing rather than by a guard: the run drops to ~920 s + refinement, so the 3,450 s deadline stops binding on the one dataset where it binds.",
+      "kill_condition": "If ~140 stage-4 cycles on a 20,000-epoch microns start do not recover the 0.01919 pp that the cut costs, the trade is dead as a SCORE hypothesis and the item degrades to a pure runtime fix for P07 (still worth taking, but it must then be reported as a -0.019 pp regression bought for 2,338 s, never as a win). Cheap decisive probe: run stage 4 from a 20,000-epoch start with n_cycles=200 and log the per-cycle score curve - if it flattens before recovering 0.019 pp, stop there and do not run a confirm.",
+      "prior_evidence": [
+        "experiments/outputs/proto_P07.json (the five-arm microns epoch grid, 2026-08-16)",
+        "experiments/log.md 2026-08-16 (P07/S01 microns epoch sizing)",
+        "results/20260815T195540Z-H42-microns-s42-verify-f91b66.json (champion stage split: sift 86.95 s, alt 86.00 s / 5 cycles, wall 3258.2 s)",
+        "experiments/log.md 2026-08-10 (H42: connectome stage-4 curve saturates near 143 cycles; microns ships 5)"
+      ],
+      "est_cost": "low - one variant module (two constants), and the sizing probe is a single ~70 min run",
+      "expected_pp": "microns +0.00 to +0.06 (the cut costs a KNOWN -0.01919 pp, so the stage-4 gain must exceed that before anything is claimed)",
+      "outcome": ""
     },
     {
       "id": "L01",

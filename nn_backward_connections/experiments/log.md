@@ -3258,3 +3258,115 @@ $PY autoresearch/audit.py --variant H42 --comparator H36 --role confirm \
    needs a cheaper microns run, not a different guard.
 3. `sota.json`'s `wall_clock_s_approx` values are quiet-machine numbers. They are honest as
    recorded, but they are not what a run costs on a working laptop.
+
+---
+
+## 2026-08-16 — P07/S01 microns epoch sizing — COMPLETE, and it inverts the premise
+
+Operator-driven night session, run outside the cycle loop as a detached script
+(`dr_tmp/night_run.sh`, step 1). Machine IDLE. No champion moved; this entry records a
+MEASUREMENT and the hypothesis it generates.
+
+### What was measured
+
+The full five-arm Rocket epoch grid on microns, on the shipped H42 pipeline with **only
+`epochs` varied**. Every other constant is imported directly from `mfas.experiments.H42`
+(`_K_FULL`, `_ALPHA`, `_MAX_SWEEPS`, `_ALT_CYCLES`, `_ALT_SIFT_SWEEPS`, `_ALT_K_FULL`,
+`_MIN_BLOCK`) and stage 4 is the same `alternate_scc_sift` driver, so this is the champion
+pipeline and not a re-implementation of it. Each arm is a properly SCALED schedule
+(`make_beta_schedule` spans `cfg.cycles` cosine cycles over `cfg.epochs`), never a truncated
+one — the question is "how much Rocket does the pipeline need", not "stop it early".
+
+Data: `experiments/outputs/proto_P07.json`. Arms 0 and 2500 were taken 2026-08-11 under
+desktop load; 5000/10000/20000 were taken tonight on an idle machine. SCORES are deterministic
+and comparable across both; TIMINGS are only comparable within tonight's set.
+
+| epochs | pure % | sift % | final % | Δ vs prev arm | pipeline wall s | Δ pp vs champion |
+|---|---|---|---|---|---|---|
+| 0 | 79.3686 | 82.7050 | 83.11152 | — | 183.2 | −0.12933 |
+| 2,500 | 82.3456 | 82.9038 | 83.12094 | +0.00942 | 327.4 | −0.11991 |
+| 5,000 | 82.5919 | 82.9775 | 83.13558 | +0.01464 | 360.3 | −0.10528 |
+| 10,000 | 82.8173 | 83.0612 | 83.15791 | +0.02234 | 547.3 | −0.08294 |
+| 20,000 | 83.0342 | 83.1713 | 83.22167 | +0.06375 | 920.5 | −0.01919 |
+| **80,000 (champion)** | 83.12806 | 83.20359 | **83.24085** | +0.01919 / 2 doublings | **3258.2** | 0 |
+
+`pipeline wall` = `t_rocket + t_sift + t_alt`, which is what `RocketResult.wall_clock_s`
+reports; the shared greedy-FAS warm start (31.3 s) sits outside it in both harnesses.
+
+### The comparator is sound — checked, not assumed
+
+The grid has no 80,000 arm, so the last row is the PRODUCTION champion
+(`results/20260815T195540Z-H42-microns-s42-verify-f91b66.json`, the P05 idle-machine verify).
+Mixing a prototype harness with a production number is exactly the moving-comparator error the
+auditor exists to catch, so the two were cross-checked stage by stage rather than trusted:
+
+| | champion @80k (production) | prototype @20k |
+|---|---|---|
+| `n_sift_sweeps` | 12 | 12 |
+| `t_sift` | 86.95 s | 84.9 s |
+| `n_alt_cycles` | 5 / 5 | 5 |
+| `t_alt` | 86.00 s | 84.9 s |
+
+The stage structure is identical and the CPU stages agree to ~2% (machine noise). Rocket time
+scales linearly with epochs across the two harnesses as well: 3085.3 s / 750.7 s = 4.11× for a
+4× epoch ratio. A dedicated 80,000 arm (~54 min GPU) would therefore buy confirmation of
+something already corroborated three independent ways, and was NOT run.
+
+### Finding 1 — the early two-point read was wrong, and so was its opposite
+
+The 2026-08-11 arms (0 and 2500) suggested the gradient phase was ceremonial: 2,500 epochs
+recovered 83.121 of a champion 83.241, i.e. 92.7% of the gradient phase's total contribution
+for 3.1% of its epochs. Tonight's arms falsify the extrapolation. Per-doubling increments do
+not decay — they GROW: **+0.00942 → +0.01464 → +0.02234 → +0.06375 pp**. The curve is convex
+in log-epochs over the whole measured range, so no saturating fit taken from the low arms can
+be extrapolated, and the handoff's instruction not to cut microns' epochs on a two-point read
+was correct.
+
+### Finding 2 — but the curve has a knee immediately after 20,000, and that is the result
+
+The convexity stops abruptly. One doubling 10,000 → 20,000 buys **+0.06375 pp**; the next TWO
+doublings, 20,000 → 80,000, buy **+0.01919 pp** in total. So:
+
+* the last 60,000 epochs are **71.7% of the entire run's wall clock** (2337.7 s of 3258.2 s)
+  and they buy **+0.01919 pp**;
+* the price of that last increment is **121.8 s per 0.001 pp**;
+* the first 20,000 epochs buy +0.11015 pp for 737.3 s of Rocket, i.e. ~35× better per second.
+
+This is the S01 question answered on microns: the gradient phase is *not* ceremonial, but its
+last three quarters are, and they are being paid for out of the one dataset that has no
+runtime headroom.
+
+### What it implies — and why this is a score hypothesis, not just a runtime fix
+
+microns is the BLOCKING runtime item (P07): the champion sits at 3258 s idle and 3398–3418 s
+under load against a 3450 s guard deadline and a 3600 s cap. Cutting 80,000 → 20,000 epochs
+costs 0.01919 pp and frees **2337.7 s**, which:
+
+1. **closes P07 outright** — the run drops to ~920 s, so the runtime invariant stops binding on
+   microns and the "does not fit on a working laptop" finding is resolved by SIZING, which is
+   what P07 asked for and what a guard cannot do; and
+2. **buys ~136 additional stage-4 cycles** at the measured microns rate of 17.2 s/cycle
+   (86.00 s / 5 cycles), taking stage 4 from **5 cycles to ~140**.
+
+Point 2 is the interesting half. Every score move this campaign has produced came from stage-4
+refinement, never from the gradient phase — H36 (the block move class) and H42 (re-allocating
+the stage-4 budget) both. H42's own sizing measured connectome's stage-4 curve as still rising
+at 77 cycles and saturating near **143**; microns ships **5**. So microns' stage 4 is being run
+at 3.5% of the cycle count that connectome needs to saturate, and the reason is precisely that
+the epochs consumed the budget.
+
+Whether 136 extra cycles recover more than the 0.01919 pp they cost is NOT established here and
+must not be assumed — microns' alternation gained only +0.0373 pp over its 5 cycles, and mouse
+is known to be saturated at every stage-4 allocation tested. That is the falsifiable content of
+the hypothesis, filed as **H43**.
+
+### Honest limits of this measurement
+
+* One seed (42). The pipeline never draws from `seed` (`autoresearch/seed_class.py`), so this
+  is the P02 deterministic case and σ = 0 — but that argument covers the SCORES only.
+* TIMINGS are single measurements on an idle machine, and P07's own finding is that this box
+  runs ~20% slower under load. The 2337.7 s of freed budget is an idle-machine figure; under
+  load both sides scale together, so the TRADE is robust even though the absolute seconds are not.
+* `est_run_wall_s` in the JSON includes greedy-FAS; the table above excludes it, to be
+  comparable with `wall_clock_s` as the production harness reports it.
+* No champion moved and `sota.json` was not touched.
