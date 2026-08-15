@@ -1,0 +1,50 @@
+{
+  "item": "P07",
+  "what": "microns stage attribution + Rocket epoch sizing: does the champion's 80,000-epoch gradient phase buy score, or only wall-clock?",
+  "dataset": "microns",
+  "seed": 42,
+  "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "device_load_note": "machine NOT idle: a game (Slay the Spire 2), Chrome, Discord and Telegram were on the GPU at launch (38% util, 3756/8188 MiB). Scores are deterministic and unaffected; TIMINGS are under load.",
+  "n_nodes": 67534,
+  "n_edges": 10436569,
+  "t_load_s": 0.4045751094818115,
+  "t_greedy_fas_s": 35.44942665100098,
+  "champion_pipeline": "H42 (sota.json champion on microns)",
+  "champion_epochs": 80000,
+  "arms": [
+    {
+      "epochs": 0,
+      "pure_pct": 79.3686163429024,
+      "sift_pct": 82.70498268341854,
+      "alt_pct": 83.11151992749353,
+      "final_pct": 83.11151992749353,
+      "final_score": 12799637.0,
+      "n_epochs_done": 0,
+      "n_sift_sweeps": 12,
+      "n_alt_cycles": 5,
+      "t_init_positions_s": 0.09543657302856445,
+      "t_rocket_s": 0.95078444480896,
+      "t_sift_s": 88.03803062438965,
+      "t_alt_s": 94.19397974014282,
+      "s_per_epoch": null,
+      "est_run_wall_s": 218.72765803337097
+    },
+    {
+      "epochs": 2500,
+      "pure_pct": 82.34563853761912,
+      "sift_pct": 82.90382614083374,
+      "alt_pct": 83.12094166464239,
+      "final_pct": 83.12094166464239,
+      "final_score": 12801088.0,
+      "n_epochs_done": 2500,
+      "n_sift_sweeps": 12,
+      "n_alt_cycles": 5,
+      "t_init_positions_s": 0.001001596450805664,
+      "t_rocket_s": 139.6426088809967,
+      "t_sift_s": 93.00778341293335,
+      "t_alt_s": 94.74756050109863,
+      "s_per_epoch": 0.055857043552398684,
+      "est_run_wall_s": 362.84838104248047
+    }
+  ]
+}
