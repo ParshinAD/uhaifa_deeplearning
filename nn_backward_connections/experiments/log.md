@@ -3452,3 +3452,92 @@ any stage, and by a wide margin the cheapest. That is worth stating plainly beca
 attention has been on stage 4, which costs 5.2x more wall clock for a quarter of the gain. It does
 not follow that stage 3 should be given more sweeps (see the ranking above); it follows that
 stage 3's *design*, not its budget, is where connectome's leverage has always been.
+
+---
+
+## 2026-08-16 — S01 connectome epoch grid — the axis is CLOSED, and the pipeline is not monotone
+
+Step 2 of the detached night run, six arms, idle machine. Same harness as the microns grid: only
+`epochs` varies, every other constant imported from `mfas.experiments.H42`.
+Data: `experiments/outputs/proto_S01_connectome.json`.
+
+### First — a bit-identical parity anchor, which the microns grid did not have
+
+The connectome grid brackets the champion's own epoch count, so the 20,000 arm is a direct
+reproduction test:
+
+```
+prototype  arms[20000].final_pct = 84.15409511053134
+production champion               = 84.15409511053134   (results/20260810T214020Z-H42-connectome-s42-verify-f41d7e.json)
+difference                        = 0.0
+```
+
+Exactly zero. The prototype harness reproduces the production champion bit-for-bit. That
+retroactively strengthens the microns conclusion recorded above, which had to be argued from
+stage-structure agreement because that grid has no 80,000 arm — the harness is now shown
+faithful on the one dataset where a direct check was possible.
+
+### The grid
+
+| epochs | pure % | sift % | final % | Δ final | pipeline wall s |
+|---|---|---|---|---|---|
+| 0 | 68.91343 | 83.44721 | 83.87975 | — | 743.1 |
+| 2,500 | 81.47536 | 83.65409 | 83.91118 | +0.03143 | 790.4 |
+| 5,000 | 82.09958 | 83.76588 | 84.01427 | +0.10309 | 846.9 |
+| 10,000 | 82.62407 | 83.83586 | 84.06850 | +0.05423 | 936.8 |
+| **20,000 (shipped)** | 82.92970 | 83.91352 | **84.15410** | +0.08559 | 1130.3 |
+| 40,000 | 83.06529 | 83.94666 | 84.14743 | **−0.00666** | 1535.2 |
+
+### Finding 1 — connectome's epoch count is already at its optimum; the axis is closed
+
+Doubling to 40,000 costs 404.9 s and returns −0.00666 pp. Honest reading: −0.00666 pp is *below*
+the campaign's 0.012 pp minimum effect size, so the defensible claim is **"the curve is flat to
+slightly negative past 20,000"**, not "40,000 is worse". Either way the conclusion for the
+campaign is the same and it is a clean negative: **there is no score available on the connectome
+epoch axis above the shipped 20,000**, and the ~2,100 s of unused connectome budget cannot be
+spent there. S01's connectome leg is answered.
+
+This also kills, before it was ever queued, the natural companion to H43 ("connectome has spare
+seconds, buy more epochs with them"). It does not touch H43 itself, which cuts microns epochs
+rather than buying connectome ones.
+
+### Finding 2 — the refinement stack is NOT monotone in the quality of its input
+
+This is the result worth carrying. From 20,000 to 40,000 epochs:
+
+| | Δ |
+|---|---|
+| pure Rocket | **+0.13560 pp** |
+| after stage 3 (sift) | **+0.03314 pp** |
+| after stage 4 (final) | **−0.00666 pp** |
+
+Both intermediate stages get strictly and substantially better, and the final score gets worse.
+Stage 4 does *less well* from a *better* stage-3 order. The orders are deterministic (these
+pipelines never draw from `seed`; `autoresearch/seed_class.py`), so this is not noise — it is a
+reproducible property of the stack.
+
+Consequences, stated because they change how this campaign should reason:
+
+1. **Optimising any stage in isolation is unsound.** The campaign has been sizing stages one at a
+   time — H42 sized stage 4, tonight sized the epoch phase — and this says the composition can
+   invert a per-stage improvement. Any future per-stage win must be validated end-to-end, which
+   the gate ladder does do; the point is that a better intermediate score is not evidence.
+2. **It corroborates H44's mechanism at a second scale.** On mouse the gradient phase is outright
+   harmful (greedy-start stage 3 reaches 93.08288 against Rocket-start 92.90180). Here the same
+   phenomenon appears at the margin on the largest graph: past 20,000 epochs, more gradient
+   descent makes pure and sift better and the composed result worse. Two datasets, same sign,
+   different magnitude — mouse (n=148) has it grossly, connectome (n=136,648) has it faintly.
+3. **It qualifies H43.** H43 proposes moving microns seconds from Rocket into stage-4 cycles. The
+   marginal-value table says stage 4 buys 54x more per second than the Rocket tail, but this
+   finding says stage 4's output is not monotone in its input, so the transfer is not arithmetic.
+   H43's kill condition already requires measuring the recovery rather than assuming it; that
+   requirement is now load-bearing, not ceremonial.
+
+### Honest limits
+
+* One seed per arm (42), which is the P02 deterministic case — σ = 0 by construction, verified
+  mechanically, so a single arm is a full sample of a deterministic process, not a sample of one.
+* Timings are idle-machine single measurements; scores are exact.
+* The `epochs=0` arm is production-minus-Rocket and its stage 3 hits the 40-sweep cap without
+  converging, so 83.87975 is a **lower bound** on a Rocket-free connectome pipeline, not a
+  measurement of one. Do not quote it as "greedy+sift reaches 83.88".
