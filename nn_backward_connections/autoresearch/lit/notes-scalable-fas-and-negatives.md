@@ -78,7 +78,7 @@ then by the contiguous-block lemma the campaign already uses (`refine/scc_recurs
   `killed.json` **M4** says the recoverable weight requires.
 
 Vahidi 2025's Algorithm 4 (`FlatPartitionReorder`) is this idea in its brute-force form (`x!` over `x`
-consecutive groups, so `x ≲ 5`). Hypothesis **H44** is this idea with the exponential replaced by a
+consecutive groups, so `x ≲ 5`). Hypothesis **H46** is this idea with the exponential replaced by a
 Held–Karp subset DP and the sliding window replaced by a global LOP solve.
 
 ---

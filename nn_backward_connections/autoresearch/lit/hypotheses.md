@@ -1,5 +1,21 @@
 # Ranked shortlist — new falsifiable hypotheses from scan L01 (2026-08-16)
 
+> **Queue ids, and a concurrency note.** While this scan was writing, a concurrent cycle allocated
+> `H44` and then queued its own `H45` and `H46` — **the same two mechanisms** derived here as ranks 1
+> and 2, reached independently from the same paper. That is the strongest novelty signal the queue
+> has had, and it is also live evidence for **P03**. Resolution: the duplicates were **merged, not
+> overwritten** — the surviving `queue.json` items `H45` and `H46` carry the other agent's framing
+> plus a `scout_L01_addendum` holding everything below that they did not have, and this scan's third
+> item was renumbered to `H47`. Mapping used in this file: **rank 1 = H45**, **rank 2 = H46**,
+> **rank 3 = H47**.
+>
+> One substantive correction went into the `H45` addendum and is repeated here because it is a
+> correctness issue: the concurrent item proposes maximising `total_u(c) + total_v(c) + w_uv` over a
+> common cut `c` using `jacobi_best_gaps`' per-node profiles. **That is a heuristic, not the exact
+> gain** — `total_u` was computed with `v` still in place and `total_v` with `u` still in place, so
+> the `u`–`v` interaction is double-counted and each profile uses a stale position for the other
+> endpoint. The exact form is the `Δ(r)` derived in rank 1 below.
+
 Target: beat the champion **H42 = 84.1541%** on connectome (35,270,783 / 41,912,141), without
 regressing microns or mouse, inside 3600 s per run. Reference: **84.6147%**, gap **0.4606 pp**.
 
@@ -83,7 +99,7 @@ and it is dead by the matched-wall-clock rule `findings.md` #6 established.
 
 ---
 
-## Rank 2 — **H44**: multi-resolution coarse-block LOP (exact-gain, unbounded range)
+## Rank 2 — **H46**: multi-resolution coarse-block LOP (exact-gain, unbounded range)
 
 ### Mechanism
 Cut the current order into `K` **consecutive blocks** of size `s ≈ n/K`, each kept internally rigid.
@@ -113,9 +129,9 @@ solved **exactly** by Held–Karp subset DP, `f[S] = max_{j∈S} f[S\{j}] + Σ_{
 |---|---|
 | **M4** | Revival condition met: **unbounded range**. A block at position 0 can move to position `n−1` in a single move. This is the exact failure mode `segment.py`'s own docstring describes ("*if a run of 300 nodes belongs 800 positions earlier but no single one of them profits from moving alone, the sift is at a fixed point*") — extended from 800 positions to the whole line. |
 | **H22** | Not a rank window: this is a global permutation of a coarsening of the entire line. |
-| **H41** | H41 **is the `x = 2`, adjacent-only, span-≤2048, powers-of-two special case of this**. H44 is the multi-block, unbounded-range generalisation. A cyclic rotation of five blocks is unreachable by any sequence of *individually improving* adjacent swaps — the classic local-optimum trap H41 is subject to by construction. Credit must be taken as (H41+H44) − H41. |
+| **H41** | H41 **is the `x = 2`, adjacent-only, span-≤2048, powers-of-two special case of this**. H46 is the multi-block, unbounded-range generalisation. A cyclic rotation of five blocks is unreachable by any sequence of *individually improving* adjacent swaps — the classic local-optimum trap H41 is subject to by construction. Credit must be taken as (H41+H46) − H41. |
 | **H31** | Deterministic, exact-gain, structure-defined. No random destroy. |
-| **H32 / H33 / M7** (expensive global embeddings lose) | Not an embedding and not a warm-start: it **refines the champion's own order** and costs one `O(m)` pass plus a `K²` dense solve. H33's kill was quality **and** a 304–507 s eigensolve; H44 has no eigensolve. |
+| **H32 / H33 / M7** (expensive global embeddings lose) | Not an embedding and not a warm-start: it **refines the champion's own order** and costs one `O(m)` pass plus a `K²` dense solve. H33's kill was quality **and** a 304–507 s eigensolve; H46 has no eigensolve. |
 | **M1, M2, M3, M5, M6** | Untouched. |
 
 ### Cheap decisive test (no GPU)
@@ -124,19 +140,19 @@ From the stored H42 champion connectome positions: for each `K` in the ladder an
 against the frozen oracle on the rebuilt rank vector). This is seconds of CPU per level.
 
 **Kill condition:** if the total exact gain summed over the whole `K` × offset ladder is **< 0.012 pp**,
-the champion's order is already coarse-optimal and H44 is dead — no GPU spent.
+the champion's order is already coarse-optimal and H46 is dead — no GPU spent.
 
-This gate is worth running **first of the three**, even though H44 ranks second, because it is the
+This gate is worth running **first of the three**, even though H46 ranks second, because it is the
 cheapest decisive test in the queue *and* because either outcome is a diagnosis the campaign does not
 currently have: it partitions the remaining 0.4606 pp into "coarse mis-ordering of whole regions" vs
-"fine mis-ordering inside regions", which tells H45 and H46 where to look.
+"fine mis-ordering inside regions", which tells H45 and H47 where to look.
 
 ### Expected effect size and cost
 - **Expected: 0 to +0.15 pp on connectome**, honest midpoint +0.05. Lower prior evidence than H45
   (Vahidi's Alg. 4 is not credited with a specific increment in the paper), higher structural
   argument: this is the one hole that provably none of the three existing move classes covers.
 - **Cost:** prototype ~2–3 h of implementation + minutes of CPU, **0 GPU**. New module
-  `src/mfas/refine/coarse_lop.py` + `src/mfas/experiments/H44.py`.
+  `src/mfas/refine/coarse_lop.py` + `src/mfas/experiments/H46.py`.
 - **Memory/runtime at scale:** `W` is built sparsely (`scipy.sparse.coo_matrix` on
   `block(src)·K + block(tgt)`, at most `m = 5.66M` nonzeros) and densified only for `K ≤ 4096`
   (16.8M float64 = 134 MB). A coarse sweep is `O(K²) = 1.7e7` at `K = 4096`, ~0.1 s vectorised. Whole
@@ -144,7 +160,7 @@ currently have: it partitions the remaining 0.4606 pp into "coarse mis-ordering 
 
 ---
 
-## Rank 3 — **H46**: exact subset-DP ordering at the recursion's leaves
+## Rank 3 — **H47**: exact subset-DP ordering at the recursion's leaves
 
 ### Mechanism
 `SccRecursiveRefiner._refine` returns immediately when `hi − lo <= min_block` (**32**), and inside
@@ -182,7 +198,8 @@ against the frozen oracle). Minutes of CPU.
 - **Expected: 0 to +0.03 pp.** Low.
 - **Cost:** prototype ~1–2 h of implementation + minutes of CPU, **0 GPU**. New module
   `src/mfas/refine/leaf_exact.py` providing a subclass of `SccRecursiveRefiner` that overrides only
-  the base case, so `scc_recursive.py` is untouched and the champion is bit-reproducible.
+  the base case, so `scc_recursive.py` is untouched and the champion is bit-reproducible; variant
+  `src/mfas/experiments/H47.py`.
 
 ---
 
@@ -225,9 +242,14 @@ merely unfalsified.**
 
 ## Summary table
 
-| rank | id | move class | range | exact gain? | GPU for the kill test | expected pp | main risk |
+| rank | queue id | move class | range | exact gain? | GPU for the kill test | expected pp | main risk |
 |---|---|---|---|---|---|---|---|
 | 1 | **H45** | joint pair relocation, edge-driven | **unbounded, data-set** | yes, `O(d(u)+d(v))` | **none** | +0.05 … +0.30 | implementation weight; candidate-set sizing |
-| 2 | **H44** | permutation of coarse contiguous blocks | **unbounded** | yes, `O(m + K²)` | **none** | 0 … +0.15 | champion may already be coarse-optimal |
-| 3 | **H46** | exact `k!`-optimal ordering of recursion leaves | `k ≤ 16` | yes, `O(2^k k²)` | **none** | 0 … +0.03 | M4 says local is empty |
+| 2 | **H46** | permutation of coarse contiguous blocks | **unbounded** | yes, `O(m + K²)` | **none** | 0 … +0.15 | champion may already be coarse-optimal |
+| 3 | **H47** | exact `k!`-optimal ordering of recursion leaves | `k ≤ 16` | yes, `O(2^k k²)` | **none** | 0 … +0.03 | M4 says local is empty |
 | 4 | gated | ratio greedy init | — | — | — | 0 (now) | blocked by M6 until S01 lands |
+
+**Suggested execution order** (all three kill tests are CPU-only and need **no GPU**): run **H46**'s
+gate first because it is the cheapest and its number tells the other two where to look; then **H45**,
+which carries the strongest prior evidence and the largest expected effect; then **H47**, which I
+expect to die.

@@ -16,10 +16,11 @@ the repo.
 
 | file | contents |
 |---|---|
+| `vahidi-2025.md` | **written by a second scout running concurrently**, not by this scan. Deeper on arXiv:2506.13799 itself — it retrieved the paper's GitHub code repository, the back-edge length table (mean 20,536 / max 126,650), the executed Algorithm-4 parameters, and a critique of meta-rule M4's own evidence. Read it together with the next row; the two were written independently and agree on every shared fact. |
 | `notes-vahidi-flywire.md` | the two Vahidi papers, the FlyWire leaderboard, and the mechanism that produced our target number |
 | `notes-lop-and-ocm.md` | Linear Ordering Problem metaheuristics (2026 state of the art) and PACE 2024 one-sided crossing minimization |
 | `notes-scalable-fas-and-negatives.md` | scalable FAS heuristics, multilevel ordering, and the honest negatives |
-| `hypotheses.md` | the ranked shortlist of new falsifiable hypotheses (H44/H45/H46 + two gated ones) |
+| `hypotheses.md` | the ranked shortlist of new falsifiable hypotheses (queue ids **H45 / H46 / H47** + two gated ones). Note the id history: a concurrent cycle allocated `H44` and independently queued its own `H45`/`H46` for the same two mechanisms while this scan was writing; the duplicates were merged, not overwritten. See the banner at the top of `hypotheses.md`. |
 
 ### Queries actually issued (WebSearch), 2026-08-16
 

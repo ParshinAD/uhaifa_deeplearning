@@ -5,6 +5,19 @@ Scan L01, 2026-08-16. Sources retrieved as listed in `README.md`.
 PDF rasterizer, Bash disabled). All Vahidi-2025 content below is from the arXiv **HTML**
 rendering. The Vahidi & Koutis 2026 paper is **abstract-only** — the full text was not read.
 
+> **READ `vahidi-2025.md` ALONGSIDE THIS FILE.** A second scout ran concurrently on the same paper
+> and retrieved things this note does not have: the paper's own **code repository**
+> (`github.com/SoroushVahidi/minimum-feedback-challenge`, all three notebooks read as raw source),
+> the paper's back-edge length table (**mean 20,536, max 126,650** — hard evidence that Algorithm 2's
+> intervals are long-range), the executed Algorithm-4 parameters (`x = 6`, `ℓ = 6`, i.e. an ~18-position
+> window), and a serious critique of **M4's own evidence** (its headline `net_pp(W) ≤ 0` numbers measure
+> how much of the *reference's* rearrangement is short-range, which does not bound a hill-climb that
+> never pays the `lose` term). The two notes agree on every fact they share — including the 84.6147
+> provenance correction and the "no bounded-span insertion exists in the paper" conclusion, which were
+> reached independently. What *this* note adds is the full leaderboard with our own rank, the LOP/OCM
+> and multilevel-MinLA literature, the exact `Δ(r)` derivation, and the two algorithmic upgrades
+> (Held–Karp subset DP; weighted-interval-scheduling DP).
+
 ---
 
 ## 1. What I read
@@ -132,7 +145,7 @@ notes it deliberately implemented this *flat* rather than recursively, for memor
 This is a **coarsened Linear Ordering Problem**: contract contiguous rank groups into supernodes and
 solve the LOP on the small dense matrix. Our `H41` segment move is precisely the `x = 2`,
 adjacent-only, span-≤2048, powers-of-two special case of this. The generalisation is the basis of
-hypothesis **H44**.
+hypothesis **H46**.
 
 ### 3.5 Alg. 5 — `SCCBasedGlobalRanking`
 Global condensation → topological order → exhaustive permutation for SCCs of size ≤ 9, otherwise
@@ -189,8 +202,8 @@ Recorded so a future scout does not re-read it.
 |---|---|---|
 | Alg. 2 backward-edge interval repair | **yes — highest value** | exact gain, cost `O(d(u)+d(v))` per candidate independent of span, unbounded range. Becomes **H45**. |
 | S2 non-overlapping-interval DP + batched apply | **yes, as the enabler for the above** | disjoint contiguous intervals compose exactly; turns a sequential loop into a vectorised sweep. Folded into **H45**. |
-| Alg. 4 coarsened `x!` group permutation | **yes, and improvable** | `x!` brute force caps `x ≈ 5`; subset-DP (Held–Karp) solves the coarse LOP exactly in `O(2^x · x²)`, so `x = 16` costs ~1e6 ops instead of `16! = 2e13`. Becomes **H44**. |
-| Alg. 3/5 exhaustive permutation of SCCs with `|S| ≤ 9` | **maybe — cheap to size** | we currently do *nothing* below `min_block=32`. Becomes **H46**, with a free CPU sizing gate. |
+| Alg. 4 coarsened `x!` group permutation | **yes, and improvable** | `x!` brute force caps `x ≈ 5`; subset-DP (Held–Karp) solves the coarse LOP exactly in `O(2^x · x²)`, so `x = 16` costs ~1e6 ops instead of `16! = 2e13`. Becomes **H46**. |
+| Alg. 3/5 exhaustive permutation of SCCs with `|S| ≤ 9` | **maybe — cheap to size** | we currently do *nothing* below `min_block=32`. Becomes **H47**, with a free CPU sizing gate. |
 | Alg. 1 ratio greedy (0.7524 vs our 0.6891) | **gated** | see `hypotheses.md` §Gated-1; it is live only if **S01** shows the Rocket phase is cuttable. |
 | S2 multi-core parallelism | **out of scope for score** | relevant to P07 runtime only. |
 
