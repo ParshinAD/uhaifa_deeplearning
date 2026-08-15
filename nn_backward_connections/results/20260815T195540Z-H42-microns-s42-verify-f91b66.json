@@ -1,0 +1,213 @@
+{
+  "exp_id": "20260815T195540Z-H42-microns-s42-verify-f91b66",
+  "algo": "H42",
+  "dataset": "microns",
+  "seed": 42,
+  "score": 12819555.0,
+  "pct": 83.24085291200831,
+  "wall_clock_s": 3258.232647895813,
+  "git_commit": "ef049e128121d45e8548176c47210243503616c1",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "f91b665b878d",
+  "timestamp": "2026-08-15T20:49:58Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 80000,
+  "best_positions_path": "results\\20260815T195540Z-H42-microns-s42-verify-f91b66_positions.npy",
+  "experiment_id": "H42",
+  "role": "verify",
+  "hypothesis": "H36's stage-4 inner sift was never sized: it costs ~88% of a cycle, so the shipped split buys few expensive cycles where it could buy many cheap ones. Cutting the inner sift to 2 sweeps and spending the freed seconds on more alternations beats the champion on both primaries at the SAME OR LOWER wall-clock and 0 extra gradient steps.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 80000,
+  "variant_attrs": {
+    "pure_best_score": 12802184.0,
+    "pure_best_pct": 83.12805829035923,
+    "sift_best_score": 12813817.0,
+    "sift_best_pct": 83.20359451934108,
+    "n_sift_sweeps": 12,
+    "sift_sweeps_requested": 12,
+    "sift_converged": false,
+    "sift_time_s": 86.95035028457642,
+    "sift_alpha": 0.7,
+    "sift_k_full": 6,
+    "alt_best_score": 12819555.0,
+    "alt_best_pct": 83.24085291200831,
+    "alt_increment_pp": 0.0372583926672263,
+    "n_alt_cycles": 5,
+    "alt_cycles_requested": 5,
+    "alt_time_s": 86.00095295906067,
+    "alt_min_block": 32,
+    "alt_sift_sweeps": 2,
+    "alt_log": [
+      {
+        "cycle": 0,
+        "split_frac": 0.5,
+        "after_scc_pct": 83.21060725271171,
+        "after_sift_pct": 83.22017833510827,
+        "best_pct": 83.22017833510827,
+        "t_scc_s": 3.153808832168579,
+        "t_sift_s": 13.700469493865967,
+        "cum_wall_s": 16.854278326034546
+      },
+      {
+        "cycle": 1,
+        "split_frac": 0.382,
+        "after_scc_pct": 83.22415871062326,
+        "after_sift_pct": 83.22827544484268,
+        "best_pct": 83.22827544484268,
+        "t_scc_s": 2.832179307937622,
+        "t_sift_s": 13.723141431808472,
+        "cum_wall_s": 33.40959906578064
+      },
+      {
+        "cycle": 2,
+        "split_frac": 0.618,
+        "after_scc_pct": 83.23052861010157,
+        "after_sift_pct": 83.23299605332457,
+        "best_pct": 83.23299605332457,
+        "t_scc_s": 3.695390224456787,
+        "t_sift_s": 13.718863725662231,
+        "cum_wall_s": 50.82385301589966
+      },
+      {
+        "cycle": 3,
+        "split_frac": 0.25,
+        "after_scc_pct": 83.23488559537165,
+        "after_sift_pct": 83.23721018661857,
+        "best_pct": 83.23721018661857,
+        "t_scc_s": 3.0510354042053223,
+        "t_sift_s": 13.420829772949219,
+        "cum_wall_s": 67.29671597480774
+      },
+      {
+        "cycle": 4,
+        "split_frac": 0.75,
+        "after_scc_pct": 83.23877506508369,
+        "after_sift_pct": 83.24085291200831,
+        "best_pct": 83.24085291200831,
+        "t_scc_s": 4.993429660797119,
+        "t_sift_s": 13.71080732345581,
+        "cum_wall_s": 86.00095295906067
+      }
+    ],
+    "refined_best_score": 12819555.0,
+    "refined_best_pct": 83.24085291200831,
+    "sift_log": [
+      {
+        "sweep": 0,
+        "alpha": 1.0,
+        "candidate_pct": 83.1616025316487,
+        "accepted": true,
+        "n_movers": 3539,
+        "wall": 8.702711820602417
+      },
+      {
+        "sweep": 1,
+        "alpha": 1.0,
+        "candidate_pct": 83.17985511822722,
+        "accepted": true,
+        "n_movers": 4584,
+        "wall": 8.304912328720093
+      },
+      {
+        "sweep": 2,
+        "alpha": 1.0,
+        "candidate_pct": 83.18782885580048,
+        "accepted": true,
+        "n_movers": 3067,
+        "wall": 7.608300447463989
+      },
+      {
+        "sweep": 3,
+        "alpha": 1.0,
+        "candidate_pct": 83.18610164554438,
+        "accepted": false,
+        "n_movers": 2260,
+        "wall": 7.314600706100464
+      },
+      {
+        "sweep": 4,
+        "alpha": 1.0,
+        "candidate_pct": 83.19702332844196,
+        "accepted": true,
+        "n_movers": 1710,
+        "wall": 7.049470663070679
+      },
+      {
+        "sweep": 5,
+        "alpha": 1.0,
+        "candidate_pct": 83.2002569777184,
+        "accepted": true,
+        "n_movers": 1312,
+        "wall": 7.0252203941345215
+      },
+      {
+        "sweep": 6,
+        "alpha": 0.7,
+        "candidate_pct": 83.19444549960109,
+        "accepted": false,
+        "n_movers": 998,
+        "wall": 6.929218769073486
+      },
+      {
+        "sweep": 7,
+        "alpha": 0.7,
+        "candidate_pct": 83.19565324812602,
+        "accepted": false,
+        "n_movers": 843,
+        "wall": 6.869880199432373
+      },
+      {
+        "sweep": 8,
+        "alpha": 0.7,
+        "candidate_pct": 83.19781550758196,
+        "accepted": false,
+        "n_movers": 923,
+        "wall": 6.864984512329102
+      },
+      {
+        "sweep": 9,
+        "alpha": 0.7,
+        "candidate_pct": 83.19999724685283,
+        "accepted": false,
+        "n_movers": 867,
+        "wall": 6.823180675506592
+      },
+      {
+        "sweep": 10,
+        "alpha": 0.7,
+        "candidate_pct": 83.20190626871482,
+        "accepted": true,
+        "n_movers": 817,
+        "wall": 6.755845069885254
+      },
+      {
+        "sweep": 11,
+        "alpha": 0.7,
+        "candidate_pct": 83.20359451934108,
+        "accepted": true,
+        "n_movers": 737,
+        "wall": 6.702024698257446
+      }
+    ]
+  },
+  "runtime_guard": {
+    "armed": true,
+    "source": "campaign",
+    "time_limit_s": 3450.0,
+    "reserve_s": 150.0,
+    "cap_s": 3600.0,
+    "warn_s": 3400.0,
+    "wall_clock_s": 3258.232647895813,
+    "variant_wall_s": 3226.8724813461304,
+    "deadline_reached": false,
+    "stages_truncated": {},
+    "degraded": false,
+    "over_warn": false,
+    "over_cap": false
+  }
+}
