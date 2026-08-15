@@ -99,6 +99,14 @@ datasets:
     role: primary
     n_nodes: 136648
     baseline_sigma_pp: 0.0189         # frozen-baseline noise floor (PROTOCOL.md)
+    # Smallest score difference the ORACLE can represent, expressed in pp. Connectome weights
+    # are int64, total 41,912,141, so one weight unit = 100/41912141 = 2.386e-6 pp. Used as the
+    # sigma FLOOR of the non-inferiority SE (audit.noninferiority_ci) — see D4 note below.
+    measurement_resolution_pp: 0.0000024
+    # Minimum effect size a promotion must clear (update_sota.py). Defaults to screen_delta_pp
+    # when absent; stated explicitly here so the promotion gate never silently inherits a
+    # screen-stage number that later changes for screen-stage reasons.
+    min_promotion_delta_pp: 0.012
     # KEPT at the MPS-era value, but its JUSTIFICATION changed at the P01 re-baseline.
     # It used to be 2 x champion sigma (H35 sigma = 0.0060 on MPS). On CUDA the champion's sigma
     # is exactly 0.0000 — the pipeline never draws from `seed` — so "2 x sigma" would be 0 and
@@ -116,6 +124,9 @@ datasets:
     # effect size, not 2 x sigma. Note microns is the expensive dataset on this hardware
     # (3240 s/run vs 706 s on MPS) — see runtime above and queue item P02.
     screen_delta_pp: 0.002
+    # int64 weights, total 15,400,557 -> one weight unit = 100/15400557 = 6.493e-6 pp.
+    measurement_resolution_pp: 0.0000065
+    min_promotion_delta_pp: 0.002
     confirm_seeds: [42, 123, 999, 7, 31415]
     screen_seeds: [42, 123, 999]
   mouse:
@@ -123,6 +134,23 @@ datasets:
     n_nodes: 148
     baseline_sigma_pp: 0.2624
     non_inferiority_pp: -0.26
+    # Mouse weights are float64 (total 9.159036176272162), so there is no integer quantum. The
+    # resolution here is the float64 accumulation noise of the exact scorer: ulp(9.159) = 1.78e-15
+    # absolute, i.e. ~2e-14 pp per ulp, and the measured cancellation noise of numpy's ddof=1 std
+    # over 20 identical values is 1.458e-14 pp. 1e-12 pp sits two orders above that and eleven
+    # orders below the -0.26 pp non-inferiority margin, so it floors float noise without ever
+    # being the binding term of a real comparison.
+    measurement_resolution_pp: 0.000000000001
+    # JUDGEMENT CALL, flagged for the operator (2026-08-15). Mouse is SUPPORTING and PROTOCOL.md
+    # calls it saturated with an expectation of 0.0000 pp, so it has no screen_delta_pp to inherit.
+    # Before this existed, the only floor on a mouse promotion was update_sota.py's 4-decimal
+    # rounding of pct_mean, which is how H42 took the mouse championship from H36 on a delta of
+    # EXACTLY 0.0 over bit-identical pools (n=20 each, one distinct value, 92.91701410211007).
+    # 0.01 pp = 3.8% of baseline_sigma_pp (0.2624) and ~2/3 of the smallest real mouse move ever
+    # recorded between champions (+0.0152 pp, H30 -> H36). It excludes exact ties and float-level
+    # differences without blocking a genuine mouse improvement. It is not derived from a
+    # measurement; if you disagree with it, this line is the only place to change it.
+    min_promotion_delta_pp: 0.01
     confirm_seeds: [42, 123, 999, 7, 31415, 2718, 1618, 1414, 1732, 2236,
                     9999, 8888, 7777, 6666, 5555, 4444, 3333, 2222, 1111, 1234]
     screen_seeds: [42, 123, 999]
@@ -216,6 +244,72 @@ gates:
     what: >
       Red-team + mechanical audit (autoresearch/audit.py). Leakage, frozen integrity,
       fabricated numbers, cherry-picked seeds, double-counted increments, runtime honesty.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PROMOTION GATE (D1/D4/D5/D6, 2026-08-15) — the arithmetic that must hold before a variant
+# may become the recorded champion. `audit.py --gate promotion` enforces every line of this
+# block as a hard FAIL; `audit.py --gate report` (the default, and what every exploratory
+# caller gets) reports the same computations at INFO/WARN and never changes its exit code.
+#
+# WHY THIS EXISTS. Until now audit.py could not FAIL on any SCIENTIFIC ground: every
+# significance result was emitted at INFO and the degeneracy notice at WARN, so "is this a real
+# gain?" was adjudicated only by the agent that produced the gain. `screen_delta_pp` above was
+# read by NO code at all — it lived in a WARN message string and in prose. These are the
+# thresholds that turn the ladder in `gates:` into something a script can refuse.
+# ─────────────────────────────────────────────────────────────────────────────
+promotion_gate:
+  enabled: true
+  z: 1.96                             # two-sided 95%, matching PROTOCOL.md throughout
+  # Below this, a sample std is float noise rather than dispersion (D3): numpy's ddof=1 std over
+  # 20 IDENTICAL mouse values returns 1.458e-14 by catastrophic cancellation, which defeated the
+  # `std == 0.0` degeneracy tripwire on exactly the pool that needed it. audit.summarize() also
+  # reports a single-distinct-value pool as exactly 0.0 so the record is not polluted.
+  zero_std_tol: 0.000000000001
+  primary:
+    # PRIMARY datasets (connectome, microns): a promotion must show a real effect, twice over.
+    require_delta_gt_min_effect: true       # delta_pp > datasets.<ds>.min_promotion_delta_pp
+    require_protocol_ci_lower_gt: 0.0       # the sigma-floored CI of gates.confirm, now enforced
+  supporting:
+    # SUPPORTING datasets (mouse): non-inferiority only, against datasets.<ds>.non_inferiority_pp.
+    #
+    # D4 (2026-08-15). The OLD bound reused audit.protocol_se(), i.e.
+    #     max(std_comparator, baseline_sigma_pp) * sqrt(2 / n_comparator)
+    # which is wrong here in two independent ways. (a) It uses the COMPARATOR's n, so the
+    # variant's 20 mouse seeds contributed nothing — H36 was judged on sqrt(2/3). (b) Its sigma
+    # floor is baseline_sigma_pp = 0.2624, the RANDOM-INIT baseline's dispersion, applied to a
+    # pipeline whose real dispersion is 0. Together they demanded delta > +0.16 pp to clear a
+    # -0.26 pp margin on a dataset PROTOCOL.md itself describes as saturated at 0.0000 pp.
+    # Measured consequence: -0.4047 for H36 (whose mouse score IMPROVED, 92.90180243 ->
+    # 92.91701410) and -0.4199 for P02 at delta exactly 0. It never once changed a verdict.
+    #
+    # The replacement (audit.noninferiority_ci) pools both arms and floors sigma at the DATASET's
+    # own measurement resolution rather than at another algorithm's dispersion:
+    #     sd_pooled = sqrt(((n_v-1)*s_v^2 + (n_c-1)*s_c^2) / (n_v+n_c-2))
+    #     se        = max(sd_pooled, measurement_resolution_pp) * sqrt(1/n_v + 1/n_c)
+    #     pass iff  delta - z*se > non_inferiority_pp
+    # For a deterministic pipeline se collapses to ~0 and the test becomes the honest question
+    # "is the point estimate above the margin?"; for a genuinely stochastic one it is the
+    # ordinary pooled-variance non-inferiority test. Pinned by tests/test_audit_gates.py.
+    se: pooled_floored_at_measurement_resolution
+    require_non_inferiority: true
+  evidence:
+    # D5: audit.py used to WARN-and-continue on an empty comparator pool and still exit 0 with
+    # an empty per_dataset. Verified live in audit_P02.json: 2 of 3 datasets produced NO
+    # significance analysis whatsoever and the audit passed. A champion was promotable with
+    # zero comparator evidence.
+    require_comparator_runs: true
+    require_variant_runs: true
+    require_nonempty_per_dataset: true
+  provenance:
+    # D6 = CLAUDE.md invariant 5 ("results must be reproducible via git checkout + the logged
+    # command") and CAMPAIGN.md rule 3, neither of which was enforced anywhere. Cheap test:
+    # `git cat-file -e <commit>:<repo-relative path to the variant module>`. If the module does
+    # not exist at the commit the runs were stamped with, the number cannot be reproduced by
+    # checkout, whatever the working tree happened to contain. Skipped (WARN) if git is absent.
+    require_variant_module_at_commit: true
+    # A commit that DOES contain the module but was run from a modified tree is a softer
+    # problem: reproducible in principle, unverifiable in fact. WARN, not FAIL.
+    warn_on_dirty_tree: true
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Budgets and stop/escalation criteria for unattended operation.

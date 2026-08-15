@@ -2,13 +2,17 @@
   "_doc": "Champion registry. THE comparator for every new variant (campaign.yaml: comparator.primary=champion). Updated ONLY after a full cycle passes confirm + critic + audit. Hand-editing this file is a protocol violation; use autoresearch/update_sota.py.",
   "_schema": {
     "champion": "variant id that currently holds the dataset",
-    "pct_mean": "exact feedforward percentage, mean over seeds",
-    "pct_std": "std over the same seeds",
+    "pct_mean": "feedforward percentage, mean over seeds, ROUNDED to 4 dp for display only",
+    "pct_mean_exact": "the same mean at full precision. THIS is what update_sota.py compares the next candidate against (added 2026-08-15, D2): gating on the rounded pct_mean let H42 take the mouse championship from H36 on a delta of exactly 0.0 over bit-identical pools. Rows promoted before that date have no pct_mean_exact and fall back to pct_mean; they are left as recorded.",
+    "pct_std": "std over the same seeds, rounded to 4 dp for display",
+    "pct_std_exact": "the same std at full precision",
     "n_seeds": "number of seeds behind pct_mean",
     "seeds": "the actual seeds",
     "role": "role of the result JSONs used (implement|verify|confirm)",
     "evidence": "glob of results/*.json backing this row",
     "finding": "findings.md section that documents it",
+    "caveats": "list of short strings scoping the promotion (added 2026-08-15, D7). A row with a non-empty caveats list is NOT an unqualified win; read them before quoting the number. Written by update_sota.py --caveat.",
+    "forced": "present only when the row was installed with update_sota.py --force, i.e. over a failing audit or an insufficient effect size. Its justification must exist in experiments/log.md.",
     "wall_clock_s_approx": "approximate per-run wall clock; recompute from JSONs before quoting"
   },
   "updated": "2026-08-10",
@@ -30,6 +34,7 @@
       "role": "confirm",
       "evidence": "results/*-H42-connectome-*-confirm-*.json",
       "finding": "findings.md #7 (H42, 2026-08-10)",
+      "caveats": [],
       "wall_clock_s_approx": 1238,
       "runner_up": {
         "champion": "H36",
@@ -54,6 +59,9 @@
       "role": "confirm",
       "evidence": "results/*-H42-microns-*-confirm-*.json",
       "finding": "findings.md #7 (H42, 2026-08-10)",
+      "caveats": [
+        "Weak leg, recorded as such in findings.md #7: +0.0070 pp bought +107 s of wall clock, and microns now crosses the 3400 s runtime warn band (3398-3418 s against a 3600 s cap). Promoting connectome only and leaving microns on H36 was a defensible alternative verdict."
+      ],
       "wall_clock_s_approx": 3418,
       "runner_up": {
         "champion": "H36",
@@ -71,12 +79,21 @@
       "role": "confirm",
       "evidence": "results/*-H42-mouse-*-confirm-*.json",
       "finding": "findings.md #7 (H42, 2026-08-10)",
+      "caveats": [
+        "TIE, NOT A WIN. H42's delta over H36 on mouse is exactly 0.0 pp: the two confirm pools are bit-identical (n=20 seeds each, one distinct value, 92.91701410211007). This row changed hands only because update_sota.py compared the full-precision candidate mean against the champion's 4-decimal-ROUNDED pct_mean (92.917) - defect D2, fixed 2026-08-15. Under the minimum-effect-size gate now in force the promotion would be REFUSED. Backfilled 2026-08-15 as documentation; no score, seed list or n was altered.",
+        "Inherited from its predecessor H36, which took this row under PROTOCOL.md's 'GENERAL WIN with mouse caveat' decision-table row (added 2026-06-22, seven weeks before H36): H36's mouse non-inferiority bound was NOT cleared - protocol_ci_lower = -0.4047 against a -0.26 pp margin - even though its mouse score IMPROVED (+0.0152 pp over H30, 92.90180243 -> 92.91701410). The bound was mis-specified, not the result: it used the comparator's n only and floored sigma at the random-init baseline's 0.2624 pp, which demanded a +0.16 pp IMPROVEMENT to certify 'not worse' on a saturated 148-node graph. Re-specified 2026-08-15 (defect D4); under the pooled formula H36's mouse leg passes.",
+        "Provenance is not reproducible by checkout as of 2026-08-15: every H42 mouse confirm run is stamped 1865372b+dirty, a commit at which src/mfas/experiments/H42.py does not exist. audit.py --gate promotion FAILs on this (defect D6); a re-run from a clean checkout is required to close it."
+      ],
       "wall_clock_s_approx": 6,
       "runner_up": {
         "champion": "H36",
         "pct_mean": 92.917,
         "pct_std": 0.0,
-        "n_seeds": 20
+        "n_seeds": 20,
+        "caveats": [
+          "Promoted as 'GENERAL WIN with mouse caveat' (PROTOCOL.md decision table, the checkmark-checkmark-cross row): the mouse non-inferiority bound was not cleared - protocol_ci_lower = -0.4047 vs the -0.26 pp margin - while the mouse score itself IMPROVED by +0.0152 pp over H30 with zero dispersion over 20 seeds. Recorded in findings.md #6 and filed at the time as queue item P04. The bound has since been re-specified (D4, 2026-08-15).",
+          "Provenance is not reproducible by checkout: all 36 H36 runs are stamped 9d43b977+dirty, a commit at which src/mfas/experiments/H36.py does not exist (defect D6, 2026-08-15)."
+        ]
       },
       "seeds": [
         7,

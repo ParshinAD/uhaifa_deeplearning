@@ -20,8 +20,18 @@ The auditor computes; you adjudicate. Run it first and read its output carefully
 ```bash
 PY=/c/ProgramData/anaconda3/envs/allen/python.exe
 $PY autoresearch/audit.py --variant <id> --comparator champion \
-    --role confirm --comparator-role confirm --out autoresearch/audit_<id>.json
+    --role confirm --comparator-role confirm --gate promotion \
+    --out autoresearch/audit_<id>.json
 ```
+
+**`--gate promotion` is not optional at this rung.** The default `--gate report` keeps
+significance at INFO and degeneracy at WARN, so a report-mode audit exits 0 on evidence that
+cannot support a champion change — that is the mode for exploring, not for adjudicating. Strict
+mode turns the thresholds in `campaign.yaml`'s `promotion_gate` block into hard failures: minimum
+effect size per dataset, `protocol_ci_lower > 0` on the primaries, mouse non-inferiority, a
+non-empty comparator pool, and provenance (the runs must come from a commit that actually
+contains the variant's module — CLAUDE.md invariant 5). `update_sota.py` runs the same mode, so
+if you adjudicate in report mode you will approve something the promotion step then refuses.
 
 A non-zero exit is disqualifying. WARNs are yours to adjudicate — especially
 `comparator_homogeneity` and `leakage.dataset_keying`.

@@ -1,6 +1,6 @@
 {
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
-  "updated": "2026-08-11",
+  "updated": "2026-08-15",
   "next_free_id": "H43",
   "next_free_protocol_id": "P08",
   "items": [
@@ -52,7 +52,7 @@
       "id": "P03",
       "title": "Cycle handoff: the previous cycle was still writing when the driver launched the next one",
       "status": "proposed",
-      "priority": 1,
+      "priority": 5,
       "kind": "infrastructure",
       "axis": "campaign lifecycle",
       "hypothesis": "The driver can start cycle N+1 while cycle N is still writing to the worktree, so two cycles briefly share the sandbox. Observed 2026-08-09 during P02: autoresearch/waitfor.sh (21:13:27) and .claude/agents/verifier.md (21:15:37) appeared AFTER the P02 cycle's preflight `git status` (~21:12) and were not its work.",
@@ -66,7 +66,8 @@
       ],
       "est_cost": "cheap (reading driver.sh + a stub-cycle reproduction; no GPU)",
       "expected_pp": "n/a - protects the record rather than the metric",
-      "evidence_upgraded": "2026-08-10 (cycle 5): REPRODUCED WITH TIMESTAMPS, no longer mtime archaeology. .claude/commands/research-cycle.md was written at 07:14:01 with cycle-#4-authored content - 6m23s AFTER driver.log recorded 'cycle #4 finished OK' (07:07:38) and 5m23s after it started cycle #5 (07:08:38); cycle #5's own preflight git status at ~07:09 saw a clean tree. Two cycles shared the sandbox for ~5.4 minutes. Benign this time (a docs file), but it proves the driver releases the lock before the cycle's last writes land."
+      "evidence_upgraded": "2026-08-10 (cycle 5): REPRODUCED WITH TIMESTAMPS, no longer mtime archaeology. .claude/commands/research-cycle.md was written at 07:14:01 with cycle-#4-authored content - 6m23s AFTER driver.log recorded 'cycle #4 finished OK' (07:07:38) and 5m23s after it started cycle #5 (07:08:38); cycle #5's own preflight git status at ~07:09 saw a clean tree. Two cycles shared the sandbox for ~5.4 minutes. Benign this time (a docs file), but it proves the driver releases the lock before the cycle's last writes land.",
+      "outcome": "PARTIALLY ADDRESSED 2026-08-15 (commit 91220f6). The lock was never a per-cycle mutex - it is taken once at driver start and released only at driver exit - and `wait $cmd_pid` returning means one process exited, not that the cycle finished writing. That is structural: sweep.sh and detach.sh EXIST to outlive the session, so overlapping writers are by design. What landed: no-op cycle detection (HEAD + history length either side of a cycle), pid-ownership verification in --abort, and a .sweep status file that lets a resuming cycle tell a killed sweep from an unstarted one. What did NOT land: any barrier that makes cycle N+1 wait for cycle N's writes. Best evidence for the remaining race is proto_H42.json (mtime 08:18:50) written 70 min into cycle #5 by cycle #4's detached prototype - not the research-cycle.md timestamp originally cited, which is retrospective text ABOUT cycle #4 written BY cycle #5. Deprioritised because the damage so far is confined to shared scratch, never to results/*.json."
     },
     {
       "id": "H36",
@@ -109,7 +110,7 @@
     {
       "id": "P04",
       "title": "The mouse non-inferiority test is mis-specified - it can only be passed by a large improvement",
-      "status": "proposed",
+      "status": "done",
       "priority": 3,
       "kind": "protocol",
       "axis": "measurement",
@@ -125,7 +126,8 @@
       ],
       "est_cost": "cheap (no GPU; arithmetic plus a synthetic-regression check)",
       "expected_pp": "n/a - protects the verdict rule",
-      "narrowed": "2026-08-10 (cycle 5, H42): the diagnosis in this item is WIDER THAN THE DEFECT. The mouse non-inferiority bound PASSED for H42 (protocol_ci_lower = -0.1626 > -0.26) with no change to the test. What changed is the COMPARATOR POOL: protocol_se scales as sqrt(2/n_c), so a 3-seed comparator gives SE = 0.2142 pp (bound -0.42, unpassable) while H36's 20-seed mouse pool gives SE = 0.0830 (bound -0.1626, passable). P02 and H36 both failed it because they were compared against 3-seed mouse pools, not because the statistic is mis-specified. Mouse costs ~5 s/run, so the cheap fix is to REQUIRE a 20-seed comparator pool on mouse before quoting the bound. Re-scope the item to that, and verify it still fires on a synthetic regression."
+      "narrowed": "2026-08-10 (cycle 5, H42): the diagnosis in this item is WIDER THAN THE DEFECT. The mouse non-inferiority bound PASSED for H42 (protocol_ci_lower = -0.1626 > -0.26) with no change to the test. What changed is the COMPARATOR POOL: protocol_se scales as sqrt(2/n_c), so a 3-seed comparator gives SE = 0.2142 pp (bound -0.42, unpassable) while H36's 20-seed mouse pool gives SE = 0.0830 (bound -0.1626, passable). P02 and H36 both failed it because they were compared against 3-seed mouse pools, not because the statistic is mis-specified. Mouse costs ~5 s/run, so the cheap fix is to REQUIRE a 20-seed comparator pool on mouse before quoting the bound. Re-scope the item to that, and verify it still fires on a synthetic regression.",
+      "outcome": "DONE 2026-08-15. The gate was not merely mis-specified, it was UNPASSABLE: protocol_se = max(comparator_std, 0.2624) * sqrt(2/n_comparator) used the RANDOM-INIT baseline's dispersion as a floor for a pipeline whose real dispersion is 0, and used only the COMPARATOR's n, so the variant's 20 mouse seeds contributed nothing. Clearing -0.26 required delta > +0.16 pp on a dataset PROTOCOL.md itself calls saturated. It returned -0.4047 for H36 - whose mouse score IMPROVED, 92.90180243 -> 92.917014102 - and -0.4199 for P02 at delta exactly 0, and it never once changed a verdict. Re-specified as a real non-inferiority test: se = max(pooled_sd, measurement_resolution_pp) * sqrt(1/n_v + 1/n_c), pooling both arms and flooring at the dataset's own oracle resolution. H36's mouse leg goes -0.4047 -> +0.0152 (PASS); a -0.31 pp regression still fails. Pinned by tests/test_audit_gates.py."
     },
     {
       "id": "P05",
@@ -153,7 +155,7 @@
     {
       "id": "P07",
       "title": "BLOCKING: the champion's microns configuration does not fit 3600 s on a loaded machine",
-      "status": "proposed",
+      "status": "in_progress",
       "priority": 0,
       "kind": "infrastructure",
       "axis": "runtime safety",
@@ -168,13 +170,14 @@
         "autoresearch/campaign.yaml runtime.max_wall_clock_s_per_run = 3600"
       ],
       "est_cost": "cheap to measure (2-4 microns runs, ~1 h each); the fix is S01-shaped and is a normal variant",
-      "expected_pp": "n/a - restores the runtime invariant, and unblocks promotion on microns"
+      "expected_pp": "n/a - restores the runtime invariant, and unblocks promotion on microns",
+      "outcome": "IN PROGRESS 2026-08-15 night. Grid running via experiments/proto_P07_sizing.py on an IDLE machine (operator asleep), which also supplies the idle-machine counter-measurement P07's own method step 1 asks for. Two arms already on disk from the aborted 2026-08-11 cycle: epochs=0 -> 83.11152%, epochs=2500 -> 83.12094%, against a champion of 83.2409% at 80,000 epochs. So the gradient phase buys ~0.13 pp for roughly its entire ~3200 s. Arms 5000/10000/20000 decide whether microns' runtime invariant can be met by SIZING rather than by weakening the cap."
     },
     {
       "id": "H37",
       "title": "Cycle-triggered under-relaxation (fix the microns regression, make H35 a general win)",
       "status": "proposed",
-      "priority": 2,
+      "priority": 3,
       "axis": "discrete refinement / schedule",
       "hypothesis": "Switching from Jacobi (alpha=1) to under-relaxed (alpha<1) sweeps ONLY once a period-2 limit cycle is actually detected — instead of unconditionally after k_full=6 sweeps — recovers H35's connectome gain without the -0.0019 pp microns loss, making it a clean 3-dataset GENERAL WIN.",
       "rationale": "findings.md #5 documents the exact cause: microns is capped at 12 sweeps, so k_full=6 leaves only 6 under-relaxed sweeps, not enough to overtake 12 full Jacobi sweeps. Detection (candidate score alternating between two values / mover set oscillating) is cheap and removes the hand-tuned constant.",
@@ -191,7 +194,7 @@
       "id": "H38",
       "title": "Gauss-Seidel / block-sequential exact-gain sift",
       "status": "proposed",
-      "priority": 3,
+      "priority": 2,
       "axis": "discrete refinement / update order",
       "hypothesis": "Replacing the simultaneous (Jacobi) rebuild with sequential (Gauss-Seidel) or block-sequential updates — each node re-inserted against the CURRENT order, not the stale one — converges where Jacobi limit-cycles and reaches a strictly better fixed point than under-relaxation.",
       "rationale": "Under-relaxation (H35) is the textbook cure for a Jacobi 2-cycle; Gauss-Seidel is the other one, and usually the stronger. The open question is cost: the current kernel is vectorized-NumPy over all nodes at once, so a naive GS loses the vectorization. Block-sequential (K blocks, Jacobi within a block, sequential across blocks) is the practical middle and is a tunable interpolation between the two.",
@@ -225,7 +228,7 @@
       "id": "H40",
       "title": "Structure-aware destroy operator for ruin-and-recreate (revives H31 under its stated condition)",
       "status": "proposed",
-      "priority": 5,
+      "priority": 6,
       "axis": "metaheuristic / discrete",
       "hypothesis": "A destroy operator that removes a CYCLE-DENSE or SCC-coherent set of nodes (rather than a random contiguous span) and re-inserts them by exact gain beats the plain sift, where H31's random ruin-and-recreate did not.",
       "rationale": "killed.json H31 revival condition names exactly this. The feedback weight is concentrated in the giant SCC; random destruction mostly re-does work the full-range sift already did.",
@@ -240,8 +243,8 @@
     {
       "id": "H41",
       "title": "Segment / block moves instead of single-node re-insertion",
-      "status": "proposed",
-      "priority": 6,
+      "status": "prototype-passed",
+      "priority": 1,
       "axis": "discrete refinement / move class",
       "hypothesis": "Moving contiguous SEGMENTS (or coherent groups) of nodes as a unit reaches orders that no sequence of single-node insertions can, because the Rocket<->best difference is a distributed long-range reordering rather than a set of independent misplacements.",
       "rationale": "The gap structure (diagnosis Step 2) is a distributed reordering with Kendall-tau 0.61 and rank-distance p50 ~22,580 — consistent with whole regions being in the wrong place. Single-node exact-gain insertion is, by construction, blind to a move that is only profitable jointly.",
@@ -251,13 +254,14 @@
         "experiments/outputs/localsearch_sizing.json"
       ],
       "est_cost": "medium",
-      "expected_pp": "connectome +0.05 to +0.3 (speculative)"
+      "expected_pp": "connectome +0.05 to +0.3 (speculative)",
+      "outcome": "PROTOTYPE GATE PASSED 2026-08-15, on all three cheap proxies at MATCHED WALL-CLOCK (the control CAMPAIGN.md demands for any variant adding non-gradient compute). Champion alone vs champion+segment: mouse 93.08288 -> 93.14175 (+0.0589 pp), hard400 75.39475 -> 75.40662 (+0.0119 pp), hard6000 74.61334 -> 74.65060 (+0.0373 pp). Segment-class credit is 0.0549 / 0.0653 / 0.0639 pp - strikingly consistent across three structurally different graphs. The arm WITH segments completes FEWER alternation cycles than the arm without (mouse 3033 vs 7152, hard6000 331 vs 444) and still wins, so this is re-allocation, not extra compute. Mechanism: a right segment move IS an adjacent-block swap, so by the same contiguous-block lemma stage 4 uses, only S<->J cross edges flip and delta = W(J->S) - W(S->J) exactly, computed by one prefix sum per (L,d) rung over a geometric ladder. Exactness confirmed independently of the unit tests: predicted gain equals realised delta to full precision on all three graphs (hard400 4.0/16846 = +0.02374 pp predicted and realised; hard6000 6.0/150327 = +0.00399; mouse 0.002278/9.159 = +0.02488). NEXT: commit src/mfas/refine/segment.py FIRST (the provenance gate now FAILS both existing champions because their modules were committed AFTER their runs), then screen on connectome + microns."
     },
     {
       "id": "S01",
       "title": "PHASE-2 SIZING (speed): how much Rocket does the pipeline actually need?",
-      "status": "proposed",
-      "priority": 7,
+      "status": "in_progress",
+      "priority": 1,
       "phase": "speed",
       "axis": "compute allocation",
       "hypothesis": "Because the discrete sift does most of the work and 'sift-on-greedy ~ sift-on-Rocket' was already observed, the 20k-epoch Rocket phase can be cut by an order of magnitude (or removed) at equal final score — a ~10x wall-clock reduction.",
@@ -269,17 +273,19 @@
       ],
       "est_cost": "cheap (5 connectome runs, no new code)",
       "expected_pp": "score ~0; wall-clock -50% to -90%",
-      "note": "Sizing may run during Phase 1 (it is cheap and informative); any CHANGE to the champion pipeline waits for Phase 2."
+      "note": "Sizing may run during Phase 1 (it is cheap and informative); any CHANGE to the champion pipeline waits for Phase 2.",
+      "outcome": "MERGED WITH P07 and started 2026-08-15. S01 asked 'how much Rocket does the pipeline actually need?' and P07 needs exactly that answer on microns, so running them apart would pay the same GPU twice. Extended to CONNECTOME, which S01's own text never covered and which is the mission dataset: it ships 20,000 epochs and uses ~1232 s of the 3600 s cap, so ~2368 s is unused. Arms 0/2500/5000/10000/20000/40000; 40,000 is included because 'the curve was still rising' is precisely the mistake H36 made at stage 4, and ruling it out costs ~500 s. Output: experiments/outputs/proto_S01_connectome.json."
     },
     {
       "id": "L01",
       "title": "Literature scan: post-2024 FAS / linear-arrangement / connectome-ordering methods",
       "status": "proposed",
-      "priority": 8,
+      "priority": 3,
       "kind": "scout",
       "goal": "Read Vahidi 2025 (arXiv:2506.13799) in full and extract its exact insertion/SCC mechanics; then sweep for newer FAS heuristics, and for adjacent literature (rank aggregation, minimum linear arrangement, DAG learning, topological ordering under noise) that carries transferable move classes.",
       "output": "autoresearch/lit/<date>-<topic>.md with concrete, falsifiable transfer ideas appended to this queue.",
-      "est_cost": "cheap"
+      "est_cost": "cheap",
+      "outcome": "RAISED from priority 8 on 2026-08-15. The automatic trigger cannot save this: cycles_since_literature_scan is 5 against a threshold of 8, and the OTHER trigger (consecutive_kills >= 3) has never fired because the counter has never left 0 - 4 of the first 7 cycles were infrastructure items, which never increment it. So the campaign has run its entire life with zero literature input and an empty lit/ directory. At priority 8 it would never have been reached."
     },
     {
       "id": "P06",
@@ -301,6 +307,25 @@
       "expected_pp": "n/a - restores auditability of runtime and seed-count claims",
       "status_note": "2026-08-11 (cycle 6): PART (a) IS NOW DONE TOO, so this item is closed. It landed inside the P05 cycle deliberately: P05's central question - 'did the wall-clock guard truncate this run?' - is answered by requested-vs-done stage counts that live in history.attrs, which run_variant.py was discarding. Splitting them would have paid the same ~78 min of verification GPU twice for one deliverable. eval/run_variant.py now persists history.attrs to results/*.json as `variant_attrs` (via a tolerant numpy/pandas coercion), additive only - the frozen schema and aggregate.py are untouched, and the mouse + connectome re-runs it was verified against are bit-identical to the champion. Per-stage timings are measurements from here on: the cycle-6 connectome run reports stage 3 = 134.4 s and stage 4 = 697.3 s directly. Step 2 of the method (audit.py reporting per-stage wall-clock) was NOT done - audit.py gained the runtime_guard check instead, which was what P05 needed; per-stage reporting is now cheap for any cycle that wants it, since the data is on disk.",
       "progress": "PART (b) FIXED 2026-08-10, before any further cycle ran: sweep.sh no longer carries a hardcoded '42 123 999'. With no --seeds and no --auto-seeds it now reads the seed list for the ROLE from campaign.yaml per dataset (confirm -> confirm_seeds 5/5/20, implement -> screen_seeds), and REFUSES to launch if that list cannot be read rather than guessing. Verified end-to-end with a deliberately failing variant id: the plan came out as the full 20-seed mouse confirm and the sweep reported DONE rc=1 without writing results. This does not retroactively affect H42 — cycle 5 caught the shortfall itself and topped the pools up to 5/5/20, which is what audit.py counted. PART (a) IS STILL OPEN and is now the whole of this item: results/*.json still discards history.attrs, so per-stage timings remain an inference rather than a measurement."
+    },
+    {
+      "id": "P08",
+      "title": "The champions' evidence is not reproducible by checkout - re-derive it at a commit that contains the variant module",
+      "status": "proposed",
+      "priority": 2,
+      "kind": "protocol",
+      "axis": "provenance / reproducibility",
+      "hypothesis": "Every number in sota.json can be reproduced from a clean checkout of the commit its runs cite. Currently false.",
+      "rationale": "CLAUDE.md invariant 5 and CAMPAIGN.md rule 3 both require it, and audit.py's new provenance gate (--gate promotion) FAILS both champions on it. All 36 H36 runs cite 9d43b977+dirty, where src/mfas/experiments/H36.py does not exist; 32 of H42's confirm runs cite 1865372b+dirty, where H42.py does not exist. In each case the module was committed one commit LATER in the same cycle and the runs were never re-derived, so the citation points at a tree that cannot produce the number. Severity is MODERATE, not critical: the measuring apparatus provably did not change (git diff 9d43b97..01bea66 over eval/ src/mfas/ configs/ is four NEW files and zero modifications, and the frozen manifest passed throughout), the cycle commits with git add -A so nothing was withheld, and H42's connectome and mouse numbers were already re-derived bit-identically from tracked source at 07497a8 (35270783.0 / 8.510302935524168). What remains genuinely open is H36: 30 runs, no post-commit re-derivation, and a 43-minute window between its last confirm run and its commit in which 350 lines of new library code could have moved.",
+      "method": "1) The cheap part first: H42 already has post-commit verify runs on connectome and mouse; add the microns leg and H42's provenance is closed. 2) For H36, re-run confirm at 2-3 seeds per primary from HEAD (where both modules are tracked) rather than the full 5/5/20 - the pools are bit-identical with std 0, so the extra seeds buy reproducibility theatre, not information; see the confirm-cost analysis. 3) Going forward the fix is procedural and free: COMMIT THE VARIANT MODULE BEFORE LAUNCHING THE SCREEN. research-cycle.md now says so.",
+      "kill_condition": "Not a hypothesis - it is a debt with a known cost. It closes when audit.py --gate promotion reports provenance PASS for the sitting champion on all three datasets.",
+      "prior_evidence": [
+        "autoresearch/audit_H36.json",
+        "autoresearch/audit_H42.json",
+        "tests/test_audit_gates.py"
+      ],
+      "est_cost": "medium (~2.5 h GPU at 2 seeds/primary; ~7 h at the full confirm seed set)",
+      "expected_pp": "0.0 - this buys trustworthiness, not score"
     }
   ]
 }

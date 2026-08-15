@@ -130,10 +130,25 @@ yourself as well — the critic adjudicates, the audit computes:
 
 ```bash
 $PY autoresearch/audit.py --variant <id> --comparator champion \
-    --role confirm --comparator-role confirm --out autoresearch/audit_<id>.json
+    --role confirm --comparator-role confirm --gate promotion \
+    --out autoresearch/audit_<id>.json
 ```
 
 A non-zero exit is a hard stop for promotion.
+
+**Use `--gate promotion` here.** The default `--gate report` reports significance as INFO and
+degeneracy as WARN and therefore exits 0 on evidence that cannot support a champion change; until
+2026-08-15 that was the ONLY mode and `screen_delta_pp` was evaluated by no code at all. Strict
+mode enforces the `promotion_gate` block in `campaign.yaml`: per-dataset minimum effect size,
+`protocol_ci_lower > 0` on both primaries, mouse non-inferiority, a non-empty comparator pool, and
+**provenance** — the backing runs must come from a commit that contains the variant's own module.
+
+That provenance gate currently FAILS for both H36 and H42: all 36 H36 runs cite
+`9d43b977+dirty`, where `src/mfas/experiments/H36.py` does not exist, and 32 of H42's confirm runs
+cite `1865372b+dirty`, where `H42.py` does not exist. The module was committed one commit later in
+the same cycle each time, and the runs were never re-derived. **So: commit the variant module
+BEFORE you launch the screen, not after the confirm.** Otherwise the numbers you promote are not
+reproducible by checkout, which is CLAUDE.md invariant 5 and CAMPAIGN.md rule 3.
 
 ## 4. Decide, record, commit
 
@@ -150,6 +165,32 @@ Verdict is one of **keep / kill / iterate**, per the ladder. Then:
   `consecutive_kills` if it did not improve.
 - Regenerate the dashboard: `$PY autoresearch/dashboard.py`.
 - Update `autoresearch/state.json`: `cycle += 1`, `current_item: null`, streaks, outcome, history.
+- **Record which gates you actually ran.** The new history entry MUST carry a `gates_run` list:
+
+  ```json
+  {"cycle": 8, "item": "H41", "outcome": "keep",
+   "gates_run": ["novelty", "prototype", "screen", "confirm", "critic"]}
+  ```
+
+  A `keep` requires all five. If you skipped one, say so by leaving it out — do not list a gate you
+  did not run. This exists because cycle #5 skipped the critic rung for TIME reasons (confirm ran
+  to 16:14 against a 17:08 driver cap) and that survived only because the cycle volunteered it in
+  prose; nothing mechanical recorded it, and `audit.py` exited 0 with the rung unrun while
+  `update_sota.py` promoted the champion. `autoresearch/verify_cycle.py` now FAILs a `keep` whose
+  `gates_run` does not cover the ladder.
+- **Verify your own bookkeeping before you commit**, and fix what it finds:
+
+  ```bash
+  $PY autoresearch/verify_cycle.py            # exit 0 required
+  ```
+
+  It re-derives the record from artifacts: every score figure in your `log.md` section must appear
+  in a `results/*.json` or `experiments/outputs/*.json` (CAMPAIGN.md rule 3, previously enforced by
+  nothing), the history must be contiguous, and each champion in `sota.json` must have backing
+  runs. A figure that is legitimately foreign — a prior machine, the published reference — goes in
+  `autoresearch/known_figures.json` **with a reason**, never left bare. If a number you want to
+  quote lives only in gitignored `dr_tmp/`, promote the artifact instead of quoting it: cycle #3
+  quoted four prototype figures that exist nowhere tracked, and they are unverifiable today.
 - Commit everything as **one** commit:
   `git add -A && git commit -m "phase7 <id>: <verdict> — <one-line result>"`
   Never `git push`. Never merge into another branch.
