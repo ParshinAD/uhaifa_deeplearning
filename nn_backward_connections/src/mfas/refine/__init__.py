@@ -24,6 +24,16 @@ from .scc_recursive import (
     scc_recursive_refine,
     topo_order_labels,
 )
+from .segment import (
+    DEFAULT_OFFSETS,
+    DEFAULT_SEG_LENGTHS,
+    alternate_scc_sift_segment,
+    best_segment_moves,
+    build_span_index,
+    segment_gains,
+    segment_refine,
+    segment_sweep,
+)
 from .underrelax import (
     sift_underrelaxed,
     underrelaxed_rebuild,
@@ -35,6 +45,14 @@ __all__ = [
     "alternate_scc_sift",
     "scc_recursive_refine",
     "topo_order_labels",
+    "DEFAULT_OFFSETS",
+    "DEFAULT_SEG_LENGTHS",
+    "alternate_scc_sift_segment",
+    "best_segment_moves",
+    "build_span_index",
+    "segment_gains",
+    "segment_refine",
+    "segment_sweep",
     "build_sift_edges",
     "jacobi_best_gaps",
     "jacobi_rebuild",
