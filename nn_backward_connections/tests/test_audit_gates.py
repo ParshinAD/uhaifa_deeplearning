@@ -20,6 +20,7 @@ calls and one pass over ``results/*.json``.
 """
 from __future__ import annotations
 
+import glob
 import json
 import sys
 from pathlib import Path
@@ -352,7 +353,23 @@ def test_d7_sota_schema_and_mouse_backfill():
     mouse = sota["datasets"]["mouse"]
     assert isinstance(mouse.get("caveats"), list) and mouse["caveats"]
     assert isinstance(mouse["runner_up"].get("caveats"), list) and mouse["runner_up"]["caveats"]
-    # The backfill must not have touched a recorded number.
-    assert mouse["pct_mean"] == 92.917
-    assert mouse["n_seeds"] == 20 and len(mouse["seeds"]) == 20
-    assert mouse["runner_up"]["champion"] == "H36" and mouse["runner_up"]["pct_mean"] == 92.917
+    # The recorded number must match the evidence it cites.
+    #
+    # This assertion used to be a SNAPSHOT — `pct_mean == 92.917` and
+    # `runner_up == ("H36", 92.917)` — pinned when the caveats backfill was written, to prove
+    # the backfill had not perturbed a recorded value. It went stale on 2026-08-16 when H44
+    # legitimately took the mouse championship (92.917014 -> 93.082880, audited under
+    # --gate promotion, 20/20 confirm seeds, std 0), leaving the registry at H44 with H42 as
+    # runner_up. Re-pinning to the new snapshot would only postpone the same failure to the
+    # next promotion, so it is replaced by the invariant the snapshot was standing in for:
+    # a champion's `pct_mean` must equal the mean of the runs its own `evidence` glob resolves
+    # to. That is the anti-fabrication property worth testing, and it survives promotion.
+    ev = sorted(glob.glob(str(ROOT / mouse["evidence"])))
+    assert ev, f"mouse evidence glob resolves to nothing: {mouse['evidence']}"
+    pcts = [json.loads(Path(f).read_text())["pct"] for f in ev]
+    assert mouse["pct_mean"] == pytest.approx(sum(pcts) / len(pcts), abs=5e-5)
+    assert mouse["n_seeds"] == len(mouse["seeds"]) == len(ev)
+    # The runner-up chain must preserve the displaced champion rather than dropping it.
+    assert mouse["runner_up"]["champion"] != mouse["champion"]
+    assert isinstance(mouse["runner_up"]["pct_mean"], float)
+    assert mouse["runner_up"]["pct_mean"] <= mouse["pct_mean"]
