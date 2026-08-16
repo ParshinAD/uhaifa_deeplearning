@@ -1,0 +1,214 @@
+{
+  "exp_id": "20260816T055613Z-H49-microns-s42-implement-1446ae",
+  "algo": "H49",
+  "dataset": "microns",
+  "seed": 42,
+  "score": 12819965.0,
+  "pct": 83.24351515338049,
+  "wall_clock_s": 3213.412710428238,
+  "git_commit": "e8515e8a57777829da672b96a9ea07408cb4d305+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "1446ae39fe0e",
+  "timestamp": "2026-08-16T06:49:47Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 80000,
+  "best_positions_path": "results\\20260816T055613Z-H49-microns-s42-implement-1446ae_positions.npy",
+  "experiment_id": "H49",
+  "role": "implement",
+  "hypothesis": "The champion warm-starts from greedy-FAS (maximising out_w - in_w), which reaches 68.91343% on connectome. A ratio greedy maximising (out_w+1)/(in_w+1) reaches 74.61730% at the same cost - +5.70387 pp of starting quality. The claim is that part of that advantage SURVIVES the refinement stack: through stage 3 alone it is still +0.03456 pp, about 2.9x the connectome minimum effect size, and this variant tests whether Rocket and stage 4 wash it out.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 80000,
+  "variant_attrs": {
+    "pure_best_score": 12802004.0,
+    "pure_best_pct": 83.12688950146413,
+    "sift_best_score": 12813842.0,
+    "sift_best_pct": 83.20375685113207,
+    "n_sift_sweeps": 12,
+    "sift_sweeps_requested": 12,
+    "sift_converged": false,
+    "sift_time_s": 84.60933566093445,
+    "sift_alpha": 0.7,
+    "sift_k_full": 6,
+    "alt_best_score": 12819965.0,
+    "alt_best_pct": 83.24351515338049,
+    "alt_increment_pp": 0.03975830224841559,
+    "n_alt_cycles": 5,
+    "alt_cycles_requested": 5,
+    "alt_time_s": 84.92490267753601,
+    "alt_min_block": 32,
+    "alt_sift_sweeps": 2,
+    "alt_log": [
+      {
+        "cycle": 0,
+        "split_frac": 0.5,
+        "after_scc_pct": 83.211412418395,
+        "after_sift_pct": 83.22219774258814,
+        "best_pct": 83.22219774258814,
+        "t_scc_s": 3.152599811553955,
+        "t_sift_s": 13.616670370101929,
+        "cum_wall_s": 16.769270181655884
+      },
+      {
+        "cycle": 1,
+        "split_frac": 0.382,
+        "after_scc_pct": 83.22618461137478,
+        "after_sift_pct": 83.23101560547452,
+        "best_pct": 83.23101560547452,
+        "t_scc_s": 2.9075307846069336,
+        "t_sift_s": 13.583292245864868,
+        "cum_wall_s": 33.260093212127686
+      },
+      {
+        "cycle": 2,
+        "split_frac": 0.618,
+        "after_scc_pct": 83.23320383801703,
+        "after_sift_pct": 83.2357167341415,
+        "best_pct": 83.2357167341415,
+        "t_scc_s": 3.524662494659424,
+        "t_sift_s": 13.482534646987915,
+        "cum_wall_s": 50.267290353775024
+      },
+      {
+        "cycle": 3,
+        "split_frac": 0.25,
+        "after_scc_pct": 83.23752186365726,
+        "after_sift_pct": 83.2399958001519,
+        "best_pct": 83.2399958001519,
+        "t_scc_s": 3.0588881969451904,
+        "t_sift_s": 13.403357028961182,
+        "cum_wall_s": 66.7295355796814
+      },
+      {
+        "cycle": 4,
+        "split_frac": 0.75,
+        "after_scc_pct": 83.24152821225881,
+        "after_sift_pct": 83.24351515338049,
+        "best_pct": 83.24351515338049,
+        "t_scc_s": 4.859771966934204,
+        "t_sift_s": 13.33559513092041,
+        "cum_wall_s": 84.92490267753601
+      }
+    ],
+    "epochs_requested": 80000,
+    "refined_best_score": 12819965.0,
+    "refined_best_pct": 83.24351515338049,
+    "sift_log": [
+      {
+        "sweep": 0,
+        "alpha": 1.0,
+        "candidate_pct": 83.16108956318918,
+        "accepted": true,
+        "n_movers": 3570,
+        "wall": 7.747617959976196
+      },
+      {
+        "sweep": 1,
+        "alpha": 1.0,
+        "candidate_pct": 83.18003692983312,
+        "accepted": true,
+        "n_movers": 4728,
+        "wall": 7.413378000259399
+      },
+      {
+        "sweep": 2,
+        "alpha": 1.0,
+        "candidate_pct": 83.18928334864772,
+        "accepted": true,
+        "n_movers": 3027,
+        "wall": 7.456959962844849
+      },
+      {
+        "sweep": 3,
+        "alpha": 1.0,
+        "candidate_pct": 83.1945299121324,
+        "accepted": true,
+        "n_movers": 2145,
+        "wall": 7.11542272567749
+      },
+      {
+        "sweep": 4,
+        "alpha": 1.0,
+        "candidate_pct": 83.1983154894982,
+        "accepted": true,
+        "n_movers": 1582,
+        "wall": 7.019728899002075
+      },
+      {
+        "sweep": 5,
+        "alpha": 1.0,
+        "candidate_pct": 83.20036736333627,
+        "accepted": true,
+        "n_movers": 1262,
+        "wall": 7.08182692527771
+      },
+      {
+        "sweep": 6,
+        "alpha": 0.7,
+        "candidate_pct": 83.19437407361305,
+        "accepted": false,
+        "n_movers": 1072,
+        "wall": 6.847158670425415
+      },
+      {
+        "sweep": 7,
+        "alpha": 0.7,
+        "candidate_pct": 83.19549740960667,
+        "accepted": false,
+        "n_movers": 916,
+        "wall": 6.822293758392334
+      },
+      {
+        "sweep": 8,
+        "alpha": 0.7,
+        "candidate_pct": 83.19732851220901,
+        "accepted": false,
+        "n_movers": 1021,
+        "wall": 6.785707235336304
+      },
+      {
+        "sweep": 9,
+        "alpha": 0.7,
+        "candidate_pct": 83.20008815265578,
+        "accepted": false,
+        "n_movers": 1015,
+        "wall": 6.845414876937866
+      },
+      {
+        "sweep": 10,
+        "alpha": 0.7,
+        "candidate_pct": 83.20202964087598,
+        "accepted": true,
+        "n_movers": 966,
+        "wall": 6.766276121139526
+      },
+      {
+        "sweep": 11,
+        "alpha": 0.7,
+        "candidate_pct": 83.20375685113207,
+        "accepted": true,
+        "n_movers": 945,
+        "wall": 6.707550525665283
+      }
+    ]
+  },
+  "runtime_guard": {
+    "armed": true,
+    "source": "campaign",
+    "time_limit_s": 3450.0,
+    "reserve_s": 150.0,
+    "cap_s": 3600.0,
+    "warn_s": 3400.0,
+    "wall_clock_s": 3213.412710428238,
+    "variant_wall_s": 3182.8040804862976,
+    "deadline_reached": false,
+    "stages_truncated": {},
+    "degraded": false,
+    "over_warn": false,
+    "over_cap": false
+  }
+}

@@ -3804,3 +3804,62 @@ that reasoning.
 
 `killed.json` records H45 with a revival condition naming the regime, not the mechanism: revive
 it as a PRIMARY refiner from a cheap start, never again as a bolt-on to a converged order.
+
+---
+
+## 2026-08-16 — H48/H49 SCREEN: KILL. A strictly better start ends strictly worse
+
+Variant `H49` = the champion pipeline with exactly one change, `order = ratio_greedy_rank(g)`
+instead of `greedy_fas_order(g)`. Module committed at `d589883` **before** the runs.
+
+### The result
+
+| dataset | H49 | champion | Δ | gate | verdict |
+|---|---|---|---|---|---|
+| connectome | 84.140276 | 84.154095 | **−0.01382** | > +0.012 | **FAIL** |
+| microns | 83.243515 | 83.240853 | +0.00266 | > +0.002 | pass |
+| mouse | 92.790860 | 93.082880 | **−0.29202** | ≥ −0.26 | **FAIL** |
+
+Fails the connectome gate and the mouse non-inferiority gate. **KILL.**
+
+### The finding — the advantage did not wash out, it INVERTED
+
+Three measurements of the same variant, at three depths of the pipeline:
+
+| measured at | Δ vs the incumbent init |
+|---|---|
+| the initial order | **+5.70387 pp** (74.61730 vs 68.91343) |
+| after stage 3 | +0.03456 pp |
+| after the full pipeline | **−0.01382 pp** |
+
+A start that is 5.7 pp better ends 0.014 pp worse. This is the **third** measured instance in
+24 hours of the refinement stack being non-monotone in the quality of its input, after the
+connectome epoch grid (20k → 40k: stage 3 +0.03314 pp, final −0.00666 pp) and H44 on mouse
+(Rocket's order is *better* pure and *worse* refined).
+
+Two consequences worth more than the kill:
+
+1. **It answers the question H48 was filed to ask.** The reference family reaches 84.61 from a
+   ratio-greedy start; we reach 84.15 from a greedy-FAS start. That difference is **not in the
+   init** — we now have their init, measured on our own scorer at 74.61730%, and it makes our
+   pipeline worse. The margin lives in the **refiner**. Effort should go there, and the "better
+   warm start" branch can be closed.
+2. **`M6-init-is-flat` is confirmed and extended.** It was stated as a ≤0.06 pp *ceiling* on
+   init-alone, measured through Rocket's plateau. It now holds through the **whole** pipeline,
+   and the ceiling is not merely low — it can be **negative**. A better start is not weakly
+   useful here; it is actively harmful.
+
+### Why the stage-3 number was misleading, stated plainly
+
+The prototype's +0.03456 pp after stage 3 was ~2.9x the minimum effect size and was recorded in
+the queue and the commit message as promising. It did not survive. The caveats written *before*
+the screen were the right ones — measured without the gradient phase, and with stage 3 truncated
+at its 40-sweep cap — and they were what made the negative result legible instead of surprising.
+This is the value of pre-registering the qualifier rather than the hope.
+
+### Process note — a real cost, recorded
+
+The H49 screen finished at 09:49 and was not read until 12:45. No background waiter had been
+launched for it, unlike every earlier stage of this session, so nothing signalled completion.
+**2 h 56 min of idle machine.** The fix is mechanical: never launch a detached run without
+launching its waiter in the same step.

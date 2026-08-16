@@ -392,7 +392,7 @@
     {
       "id": "H48",
       "title": "Ratio greedy init ((out_w+1)/(in_w+1)) instead of greedy-FAS - a +6.3 pp better start at the same cost",
-      "status": "proposed",
+      "status": "killed",
       "priority": 0,
       "axis": "starting basin",
       "hypothesis": "Vahidi's Algorithm 1 - peel nodes by score(u) = (out_w+1)/(in_w+1) with a max-heap, updating scores on removal - reaches 75.24% on this exact connectome graph. Our H02 greedy-FAS warm start reaches 68.9134% (measured tonight: proto_S01_connectome.json arms[epochs=0].pure_pct). That is +6.33 pp of starting quality at the same asymptotic cost. The claim is that with a REDUCED or ABSENT gradient phase, the better start survives into the refined score.",
@@ -405,7 +405,8 @@
       ],
       "est_cost": "low - one heap peel over 5.66 M edges, then one existing sizing arm",
       "expected_pp": "unknown through the full pipeline; the init delta itself is a claimed +6.33 pp",
-      "outcome": ""
+      "outcome": "SCREEN FAILED 2026-08-16 -> KILLED (variant H49, module committed at d589883 BEFORE the runs). connectome 84.140276 vs champion 84.154095 = -0.01382 pp (threshold +0.012); microns 83.243515 vs 83.240853 = +0.00266 pp (threshold 0.002, passes); mouse 92.790860 vs 93.082880 = -0.29202 pp, WORSE than the -0.26 non-inferiority margin. Fails both the connectome gate and the mouse gate. THE SCIENCE: the init was +5.70387 pp better (74.61730 vs 68.91343), still +0.03456 pp ahead after stage 3, and -0.01382 pp BEHIND after the full pipeline. The advantage was not merely washed out, it INVERTED - the third instance in 24 h of the refinement stack being non-monotone in the quality of its input. This answers the question H48 was filed to answer: the reference family's margin does NOT live in the initial order. M6-init-is-flat is confirmed and EXTENDED - it holds through the full pipeline, not just through Rocket's plateau, and the ceiling is not merely low but can be negative.",
+      "revival_if": "Only as part of a DIFFERENT refiner. The init question is settled for the current stack: a strictly better start ends strictly worse. Any revival must pair the init with the refiner it was designed for (iterated exact-gain pair relocation, see the H45 revival condition), and must be measured as a whole pipeline against the champion - never as a drop-in warm start."
     },
     {
       "id": "P06",

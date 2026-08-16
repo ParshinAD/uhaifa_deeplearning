@@ -137,6 +137,15 @@
       "evidence": "experiments/log.md H19"
     },
     {
+      "id": "H48", "axis": "starting basin",
+      "mechanism": "ratio-greedy init (out_w+1)/(in_w+1) replacing greedy-FAS, as a drop-in warm start",
+      "result_pp": {"connectome": -0.01382, "microns": 0.00266, "mouse": -0.29202},
+      "verdict": "screen FAIL 2026-08-16 (variant H49) - fails connectome and fails mouse non-inferiority",
+      "why_dead": "The init was measured +5.70387 pp better than ours (74.61730 vs 68.91343 on connectome, both on the frozen scorer, independently reproducing the reference family's Algorithm 1 claim). After stage 3 it was still +0.03456 pp ahead. After the FULL pipeline it was -0.01382 pp behind. The advantage did not wash out, it INVERTED. This is the third measured instance in 24 h of the refinement stack being non-monotone in the quality of its input, and it settles where the reference family's margin lives: NOT in the initial order.",
+      "revival_if": "Only paired with the refiner it was designed for (iterated exact-gain pair relocation - see H45's revival condition), measured as a whole pipeline against the champion. Never again as a drop-in warm start for the current stack.",
+      "evidence": "results/*-H49-*-implement-*.json; experiments/outputs/proto_H48_connectome.json, proto_H48_mouse.json; experiments/log.md 2026-08-16"
+    },
+    {
       "id": "H41", "axis": "discrete refinement / move class",
       "mechanism": "exact-gain bounded-span SEGMENT moves (rigid contiguous-block relocation) as a third class inside stage 4",
       "result_pp": {"connectome": 0.0057, "microns": 0.00139, "mouse": 0.0},
