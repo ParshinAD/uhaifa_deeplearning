@@ -1,0 +1,20 @@
+{
+  "item": "H48",
+  "dataset": "mouse",
+  "n_nodes": 148,
+  "n_edges": 583,
+  "ours_pct": 90.12629794323948,
+  "ours_wall_s": 0.0010116100311279297,
+  "ratio_pct": 88.38256063787692,
+  "ratio_wall_s": 0.0009870529174804688,
+  "init_delta_pp": -1.7437373053625578,
+  "ours_sift_pct": 93.08288021668459,
+  "ours_sift_wall_s": 0.003717184066772461,
+  "ours_sift_sweeps": 14,
+  "ours_sift_converged": true,
+  "ratio_sift_pct": 92.7210539874484,
+  "ratio_sift_wall_s": 0.002993345260620117,
+  "ratio_sift_sweeps": 10,
+  "ratio_sift_converged": true,
+  "composed_delta_pp": -0.36182622923618624
+}

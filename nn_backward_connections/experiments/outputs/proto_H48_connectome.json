@@ -1,0 +1,20 @@
+{
+  "item": "H48",
+  "dataset": "connectome",
+  "n_nodes": 136648,
+  "n_edges": 5657719,
+  "ours_pct": 68.91342773446004,
+  "ours_wall_s": 17.40482807159424,
+  "ratio_pct": 74.61730241840903,
+  "ratio_wall_s": 20.013954162597656,
+  "init_delta_pp": 5.703874683948982,
+  "ours_sift_pct": 83.44720686065644,
+  "ours_sift_wall_s": 117.3890950679779,
+  "ours_sift_sweeps": 40,
+  "ours_sift_converged": false,
+  "ratio_sift_pct": 83.48176248023216,
+  "ratio_sift_wall_s": 117.35910058021545,
+  "ratio_sift_sweeps": 40,
+  "ratio_sift_converged": false,
+  "composed_delta_pp": 0.03455561957572684
+}

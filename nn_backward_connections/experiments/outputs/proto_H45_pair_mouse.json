@@ -1,0 +1,38 @@
+{
+  "item": "H45",
+  "dataset": "mouse",
+  "top_k": 130,
+  "champion_positions": "results\\20260816T014318Z-H44-mouse-s42-confirm-786a77_positions.npy",
+  "champion_pct": 93.08288021668459,
+  "n_backward_edges": 130,
+  "n_positive_pairs": 1,
+  "n_distinct_pairs": 1,
+  "distinct_frac_of_positive": 1.0,
+  "t_jacobi_s": 0.0,
+  "t_pair_scan_s": 0.00572514533996582,
+  "exactness_checks": [
+    {
+      "u": 26,
+      "v": 59,
+      "predicted": 0.0018268378987315904,
+      "realised": 0.0018268378987311706,
+      "match": true
+    }
+  ],
+  "exactness_all_match": true,
+  "greedy_batch_moves": 1,
+  "greedy_batch_gain_pp": 0.019945743892400863,
+  "top_moves": [
+    {
+      "u": 26,
+      "v": 59,
+      "gain": 0.0018268378987315904,
+      "cut": 110,
+      "lo": 86,
+      "hi": 137,
+      "span": 51,
+      "single_u": 1.3877787807814457e-16,
+      "single_v": 0.0
+    }
+  ]
+}

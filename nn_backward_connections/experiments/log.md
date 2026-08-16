@@ -3725,3 +3725,82 @@ gradient phase's contribution has a **sign**, and that sign is graph-dependent: 
 on mouse (n=148), faintly negative past 20,000 epochs on connectome (n=136,648), positive in
 between. `killed.json` M2 said only the starting basin and discrete refinement ever moved the
 metric; that is now sharpened — the gradient phase moves it too, sometimes downwards.
+
+---
+
+## 2026-08-16 — H45 prototype gate: the move class is REAL and DISTINCT, and it is still a kill
+
+`experiments/proto_H45_pair.py`, measured on the champion's own connectome order
+(`results/20260816T002921Z-H44-connectome-s42-implement-4ee32b_positions.npy`, 84.154095).
+Every backward edge was scanned — all **1,178,821** of them, not a sample.
+
+### The implementation was wrong first, and the exactness check is what caught it
+
+Worth recording because it justifies the gate's design. The first run reported **1 of 18**
+predicted gains matching the frozen oracle. The closed form was fine — a brute-force sweep over
+every split of a test pair reproduced it with **0 mismatches**. The bug was in the scan: when an
+interval node is a neighbour of **both** `u` and `v`, emitting one event per edge and walking
+them individually manufactures intermediate states where that node is counted in the prefix for
+its `v`-edges while still counted in the suffix for its `u`-edges. Those states are not splits,
+are not achievable, and their gain is inflated. Aggregating by position first fixed it:
+**25 / 25** exact afterwards, on the real graph.
+
+Had the gate not required predicted == realised, an inflated prototype would have gone forward.
+
+### The result
+
+| | value |
+|---|---|
+| backward edges scanned | 1,178,821 (all) |
+| pairs with a strictly positive exact gain | 3,498 (0.30%) |
+| **of which neither endpoint profits alone** | **989 (28.3% of positive)** |
+| exactness vs frozen oracle | 25 / 25 |
+| greedy disjoint batch (today's packing rule) | 43 moves, +0.00100 pp |
+| **optimal disjoint batch (interval-scheduling DP)** | **185 moves, +0.00193 pp** |
+
+Two findings inside that table:
+
+1. **The move class is genuinely distinct.** 989 improving moves are invisible to the champion's
+   sift by construction — neither endpoint has any profitable solo relocation. The single best
+   move spans **92,958 positions**, 68% of the line. Nothing else in the pipeline reaches that
+   range. The distinctness question the gate was built to ask is answered YES.
+2. **The packing rule is worth ~2x.** The optimal DP finds +0.00193 pp against greedy's
+   +0.00100 pp from the same candidate set — a 1.93x improvement for O(k log k). This confirms,
+   on our own graph, what the 2026 Vahidi-Koutis abstract implies by naming a DP for selecting
+   non-overlapping intervals. It also means H41's greedy `select_disjoint_moves` is leaving
+   roughly half its available gain unpacked, which is a free improvement to that machinery if it
+   is ever revived.
+
+### Verdict — KILL as filed, and the reason matters more than the verdict
+
++0.00193 pp per sweep is **6.2x below** the 0.012 pp minimum effect size, and it would take 6.2
+sweeps of a strictly diminishing process to reach it. At the prototype's 408 s per sweep the
+rate is 4.7e-6 pp/s against stage 4's measured 3.45e-4 pp/s — 73x worse. Vectorising the scan
+would fix the seconds but not the pp: the reachable gain per sweep is implementation-independent.
+
+**But H45 was filed as the wrong hypothesis, and the gate has shown why.** It was filed as a
+BOLT-ON to the champion's endgame. The champion's order is already a joint fixed point of
+single-node insertion and SCC block refinement, so only 0.30% of backward edges admit any
+improving pair move at all. That is not evidence the move class is weak — it is evidence the
+order is already good *with respect to it*.
+
+In the reference family this same move is **the primary refiner, applied from a cheap greedy
+order at 75.24%**, and it is credited with the climb to 84.61%. We measured it in the one regime
+where it has almost nothing left to do.
+
+### The successor, and the number that frames it
+
+Two starting points, both measured, and the comparison is uncomfortable:
+
+| route | start | after refinement |
+|---|---|---|
+| ours (`epochs=0` arm, 2026-08-16) | greedy-FAS **68.91343** | 83.87975 |
+| reference family (Vahidi Alg 1 -> Alg 2+) | ratio greedy **75.24** (their figure) | 84.61 (their figure) |
+
+Our refiner from 68.91 reaches 83.88; theirs from 75.24 reaches 84.61. The open question is
+whether that difference lives in the **init** or in the **refiner** — and that is exactly what
+**H48** isolates, at the cost of one CPU pass. H48 is now the next item, promoted above H43 on
+that reasoning.
+
+`killed.json` records H45 with a revival condition naming the regime, not the mechanism: revive
+it as a PRIMARY refiner from a cheap start, never again as a bolt-on to a converged order.
