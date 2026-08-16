@@ -1,0 +1,44 @@
+{
+  "item": "H51",
+  "dataset": "mouse",
+  "start_mode": "champion",
+  "n_passes": 5,
+  "start_pct": 93.08288021668459,
+  "champion_pct": 93.08288021668459,
+  "final_pct": 93.10282596057698,
+  "total_gain_pp": 0.01994574389239628,
+  "applied": 1,
+  "popped": 259,
+  "checkpoints": [
+    {
+      "applied": 1,
+      "popped": 86,
+      "pct": 93.10282596057698,
+      "realised_gain_pp": 0.01994574389239628,
+      "predicted_gain_pp": 0.019945743892400863,
+      "exact": true,
+      "mean_span": 51.0,
+      "wall": 0.0030968189239501953
+    }
+  ],
+  "passes": [
+    {
+      "pass_i": 0,
+      "applied": 1,
+      "start_pct": 93.08288021668459,
+      "end_pct": 93.10282596057698,
+      "gain_pp": 0.01994574389239628,
+      "wall": 0.004020214080810547
+    },
+    {
+      "pass_i": 1,
+      "applied": 0,
+      "start_pct": 93.10282596057698,
+      "end_pct": 93.10282596057698,
+      "gain_pp": 0.0,
+      "wall": 0.0076711177825927734
+    }
+  ],
+  "batch_reference": null,
+  "delta_vs_champion_pp": 0.019945743892392898
+}

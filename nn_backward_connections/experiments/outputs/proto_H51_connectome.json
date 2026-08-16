@@ -1,0 +1,126 @@
+{
+  "item": "H51-gate1",
+  "dataset": "connectome",
+  "start_pct": 74.61730241840903,
+  "target_moves": 1000000,
+  "applied": 159671,
+  "popped": 1763052,
+  "final_pct": 82.36412451466032,
+  "total_gain_pp": 7.746822096251298,
+  "checkpoints": [
+    {
+      "applied": 1,
+      "popped": 1,
+      "pct": 74.62154939782246,
+      "realised_gain_pp": 0.004246979413435358,
+      "predicted_gain_pp": 0.004246979413435358,
+      "exact": true,
+      "mean_span": 6742.0,
+      "wall": 0.06188654899597168
+    },
+    {
+      "applied": 10,
+      "popped": 16,
+      "pct": 74.6316944295449,
+      "realised_gain_pp": 0.014392011135866335,
+      "predicted_gain_pp": 0.014392011135866335,
+      "exact": true,
+      "mean_span": 13085.5,
+      "wall": 0.1630847454071045
+    },
+    {
+      "applied": 100,
+      "popped": 204,
+      "pct": 74.70206067497244,
+      "realised_gain_pp": 0.0847582565634144,
+      "predicted_gain_pp": 0.0847582565634144,
+      "exact": true,
+      "mean_span": 22878.27,
+      "wall": 0.689671516418457
+    },
+    {
+      "applied": 500,
+      "popped": 1148,
+      "pct": 74.8974121842165,
+      "realised_gain_pp": 0.2801097658074781,
+      "predicted_gain_pp": 0.2801097658074781,
+      "exact": true,
+      "mean_span": 20015.908,
+      "wall": 2.4426822662353516
+    },
+    {
+      "applied": 1000,
+      "popped": 2424,
+      "pct": 75.06856784052144,
+      "realised_gain_pp": 0.45126542211241366,
+      "predicted_gain_pp": 0.45126542211241366,
+      "exact": true,
+      "mean_span": 19448.928,
+      "wall": 4.528388500213623
+    },
+    {
+      "applied": 2000,
+      "popped": 4904,
+      "pct": 75.32783400399421,
+      "realised_gain_pp": 0.7105315855851888,
+      "predicted_gain_pp": 0.7105315855851888,
+      "exact": true,
+      "mean_span": 21540.905,
+      "wall": 9.530353307723999
+    },
+    {
+      "applied": 5000,
+      "popped": 13230,
+      "pct": 75.90258393146749,
+      "realised_gain_pp": 1.2852815130584716,
+      "predicted_gain_pp": 1.2852815130584716,
+      "exact": true,
+      "mean_span": 21772.3848,
+      "wall": 25.069369554519653
+    },
+    {
+      "applied": 10000,
+      "popped": 28726,
+      "pct": 76.61593331631519,
+      "realised_gain_pp": 1.99863089790617,
+      "predicted_gain_pp": 1.99863089790617,
+      "exact": true,
+      "mean_span": 21837.7285,
+      "wall": 55.540868520736694
+    },
+    {
+      "applied": 20000,
+      "popped": 69611,
+      "pct": 77.63970826496313,
+      "realised_gain_pp": 3.0224058465541046,
+      "predicted_gain_pp": 3.0224058465541046,
+      "exact": true,
+      "mean_span": 22685.5053,
+      "wall": 131.21831703186035
+    },
+    {
+      "applied": 50000,
+      "popped": 227610,
+      "pct": 79.73503668066014,
+      "realised_gain_pp": 5.117734262251122,
+      "predicted_gain_pp": 5.117734262251122,
+      "exact": true,
+      "mean_span": 21177.2154,
+      "wall": 314.61157155036926
+    },
+    {
+      "applied": 100000,
+      "popped": 659201,
+      "pct": 81.49647377832595,
+      "realised_gain_pp": 6.879171359916927,
+      "predicted_gain_pp": 6.879171359916927,
+      "exact": true,
+      "mean_span": 19103.1033,
+      "wall": 566.092081785202
+    }
+  ],
+  "batch_reference": {
+    "moves": 846,
+    "gain_pp": 0.10931
+  }
+}

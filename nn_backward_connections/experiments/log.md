@@ -4046,3 +4046,66 @@ H51's first gate is deliberately cheap and does not require building it: apply t
 moves **sequentially** with a naive O(interval) rebuild and measure the realised gain against the
 ~60 a disjoint batch fits. If sequential does not win by a wide margin there, the throughput
 story is wrong and the item dies before any data structure is written.
+
+---
+
+## 2026-08-16 — H51: the throughput diagnosis is confirmed, and it moves the CONNECTOME champion
+
+### Gate 1 — sequential vs batched, same ratio-greedy start
+
+| arm | moves | gain | wall |
+|---|---|---|---|
+| H50 batched, sweep 0 | 846 | +0.10931 pp | 53 s |
+| **sequential** | 1,000 | **+0.45127 pp** | 5 s |
+| sequential | 20,000 | +3.02241 pp | 131 s |
+| **sequential, full heap drain** | **159,671** | **+7.74682 pp** (74.61730 → 82.36412) | ~900 s |
+
+**4.13× per move**, and against H50's whole batched run (40 sweeps, 2,150 s, +0.67573 pp) it is
+~11× the gain in under half the time. Every checkpoint exact. The H50 diagnosis was right: the
+wall was the **disjointness constraint**, not the move class.
+
+Second finding, contrary to H51's own filing: the naive `O(interval)` rebuild is **cheap enough**
+— 20,000 moves at a mean span of 22,686 positions cost 131 s. The Dietz–Sleator order-maintenance
+structure this item was filed as requiring is **not needed**, which drops its cost from "high" to
+"medium".
+
+Standalone, though, the route still ends at 82.36412 — **1.52 pp below our own Rocket-free arm**
+(83.87975). As a *replacement* for our refiner it loses. Its value is as a *complement*.
+
+### The result that matters — on the CHAMPION's connectome order
+
+H45 measured this same move class on this same order with BATCHED application: **+0.00193 pp**,
+applying 185 of 3,498 candidates. Applied sequentially, with the heap refilled between passes
+(what the reference's Alg 2 does):
+
+| pass | moves | score | gain |
+|---|---|---|---|
+| 0 | 1,610 | 84.169263 | +0.01517 |
+| 1 | 709 | 84.175022 | +0.00576 |
+| 2 | 118 | 84.175874 | +0.00085 |
+| 3–5 | 74 | **84.176420** | +0.00055 |
+
+> **84.154095 → 84.176420 = +0.02233 pp**, 2,511 moves, all exact, converged.
+
+That is **1.86× the connectome minimum effect size** (0.012 pp) and **11.6×** what the batched
+measurement of the identical move class found. It is the first movement on the mission dataset
+this session.
+
+Sizing: passes 0–1 give **93.7 % of the gain for 33.3 % of the time** — +0.02093 pp in 644 s. On
+top of the champion's 1,152 s that is a 1,796 s run against a 3,450 s guard deadline, so it fits
+comfortably. Two passes is the configuration to ship.
+
+mouse, same test on the H44 champion order: **+0.01995 pp** (93.082880 → 93.102826), converged
+after one move, against a 0.01 pp mouse promotion threshold.
+
+### What this does and does not claim
+
+* It is a **post-hoc refinement of a stored order**, not a pipeline run. To become a champion it
+  must be a stage inside the pipeline, run end to end, committed before its runs, screened and
+  confirmed. That is H52.
+* +0.02233 pp closes **4.8 %** of the remaining 0.4606 pp gap. It is a real gain from a genuinely
+  new move class, not a route to the target.
+* The move class complements rather than replaces: standalone it reaches 82.36, well under our
+  refiner, but on top of our refiner it finds 2,511 improving moves the existing two classes
+  cannot see — consistent with H45's finding that 28.3 % of its positive moves are invisible to
+  the sift by construction.
