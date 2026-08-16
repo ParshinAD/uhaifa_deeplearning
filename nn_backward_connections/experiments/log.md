@@ -3619,3 +3619,109 @@ Filed into `killed.json`:
 The screen ran 1 seed on the primaries and 3 on mouse — the P02 policy for a variant that never
 draws from its seed, which `autoresearch/seed_class.py` verifies mechanically for H41. Since the
 verdict is a KILL and no promotion follows, no confirm-stage CI was computed.
+
+---
+
+## 2026-08-16 — H44: KEEP. New MOUSE champion, from deleting the gradient phase
+
+Third score move of the campaign, and the first that makes the pipeline *cheaper*.
+
+### What changed
+
+One constant: `_EPOCHS["mouse"]` goes `5_000 -> 0`. Nothing else. `src/mfas/experiments/H44.py`
+is otherwise byte-identical to H42, and `tests/test_experiment_H44.py` (16 cases) asserts that
+constant-for-constant rather than trusting it.
+
+### Where it came from — a result the campaign had already produced and thrown away
+
+`HANDOFF.md` recorded, in a subordinate clause dismissing it: *"came from a greedy+sift start
+that skipped Rocket and sits in a different, higher basin (93.083 vs 92.902). It does not
+transfer."* The dismissal compared the Rocket-free arm against the **Rocket-start stage-3 fixed
+point** (92.90180243040469) and never against the **champion** (92.91701410211007). Against the
+champion it is +0.166 pp — larger than any mouse move the campaign has ever shipped.
+
+Full trail: `dr_tmp/investigation_rocket_free_basin.md`.
+
+### The mechanism, and what it is NOT
+
+Stage 3 is the same function with the same constants in both arms, and **both reach a true
+fixed point** — so this is a fixed-point-to-fixed-point comparison, not a budget artefact:
+
+| stage-3 starting order | stage-3 fixed point |
+|---|---|
+| Rocket's plateau order (champion) | 92.90180243040469 |
+| greedy-FAS order, no Rocket | **93.08288021668459** |
+
+Three alternative explanations were checked against artifacts and all fail:
+
+* **Not the stage-4 cycle budget.** The prototype gave stage 4 **7,385 cycles** (231x
+  production's 32) and it returned `delta_pp = 0.0`. `experiments/outputs/proto_H42_mouse.json`
+  shows nine allocations from (8,8) to (1,128) all returning exactly 92.91701410211007.
+* **Not "no Rocket" alone.** `proto_h32_trophic.json`'s plain-Jacobi `greedy_sift` control
+  reaches 92.91630, which does *not* beat the champion. The mechanism is
+  **greedy start x under-relaxation** specifically.
+* **Not a fixture mismatch.** The prototype loads the production `mouse` dataset and its
+  `total_weight` is bit-identical to the champion record's.
+
+Independently corroborated eight weeks earlier by `dr_tmp/size_global_discrete.json`
+(`sift_fullrange_on_greedy_noRocket` = 93.047 / 93.012 / 93.004 over 3 seeds, a different sift).
+
+### Pre-registered test, then screen, then confirm
+
+The settling test was written into `queue.json`'s `kill_condition` **before it was run**:
+`arms[epochs=0].final_pct == 93.08288021668459` and `arms[epochs=5000].final_pct ==
+92.91701410211007`. Both hit exactly (`experiments/outputs/proto_P07_mouse.json`). The second
+arm doubles as a parity anchor — the harness reproduces the production champion bit-for-bit.
+
+| stage | result |
+|---|---|
+| screen mouse (3 seeds) | 93.08288021668459, all identical |
+| screen connectome (1 seed) | **bit-identical to champion — 0 of 136,648 positions differ** |
+| screen microns (1 seed) | **bit-identical to champion — 0 of 67,534 positions differ** |
+| confirm mouse (20 seeds) | 20/20 at 93.08288021668459, std 0.0 |
+
+The primaries were run rather than argued: H44's `_EPOCHS` is untouched there, so identity was
+*predicted* — and then *checked*.
+
+### Audit — `dr_tmp/audit_H44_mouse.json`, `--gate promotion`, **VERDICT: PASS** (4 warnings)
+
+Every warning, stated rather than waved through:
+
+1. **`leakage.dataset_keying`** — dataset-name keying present. It keys **compute budgets only**
+   (`_EPOCHS`, `_MAX_SWEEPS`, `_ALT_CYCLES`, `_ALT_SIFT_SWEEPS`), never the metric or a
+   dataset-specific algorithm branch. These dicts predate H44; H42 and H36 have the same ones.
+2. **`significance.mouse.degenerate`** — both pools have std 0, so the Welch CI is degenerate.
+   **This is the warning that matters and it qualifies the headline.** Under the conservative
+   PROTOCOL CI (σ floored at the historical mouse `baseline_sigma_pp` = 0.2624) the lower bound
+   is only **+0.0032 pp**. So the defensible conservative claim is *"positive, but small"*; the
+   +0.16587 pp figure is a deterministic point estimate over 20 bit-identical runs. Both numbers
+   are persisted in `sota.json`'s caveats so nobody can read one without the other.
+3. **`provenance.mouse.dirty`** — the hard check PASSES (the module exists at every commit
+   backing the runs; the P08 forward fix worked, because H44.py was committed at `0615b22`
+   *before* any run). The tree was nonetheless dirty. **Structural cause worth recording: it
+   always will be.** `results/` is tracked, so the first run of any pool dirties the tree for
+   every subsequent run. A fully clean multi-run pool is impossible under the current layout —
+   that is the real root of P08, and chasing it per-cycle is futile.
+4. **`compute.mouse`** — grad-step budget differs, 0 vs 5,000. **The warning is inverted here.**
+   It guards against winning by spending more; H44 wins while spending strictly less — 0
+   gradient steps and 0.7 s against 4.8 s.
+
+### Verdict — KEEP, mouse only
+
+`autoresearch/sota.json`: mouse champion H42 92.917014 -> **H44 93.082880**, +0.165880 pp,
+n=20, std 0.
+
+**connectome and microns championships are UNCHANGED.** H44 ties them bit-for-bit, and a tie is
+below `min_promotion_delta_pp` (0.012 / 0.002) — the rule that exists precisely because H42 once
+took the mouse championship from H36 on a delta of exactly 0.0. **This does not advance the
+mission target**, which is connectome 84.1541 -> 84.6147, and it must not be reported as if it
+did. mouse is a `supporting` dataset.
+
+### What it means beyond mouse
+
+This is the extreme case of the non-monotonicity measured on connectome the same night (20k ->
+40k epochs improves stage 3 by +0.03314 pp while the composed score falls 0.00666 pp). The
+gradient phase's contribution has a **sign**, and that sign is graph-dependent: grossly negative
+on mouse (n=148), faintly negative past 20,000 epochs on connectome (n=136,648), positive in
+between. `killed.json` M2 said only the starting basin and discrete refinement ever moved the
+metric; that is now sharpened — the gradient phase moves it too, sometimes downwards.
