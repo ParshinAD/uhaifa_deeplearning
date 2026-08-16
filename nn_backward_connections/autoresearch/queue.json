@@ -1,7 +1,7 @@
 {
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
   "updated": "2026-08-16",
-  "next_free_id": "H49",
+  "next_free_id": "H52",
   "next_free_protocol_id": "P08",
   "items": [
     {
@@ -391,6 +391,42 @@
       ],
       "est_cost": "prototype: ~1-2 h implementation + minutes of CPU, ZERO GPU.",
       "expected_pp": "connectome 0 to +0.03. Low, and likely to die at the gate - queued for the diagnostic number as much as for the score.",
+      "outcome": ""
+    },
+    {
+      "id": "H50",
+      "title": "The reference ROUTE run standalone: ratio-greedy init + iterated exact-gain pair relocation",
+      "status": "killed",
+      "priority": 0,
+      "axis": "divergent / whole-pipeline",
+      "hypothesis": "Run the reference family's route on its own terms rather than bolted onto the champion: ratio-greedy init, then iterated exact-gain pair relocation with optimal interval-scheduling batching, no Rocket, no sift, no SCC. Measured against our own Rocket-free arm (83.87975), not against the champion.",
+      "rationale": "Divergent-mode item after 5 consecutive kills. H45's gate showed the move class is real and distinct - 989 improving moves invisible to our sift, the best spanning 68% of the line - but that it has nothing left to do on our CONVERGED order. In the reference family it is the primary refiner from a cheap start and is credited with 75.24 -> 84.61.",
+      "kill_condition": "Lands far below our own Rocket-free 83.87975 -> the route does not transfer as implemented.",
+      "prior_evidence": [
+        "experiments/outputs/proto_H45_pair_connectome.json",
+        "experiments/outputs/proto_H48_connectome.json",
+        "autoresearch/lit/vahidi-2025.md"
+      ],
+      "est_cost": "medium",
+      "expected_pp": "unknown",
+      "outcome": "MEASURED 2026-08-16 -> KILLED AS IMPLEMENTED, with a precise diagnosis that is worth more than the verdict (experiments/outputs/proto_H50_connectome.json). connectome: init 74.61730 -> 75.29304 after 40 sweeps (2,150 s), i.e. +0.67573 pp, leaving it 8.59 pp BELOW our own Rocket-free arm and 8.86 pp below the champion. Every sweep exact (predicted == realised, oracle-checked). mouse climbed 88.38256 -> 92.84280 (+4.46 pp in 30 sweeps) and had NOT converged, so the move class itself is strong. THE BOTTLENECK IS THROUGHPUT UNDER DISJOINTNESS, NOT THE MOVE CLASS. Across the 40 sweeps 4,018,567 positive-gain candidates were found and 4,193 applied - 0.104%. The ratio degrades from 0.730% at sweep 0 to 0.032% at sweep 39, because a pair move's interval spans the distance between a backward edge's endpoints (mean 20,536 positions per the reference's own table) and disjoint intervals of that size barely fit on a 136,648-position line. Reaching even 83.87975 at the observed rate needs ~1,086 more sweeps, about 16 hours. ARCHITECTURAL FINDING: this campaign's refiners are all 'compute every gain vectorised, apply a maximal DISJOINT batch'. That is correct and fast for single-node moves, whose intervals are tiny, and it is structurally unable to exploit interval moves. The reference's Alg 2 applies moves ONE AT A TIME from a heap with incremental updates - a sequential architecture our batched one cannot emulate.",
+      "revival_if": "Only via H51: sequential application with an order-maintenance structure. The move class and its exact gain are verified; what is missing is the ability to apply ~100,000 moves per pass instead of 60."
+    },
+    {
+      "id": "H51",
+      "title": "Sequential pair relocation with an order-maintenance structure (unblock H50's throughput)",
+      "status": "proposed",
+      "priority": 1,
+      "axis": "discrete refinement / architecture",
+      "hypothesis": "The exact-gain pair relocation move is verified and abundant - ~100,000 positive-gain candidates exist on the connectome order at every sweep - but the campaign's batched-disjoint application can only realise 0.1% of them. Applying them SEQUENTIALLY, each against the updated order, realises the rest and is what the reference family actually does.",
+      "rationale": "H50 measured the blocker exactly: 4,018,567 candidates found, 4,193 applied (0.104%), because pair-move intervals average tens of thousands of positions and disjoint intervals of that size barely fit on the line. Sequential application is blocked for us by one thing: naively applying a pair move rewrites the rank of every node in the interval, which is O(interval) and averages ~20,536 positions. An ORDER-MAINTENANCE structure (Dietz-Sleator labelling) gives O(1) amortised insert/delete and O(1) order comparison, so moving two nodes costs O(1) and the gain kernel's 'is this neighbour inside the interval' test stays O(1) per neighbour. That converts the per-move cost from O(interval) to O(d(u)+d(v)), which is the same bound the gain computation already has.",
+      "kill_condition": "Two gates. (1) Cheap: on the connectome order, apply the top-N pair moves SEQUENTIALLY with a naive O(interval) rank rebuild for N=1,000 and measure the realised gain. If sequential application of 1,000 moves does not beat the ~60 that a disjoint batch fits by a wide margin, the throughput story is wrong and H51 dies before the data structure is built. (2) If it passes, build the order-maintenance version and require the whole pipeline to beat 83.87975 - our own Rocket-free arm - before it is compared to the champion at all.",
+      "prior_evidence": [
+        "experiments/outputs/proto_H50_connectome.json (the 0.104% throughput measurement)",
+        "experiments/outputs/proto_H45_pair_connectome.json (the move class, 25/25 exact)"
+      ],
+      "est_cost": "high - a real data structure, but gate (1) is an afternoon",
+      "expected_pp": "unknown; the external claim for this route is +0.46 pp over our champion, provenance unverified",
       "outcome": ""
     },
     {

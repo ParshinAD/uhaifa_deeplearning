@@ -3953,3 +3953,96 @@ reaches 84.61 from a 75.24 start; ours reaches 84.15 from 68.91, and giving ours
 makes it worse. So the difference is a refiner that keeps improving where ours converges — and
 `M8` says to judge any candidate for it by the composed delta and its redundancy fraction, not by
 what it finds on its own.
+
+---
+
+## 2026-08-16 — H38: Gauss-Seidel loses to Jacobi, and the confound was tested not assumed
+
+Block-sequential exact-gain sift vs the champion's under-relaxed Jacobi, both from the same
+greedy-FAS start. `K = 1` is the champion; `K = n` would be pure Gauss-Seidel.
+
+| K | damped (α=0.7) | undamped (α=1.0) |
+|---|---|---|
+| 1 | **+0.00000** (parity) | — |
+| 2 | −0.04685 | **−0.55312** |
+| 4 | −0.07366 | −0.11775 |
+| 8 | −0.13827 | −0.10571 |
+
+Every arm loses, and each costs `K`× more per sweep. Same sign on mouse. **KILL.**
+
+Parity: the `K = 1` arm reproduces `sift_underrelaxed` exactly (83.44721 connectome, 93.08288
+mouse), so every `K > 1` difference is the mechanism and not the harness.
+
+**The confound was tested rather than assumed away.** The first grid damped the block-sequential
+arms with `α = 0.7` — the cure for the *Jacobi collision*, which Gauss-Seidel does not have by
+construction. Killing the hypothesis on that would have been killing it on a handicap I
+introduced. Re-running undamped does not rescue it; at `K = 2` it is 12× worse.
+
+Side finding worth keeping: **damping helps sequential schemes too**, so under-relaxation's
+benefit is broader than the "Jacobi 2-cycle cure" that `underrelax.py`'s docstring attributes it
+to. Honest limitation, recorded in the revival condition: at `K ≤ 8` each sub-step still moves
+~`n/K` nodes at once (68,324 at `K = 2`), so the pure Gauss-Seidel limit was never reached. The
+trend runs monotonically away from the champion, which is evidence against the limit, not a proof.
+
+---
+
+## 2026-08-16 — H50 (divergent mode): the reference route, and the architecture that blocks it
+
+Five consecutive science kills after the one score move forced divergent mode. The item chosen
+was not another increment but the reference family's **route, run standalone**: ratio-greedy init
+→ iterated exact-gain pair relocation with optimal interval-scheduling batching. No Rocket, no
+sift, no SCC. Compared against our own Rocket-free arm, not the champion — judging a route by a
+yardstick built for a different one is the mistake H45 already made.
+
+| | connectome | mouse |
+|---|---|---|
+| init (ratio greedy) | 74.61730 | 88.38256 |
+| after iterated pair relocation | **75.29304** (40 sweeps, 2,150 s) | **92.84280** (30 sweeps) |
+| gain | +0.67573 pp | **+4.46024 pp**, not converged |
+| vs our Rocket-free arm (83.87975 / 93.08288) | **−8.58671 pp** | −0.24008 pp |
+
+Every sweep exact — predicted gain equals the oracle-realised delta on all 70 sweeps.
+
+### The diagnosis, which is the actual result
+
+The move class is not weak: mouse climbed 4.46 pp on it alone and was still gaining. What fails
+is **throughput under the disjointness constraint**:
+
+| | |
+|---|---|
+| positive-gain candidates found over 40 sweeps | **4,018,567** |
+| applied | **4,193** |
+| **realised fraction** | **0.104 %** |
+| ratio at sweep 0 → sweep 39 | 0.730 % → 0.032 % |
+
+A pair move's interval spans the distance between a backward edge's endpoints — mean 20,536
+positions by the reference's own table — and disjoint intervals of that size barely fit on a
+136,648-position line. So 99.9 % of the improving moves that exist are discarded every sweep.
+Reaching even our own Rocket-free 83.87975 at the observed rate would need ~1,086 more sweeps,
+about **16 hours**.
+
+### The architectural finding
+
+Every refiner in this campaign has the same shape: **compute all gains vectorised, then apply a
+maximal DISJOINT batch**. That is correct and fast for single-node moves, whose intervals are one
+position wide. It is *structurally unable* to exploit interval moves. The reference's Algorithm 2
+applies moves **one at a time** from a heap with incremental updates — a sequential architecture
+ours cannot emulate.
+
+This also retro-explains H41: its segment moves were capped at a 2,048-position window, which is
+small enough that disjoint batches fit (97 moves per sweep) — and there the failure mode was
+redundancy, not throughput. The two kills are the same architecture meeting the same wall from
+opposite sides.
+
+### Successor filed — H51, with the blocker named exactly
+
+Sequential application is blocked for us by one thing: applying a pair move naively rewrites the
+rank of every node in the interval, O(interval) with interval ≈ 20,536. An **order-maintenance
+structure** (Dietz–Sleator labelling) gives O(1) amortised insert/delete and O(1) order
+comparison, so a pair move costs O(1) and the gain kernel's "is this neighbour inside the
+interval" test stays O(1) per neighbour — the same bound the gain computation already has.
+
+H51's first gate is deliberately cheap and does not require building it: apply the top 1,000 pair
+moves **sequentially** with a naive O(interval) rebuild and measure the realised gain against the
+~60 a disjoint batch fits. If sequential does not win by a wide margin there, the throughput
+story is wrong and the item dies before any data structure is written.
