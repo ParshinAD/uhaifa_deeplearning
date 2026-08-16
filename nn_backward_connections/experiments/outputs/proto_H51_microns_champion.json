@@ -1,0 +1,92 @@
+{
+  "item": "H51",
+  "dataset": "microns",
+  "start_mode": "champion",
+  "n_passes": 3,
+  "start_pct": 83.24085291200831,
+  "champion_pct": 83.24085291200831,
+  "final_pct": 83.25131357261948,
+  "total_gain_pp": 0.010460660611171402,
+  "applied": 1447,
+  "popped": 6251757,
+  "checkpoints": [
+    {
+      "applied": 1,
+      "popped": 207,
+      "pct": 83.24113212268881,
+      "realised_gain_pp": 0.0002792106804968158,
+      "predicted_gain_pp": 0.0002792106804968158,
+      "exact": true,
+      "mean_span": 277.0,
+      "wall": 1.065413236618042
+    },
+    {
+      "applied": 10,
+      "popped": 4641,
+      "pct": 83.24131393429471,
+      "realised_gain_pp": 0.00046102228640171913,
+      "predicted_gain_pp": 0.00046102228640171913,
+      "exact": true,
+      "mean_span": 4480.8,
+      "wall": 5.594501972198486
+    },
+    {
+      "applied": 100,
+      "popped": 128322,
+      "pct": 83.24215805960785,
+      "realised_gain_pp": 0.0013051475995316272,
+      "predicted_gain_pp": 0.0013051475995316272,
+      "exact": true,
+      "mean_span": 4422.26,
+      "wall": 92.28284049034119
+    },
+    {
+      "applied": 500,
+      "popped": 846588,
+      "pct": 83.24498912604265,
+      "realised_gain_pp": 0.00413621403433655,
+      "predicted_gain_pp": 0.00413621403433655,
+      "exact": true,
+      "mean_span": 3597.924,
+      "wall": 437.2846064567566
+    },
+    {
+      "applied": 1000,
+      "popped": 1810932,
+      "pct": 83.24831368112206,
+      "realised_gain_pp": 0.007460769113740496,
+      "predicted_gain_pp": 0.007460769113740496,
+      "exact": true,
+      "mean_span": 3502.576,
+      "wall": 864.1411991119385
+    }
+  ],
+  "passes": [
+    {
+      "pass_i": 0,
+      "applied": 1132,
+      "start_pct": 83.24085291200831,
+      "end_pct": 83.24918377952174,
+      "gain_pp": 0.008330867513428248,
+      "wall": 983.953418970108
+    },
+    {
+      "pass_i": 1,
+      "applied": 265,
+      "start_pct": 83.24918377952174,
+      "end_pct": 83.25096293595095,
+      "gain_pp": 0.001779156429212268,
+      "wall": 1989.098857164383
+    },
+    {
+      "pass_i": 2,
+      "applied": 50,
+      "start_pct": 83.25096293595095,
+      "end_pct": 83.25131357261948,
+      "gain_pp": 0.00035063666853088493,
+      "wall": 2984.615846157074
+    }
+  ],
+  "batch_reference": null,
+  "delta_vs_champion_pp": 0.010460660611173012
+}
