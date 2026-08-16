@@ -186,13 +186,21 @@ def run_rocket(g: GraphData, cfg: RocketConfig, seed: int, device,
 
     history = []
     start_time = time.time()
-    last_i = 0
+    # Count epochs that ACTUALLY ran. The old `last_i + 1` was off by one in the two
+    # degenerate cases: with cfg.epochs == 0 the loop body never executes and it reported
+    # 1, and a time_limit that fires on the very first iteration also reported 1. Both are
+    # false, and n_epochs_done feeds `total_grad_steps`, which audit.py uses to decide
+    # whether two variants are compute-matched. For cfg.epochs >= 1 with at least one
+    # completed iteration this is identical to the old expression, so no existing logged
+    # result changes. Surfaced 2026-08-16 by tests/test_experiment_H44.py, which asserts
+    # that H44's epochs=0 mouse arm takes literally zero gradient steps.
+    n_epochs_done = 0
 
     # ── Main loop (Algorithm 1, lines 4-16) ──────────────────────────────────
     for i in range(cfg.epochs):
         if time_limit and (time.time() - start_time) > time_limit:
             break
-        last_i = i
+        n_epochs_done += 1
 
         beta = float(betas[i])
 
@@ -230,6 +238,6 @@ def run_rocket(g: GraphData, cfg: RocketConfig, seed: int, device,
         best_score=best_score,
         best_pct=pct(best_score, total_weight),
         history=pd.DataFrame(history),
-        n_epochs_done=last_i + 1,
+        n_epochs_done=n_epochs_done,
         wall_clock_s=wall,
     )

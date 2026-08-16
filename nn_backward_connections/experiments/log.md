@@ -3541,3 +3541,81 @@ Consequences, stated because they change how this campaign should reason:
 * The `epochs=0` arm is production-minus-Rocket and its stage 3 hits the 40-sweep cap without
   converging, so 83.87975 is a **lower bound** on a Rocket-free connectome pipeline, not a
   measurement of one. Do not quote it as "greedy+sift reaches 83.88".
+
+---
+
+## 2026-08-16 — H41 SCREEN: KILL. The move class fires; 91.9% of what it finds is redundant
+
+Stage 2 of the night run, all three datasets, variant module committed BEFORE the screen
+(`ef049e1`) as the P08 lesson requires.
+
+### The result
+
+| dataset | H41 | champion | Δ | `screen_delta_pp` | verdict |
+|---|---|---|---|---|---|
+| connectome | 84.15979752 | 84.15409511 | **+0.00570** | 0.012 | **FAIL** |
+| microns | 83.24224247 | 83.24085291 | **+0.00139** | 0.002 | **FAIL** |
+| mouse (3 seeds) | 92.91701410211007 | 92.91701410211007 | 0.00000 | non-inferiority | pass (bit-identical) |
+
+The gate is `Pass iff delta > screen_delta_pp on BOTH primaries and mouse non-inferior`
+(`campaign.yaml`). H41 fails on both primaries. **KILL**, by the pre-registered rule.
+
+### The prediction that was wrong, and it is worth recording
+
+`HANDOFF.md` and meta-rule M4 both predicted the segment class would fire **zero** times on
+connectome's production order — M4 because "the recoverable weight is long-range" and a 2048
+window is 1.5% of the line. `night_run2.sh` was even written to skip the 57-minute microns leg
+automatically on a zero.
+
+It fired **4,619 times** on connectome and 441 on microns, and was credited **+0.07010 pp**.
+The window is not empty. That is direct empirical support for the narrowing of M4 recorded
+earlier tonight (its evidence measured the *reference ordering's* structure, not the reach of a
+hill-climb) — and it means the default ladder was killed by effect size, not by emptiness.
+
+### Why the net is small — the real obstacle is REDUNDANCY, not capacity
+
+Stage-4 credit decomposes exactly, and the two variants are constant-for-constant identical
+apart from the added class, so the comparison is clean:
+
+| | H42 (2 classes) | H41 (3 classes) |
+|---|---|---|
+| SCC block refine | — | +0.05491 |
+| inner sift | — | +0.12127 |
+| **the two old classes together** | **+0.24058** | **+0.17618** |
+| segment | — | +0.07010 |
+| **stage-4 total** | **+0.24058** | **+0.24628** |
+
+Adding the segment class **took 0.06440 pp of ground away from the other two** while contributing
+0.07010 pp of its own. So **91.9% of the segment class's credit was ground the existing classes
+would have reached anyway**, and the net advantage is the 8.1% remainder: +0.00570 pp.
+
+H41's own docstring flagged this risk in advance ("Segment credit >= net advantage") — it is now
+measured, on the production graph, at 91.9%.
+
+### It also loses on allocation
+
+The segment stage cost 126.6 s on connectome for +0.00570 pp net = **4.50e-5 pp/s**, against the
+measured stage-4 marginal rate of **3.45e-4 pp/s** — 7.7x worse per second than the stage it was
+inserted into. The matched-wall-clock control the handoff demanded is therefore not needed to
+reject it: even at equal effect size it would lose the allocation argument. (For completeness:
+H42's stage-4 curve has only +0.0047 pp left between 77 cycles and saturation at ~143, so the
+control would *not* have beaten H41 either. Both are below the 0.012 pp minimum effect size, so
+the comparison is moot.)
+
+### NEW META-RULE — M8, from this kill
+
+The campaign has been reasoning about new move classes by their own credit. That is not evidence.
+Filed into `killed.json`:
+
+> **M8-credit-is-not-advantage.** A move class's own stage credit is NOT its contribution. Move
+> classes in an alternating refiner compete for the same ground: H41's segment class was credited
+> +0.07010 pp on connectome while delivering +0.00570 pp net, because 91.9% of what it found the
+> existing two classes would have found anyway. Judge a new class ONLY by the composed
+> champion-vs-variant delta at matched constants, and require the redundancy fraction to be
+> reported. This is why a prototype that shows a class "works" is not a screen.
+
+### Honest note
+
+The screen ran 1 seed on the primaries and 3 on mouse — the P02 policy for a variant that never
+draws from its seed, which `autoresearch/seed_class.py` verifies mechanically for H41. Since the
+verdict is a KILL and no promotion follows, no confirm-stage CI was computed.

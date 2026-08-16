@@ -63,6 +63,11 @@ SEED = 42
 # which keeps the file self-describing if it is ever re-run from scratch.
 PLAN = {
     "microns": ("proto_P07.json", [0, 2500, 5000, 10000, 20000]),
+    # mouse added 2026-08-16 to settle H44. The whole run is ~10 s, and the two arms are a
+    # PRE-REGISTERED test: epochs=0 must reproduce 93.08288021668459 (the Rocket-free stage-3
+    # fixed point measured in proto_H41.json) and epochs=5000 must reproduce the champion's
+    # 92.91701410211007. Anything else means the prototype figure was a harness artefact.
+    "mouse": ("proto_P07_mouse.json", [0, 5000]),
     # connectome ships 20,000; the grid brackets it on both sides so saturation is visible
     # rather than assumed. 40,000 is included because "the curve was still rising" is exactly
     # the mistake H36 made at stage 4, and it costs ~500 s to rule out here.
