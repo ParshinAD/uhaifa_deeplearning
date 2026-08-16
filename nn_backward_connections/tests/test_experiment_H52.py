@@ -56,11 +56,30 @@ def test_primaries_keep_the_h42_constants():
         assert H52._ALT_CYCLES[ds] == H42._ALT_CYCLES[ds]
 
 
-def test_every_dataset_has_a_pop_budget():
-    """A missing budget would silently mean 'drain', which is how microns overruns its guard."""
+def test_every_dataset_has_an_explicit_pop_budget():
+    """A MISSING budget silently means 'drain', which is how microns overruns its guard.
+
+    Zero is allowed and is not the same thing: microns is deliberately set to 0 because the
+    screen measured its run at 3,435.5 s against a 3,450 s deadline. What must never happen is
+    a dataset with no entry at all.
+    """
     for ds in ("connectome", "microns", "mouse"):
-        assert isinstance(H52._PAIR_MAX_POPS.get(ds), int)
-        assert H52._PAIR_MAX_POPS[ds] > 0
+        assert ds in H52._PAIR_MAX_POPS
+        assert isinstance(H52._PAIR_MAX_POPS[ds], int)
+        assert H52._PAIR_MAX_POPS[ds] >= 0
+    assert H52._PAIR_MAX_POPS["microns"] == 0, "microns must stay disabled until P07 is resolved"
+    assert H52._PAIR_MAX_POPS["connectome"] > 0
+
+
+def test_zero_budget_returns_the_input_untouched():
+    """With a 0 budget the stage must be a no-op, so H52 IS the champion on microns."""
+    import numpy as _np
+    from mfas.refine.pair_relocate import pair_relocate as _pr
+    g = load_dataset("mouse")
+    r0 = _np.arange(g.n_nodes, dtype=_np.int64)
+    out_rank, out_score, log = _pr(g, r0, n_passes=2, max_pops=0)
+    assert _np.array_equal(out_rank, r0)
+    assert sum(row["n_applied"] for row in log) == 0
 
 
 # ── 2. Stage 5 is monotone, and it fires ─────────────────────────────────────────────

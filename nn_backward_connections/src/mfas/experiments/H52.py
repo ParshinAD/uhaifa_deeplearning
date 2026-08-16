@@ -117,7 +117,16 @@ _MIN_BLOCK = 32          # below this the scipy call costs more than it returns
 #             ~2,100 pops/s that is ~350 k pops. This is P07 as a hard budget.
 # mouse:      converges after one move; the budget is never reached.
 _PAIR_PASSES = 2
-_PAIR_MAX_POPS = {"connectome": 2_400_000, "microns": 350_000, "mouse": 100_000}
+_PAIR_MAX_POPS = {"connectome": 2_400_000, "microns": 0, "mouse": 100_000}
+# microns = 0 is a DELIBERATE DISABLE, decided from the screen and not a tuning guess.
+# At 350 k pops the screen scored 83.243288 (+0.00243 pp, above its 0.002 threshold) but the run
+# took 3,435.5 s against the guard's 3,450 s deadline - 14.5 s of margin, 0.4%. P07 measured this
+# machine at ~20% slower under ordinary desktop load, so that configuration breaches both the
+# deadline and the 3,600 s cap the moment anything else touches the GPU. A 0.0024 pp gain is not
+# worth shipping a run that is one load spike from being flagged degraded.
+# With the budget at 0 the stage returns its input untouched, so H52 IS the champion on microns,
+# bit for bit, and the microns championship stays where it is. Re-enable this the day P07 is
+# resolved - the gain is real, the seconds are not available.
 
 
 def run(g: GraphData, seed: int, device, time_limit: Optional[float] = None

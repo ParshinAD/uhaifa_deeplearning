@@ -1,0 +1,236 @@
+{
+  "exp_id": "20260816T201538Z-H52-microns-s42-implement-c1e323",
+  "algo": "H52",
+  "dataset": "microns",
+  "seed": 42,
+  "score": 12819930.0,
+  "pct": 83.24328788887311,
+  "wall_clock_s": 3435.522080183029,
+  "git_commit": "f7cb375816e42cd0270e1344005d35938dbdea07+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "c1e3239e4019",
+  "timestamp": "2026-08-16T21:12:54Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 80000,
+  "best_positions_path": "results\\20260816T201538Z-H52-microns-s42-implement-c1e323_positions.npy",
+  "experiment_id": "H52",
+  "role": "implement",
+  "hypothesis": "The champion's two refinement move classes are both blind to a pair of nodes that only improves JOINTLY: 989 of 3,498 positive-gain backward-edge pairs on its own connectome order have ZERO solo gain at both endpoints. Adding sequential exact-gain pair relocation as stage 5 reaches a strictly better order. The word SEQUENTIAL is the hypothesis: the identical move class applied as a disjoint batch gives +0.00193 pp, applied one move at a time it gives +0.02233 pp, because disjoint intervals of ~20,536 positions barely fit on a 136,648-position line and the batched form discards 99.9% of what it finds.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 80000,
+  "variant_attrs": {
+    "pure_best_score": 12802184.0,
+    "pure_best_pct": 83.12805829035923,
+    "sift_best_score": 12813817.0,
+    "sift_best_pct": 83.20359451934108,
+    "n_sift_sweeps": 12,
+    "sift_sweeps_requested": 12,
+    "sift_converged": false,
+    "sift_time_s": 84.07779788970947,
+    "sift_alpha": 0.7,
+    "sift_k_full": 6,
+    "alt_best_score": 12819555.0,
+    "alt_best_pct": 83.24085291200831,
+    "alt_increment_pp": 0.0372583926672263,
+    "n_alt_cycles": 5,
+    "alt_cycles_requested": 5,
+    "alt_time_s": 85.28321886062622,
+    "alt_min_block": 32,
+    "alt_sift_sweeps": 2,
+    "alt_log": [
+      {
+        "cycle": 0,
+        "split_frac": 0.5,
+        "after_scc_pct": 83.21060725271171,
+        "after_sift_pct": 83.22017833510827,
+        "best_pct": 83.22017833510827,
+        "t_scc_s": 3.1870617866516113,
+        "t_sift_s": 13.682155847549438,
+        "cum_wall_s": 16.86921763420105
+      },
+      {
+        "cycle": 1,
+        "split_frac": 0.382,
+        "after_scc_pct": 83.22415871062326,
+        "after_sift_pct": 83.22827544484268,
+        "best_pct": 83.22827544484268,
+        "t_scc_s": 2.911268949508667,
+        "t_sift_s": 13.553733587265015,
+        "cum_wall_s": 33.33522057533264
+      },
+      {
+        "cycle": 2,
+        "split_frac": 0.618,
+        "after_scc_pct": 83.23052861010157,
+        "after_sift_pct": 83.23299605332457,
+        "best_pct": 83.23299605332457,
+        "t_scc_s": 3.631622076034546,
+        "t_sift_s": 13.512663841247559,
+        "cum_wall_s": 50.479506492614746
+      },
+      {
+        "cycle": 3,
+        "split_frac": 0.25,
+        "after_scc_pct": 83.23488559537165,
+        "after_sift_pct": 83.23721018661857,
+        "best_pct": 83.23721018661857,
+        "t_scc_s": 3.017646551132202,
+        "t_sift_s": 13.47234296798706,
+        "cum_wall_s": 66.96949601173401
+      },
+      {
+        "cycle": 4,
+        "split_frac": 0.75,
+        "after_scc_pct": 83.23877506508369,
+        "after_sift_pct": 83.24085291200831,
+        "best_pct": 83.24085291200831,
+        "t_scc_s": 4.802853345870972,
+        "t_sift_s": 13.51086950302124,
+        "cum_wall_s": 85.28321886062622
+      }
+    ],
+    "epochs_requested": 80000,
+    "pair_best_score": 12819930.0,
+    "pair_best_pct": 83.24328788887311,
+    "pair_increment_pp": 0.002434976864805094,
+    "pair_passes_requested": 2,
+    "n_pair_passes": 1,
+    "n_pair_moves": 247,
+    "n_pair_pops": 350000,
+    "pair_max_pops": 350000,
+    "pair_time_s": 219.75298810005188,
+    "pair_log": [
+      {
+        "pass_i": 0,
+        "n_applied": 247,
+        "n_popped": 350000,
+        "before_pct": 83.24085291200831,
+        "after_pct": 83.24328788887311,
+        "gain_pp": 0.002434976864805094,
+        "predicted_gain_pp": 0.002434976864797812,
+        "wall": 219.10822176933289,
+        "cum_wall_s": 219.75298810005188
+      }
+    ],
+    "refined_best_score": 12819930.0,
+    "refined_best_pct": 83.24328788887311,
+    "sift_log": [
+      {
+        "sweep": 0,
+        "alpha": 1.0,
+        "candidate_pct": 83.1616025316487,
+        "accepted": true,
+        "n_movers": 3539,
+        "wall": 7.601861000061035
+      },
+      {
+        "sweep": 1,
+        "alpha": 1.0,
+        "candidate_pct": 83.17985511822722,
+        "accepted": true,
+        "n_movers": 4584,
+        "wall": 7.36737060546875
+      },
+      {
+        "sweep": 2,
+        "alpha": 1.0,
+        "candidate_pct": 83.18782885580048,
+        "accepted": true,
+        "n_movers": 3067,
+        "wall": 7.282793283462524
+      },
+      {
+        "sweep": 3,
+        "alpha": 1.0,
+        "candidate_pct": 83.18610164554438,
+        "accepted": false,
+        "n_movers": 2260,
+        "wall": 7.065633773803711
+      },
+      {
+        "sweep": 4,
+        "alpha": 1.0,
+        "candidate_pct": 83.19702332844196,
+        "accepted": true,
+        "n_movers": 1710,
+        "wall": 7.0782411098480225
+      },
+      {
+        "sweep": 5,
+        "alpha": 1.0,
+        "candidate_pct": 83.2002569777184,
+        "accepted": true,
+        "n_movers": 1312,
+        "wall": 6.866782903671265
+      },
+      {
+        "sweep": 6,
+        "alpha": 0.7,
+        "candidate_pct": 83.19444549960109,
+        "accepted": false,
+        "n_movers": 998,
+        "wall": 6.855659246444702
+      },
+      {
+        "sweep": 7,
+        "alpha": 0.7,
+        "candidate_pct": 83.19565324812602,
+        "accepted": false,
+        "n_movers": 843,
+        "wall": 6.791773796081543
+      },
+      {
+        "sweep": 8,
+        "alpha": 0.7,
+        "candidate_pct": 83.19781550758196,
+        "accepted": false,
+        "n_movers": 923,
+        "wall": 6.788641691207886
+      },
+      {
+        "sweep": 9,
+        "alpha": 0.7,
+        "candidate_pct": 83.19999724685283,
+        "accepted": false,
+        "n_movers": 867,
+        "wall": 6.886734962463379
+      },
+      {
+        "sweep": 10,
+        "alpha": 0.7,
+        "candidate_pct": 83.20190626871482,
+        "accepted": true,
+        "n_movers": 817,
+        "wall": 6.729375123977661
+      },
+      {
+        "sweep": 11,
+        "alpha": 0.7,
+        "candidate_pct": 83.20359451934108,
+        "accepted": true,
+        "n_movers": 737,
+        "wall": 6.762930393218994
+      }
+    ]
+  },
+  "runtime_guard": {
+    "armed": true,
+    "source": "campaign",
+    "time_limit_s": 3450.0,
+    "reserve_s": 150.0,
+    "cap_s": 3600.0,
+    "warn_s": 3400.0,
+    "wall_clock_s": 3435.522080183029,
+    "variant_wall_s": 3401.7042219638824,
+    "deadline_reached": false,
+    "stages_truncated": {},
+    "degraded": false,
+    "over_warn": true,
+    "over_cap": false
+  }
+}
