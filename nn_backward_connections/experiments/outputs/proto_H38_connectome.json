@@ -1,0 +1,85 @@
+{
+  "item": "H38",
+  "dataset": "connectome",
+  "start_pct": 68.91342773446004,
+  "k_full": 6,
+  "alpha": 0.7,
+  "max_sweeps": 40,
+  "production_pct": 83.44720686065644,
+  "production_wall_s": 115.72447681427002,
+  "production_sweeps": 40,
+  "block_counts": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "arms": [
+    {
+      "n_blocks": 1,
+      "damping": "damped",
+      "pct": 83.44720686065644,
+      "wall_s": 116.96985793113708,
+      "sweeps": 40,
+      "delta_vs_production_pp": 0.0,
+      "final_movers": 2632
+    },
+    {
+      "n_blocks": 2,
+      "damping": "damped",
+      "pct": 83.40035647427317,
+      "wall_s": 230.94174098968506,
+      "sweeps": 40,
+      "delta_vs_production_pp": -0.04685038638326944,
+      "final_movers": 2449
+    },
+    {
+      "n_blocks": 2,
+      "damping": "undamped",
+      "pct": 82.89408789686979,
+      "wall_s": 231.12392330169678,
+      "sweeps": 40,
+      "delta_vs_production_pp": -0.5531189637866447,
+      "final_movers": 25688
+    },
+    {
+      "n_blocks": 4,
+      "damping": "damped",
+      "pct": 83.37355039915522,
+      "wall_s": 458.0195748806,
+      "sweeps": 40,
+      "delta_vs_production_pp": -0.07365646150121563,
+      "final_movers": 2168
+    },
+    {
+      "n_blocks": 4,
+      "damping": "undamped",
+      "pct": 83.32945339156022,
+      "wall_s": 458.06366086006165,
+      "sweeps": 40,
+      "delta_vs_production_pp": -0.11775346909621476,
+      "final_movers": 8136
+    },
+    {
+      "n_blocks": 8,
+      "damping": "damped",
+      "pct": 83.30894143537073,
+      "wall_s": 914.35808634758,
+      "sweeps": 40,
+      "delta_vs_production_pp": -0.1382654252857094,
+      "final_movers": 1344
+    },
+    {
+      "n_blocks": 8,
+      "damping": "undamped",
+      "pct": 83.34150002024474,
+      "wall_s": 915.3756151199341,
+      "sweeps": 40,
+      "delta_vs_production_pp": -0.10570684041169898,
+      "final_movers": 3331
+    }
+  ],
+  "parity_k1_ok": true,
+  "best_delta_pp": 0.0,
+  "verdict": "FAIL (below the 0.012 pp minimum effect size)"
+}

@@ -1,0 +1,85 @@
+{
+  "item": "H38",
+  "dataset": "mouse",
+  "start_pct": 90.12629794323948,
+  "k_full": 6,
+  "alpha": 0.7,
+  "max_sweeps": 40,
+  "production_pct": 93.08288021668459,
+  "production_wall_s": 0.002999544143676758,
+  "production_sweeps": 14,
+  "block_counts": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "arms": [
+    {
+      "n_blocks": 1,
+      "damping": "damped",
+      "pct": 93.08288021668459,
+      "wall_s": 0.004513740539550781,
+      "sweeps": 14,
+      "delta_vs_production_pp": 0.0,
+      "final_movers": 0
+    },
+    {
+      "n_blocks": 2,
+      "damping": "damped",
+      "pct": 93.07841293238738,
+      "wall_s": 0.0060007572174072266,
+      "sweeps": 12,
+      "delta_vs_production_pp": -0.00446728429720622,
+      "final_movers": 0
+    },
+    {
+      "n_blocks": 2,
+      "damping": "undamped",
+      "pct": 93.00587459075233,
+      "wall_s": 0.01999974250793457,
+      "sweeps": 40,
+      "delta_vs_production_pp": -0.07700562593225868,
+      "final_movers": 5
+    },
+    {
+      "n_blocks": 4,
+      "damping": "damped",
+      "pct": 93.02970628205394,
+      "wall_s": 0.005000114440917969,
+      "sweeps": 5,
+      "delta_vs_production_pp": -0.053173934630649455,
+      "final_movers": 0
+    },
+    {
+      "n_blocks": 4,
+      "damping": "undamped",
+      "pct": 93.02970628205394,
+      "wall_s": 0.00451207160949707,
+      "sweeps": 5,
+      "delta_vs_production_pp": -0.053173934630649455,
+      "final_movers": 0
+    },
+    {
+      "n_blocks": 8,
+      "damping": "damped",
+      "pct": 93.00929757681179,
+      "wall_s": 0.010001182556152344,
+      "sweeps": 4,
+      "delta_vs_production_pp": -0.07358263987279656,
+      "final_movers": 0
+    },
+    {
+      "n_blocks": 8,
+      "damping": "undamped",
+      "pct": 93.00929757681179,
+      "wall_s": 0.0075147151947021484,
+      "sweeps": 4,
+      "delta_vs_production_pp": -0.07358263987279656,
+      "final_movers": 0
+    }
+  ],
+  "parity_k1_ok": true,
+  "best_delta_pp": 0.0,
+  "verdict": "FAIL (below the 0.012 pp minimum effect size)"
+}

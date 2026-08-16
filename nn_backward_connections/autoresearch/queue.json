@@ -194,7 +194,7 @@
     {
       "id": "H38",
       "title": "Gauss-Seidel / block-sequential exact-gain sift",
-      "status": "proposed",
+      "status": "killed",
       "priority": 2,
       "axis": "discrete refinement / update order",
       "hypothesis": "Replacing the simultaneous (Jacobi) rebuild with sequential (Gauss-Seidel) or block-sequential updates — each node re-inserted against the CURRENT order, not the stale one — converges where Jacobi limit-cycles and reaches a strictly better fixed point than under-relaxation.",
@@ -206,7 +206,9 @@
         "src/mfas/refine/insertion.py"
       ],
       "est_cost": "medium (needs a blocked kernel to keep vectorization)",
-      "expected_pp": "connectome +0.05 to +0.3 (speculative)"
+      "expected_pp": "connectome +0.05 to +0.3 (speculative)",
+      "outcome": "PROTOTYPE GATE 2026-08-16 -> KILLED (experiments/outputs/proto_H38_connectome.json, proto_H38_mouse.json). Block-sequential loses to the champion's under-relaxed Jacobi at EVERY block count and under BOTH damping schedules, from the same greedy-FAS start on connectome: K=2 damped -0.04685 / undamped -0.55312; K=4 -0.07366 / -0.11775; K=8 -0.13827 / -0.10571 pp. Same sign on mouse. It also costs K times more per sweep. PARITY: the K=1 arm reproduces sift_underrelaxed EXACTLY (83.44721 connectome, 93.08288 mouse), so every K>1 difference is the mechanism and not the harness. THE CONFOUND WAS TESTED, NOT ASSUMED AWAY: the first grid damped the block-sequential arms with alpha=0.7, which is the cure for the JACOBI collision that Gauss-Seidel does not have by construction - handicapping the arm with a treatment for a disease it lacks. Re-running undamped does NOT rescue it; at K=2 it is 12x worse. So damping helps sequential schemes too, which means under-relaxation's benefit is broader than the 'Jacobi 2-cycle cure' that underrelax.py's docstring attributes it to.",
+      "revival_if": "HONEST LIMITATION of this gate: at K<=8 each sub-step still moves ~n/K nodes simultaneously (68,324 at K=2), so the Jacobi collision is still present and the PURE Gauss-Seidel limit K=n was never reached. The trend across K=1,2,4,8 is monotonically AWAY from the champion, which is evidence against the limit rather than for it, but it is not a proof. A revival would need a kernel that reaches small blocks affordably - restricting jacobi_best_gaps to a block's incident edges (a block of n/K nodes touches ~m/K edges) recovers an O(m) sweep and would make K in the thousands testable. Only worth building if some other evidence suggests the limit behaves differently from the trend."
     },
     {
       "id": "H39",
