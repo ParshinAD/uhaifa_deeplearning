@@ -3863,3 +3863,93 @@ The H49 screen finished at 09:49 and was not read until 12:45. No background wai
 launched for it, unlike every earlier stage of this session, so nothing signalled completion.
 **2 h 56 min of idle machine.** The fix is mechanical: never launch a detached run without
 launching its waiter in the same step.
+
+---
+
+## 2026-08-16 — H43 MEASURED: the champion's microns allocation is already right
+
+`experiments/outputs/proto_H43_microns.json`. H43's kill condition required the stage-4 recovery
+curve be **measured**, not extrapolated from the 54:1 marginal-rate table — precisely because the
+stack is non-monotone. It was.
+
+Rocket at 20,000 epochs → 83.03422, stage 3 → 83.17130, then stage 4 one cycle at a time:
+
+| cycles | best % | Δ vs champion | run wall |
+|---|---|---|---|
+| 5 (the shipped count) | 83.22167 | −0.01919 | 995 s |
+| 10 | 83.22974 | −0.01112 | 1,117 s |
+| 20 | 83.23470 | −0.00615 | 1,364 s |
+| 50 | 83.23722 | −0.00364 | 2,106 s |
+| 100 | 83.23815 | −0.00271 | 3,071 s |
+| **120** | **83.23842** | **−0.00243** | 3,402 s |
+
+Parity: cycle 4 reproduces the sizing grid's 20,000 arm exactly (83.22167).
+
+**Verdict: KILLED as a score hypothesis.** Stage 4 recovers **87.3%** of the 0.01919 pp the
+epoch cut costs and then saturates — cycles 100 → 120 buy +0.00028 pp for 330 s — landing
+0.00243 pp short while consuming the entire freed budget (3,402 s of a 3,450 s deadline).
+
+**The positive result is the negative one.** The 54:1 marginal-rate table predicted this trade
+would win. Measuring it shows the alternative allocation lands short. **H42's microns split is
+validated as near-optimal to within 0.0024 pp** — the microns allocation question is closed, and
+closed by measurement rather than by the arithmetic that would have got it wrong.
+
+A runtime trade curve falls out, recorded for P07 (the champion runs 3,258 s idle): 20 cycles =
+1,364 s, saving 58% of the wall clock for −0.00615 pp. Every point on it is a **regression on a
+primary**, so none is promotable; it is an engineering option if the 3,600 s cap ever binds.
+
+---
+
+## 2026-08-16 — H46: the coarse-block family closes, in 10 seconds, at exactly zero
+
+`experiments/outputs/proto_H46_connectome.json`. Partition the line into `K` contiguous blocks
+and permute them. Exact by the same contiguous-block lemma `segment.py` proves: one `bincount`
+builds the whole `K x K` inter-block weight matrix, so every permutation's gain is read off it
+with no rescoring, and the best permutation of `K ≤ 8` blocks is a brute-force dense LOP.
+
+On the champion's connectome order, **28 partitions** (K = 2…8 × 4 boundary offsets):
+
+> **every single one gives exactly +0.000000 pp, and the optimal permutation is the IDENTITY.**
+
+Same on mouse. Exactness confirmed against the frozen oracle (predicted 0 = realised 0). Total
+cost 10.3 s.
+
+This closes the family and says something sharp: the champion's order has **no coarse-scale
+misordering at all**, at any granularity from 17,081 to 68,324 nodes — which is exactly the band
+`diagnosis.md`'s rank-distance percentiles (p25 8,290 / p50 22,580 / p75 54,432) pointed at. The
+remaining 0.4606 pp is not a block-permutation problem.
+
+A prototype defect was caught before it mattered: the script originally selected the position
+vector by a name glob, which picked the just-killed **H49** run rather than the champion.
+Measuring a move class on a non-champion order silently answers a different question. It now
+reads the champion from `sota.json`.
+
+---
+
+## 2026-08-16 — where the session leaves the search space
+
+Six doors measured shut in 24 hours, every one with an artifact:
+
+| axis | verdict | evidence |
+|---|---|---|
+| Rocket epochs, connectome | at optimum; 40k is flat-to-negative | `proto_S01_connectome.json` |
+| Rocket epochs, microns | knee at 20k, but the re-allocation loses | `proto_P07.json`, `proto_H43_microns.json` |
+| stage-3 sweep caps | truncated but crawling; worth less than stage 4 | log 2026-08-16, marginal table |
+| initial order | a 5.7 pp better start ends 0.014 pp **worse** | `proto_H48_*.json`, H49 screen |
+| segment moves, 2,048 window | fires 4,619x, 91.9% redundant | H41 screen |
+| pair relocation, converged order | +0.00193 pp, 6.2x under the bar | `proto_H45_pair_connectome.json` |
+| coarse block permutation, K ≤ 8 | **exactly zero** | `proto_H46_connectome.json` |
+
+What that leaves standing. The gap is not in the gradient budget, not in the starting basin, not
+in coarse structure, and not in any of the three move classes tested. It is **fine-grained and
+inside the refiner** — which is where the one thing that did move this session came from (H44,
+by *removing* a stage). The queue's remaining science items all sit there: H38 (Gauss-Seidel /
+block-sequential sift), H37 (cycle-triggered under-relaxation), H39 (frozen-scale discrete ↔
+continuous alternation), H47 (exact subset-DP at the SCC recursion's leaves), H40 (structure-aware
+ruin-and-recreate).
+
+One inference worth carrying into the next session, from the reference comparison: their route
+reaches 84.61 from a 75.24 start; ours reaches 84.15 from 68.91, and giving ours *their* start
+makes it worse. So the difference is a refiner that keeps improving where ours converges — and
+`M8` says to judge any candidate for it by the composed delta and its redundancy fraction, not by
+what it finds on its own.

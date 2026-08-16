@@ -1,0 +1,422 @@
+{
+  "item": "H46",
+  "dataset": "mouse",
+  "champion_positions": "results\\20260816T014407Z-H44-mouse-s1234-confirm-786a77_positions.npy",
+  "champion_pct": 93.08288021668459,
+  "levels": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "offset_fracs": [
+    0.0,
+    0.25,
+    0.5,
+    0.75
+  ],
+  "t_scan_s": 6.909348964691162,
+  "partitions": [
+    {
+      "K": 2,
+      "offset_frac": 0.0,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 3,
+      "offset_frac": 0.25,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 3,
+      "offset_frac": 0.5,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 3,
+      "offset_frac": 0.75,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 3,
+      "offset_frac": 0.0,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 4,
+      "offset_frac": 0.25,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 4,
+      "offset_frac": 0.5,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 4,
+      "offset_frac": 0.75,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 4,
+      "offset_frac": 0.0,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 5,
+      "offset_frac": 0.25,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 5,
+      "offset_frac": 0.5,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 5,
+      "offset_frac": 0.75,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 5,
+      "offset_frac": 0.0,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 6,
+      "offset_frac": 0.25,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 6,
+      "offset_frac": 0.5,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 6,
+      "offset_frac": 0.75,
+      "gain_pp": 1.9394582630890416e-14,
+      "perm": [
+        1,
+        0,
+        2,
+        3,
+        4,
+        5
+      ],
+      "is_identity": false
+    },
+    {
+      "K": 6,
+      "offset_frac": 0.0,
+      "gain_pp": 1.9394582630890416e-14,
+      "perm": [
+        1,
+        0,
+        2,
+        3,
+        4,
+        5
+      ],
+      "is_identity": false
+    },
+    {
+      "K": 7,
+      "offset_frac": 0.25,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 7,
+      "offset_frac": 0.5,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 7,
+      "offset_frac": 0.75,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 7,
+      "offset_frac": 0.0,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 8,
+      "offset_frac": 0.25,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 8,
+      "offset_frac": 0.5,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 8,
+      "offset_frac": 0.75,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 8,
+      "offset_frac": 0.0,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 9,
+      "offset_frac": 0.25,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 9,
+      "offset_frac": 0.5,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "is_identity": true
+    },
+    {
+      "K": 9,
+      "offset_frac": 0.75,
+      "gain_pp": 0.0,
+      "perm": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "is_identity": true
+    }
+  ],
+  "best_gain_pp": 1.9394582630890416e-14,
+  "best_K": 6,
+  "best_perm": [
+    1,
+    0,
+    2,
+    3,
+    4,
+    5
+  ],
+  "exactness_match": true,
+  "realised_pp": 0.0,
+  "verdict": "FAIL (below the 0.012 pp minimum effect size)"
+}
