@@ -1,8 +1,8 @@
 {
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
-  "updated": "2026-08-16",
-  "next_free_id": "H52",
-  "next_free_protocol_id": "P08",
+  "updated": "2026-08-17",
+  "next_free_id": "H54",
+  "next_free_protocol_id": "P10",
   "items": [
     {
       "id": "P01",
@@ -415,7 +415,7 @@
     {
       "id": "H51",
       "title": "Sequential pair relocation with an order-maintenance structure (unblock H50's throughput)",
-      "status": "proposed",
+      "status": "confirmed",
       "priority": 1,
       "axis": "discrete refinement / architecture",
       "hypothesis": "The exact-gain pair relocation move is verified and abundant - ~100,000 positive-gain candidates exist on the connectome order at every sweep - but the campaign's batched-disjoint application can only realise 0.1% of them. Applying them SEQUENTIALLY, each against the updated order, realises the rest and is what the reference family actually does.",
@@ -427,7 +427,7 @@
       ],
       "est_cost": "high - a real data structure, but gate (1) is an afternoon",
       "expected_pp": "unknown; the external claim for this route is +0.46 pp over our champion, provenance unverified",
-      "outcome": ""
+      "outcome": "CONFIRMED and PARTLY PROMOTED 2026-08-17 as variant H52. The throughput diagnosis was right: the same move class applied as a disjoint batch gives +0.00193 pp, applied SEQUENTIALLY it gives +0.02233 pp on the champion's connectome order - 11.6x. The Dietz-Sleator structure this item was filed as needing turned out to be UNNECESSARY: the naive O(interval) rebuild costs 131 s for 20,000 moves at a mean span of 22,686 positions. CONFIRM: connectome 84.17502222088821 (5/5, std 0, +0.02093 pp), mouse 93.10282596057698 (20/20, std 0, +0.01995 pp), microns bit-identical to H42 by design. PROMOTED ON MOUSE ONLY. connectome was REFUSED by audit.py --gate promotion on protocol_ci: sigma floored at baseline_sigma_pp=0.0189 gives SE=0.0120 at n=5, so the threshold is 0.02343 pp and the CI lower bound is -0.0025. Even fully converged the move class yields +0.02233 pp, so no configuration clears it. See P09."
     },
     {
       "id": "H48",
@@ -487,6 +487,26 @@
       ],
       "est_cost": "medium (~2.5 h GPU at 2 seeds/primary; ~7 h at the full confirm seed set)",
       "expected_pp": "0.0 - this buys trustworthiness, not score"
+    },
+    {
+      "id": "P09",
+      "title": "The campaign's two significance criteria disagree for the first time - decide which governs",
+      "status": "proposed",
+      "priority": 0,
+      "kind": "protocol",
+      "axis": "statistics / promotion gate",
+      "hypothesis": "Not a hypothesis - an operator decision. campaign.yaml carries TWO thresholds for a connectome promotion and on 2026-08-17 they disagreed for the first time: H52 scored +0.02093 pp, which CLEARS min_promotion_delta_pp (0.012) and FAILS the PROTOCOL CI (threshold 1.96 * 0.0189 * sqrt(2/5) = 0.02343 pp). H36 (+0.1837) and H42 (+0.0569) both cleared the higher bar, so the conflict never surfaced before.",
+      "rationale": "The PROTOCOL CI floors sigma at baseline_sigma_pp = 0.0189, a frozen-baseline noise floor inherited from the MPS era when the pipeline was measured as stochastic. On CUDA these pipelines never draw from `seed`: H52's connectome pool is 5 runs with ONE distinct value and std exactly 0, re-scored exactly by the frozen oracle. So the test asks whether a deterministic delta exceeds a historical STOCHASTIC noise floor from a different device era. That may still be the right conservatism - a deterministic pipeline can be deterministically wrong, and 0.0189 pp is a reasonable estimate of how much a re-measurement might move - but it is a judgement, and it is now BINDING on real results rather than hypothetical ones. NOTE THE TEMPTATION AND WHY IT WAS REFUSED: the threshold scales as sqrt(2/n), so running 7 connectome seeds instead of 5 would have lowered it to 0.0198 pp and passed H52 unchanged. On a pipeline with std = 0 those extra seeds carry ZERO information; shrinking an artificial SE to admit one's own result is exactly what these gates exist to prevent. It was not done, and this entry exists so the decision is the operator's rather than the agent's.",
+      "kill_condition": "Operator picks one of: (a) keep both gates as-is and accept that gains in the 0.012-0.023 pp band are unpromotable on connectome; (b) re-derive baseline_sigma_pp on THIS device for a deterministic pipeline, which would likely collapse it toward measurement_resolution_pp and make min_promotion_delta_pp the binding rule; (c) keep the CI but state a fixed seed count in the protocol so n cannot be chosen after seeing the delta. Do NOT resolve by re-running with more seeds.",
+      "prior_evidence": [
+        "dr_tmp/audit_H52_connectome.json (the FAIL, with the arithmetic)",
+        "results/*-H52-connectome-*-confirm-*.json (5 runs, one distinct value, std 0)",
+        "autoresearch/campaign.yaml datasets.connectome (both thresholds and their justifications)",
+        "experiments/log.md 2026-08-17 (H52)"
+      ],
+      "est_cost": "none - a decision",
+      "expected_pp": "unblocks +0.02093 pp on connectome if (b) or (c)",
+      "outcome": ""
     }
   ]
 }
