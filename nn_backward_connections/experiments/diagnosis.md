@@ -217,6 +217,50 @@ edges and sits at 99.6% of its own ceiling. (Spacing-dependent but robust: at th
 optimized spacing at std ≈ 141 it still loses, `q01_drift.json` `beta_analysis.at_std141`,
 β ∈ {0.05, 0.30, 1.05} → −1,240.8 / −596.6 / −223.1.)
 
+#### Where the smoothing loss comes from: the surrogate's RESOLUTION
+
+`σ(0) = 0.5` exactly — at zero separation the surrogate answers "I cannot tell" and pays half
+credit. That is the unavoidable price of differentiability: the step has to be smeared, and the
+middle of a smeared step is the middle. What decides whether this matters is how the smear width
+compares with the distance between **rank-adjacent** nodes, and on this graph that comparison is
+brutal (measured, `resolution` block of the artifact, std = 141, β = 1.05, n = 136,648):
+
+    distance between two rank-adjacent nodes = 0.003574 position units
+    beta * that distance                     = 0.003753
+    credit for an edge between them          = sigma(0.003753) = 0.5009
+
+| nodes are this many ranks apart | β·Δ | credit |
+|---|---|---|
+| 1 | 0.004 | **50.1%** |
+| 100 | 0.375 | 59.3% |
+| **293** | 1.10 | 75% |
+| **585** | 2.20 | 90% |
+| **1,224** | 4.60 | 99% |
+
+**The surrogate's resolution is ~1,000 ranks out of 136,648** — it cannot resolve the ordering at
+any granularity finer than ~1% of the graph. Everything inside a thousand-node window is a blur in
+which every edge, correct or not, scores about half.
+
+That is what makes the loss *asymmetric between the two orders*: the better order collects much
+more of its winning weight inside the blur.
+
+| order | credit lost on correct edges | credit gifted to wrong edges | net | median rank distance of won weight | share of won weight < 1,000 ranks |
+|---|---|---|---|---|---|
+| best | 669.07 | 138.63 | **530.44** | 8,776 | **16.1%** |
+| Rocket | 71.64 | 12.10 | **59.54** | 22,693 | **3.1%** |
+
+Rocket's order *is* the surrogate's own optimum, so it has learned that narrow wins do not pay: it
+spreads its heavy edges out (median won-edge distance 22,693 ranks) and simply does not contest the
+fine-grained battles. The best order contests and wins them — at half rate. The second column is the
+mirror image of the same effect: a *wrong* edge at short range is also gifted ≈0.5, which is why the
+net loss is the difference (669.07 − 138.63 for best, 71.64 − 12.10 for Rocket).
+
+Sharpening β would narrow the blur, but that is the other jaw of the vice: already at β = 1.05, 99%
+of edge-level gradient mass sits on 2.83% of edges (insight 4 below). Wide blur ⇒ gradient but no
+resolution; narrow blur ⇒ resolution but no gradient. The discrete sift escapes the vice by working
+in rank space, where "one rank ahead" counts exactly as much as "twenty thousand ranks ahead" —
+precisely as the true metric counts it.
+
 **(3) β·std ≈ 470 — the crossover, which Rocket never reaches.** Log-interpolated (not a grid
 node), on a 61-point grid:
 
@@ -368,3 +412,123 @@ weight and each basin picks a different one. This is stated as a hypothesis cons
 **Reproduce:** `PYTHONPATH=src python experiments/diagnostics/q02_seed_distance.py`
 (env `allen`). Artifacts: `experiments/outputs/q02_seed_distance.json`,
 `experiments/outputs/q02_seed_distance.png`. Extends `experiments/rocket_base.ipynb`.
+
+---
+
+## Q04 — Is the failure a property of *any* g(Delta), or only of exponentially-tailed g?
+
+**Answer (2026-08-17).** Of the whole family — but the reason is sharper than Q01 stated, and
+one of Q01's supporting rows was mis-interpreted. **Alignment is bought by narrowing the
+surrogate's core, which is the `beta` axis; the tail exponent is a separate, genuinely new
+degree of freedom that decides what the narrow core *costs*. Neither buys score.**
+
+Primary artifact: `experiments/outputs/q04_surrogate_tails.json`
+(`experiments/diagnostics/q04_surrogate_tails.py`, connectome, float64, even spacing for
+every order — the same like-for-like convention as Q01).
+
+### 0. `tanh` IS the sigmoid — the naive reading is a no-op
+
+`(tanh(z/2)+1)/2 == sigmoid(z)` to **2.2e-16** over 2·10⁵ points, so `tanh(z/a) == sigmoid(2z/a)`.
+Measured consequence: the `tanh_half` row is bit-identical to the sigmoid everywhere (same
+crossover 473.02, same alignment ratio −0.5908, gradient cosine **1.000000**), and
+`tanh(x/10)` reproduces the sigmoid's crossover scaled by exactly 5 (2364.4 = 5 × 473.0).
+
+> **This corrects the reading of Q01's four-shape table.** Its "slower-decaying tanh"
+> (`tanh(x/10)`) is not a different shape — it is the sigmoid at `beta/5`, i.e. a move along
+> the *already-swept* `beta*std` axis. The tail axis that row appeared to test was never
+> varied. (That table also had **no committed artifact**; it is re-measured here and its
+> ranking rows reproduce — every shape gives `imbalance > rocket > best` at std 0.01 and
+> `rocket > best > imbalance` at std 141, except the two narrow-core shapes below.)
+
+### 1. Every shape aligns at ~200× its own transition width
+
+Define `width(g)` = the `z` at which `g` reaches 0.9, and take the crossover as the `beta*std`
+at which `F_g(best)` overtakes `F_g(rocket)`:
+
+| shape | width | crossover `beta*std` | ratio |
+|---|---|---|---|
+| sigmoid | 2.1973 | 473.02 | 215.3 |
+| tanh(z/2) *(= sigmoid)* | 2.1973 | 473.02 | 215.3 |
+| tanh(z/10) | 10.9865 | 2364.37 | 215.2 |
+| cauchy / arctan | 3.0778 | 654.43 | 212.6 |
+| poly `z^-1` | 4.0000 | 744.06 | 186.0 |
+| poly `z^-2` | 1.2361 | 234.16 | 189.4 |
+| **poly `z^-4`** | **0.4954** | **95.05** | 191.9 |
+| **sigmoid @ matched width** | **0.4953** | **105.92** | 213.8 |
+| H11 clamp (M=5) | 4.0000 | 931.93 | 233.0 |
+
+The ratio is **179–233 across eleven shapes** — i.e. to first order "change the shape" *is*
+"change `beta`", which is Q01's law and the killed A-SCALE/H03 axis. Only ~±13% is shape.
+
+### 2. The new degree of freedom is what a narrow core COSTS
+
+Rocket's operating point is fixed at `beta*std ≈ 148`, so a shape aligns there iff
+`width(g) ≲ 0.74`. Two shapes qualify, and they pay very differently. Alignment ratio
+`A = (F_g(best) − F_g(rocket)) / (ceiling(best) − ceiling(rocket))` — the fraction of the true
++296.02 advantage the surrogate actually sees — measured at `beta*std = 148`, and the
+zero-gradient node fraction measured at Rocket's **real converged positions** (std 141.04):
+
+| shape | width | **A @ 148** | nodes with `grad == 0` | cos vs sigmoid |
+|---|---|---|---|---|
+| sigmoid | 2.1973 | **−0.5908** | 16.1% | 1.000000 |
+| sigmoid @ matched width | 0.4953 | **+0.1315** | **42.5%** | 0.335 |
+| **poly `z^-4`** | 0.4954 | **+0.1725** | **0.006%** | 0.293 |
+| tanh(z/10) | 10.9865 | −1.9048 | 0.009% | −0.241 |
+| poly `z^-1` | 4.0000 | −0.7949 | 0.006% | 0.016 |
+| H11 clamp (M=5) | 4.0000 | **−1.0630** | **65.8%** | −0.485 |
+
+So the exponential tail can only buy alignment by freezing **42.5%** of the nodes, while the
+algebraic tail buys *more* alignment (+0.173) with **0.006%** frozen — a 7,000× difference at
+identical core width. That gap is the one thing no rescaling of `beta` can reproduce. The
+gradient cosines (0.29–0.34, vs 1.000000 for tanh) confirm these are dynamically distinct
+directions, not reparametrizations.
+
+**It also explains the logged H11 kill mechanistically:** a hard flat top/bottom is the worst
+cell in the table — worst alignment (−1.063) *and* the most frozen nodes (65.8%). "Constant
+outside a band" removes exactly the long-range coupling the objective needs.
+
+### 3. …and the alignment is worthless: it ANTI-correlates with achieved score
+
+The static argument predicts that the two aligned shapes should optimize best. They optimize
+**worst**. Prototype gate, 3 seeds, everything else identical to baseline
+(`experiments/outputs/proto_h37_tails.json`), Δ vs the sigmoid in pp:
+
+| arm | A @ 148 | Δ mouse | Δ hard synthetic |
+|---|---|---|---|
+| sigmoid | −0.591 | 0 (92.3455) | 0 (73.6832) |
+| sigmoid @ matched width | **+0.132** | +0.004 | **−2.117** |
+| **poly `z^-4`** (native, aligned) | **+0.173** | **−0.220** | **−2.834** |
+| poly `z^-4` @ sigmoid's width | — | −0.018 | −0.459 |
+| poly `z^-1` | −0.795 | −0.130 | −0.708 |
+
+**The two shapes whose surrogate ranks the better order higher are the two worst optimizers**
+— on the fixture purpose-built to carry an optimization gap, by −2.1 and −2.8 pp. Confirmed
+directly on the connectome through the frozen runner (`H37` / `H37B`, see `log.md`).
+
+### Insights & how to use
+
+1. **Static surrogate alignment is not a proxy for reachable score — here it is an inverted
+   one.** Finding #3 diagnosed the surrogate as misaligned at the operating scale; Q04 shows
+   that *fixing* the misalignment (the only shape that does) makes the result strictly worse.
+   The binding constraint is the optimizability of the landscape, not its ranking fidelity.
+2. **Mechanism: alignment and interaction range are the same knob pulled in opposite
+   directions.** Aligning requires a narrow core, a narrow core is a short-range interaction,
+   and a short-range interaction cannot perform the long-range reordering the gap consists of
+   (`findings.md` #3: flip rank-distance p50 ≈ 22,580). The polynomial tail restores a
+   *non-zero* long-range force but a very weak one — `g'` falls 10¹⁰ from `z=0` to `z=100` —
+   so it does not compensate. Corroborating signature: the narrow-core arms converge to a
+   **smaller** position spread (mouse final std 15.9/16.9 vs the sigmoid's 25.1).
+3. **The continuous family is now closed on its last untested axis.** H11 killed the core
+   shape, H34 the gradient estimator, H03/A-SCALE the scale, and Q04+H37 the tail exponent —
+   the one axis whose prior negative evidence was an artifact of a mis-specified arm.
+4. **The sigmoid is not merely adequate, it is near-optimal for its job.** Its width 2.20 sits
+   where the interaction is long-ranged enough to reorder yet sharp enough to discriminate;
+   both directions away from it lose.
+
+**Reproduce** (env `allen`, from the repo root):
+```
+PYTHONPATH=src python experiments/diagnostics/q04_surrogate_tails.py   # ~4 min, theory gate
+PYTHONPATH=src python experiments/proto_h37_tails.py                   # ~8 min, prototype gate
+```
+Artifacts: `experiments/outputs/q04_surrogate_tails.json`,
+`experiments/outputs/proto_h37_tails.json`.

@@ -74,7 +74,7 @@
     ],
     "operating_std": 141.0
   },
-  "git_commit": "eb769e4bc7e518d67f6c5c2a72063bc521aa5941",
+  "git_commit": "af6c5b8ae4829e32bd16588d8f5c2fb7fc566671",
   "graph": {
     "n_nodes": 136648,
     "n_edges": 5657719,
@@ -1017,5 +1017,53 @@
     "true_advantage_of_best": 296.01704781704757,
     "extra_smoothing_loss_of_best": 470.89789142398695,
     "net_F_advantage": -174.88084360693938
+  },
+  "resolution": {
+    "neighbour_gap_positions": 0.003574427197964861,
+    "beta_times_neighbour_gap": 0.0037531485578631042,
+    "credit_for_adjacent_pair": 0.5009382860380649,
+    "ranks_needed_for_credit": {
+      "0.75": 292.71750684273917,
+      "0.9": 585.4350136854783,
+      "0.99": 1224.337320862905
+    },
+    "per_order": {
+      "best": {
+        "credit_lost_on_correct_edges": 669.0737287499688,
+        "credit_gifted_to_wrong_edges": 138.63342742595643,
+        "net_smoothing_loss": 530.4403013240124,
+        "won_weight_rank_distance_p25": 2228.0,
+        "won_weight_rank_distance_p50": 8776.0,
+        "won_weight_rank_distance_p75": 29587.0,
+        "won_weight_share_within_1000_ranks": 0.16059272571939004
+      },
+      "rocket": {
+        "credit_lost_on_correct_edges": 71.63760599261343,
+        "credit_gifted_to_wrong_edges": 12.095196092585176,
+        "net_smoothing_loss": 59.542409900028254,
+        "won_weight_rank_distance_p25": 8632.0,
+        "won_weight_rank_distance_p50": 22693.0,
+        "won_weight_rank_distance_p75": 46992.0,
+        "won_weight_share_within_1000_ranks": 0.031135159163374688
+      },
+      "imbalance_sort": {
+        "credit_lost_on_correct_edges": 81.5317328026521,
+        "credit_gifted_to_wrong_edges": 75.53474961798224,
+        "net_smoothing_loss": 5.996983184669858,
+        "won_weight_rank_distance_p25": 19641.0,
+        "won_weight_rank_distance_p50": 69426.0,
+        "won_weight_rank_distance_p75": 111870.0,
+        "won_weight_share_within_1000_ranks": 0.03222916243437148
+      },
+      "random": {
+        "credit_lost_on_correct_edges": 23.745663417755445,
+        "credit_gifted_to_wrong_edges": 23.34045241304212,
+        "net_smoothing_loss": 0.40521100471332616,
+        "won_weight_rank_distance_p25": 18369.0,
+        "won_weight_rank_distance_p50": 40108.0,
+        "won_weight_rank_distance_p75": 68440.0,
+        "won_weight_share_within_1000_ranks": 0.014735360679624759
+      }
+    }
   }
 }

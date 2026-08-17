@@ -222,6 +222,63 @@ def main() -> None:
     print(f"  net surrogate advantage      : {gap_true - gap_smooth:+10.2f}"
           f"   <-- negative means the surrogate prefers the WORSE order")
 
+    # ── WHY the smoothing loss is what it is: the surrogate's RESOLUTION ─────────
+    # sigma(0) = 0.5 exactly: at zero separation the surrogate answers "I cannot tell"
+    # and pays half credit. What matters is how that half-credit zone compares with the
+    # distance between rank-ADJACENT nodes, which is fixed by n and the position scale.
+    beta = CONFIG["beta_main"]
+    ranked = even_positions(best_order, CONFIG["operating_std"])[np.argsort(best_order)]
+    step = float(np.diff(ranked).mean())
+    res = {"neighbour_gap_positions": step, "beta_times_neighbour_gap": beta * step,
+           "credit_for_adjacent_pair": float(1.0 / (1.0 + np.exp(-beta * step))),
+           "ranks_needed_for_credit": {}}
+    for target in (0.75, 0.90, 0.99):
+        res["ranks_needed_for_credit"][str(target)] = float(
+            np.log(target / (1 - target)) / (beta * step))
+    print(f"\nSURROGATE RESOLUTION at std={CONFIG['operating_std']}, beta={beta} "
+          f"({n:,} nodes):")
+    print(f"  rank-adjacent nodes are {step:.6f} position units apart "
+          f"-> credit sigma({beta * step:.5f}) = {res['credit_for_adjacent_pair']:.4f}")
+    for t, r in res["ranks_needed_for_credit"].items():
+        print(f"  ranks apart needed for credit {t}: {r:,.0f}")
+
+    # Where each order's smoothing loss comes from: credit LOST on correct edges vs
+    # credit GIFTED to wrong ones, plus how short-range each order's won weight is.
+    def weighted_percentiles(vals, wts, qs):
+        idx = np.argsort(vals)
+        v, cw = vals[idx], np.cumsum(wts[idx]) / wts.sum()
+        return [float(v[np.searchsorted(cw, q)]) for q in qs]
+
+    res["per_order"] = {}
+    for name, o in orders.items():
+        p = even_positions(o, CONFIG["operating_std"])
+        d = beta * (p[np.asarray(g.tgt)] - p[np.asarray(g.src)])
+        s = 1.0 / (1.0 + np.exp(-np.clip(d, -700, 700)))
+        nw = np.asarray(g.weight, dtype=np.float64) / w_max
+        fwd = d > 0
+        lost = float((nw[fwd] * (1 - s[fwd])).sum())
+        gifted = float((nw[~fwd] * s[~fwd]).sum())
+        rd = np.abs(o[np.asarray(g.tgt)].astype(np.int64)
+                    - o[np.asarray(g.src)].astype(np.int64)).astype(np.float64)
+        q25, q50, q75 = weighted_percentiles(rd[fwd], nw[fwd], (0.25, 0.50, 0.75))
+        res["per_order"][name] = {
+            "credit_lost_on_correct_edges": lost,
+            "credit_gifted_to_wrong_edges": gifted,
+            "net_smoothing_loss": lost - gifted,
+            "won_weight_rank_distance_p25": q25,
+            "won_weight_rank_distance_p50": q50,
+            "won_weight_rank_distance_p75": q75,
+            "won_weight_share_within_1000_ranks":
+                float(nw[fwd][rd[fwd] < 1000].sum() / nw[fwd].sum())}
+    print(f"\n{'order':>15} {'lost on correct':>16} {'gifted to wrong':>16} "
+          f"{'net':>9} {'won-weight p50 rank dist':>25} {'<1000 ranks':>12}")
+    for name, v in res["per_order"].items():
+        print(f"{name:>15} {v['credit_lost_on_correct_edges']:16.2f} "
+              f"{v['credit_gifted_to_wrong_edges']:16.2f} {v['net_smoothing_loss']:9.2f} "
+              f"{v['won_weight_rank_distance_p50']:25,.0f} "
+              f"{100 * v['won_weight_share_within_1000_ranks']:11.1f}%")
+    report["resolution"] = res
+
     _OUT.mkdir(parents=True, exist_ok=True)
     dest = _OUT / "q01_surrogate_ranking.json"
     dest.write_text(json.dumps(report, indent=2))
