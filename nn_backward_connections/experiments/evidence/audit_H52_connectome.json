@@ -1,0 +1,182 @@
+{
+  "variant": "H52",
+  "comparator": "H42",
+  "gate": "promotion",
+  "per_dataset": {
+    "connectome": {
+      "variant": "H52",
+      "comparator": "H42",
+      "variant_stats": {
+        "n": 5,
+        "mean": 84.17502222088821,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260816T221113Z-H52-connectome-s42-confirm-8b352c.json",
+          "20260816T224145Z-H52-connectome-s123-confirm-8b352c.json",
+          "20260816T231201Z-H52-connectome-s999-confirm-8b352c.json",
+          "20260816T234220Z-H52-connectome-s7-confirm-8b352c.json",
+          "20260817T001237Z-H52-connectome-s31415-confirm-8b352c.json"
+        ],
+        "max_wall_s": 1818.6658029556274,
+        "grad_steps": [
+          20000
+        ],
+        "commits": [
+          "5734d23d+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "comparator_stats": {
+        "n": 5,
+        "mean": 84.15409511053134,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260810T064240Z-H42-connectome-s42-confirm-f41d7e.json",
+          "20260810T070327Z-H42-connectome-s123-confirm-f41d7e.json",
+          "20260810T072409Z-H42-connectome-s999-confirm-f41d7e.json",
+          "20260810T103830Z-H42-connectome-s7-confirm-f41d7e.json",
+          "20260810T105922Z-H42-connectome-s31415-confirm-f41d7e.json"
+        ],
+        "max_wall_s": 1238.253127336502,
+        "grad_steps": [
+          20000
+        ],
+        "commits": [
+          "1865372b+dirty",
+          "3791350d",
+          "3791350d+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "dataset_role": "primary",
+      "delta_pp": 0.02092711035686534,
+      "welch_se": 0.0,
+      "welch_ci_lower": 0.02092711035686534,
+      "protocol_se": 0.011953409555436475,
+      "protocol_ci_lower": -0.002501572371790148,
+      "noninferiority_se": 1.517893276880822e-06,
+      "noninferiority_ci_lower": 0.020924135286042655
+    }
+  },
+  "checks": [
+    {
+      "check": "frozen.manifest",
+      "status": "PASS",
+      "detail": "SHA-256 manifest matches all frozen files"
+    },
+    {
+      "check": "frozen.git",
+      "status": "PASS",
+      "detail": "no frozen path modified in the working tree"
+    },
+    {
+      "check": "leakage",
+      "status": "PASS",
+      "detail": "no oracle value or reference solution in 12 algorithm file(s)"
+    },
+    {
+      "check": "leakage.dataset_keying",
+      "status": "WARN",
+      "detail": "dataset-name keying present (legitimate for compute budgets, but the cycle must state WHAT it keys):\n    src\\mfas\\experiments\\H52.py:141: cfg = RocketConfig(epochs=_EPOCHS.get(g.name, RocketConfig.epochs))\n    src\\mfas\\experiments\\H52.py:160: max_sweeps=_MAX_SWEEPS.get(g.name, 40), time_budget_s=sift_budget)\n    src\\mfas\\experiments\\H52.py:168: n_cycles=_ALT_CYCLES.get(g.name, 32),\n    src\\mfas\\experiments\\H52.py:169: sift_sweeps=_ALT_SIFT_SWEEPS.get(g.name, 2),\n    src\\mfas\\experiments\\H52.py:179: max_pops=_PAIR_MAX_POPS.get(g.name), time_budget_s=pair_budget)\n    src\\mfas\\experiments\\H52.py:200: hist.attrs[\"sift_sweeps_requested\"] = _MAX_SWEEPS.get(g.name, 40)\n    src\\mfas\\experiments\\H52.py:209: hist.attrs[\"alt_cycles_requested\"] = _ALT_CYCLES.get(g.name, 32)\n    src\\mfas\\experiments\\H52.py:212: hist.attrs[\"alt_sift_sweeps\"] = _ALT_SIFT_SWEEPS.get(g.name, 2)\n    src\\mfas\\experiments\\H52.py:215: hist.attrs[\"epochs_requested\"] = _EPOCHS.get(g.name, RocketConfig.epochs)\n    src\\mfas\\experiments\\H52.py:225: hist.attrs[\"pair_max_pops\"] = _PAIR_MAX_POPS.get(g.name)\n    src\\mfas\\io.py:300: node_ids=g.node_ids, name=np.array(g.name))"
+    },
+    {
+      "check": "promotion_gate.config",
+      "status": "INFO",
+      "detail": "strict promotion gate armed from campaign.yaml (z=1.96, zero_std_tol=1e-12)"
+    },
+    {
+      "check": "device",
+      "status": "INFO",
+      "detail": "counting only runs measured on 'NVIDIA GeForce RTX 4060 Laptop GPU' (sota.json is machine-specific; see CAMPAIGN.md \u00a7 Hardware)"
+    },
+    {
+      "check": "significance.connectome.degenerate",
+      "status": "WARN",
+      "detail": "zero variance in a pool (variant std=0, comparator std=0): the pipeline is deterministic on this device, so the Welch CI is degenerate (SE=0 makes any positive delta 'significant'). Use the PROTOCOL CI, floored at baseline_sigma_pp=0.0189, and the min_promotion_delta_pp minimum effect size. See experiments/log.md P01."
+    },
+    {
+      "check": "significance.connectome",
+      "status": "INFO",
+      "detail": "H52 84.1750+/-0.0000 (n=5, seeds=[7, 42, 123, 999, 31415]) vs H42 84.1541+/-0.0000 (n=5) | delta=+0.0209 pp, Welch CI_lo=+0.0209, PROTOCOL CI_lo=-0.0025"
+    },
+    {
+      "check": "inventory.connectome",
+      "status": "INFO",
+      "detail": "5 run(s) for H52: 20260816T221113Z-H52-connectome-s42-confirm-8b352c.json, 20260816T224145Z-H52-connectome-s123-confirm-8b352c.json, 20260816T231201Z-H52-connectome-s999-confirm-8b352c.json, 20260816T234220Z-H52-connectome-s7-confirm-8b352c.json, 20260817T001237Z-H52-connectome-s31415-confirm-8b352c.json"
+    },
+    {
+      "check": "effect_size.connectome",
+      "status": "PASS",
+      "detail": "delta +0.0209 pp clears the minimum effect size +0.0120 pp"
+    },
+    {
+      "check": "protocol_ci.connectome",
+      "status": "FAIL",
+      "detail": "PROTOCOL CI lower bound -0.0025 does not clear +0.0000 (sigma floored at baseline_sigma_pp=0.0189, SE=0.0120) \u2014 the gain is inside the protocol noise floor"
+    },
+    {
+      "check": "provenance.connectome",
+      "status": "PASS",
+      "detail": "src/mfas/experiments/H52.py exists at every commit backing these runs"
+    },
+    {
+      "check": "provenance.connectome.dirty",
+      "status": "WARN",
+      "detail": "produced from a MODIFIED working tree at 5734d23d+dirty: n=5 \u2014 src/mfas/experiments/H52.py is present at those commits, so the run is reproducible in principle but the exact tree is unverifiable"
+    },
+    {
+      "check": "comparator_homogeneity.connectome.comparator",
+      "status": "WARN",
+      "detail": "H42 runs span 3 commits \u2014 the same id may denote different configurations. Restrict by role/commit before quoting a delta. Breakdown: 1865372b+dirty: n=3, mean=84.1541; 3791350d: n=1, mean=84.1541; 3791350d+dirty: n=1, mean=84.1541"
+    },
+    {
+      "check": "runtime.connectome",
+      "status": "PASS",
+      "detail": "max wall 1819s within budget"
+    },
+    {
+      "check": "runtime_guard.connectome",
+      "status": "PASS",
+      "detail": "all 5 runs ran under an armed deadline, none truncated"
+    },
+    {
+      "check": "compute.connectome",
+      "status": "PASS",
+      "detail": "equal gradient budget ([20000]) vs H42"
+    },
+    {
+      "check": "rescore",
+      "status": "PASS",
+      "detail": "5 run(s) re-scored with the frozen oracle, all exact"
+    },
+    {
+      "check": "evidence.per_dataset",
+      "status": "PASS",
+      "detail": "significance analysed on 1 dataset(s): connectome"
+    }
+  ]
+}

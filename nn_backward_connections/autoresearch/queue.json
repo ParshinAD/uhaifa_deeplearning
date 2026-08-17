@@ -486,7 +486,8 @@
         "tests/test_audit_gates.py"
       ],
       "est_cost": "medium (~2.5 h GPU at 2 seeds/primary; ~7 h at the full confirm seed set)",
-      "expected_pp": "0.0 - this buys trustworthiness, not score"
+      "expected_pp": "0.0 - this buys trustworthiness, not score",
+      "outcome": " PARTLY ADDRESSED 2026-08-17. An audit of what was actually committed found the same defect in a NEW place: queue.json and log.md cite 17 files under dr_tmp/ as evidence - including the whole trail behind H44's mouse promotion (investigation_rocket_free_basin.md) and the audit record behind H52's connectome REFUSAL (audit_H52_connectome.json) - and dr_tmp/ is gitignored, so a fresh checkout could open none of them. Also: results/*_positions.npy is excluded by size (158 files, 21 MB), yet the audit's rescore check reads those vectors and every 'N of M positions differ' parity claim is a statement about them. All 17 cited files and the THREE current champions' position vectors are now promoted to experiments/evidence/ with an index (0.8 MB total), and the three vectors were re-scored with the frozen oracle to confirm they reproduce 84.15409511053134 / 83.24085291200831 / 93.10282596057698 exactly. Historical citations were deliberately NOT rewritten - they record what was true when written; the index resolves them. The ORIGINAL P08 defect is untouched: H36's 36 runs still cite a commit that lacks its module."
     },
     {
       "id": "P09",

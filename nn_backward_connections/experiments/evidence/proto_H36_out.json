@@ -1,0 +1,42 @@
+{
+  "connectome_from_champion": {
+    "champion_pct": 83.91351804242117,
+    "refined_pct": 83.94574498114997,
+    "delta_pp": 0.03222693872879745,
+    "source": "results\\20260809T142912Z-H35-connectome-s42-implement-8f52fb_positions.npy",
+    "log": [
+      {
+        "round": -1,
+        "pct": 83.91351804242117,
+        "wall": 0.0
+      },
+      {
+        "round": 0,
+        "pct": 83.92992617580667,
+        "wall": 2.6851727962493896,
+        "split_frac": 0.5,
+        "n_scc_calls": 830,
+        "n_topo_blocks": 477,
+        "n_reordered": 477
+      },
+      {
+        "round": 1,
+        "pct": 83.93943654656057,
+        "wall": 2.904000997543335,
+        "split_frac": 0.382,
+        "n_scc_calls": 1101,
+        "n_topo_blocks": 620,
+        "n_reordered": 513
+      },
+      {
+        "round": 2,
+        "pct": 83.94574498114997,
+        "wall": 2.7980453968048096,
+        "split_frac": 0.618,
+        "n_scc_calls": 1328,
+        "n_topo_blocks": 745,
+        "n_reordered": 593
+      }
+    ]
+  }
+}
