@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260817T185957Z-H37-connectome-s123-implement-23393f",
+  "algo": "H37",
+  "dataset": "connectome",
+  "seed": 123,
+  "score": 34556215.0,
+  "pct": 82.4491762422731,
+  "wall_clock_s": 179.0741741657257,
+  "git_commit": "af6c5b8ae4829e32bd16588d8f5c2fb7fc566671+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "23393f50b659",
+  "timestamp": "2026-08-17T19:03:04Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260817T185957Z-H37-connectome-s123-implement-23393f_positions.npy",
+  "experiment_id": "H37",
+  "role": "implement",
+  "hypothesis": "Replacing the sigmoid with an ALGEBRAICALLY-tailed surrogate g(z)=0.5+0.5*sign(z)*(1-(1+|z|)^-4) evaluated at z=beta*Delta/4.4361 -- whose core transition width is matched EXACTLY to the sigmoid's (2.1973), so only the TAIL differs (polynomial z^-4 instead of exponential e^-|z|) -- raises the exact feedforward metric, because long-range pairs keep a correctly-signed non-vanishing force instead of being sent to numerically zero gradient. Monotone (argmax-preserving), bounded, leakage-safe, same epoch budget as baseline_passthrough. Isolates the tail axis from core sharpness (= beta = the killed H03/A-SCALE axis).",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}
