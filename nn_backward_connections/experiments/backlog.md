@@ -1769,3 +1769,150 @@ then measured: `experiments/proto_ainit_scale.py` → `experiments/outputs/proto
   0.002) PASS-pending, mouse +0.3663 pp non-inferior. Paused on battery with microns s999
   outstanding; resume state + the one command in experiments/ainit_RESUME.md. No log.md entry
   until the screen is complete. -->
+
+---
+
+# Phase 6.5 backlog (A-SURR) — the surrogate TAIL-EXPONENT axis (2026-08-17)
+
+Opened by the roadmap's `A-SURR` (TODO 7: "alternate surrogate — flat top/bottom, slower-decaying
+tanh"). The roadmap listed it **low / near-dead** by analogy to H11 and H34. Analogy is not
+evidence, so it was run properly: theory gate first (Q04), then a prototype gate, then the
+primary dataset. All three agree — but the analogy was right for the wrong reason, and the
+mechanism that emerged is new (see `diagnosis.md` § Q04).
+
+## H37 / H37B — algebraic-tail surrogate (`src/mfas/experiments/H37{,B}.py`)
+- **One-line hypothesis:** replacing the sigmoid's EXPONENTIAL tail with an ALGEBRAIC one,
+  `g(z) = 1/2 + 1/2 sign(z)(1 - (1+|z|)^-4)`, raises the exact feedforward metric, because the
+  long-range pairs the sigmoid sends to (numerically) zero force keep a correctly-signed pull —
+  and finding #3 says the recoverable weight IS long-range (flip rank-distance p50 ≈ 22,580).
+- **Two arms, because "shape" hides two axes.** `width(g)` := the `z` at which `g` reaches 0.9.
+  - **H37** — `SCALE = 4.4361` so `width` equals the sigmoid's **exactly** (2.1973). Isolates
+    the TAIL with core sharpness held fixed. This is the honest test of the new axis.
+  - **H37B** — `SCALE = 1` (native width 0.4954). The arm the static theory predicted would
+    win: the ONLY shape measured that ranks the near-optimal order ABOVE Rocket's own at
+    Rocket's operating scale (alignment ratio **+0.173** vs the sigmoid's **−0.591**) while
+    leaving essentially every node mobile (0.006% zero gradients vs 42.5% for a width-matched
+    sigmoid).
+- **Why the literal reading of TODO 7 is NOT this hypothesis (proved, not argued):**
+  `(tanh(z/2)+1)/2 == sigmoid(z)` to **2.2e-16**, so a "tanh surrogate" IS the sigmoid and a
+  "slower-decaying tanh" `tanh(z/a)` is the sigmoid at `beta·2/a` — a pure move along the
+  `beta*std` axis that H03/A-SCALE already killed (and it makes the surrogate's ranking worse:
+  alignment −1.90 at `a=10`). A HARD flat top/bottom is the H11 form, already killed. Only the
+  tail EXPONENT was genuinely untested. See `diagnosis.md` § Q04.
+- **Theory gate (Q04): PASS** — `experiments/outputs/q04_surrogate_tails.json`. Established the
+  ~200×width alignment law across 11 shapes and the 7,000× difference in frozen-node fraction
+  between an exponential and an algebraic tail at matched width.
+- **Prototype gate: FAIL (all arms).** 3 seeds, everything else identical to baseline
+  (`experiments/outputs/proto_h37_tails.json`), Δ vs sigmoid in pp:
+
+  | arm | mouse | hard synthetic |
+  |---|---|---|
+  | H37B `poly z^-4` native | −0.220 | **−2.834** |
+  | sigmoid @ matched width (H03 control) | +0.004 | **−2.117** |
+  | H37 `poly z^-4` @ matched width | −0.018 | −0.459 |
+  | `poly z^-1` | −0.130 | −0.708 |
+  | `poly z^-1` @ matched width | −0.101 | −1.686 |
+  | H11 clamp M=5 (anchor) | −0.030 | +0.107 *(within noise, σ≈0.38)* |
+
+  All four pre-registered predictions were recorded before the run; **P1 (`poly_q4` > sigmoid)
+  FAILED on both proxies**, P2 held on both, P3 held decisively on the synthetic.
+- **Primary-dataset confirmation of the kill (connectome, 3 seeds, frozen runner, role
+  `implement`, budget-matched `baseline_passthrough` = 82.8958 ± 0.0187):**
+
+  | variant | per-seed | mean ± std | Δ | 95% CI lo | screen (gate +0.04) |
+  |---|---|---|---|---|---|
+  | H37 | 82.4152 / 82.4492 / 82.4707 | 82.4450 ± 0.0280 | **−0.4508** | −0.4807 | **FAIL** |
+  | H37B | 81.9727 / 81.9355 / 81.9828 | 81.9637 ± 0.0249 | **−0.9321** | −0.9621 | **FAIL** |
+
+  Every one of the 6 per-seed deltas is negative; the miss is 11× (H37) and 23× (H37B) the
+  screen threshold **in the wrong direction**.
+- **status: KILLED** (theory gate PASS → prototype gate FAIL → primary-dataset FAIL). Not run on
+  microns or mouse through the frozen runner: the protocol kills a variant that fails the
+  connectome screen, and mouse was already covered at the prototype gate.
+- **What it bought (the reason this was worth running).** A genuinely new, artifact-backed
+  mechanism, written up as `diagnosis.md` § Q04 and finding #3's Phase-6.5 corroboration:
+  **static surrogate alignment ANTI-correlates with achieved score** — the two shapes whose
+  surrogate ranks the better order higher are the two worst optimizers (−2.1 / −2.8 pp on the
+  gap-bearing fixture). Alignment requires a narrow core, a narrow core is a short-range
+  interaction, and short-range interactions cannot perform the long-range reordering the gap
+  consists of. This also explains the H11 kill mechanistically (its clamp is the worst cell in
+  the table: alignment −1.063 AND 65.8% frozen nodes) and closes the continuous family's last
+  untested axis.
+- **Leakage:** safe. Both variants read only positions, `beta` and the input `hat_w`; the frozen
+  oracle is used exactly as baseline (best-by-oracle tracking). Only the Q04 *diagnostic* reads
+  `data/best_solution`, via `mfas.analysis.gap`. Frozen-file integrity verified before and after.
+- **Compute honesty:** compute-matched on the protocol's basis (`total_grad_steps` = 20,000 for
+  both arms and the comparator). **Wall-clock is NOT matched and must be disclosed:** ~161–190 s
+  vs the baseline's ~90 s, because `(1+|z|)^-4` costs more per step than `sigmoid`. Since the
+  arms lost, the wall-clock penalty only strengthens the kill.
+
+---
+
+# Phase 6.6 backlog (A-SURR, part 2) — the SYMMETRY axis (2026-08-17)
+
+H37 closed the tail exponent *within odd-symmetric shapes*. The researcher then asked the
+question that turned the cycle around: **what if the surrogate is constant on the positive
+branch and tanh on the negative one?** Every shape tested up to that point satisfied
+`g(-z) = 1 - g(z)`; dropping that assumption is a different move, and it works on the fly
+connectome.
+
+## H38 — one-sided (asymmetric) surrogate: flat above a margin, tanh below
+- **One-line hypothesis:** with `g(z) = 1` for `z >= M` and `g(z) = 1 + tanh((z-M)/T)` for
+  `z < M`, comfortably-feedforward edges receive **zero** gradient, so the entire budget pulls
+  FEEDBACK edges toward correctness instead of widening margins that are already won.
+- **Theory gate (Q05): PASS, on two structural grounds no symmetric shape has**
+  (`experiments/outputs/q05_asymmetric_surrogates.json`):
+  1. **It does not telescope.** Q01's small-scale degeneracy (the surrogate collapsing into the
+     node-level imbalance objective `W/2 - (beta/4)<c,P>`) requires the edge sum to run over ALL
+     edges; here the first-order term runs over the VIOLATED subset, which is order-dependent.
+     Measured: at `beta*std -> 0` this shape ranks `best > rocket > imbalance_sort > random`
+     (correct) where all 11 symmetric shapes rank the imbalance sort first.
+  2. **Alignment ratio +1.48 … +2.00** at Rocket's operating point (sigmoid: −0.591), with **no
+     crossover anywhere** in `beta*std` ∈ [1e-2, 1e6] — it never prefers the worse order.
+- **A degeneracy was derived BEFORE any run, then confirmed.** At `M = 0`, `g(0) = 1`, so the
+  collapsed configuration `P = const` attains `F = sum_e w_hat_e`, the surrogate's **global
+  maximum**, strictly above every ordering — and the dynamics flow into it (a violated edge pulls
+  its endpoints together). Confirmed numerically: `F(collapse) == W_hat` exactly, and the `M = 0`
+  arm collapses to final position std **0.0005** on the hard synthetic, scoring 58.24% vs the
+  sigmoid's 73.68%. The margin `M > 0` is what removes it (`g(0) = 0.5379 < 1`).
+- **Prototype gate: PASS.** 6×3 grid over `(M, T)` on mouse + hard synthetic
+  (`proto_h38_asym.json`, `proto_h38_sweep.json`) shows a **plateau, not a knife edge** (a broad
+  positive ridge on mouse). `(M, T) = (0.75, 1.5)` was selected as **the only grid point positive
+  on BOTH proxies** (mouse +0.396, synthetic +0.404), not the mouse-optimal (0.25, 0.75) which is
+  +0.627 on mouse but −6.30 on the synthetic. **The optimum is graph-dependent — disclosed.**
+- **Primary datasets (frozen runner, 3 seeds, role `implement`, budget-matched):**
+
+  | dataset | baseline | H38 | Δ | gate | verdict |
+  |---|---|---|---|---|---|
+  | **connectome** | 82.8958 ± 0.0187 | **83.2626 ± 0.0108** | **+0.3668** (CI_lo +0.3368) | +0.04 | **PASS, 9×** |
+  | **microns** | 83.1172 ± 0.0006 | **82.4482 ± 0.0094** | **−0.6689** (CI_lo −0.6700) | +0.002 | **FAIL (regression)** |
+  | mouse | 92.0696 ± 0.2624 | 92.2053 ± 0.2602 | +0.1357 | > −0.26 | non-inferior ✓ |
+
+  **Verdict per the Phase-5 decision table (microns ✗ / connectome ✓ / mouse ✓):
+  GRAPH-DEPENDENT — a real fly-connectome effect, NOT a general win.**
+  All three connectome seeds positive (+0.354/+0.358/+0.389). For scale: the only previously
+  CONFIRMED pure-Rocket win, H02, is +0.0508 pp on connectome — H38 is **7× larger**, and at
+  83.26% pure Rocket it exceeds H02's 82.93% by +0.33 pp.
+- **Controls — both decisive, both run on the connectome at 3 seeds:**
+
+  | control | Δ vs baseline | what it rules out |
+  |---|---|---|
+  | **H38C** mirror (flat on the FEEDBACK side) | **−2.8890** | not "any one-sided shape", and not the smaller position scale such a shape induces — the **direction** of the asymmetry is the mechanism |
+  | **H38D** plain sigmoid at `beta × 4`, whole run | **−0.5804** | not the `beta`/position-scale axis (A-SCALE ≡ H03). Stronger than H03 itself, which only ramped beta over the last 25% of epochs |
+
+- **Not a best-by-oracle sampling artifact:** the gain is the same on the FINAL-epoch score as on
+  the tracked best (mouse +0.392 vs +0.396; synthetic +0.360 vs +0.404).
+- **Leakage:** safe — `grep` clean for `best_solution` / `analysis.gap` / any target constant;
+  imports are `baseline.rocket`, `io`, `metrics` only; the frozen oracle is used exactly as the
+  baseline uses it. Frozen integrity verified before and after; all 6 connectome position vectors
+  re-score to their logged `pct` to 1e-9. Device parity checked (variant and comparator both MPS).
+- **Compute:** matched on `total_grad_steps` (20,000). **Wall-clock NOT matched and disclosed:**
+  ~115 s vs the baseline's ~75 s on connectome (≈1.5×), from the `tanh` + `where` kernel.
+- **Known defect (documented, not hidden):** `torch.where` makes autograd return 0 exactly at
+  `z == M` instead of the left-derivative `1/T`; a measure-zero kink, immaterial in float
+  practice, but the claim is "verified except at the kink", not "verified everywhere".
+- **status: CONFIRMED-PENDING — screen PASSED on connectome, FAILED on microns.** Next steps, in
+  order: (i) CONFIRM stage on connectome at 5 seeds; (ii) diagnose the microns regression — the
+  prime suspect is that `M` and `T` are absolute constants in `z` units while microns is ~4×
+  denser (155 vs 41 average degree) and runs 80k epochs, so a size/density-scaled `(M, T)` may be
+  required; any re-tuning **must not** be selected on microns and then reported on microns.

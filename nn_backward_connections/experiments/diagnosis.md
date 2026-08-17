@@ -428,17 +428,29 @@ every order — the same like-for-like convention as Q01).
 
 ### 0. `tanh` IS the sigmoid — the naive reading is a no-op
 
-`(tanh(z/2)+1)/2 == sigmoid(z)` to **2.2e-16** over 2·10⁵ points, so `tanh(z/a) == sigmoid(2z/a)`.
-Measured consequence: the `tanh_half` row is bit-identical to the sigmoid everywhere (same
-crossover 473.02, same alignment ratio −0.5908, gradient cosine **1.000000**), and
-`tanh(x/10)` reproduces the sigmoid's crossover scaled by exactly 5 (2364.4 = 5 × 473.0).
+`(tanh(z/2)+1)/2 == sigmoid(z)` to **2.2e-16 absolute** over 2·10⁵ points on [−40, 40], so
+`tanh(z/a) == sigmoid(2z/a)` **as a function**. Measured consequence: the `tanh_half` row
+matches the sigmoid on every order-level quantity (crossover 473.02, alignment ratio −0.5908,
+gradient cosine **1.000000**), and `tanh(x/10)` reproduces the sigmoid's crossover scaled by
+exactly 5 (2364.4 = 5 × 473.0).
+
+> ⚠ **"Identical as a function" is not "identical in floating point."** The same artifact
+> records `max_rel_err_float64 = 1.0` (at z = −40 the tanh form returns exactly 0 where the
+> logistic returns 4.25e-18), and the two *derivative formulas* freeze different node counts:
+> `frac_nodes_zero_grad` 0.1611 (sigmoid) vs 0.0490 (tanh form) — a 3.3× difference arising
+> purely from how each expression underflows. So the identity is exact in exact arithmetic and
+> approximate in float32; the conclusion below rests on the order-level quantities, which agree.
 
 > **This corrects the reading of Q01's four-shape table.** Its "slower-decaying tanh"
 > (`tanh(x/10)`) is not a different shape — it is the sigmoid at `beta/5`, i.e. a move along
 > the *already-swept* `beta*std` axis. The tail axis that row appeared to test was never
-> varied. (That table also had **no committed artifact**; it is re-measured here and its
-> ranking rows reproduce — every shape gives `imbalance > rocket > best` at std 0.01 and
-> `rocket > best > imbalance` at std 141, except the two narrow-core shapes below.)
+> varied. That table also had **no committed artifact** (verified: `q01_surrogate_ranking.json`
+> has no shape key and its script implements only the sigmoid) — Q01's prose describing that
+> artifact as containing a "shape comparison" is therefore wrong and is corrected here.
+> **Partial reproduction, stated honestly:** re-measured, three of the four rows reproduce, but
+> the cusp row does **not** — `sign(z)√|z|` gives `imbalance > rocket > best` at std 141, not
+> Q01's `rocket > best > imbalance`. (Q01 names the shape `|x|^0.5`, which is not monotone; Q04
+> measured the monotone `sign(z)√|z|`, so the two may not be the same function.)
 
 ### 1. Every shape aligns at ~200× its own transition width
 
@@ -458,7 +470,16 @@ at which `F_g(best)` overtakes `F_g(rocket)`:
 | H11 clamp (M=5) | 4.0000 | 931.93 | 233.0 |
 
 The ratio is **179–233 across eleven shapes** — i.e. to first order "change the shape" *is*
-"change `beta`", which is Q01's law and the killed A-SCALE/H03 axis. Only ~±13% is shape.
+"change `beta`", which is Q01's law and the killed A-SCALE/H03 axis.
+
+> ⚠ **Two honest limits on this "law".** (a) It is **threshold-dependent**: the max/min ratio
+> spread is 3.59× if `width` is defined at `g = 0.55`, 1.18× at 0.875, 1.25× at 0.90, 2.51× at
+> 0.95 and 12.52× at 0.99. There is a genuine plateau at 0.85–0.90, so the tight 179–233 band
+> is real *at this definition* but is not definition-independent. (b) Four of the eleven rows
+> are the **same function** at different `beta` (sigmoid, tanh(z/2), tanh(z/10), and the
+> width-matched sigmoid), so they are not independent evidence. The defensible statement is
+> "core width predicts the crossover far better than the tail exponent does", not a universal
+> constant.
 
 ### 2. The new degree of freedom is what a narrow core COSTS
 
@@ -483,47 +504,89 @@ identical core width. That gap is the one thing no rescaling of `beta` can repro
 gradient cosines (0.29–0.34, vs 1.000000 for tanh) confirm these are dynamically distinct
 directions, not reparametrizations.
 
-**It also explains the logged H11 kill mechanistically:** a hard flat top/bottom is the worst
-cell in the table — worst alignment (−1.063) *and* the most frozen nodes (65.8%). "Constant
-outside a band" removes exactly the long-range coupling the objective needs.
+> **RETRACTED (2026-08-17, by the critic).** An earlier version of this section claimed the
+> table "explains the logged H11 kill mechanistically" because H11's clamp has the worst
+> alignment (−1.063) *and* the most frozen nodes (65.8%). That claim **contradicts § 3 below**:
+> if low alignment went with a high score, H11 should be the *best* arm — and in this cycle's
+> own data it nearly is (`h11_clip_M5` is the only arm that beat the sigmoid on the hard
+> synthetic, +0.107 pp, though that is within noise, σ ≈ 0.38). The frozen-node count does not
+> rescue it either, since § 3 shows frozen nodes do not predict the score. **No mechanistic
+> explanation of the H11 kill is offered here.**
 
-### 3. …and the alignment is worthless: it ANTI-correlates with achieved score
+### 3. Within the SYMMETRIC family: at fixed core width, a heavier tail scores strictly worse
 
-The static argument predicts that the two aligned shapes should optimize best. They optimize
-**worst**. Prototype gate, 3 seeds, everything else identical to baseline
-(`experiments/outputs/proto_h37_tails.json`), Δ vs the sigmoid in pp:
+Prototype gate, 3 seeds, everything else identical to baseline
+(`experiments/outputs/proto_h37_tails.json`), Δ vs the sigmoid in pp; `A` measured on the
+connectome (see the cross-graph caveat below):
 
-| arm | A @ 148 | Δ mouse | Δ hard synthetic |
-|---|---|---|---|
-| sigmoid | −0.591 | 0 (92.3455) | 0 (73.6832) |
-| sigmoid @ matched width | **+0.132** | +0.004 | **−2.117** |
-| **poly `z^-4`** (native, aligned) | **+0.173** | **−0.220** | **−2.834** |
-| poly `z^-4` @ sigmoid's width | — | −0.018 | −0.459 |
-| poly `z^-1` | −0.795 | −0.130 | −0.708 |
+| arm | width | A @ 148 | Δ mouse (n=3) | Δ hard synthetic (n=3) | Δ connectome (n=3) |
+|---|---|---|---|---|---|
+| sigmoid | 2.1973 | −0.591 | 0 (92.3455) | 0 (73.6832) | 0 (82.8958) |
+| **poly `z^-4` @ sigmoid's width** (= H37) | 2.1973 | **−0.5185** | −0.018 | −0.459 | **−0.451** |
+| **poly `z^-1` @ sigmoid's width** | 2.1973 | −0.461 | −0.101 | **−1.686** | — |
+| sigmoid @ matched narrow width | 0.4953 | +0.132 | +0.004 | −2.117 | — |
+| **poly `z^-4`** native (= H37B) | 0.4954 | **+0.173** | −0.220 | −2.834 | **−0.932** |
 
-**The two shapes whose surrogate ranks the better order higher are the two worst optimizers**
-— on the fixture purpose-built to carry an optimization gap, by −2.1 and −2.8 pp. Confirmed
-directly on the connectome through the frozen runner (`H37` / `H37B`, see `log.md`).
+**The load-bearing comparison is the first three rows — core width held FIXED at the sigmoid's
+2.1973, tail varied.** There the tail exponent is monotone in the wrong direction on both
+fixtures: heavier tail ⇒ better alignment (−0.591 → −0.519 → −0.461) ⇒ *worse* score
+(0 → −0.459 → −1.686 synthetic; 0 → −0.018 → −0.101 mouse). **The tail axis is closed:
+no tail beats the exponential one at equal core width.**
+
+**Across widths the statistic adds nothing to core width.** On the synthetic,
+Spearman(width, Δ) = +0.83 vs Spearman(A, Δ) = −0.89 — the same signal with the sign flipped,
+because in this family alignment can only be bought by narrowing the core, which § 1 shows is
+the `beta` axis (already killed as A-SCALE / H03). So "alignment anti-correlates with score" is
+**re-labelling the width axis**, not an independent finding, and it is stated here only for the
+fixed-width rows.
+
+> ⚠ **Four caveats, all found by the critic and all load-bearing.**
+> 1. **Mouse contributes no evidence.** At n = 3 *no* arm differs significantly from the sigmoid
+>    (poly_q4 −0.220 ± 0.144, t = −1.53), and Spearman(A, Δ) is **−0.071 on mouse** vs −0.893 on
+>    the synthetic and −1.00 on the connectome. Any claim of the form "it lost everywhere" is
+>    false on mouse, where the *aligned* narrow sigmoid is nominally the best arm.
+> 2. **Cross-graph statistic.** `A` is measured on the connectome (the only graph with a
+>    reference order); two of the three Δ columns are mouse / hard synthetic. The synthetic
+>    *does* have a reference order, so `A` could have been measured there and was not.
+> 3. **H37 does not hold core sharpness perfectly fixed.** Width-matching is not slope-matching:
+>    `g'(0) = 0.4508` vs the sigmoid's 0.2500 (**1.80× steeper**; H37B is 8×). The clean
+>    tail-isolating pair is `poly_q1_wmatch` vs `poly_q4_wmatch` (slopes 1.82× vs 1.80×).
+> 4. **Pre-registered predictions, reported in full** (`proto_h37_tails.json →
+>    prediction_check`): P1 FAILED on both fixtures, P2 held on both, **P3 failed on mouse**
+>    (the narrow sigmoid was nominally +0.004) and held on the synthetic, **P4 failed on the
+>    synthetic** (H11's clamp was nominally +0.107) and held on mouse. Only P2 held on both.
+>
+> **Not a caveat — checked and clean:** the even-spacing convention is *not* load-bearing. Under
+> Rocket's own optimized spacing no sign flips (sigmoid −0.503, H37 −0.439, H37B +0.259,
+> H11 clamp −1.033).
+
+### 4. …but the symmetric family was hiding the real degree of freedom
+
+Everything above is confined to ODD-SYMMETRIC shapes (`g(−z) = 1 − g(z)`). Dropping that
+assumption changes the answer completely — see **§ Q05**, where a ONE-SIDED surrogate reaches
+`A = +1.48…+2.00` *without* narrowing its core, escapes Q01's small-scale telescoping
+degeneracy, and **wins +0.37 pp on the connectome**. So the correct reading of § 3 is narrow:
+*within the symmetric family* alignment and width are the same knob and the tail is dead. The
+broader claim "no shape can help" is **false**, and Q01's "it is not the shape of the sigmoid"
+holds only for the symmetric family it tested.
 
 ### Insights & how to use
 
-1. **Static surrogate alignment is not a proxy for reachable score — here it is an inverted
-   one.** Finding #3 diagnosed the surrogate as misaligned at the operating scale; Q04 shows
-   that *fixing* the misalignment (the only shape that does) makes the result strictly worse.
-   The binding constraint is the optimizability of the landscape, not its ranking fidelity.
-2. **Mechanism: alignment and interaction range are the same knob pulled in opposite
-   directions.** Aligning requires a narrow core, a narrow core is a short-range interaction,
-   and a short-range interaction cannot perform the long-range reordering the gap consists of
-   (`findings.md` #3: flip rank-distance p50 ≈ 22,580). The polynomial tail restores a
-   *non-zero* long-range force but a very weak one — `g'` falls 10¹⁰ from `z=0` to `z=100` —
-   so it does not compensate. Corroborating signature: the narrow-core arms converge to a
-   **smaller** position spread (mouse final std 15.9/16.9 vs the sigmoid's 25.1).
-3. **The continuous family is now closed on its last untested axis.** H11 killed the core
-   shape, H34 the gradient estimator, H03/A-SCALE the scale, and Q04+H37 the tail exponent —
-   the one axis whose prior negative evidence was an artifact of a mis-specified arm.
-4. **The sigmoid is not merely adequate, it is near-optimal for its job.** Its width 2.20 sits
-   where the interaction is long-ranged enough to reorder yet sharp enough to discriminate;
-   both directions away from it lose.
+1. **The tail exponent is closed, at equal core width.** Heavier tails align better and score
+   strictly worse on every fixture; the width-matched pair isolates this cleanly.
+2. **Within the symmetric family, "shape" is mostly `beta` in disguise** (§ 1), so a symmetric
+   shape swap inherits the already-killed A-SCALE / H03 verdict.
+3. **Static alignment is not, by itself, a predictor of achieved score.** It anti-correlates
+   inside the symmetric family (where it is confounded with width) and correlates strongly in
+   the asymmetric case (Q05). Alignment is necessary, not sufficient: what a shape *costs* to
+   achieve it is what decides.
+4. **The symmetry assumption, not the shape, was the real constraint** — see Q05.
+
+**Reproduce** (env `allen`, from the repo root):
+```
+PYTHONPATH=src python experiments/diagnostics/q04_surrogate_tails.py   # ~4 min, theory gate
+PYTHONPATH=src python experiments/proto_h37_tails.py                   # ~8 min, prototype gate
+```
 
 **Reproduce** (env `allen`, from the repo root):
 ```
@@ -532,3 +595,101 @@ PYTHONPATH=src python experiments/proto_h37_tails.py                   # ~8 min,
 ```
 Artifacts: `experiments/outputs/q04_surrogate_tails.json`,
 `experiments/outputs/proto_h37_tails.json`.
+
+---
+
+## Q05 — Does a ONE-SIDED (asymmetric) surrogate escape the trade-off?
+
+**Answer (2026-08-17).** Yes — and it shows that the constraint Q01 and Q04 identified was
+**the symmetry assumption, not the shape**. Every shape in those analyses satisfied
+`g(-z) = 1 - g(z)`. Dropping that produces a surrogate that is aligned at *every* scale without
+narrowing its core, and it converts into the largest pure-Rocket gain measured in this project on
+the fly connectome — while regressing on MICrONS.
+
+Primary artifact: `experiments/outputs/q05_asymmetric_surrogates.json`
+(`experiments/diagnostics/q05_asymmetric_surrogates.py`, connectome, float64, even spacing per
+order — Q01's convention).
+
+### The shape
+
+    ASYM (flat on the FEEDFORWARD side):   g(z) = 1              for z >= 0
+                                           g(z) = 1 + tanh(z/T)  for z <  0
+    MIRROR CONTROL:                        g(z) = tanh(z/T)      for z >  0
+                                           g(z) = 0              for z <= 0
+
+Both are monotone non-decreasing in `Delta` (argmax-preserving) and bounded. The first gives
+**zero gradient to every already-feedforward edge**: 100% of the gradient mass sits on feedback
+edges (measured; they carry 17.08% of `ŵ` at Rocket's converged order).
+
+### 1. It does not telescope — Q01's small-scale degeneracy simply does not apply
+
+Q01's decisive result was that `Σ_e ŵ_e σ(βΔ_e) = Ŵ/2 − (β/4)⟨c,P⟩ + O((β·std)³)`: the edge sum
+collapses to a **node-level** imbalance quantity that no longer knows which node precedes which,
+whose optimum is the imbalance sort. That derivation needs the sum over **all** edges. Here the
+first-order term is `Ŵ + (β/T)·Σ_{e: Δ_e<0} ŵ_e Δ_e`, restricted to the **violated** subset —
+which is itself order-dependent, so it does not telescope into `⟨c,P⟩`.
+
+| shape | ranking at `std = 0.01` |
+|---|---|
+| sigmoid (and all 11 symmetric shapes of Q04) | `imbalance_sort > rocket > best > random` |
+| **ASYM (all four T)** | **`best > rocket > imbalance_sort > random`** ✓ correct |
+| MIRROR control (all four T) | `imbalance_sort > rocket > random > best` |
+
+### 2. Aligned at every scale, without a narrow core
+
+| shape | crossover `β·std` | **A @ operating point** | frac nodes `grad == 0` | cos vs sigmoid |
+|---|---|---|---|---|
+| sigmoid | 473 | −0.591 | 16.1% | 1.000 |
+| **ASYM T=0.5** | **none in [1e-2, 1e6]** | **+1.484** | 83.0% | 0.023 |
+| **ASYM T=1.5** | **none** | **+1.761** | 57.0% | 0.011 |
+| **ASYM T=3.0** | **none** | **+2.001** | 39.7% | 0.065 |
+| MIRROR T=1.5 | 2726 | −2.599 | 27.3% | 0.202 |
+
+`A > 1` means the surrogate sees *more* than the near-optimal order's true +296.02 advantage.
+Note the high zero-gradient fractions are **purposeful** (a node all of whose edges are satisfied
+exerts no force), not numerical underflow — the opposite of Q04 § 2, and Q04 § 3 already showed
+that frozen-node counts do not predict the score.
+
+### 3. A degeneracy that must be removed before this is usable
+
+With the branch point at 0, `g(0) = 1`, so the collapsed configuration `P = const` attains
+`F = Σ_e ŵ_e` — the surrogate's **global maximum**, strictly above every ordering — and the
+dynamics flow into it (a violated edge pulls its endpoints *together*). Derived first, then
+confirmed: `F(collapse) == Ŵ` exactly, and the arm collapses to final position std **0.0005** on
+the hard synthetic, scoring 58.24% vs the sigmoid's 73.68%. Introducing a **margin**
+(`g = 1` only for `z ≥ M`) makes `g(0) = 1 + tanh(−M/T) < 1` and removes it.
+
+### 4. Outcome, and the honest scope
+
+Variant **H38** (`M = 0.75`, `T = 1.5`, selected on mouse + hard synthetic only):
+
+| dataset | Δ vs baseline | |
+|---|---|---|
+| **connectome** | **+0.3668 pp** (CI_lo +0.3368; all 3 seeds positive) | 9× the screen gate |
+| **microns** | **−0.6689 pp** | a clear regression |
+| mouse | +0.1357 pp | non-inferior |
+
+Controls on the connectome: the **mirror** shape −2.8890 pp (so it is the direction of the
+asymmetry, not one-sidedness or the induced scale), and a plain **sigmoid at β×4** for the whole
+run −0.5804 pp (so it is not the A-SCALE/H03 axis). **Verdict: GRAPH-DEPENDENT.**
+
+### Insights & how to use
+
+1. **`findings.md` #3's universal quantifier is false.** A continuous, gradient-based lever
+   recovers ~22% of the connectome's 1.69 pp Rocket↔best gap with 0 discrete moves. What #3
+   correctly established is that no *symmetric* surrogate, rank-space reparametrization or
+   gradient estimator does.
+2. **Alignment is necessary but not sufficient — what it COSTS decides.** Inside the symmetric
+   family alignment could only be bought by narrowing the core (§ Q04), which is the killed β
+   axis, so it anti-correlated with score. The asymmetric shape buys alignment for free and wins.
+3. **The mechanism is where the gradient is spent**, not the tail: pulling violated edges rather
+   than widening won ones. The mirror arm, which spends it the other way, loses catastrophically.
+4. **It does not transfer to MICrONS.** `M` and `T` are absolute constants in `z` units while
+   microns is ~4× denser (155 vs 41 average degree); a size/density-scaled `(M,T)` is the obvious
+   next probe, and it must not be tuned on microns and then reported on microns.
+
+**Reproduce** (env `allen`, repo root):
+```
+PYTHONPATH=src python experiments/diagnostics/q05_asymmetric_surrogates.py
+PYTHONPATH=src python experiments/proto_h38_asym.py
+```

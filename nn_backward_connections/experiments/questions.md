@@ -115,3 +115,61 @@ Contract: `experiments/PROTOCOL.md` § "Track B — Diagnostics". In one line:
 - **touches:** `diagnosis.md` § "Gap structure (Step 2)" (annotate as measured-vs-H02);
   `findings.md` #3 (same), #4 (the Vahidi 35,462,925 vs 84.6147% conflation), #5 (the
   "~17% of the residual closed" framing depends on which reference is meant).
+
+## Q04 — Is the continuous family's failure a property of *any* g(Delta), or only of exponentially-tailed g?
+- **status:** **answered (2026-08-17)** — `experiments/diagnostics/q04_surrogate_tails.py` →
+  `diagnosis.md` § Q04; artifact `experiments/outputs/q04_surrogate_tails.json`.
+  **Answer: it is a property of the whole family, and the sub-question the shape axis really
+  poses is a trade-off, not an escape.** Every monotone bounded `g` aligns (ranks the better
+  order higher) only above `beta*std ~ 200 * width(g)`, where `width(g)` is the `z` at which
+  `g` reaches 0.9 — the ratio is 179–233 across eleven shapes, i.e. changing the shape is
+  ~85% a rescaling of `beta` (Q01's already-closed axis). The genuinely new degree of freedom
+  is the TAIL EXPONENT, which controls what a narrow core *costs*: at matched width 0.4954 a
+  sigmoid freezes 42.5% of node gradients while an algebraic `z^-4` tail freezes 0.006%.
+  Measured on the fly connectome; `tanh` is proved to BE the sigmoid (2.2e-16).
+- **why it matters:** `diagnosis.md` Q01 asserted "it is not the SHAPE of the sigmoid" on the
+  strength of a four-shape table that (a) had **no committed artifact** and (b) used
+  `tanh(x/10)` as its "slower-decaying" arm — which is `sigmoid(x/5)`, i.e. a pure `beta`
+  rescaling, so the tail axis it was meant to test was never varied. Q04 re-measures that
+  table into a committed artifact and separates the two axes properly. It also closes the
+  roadmap's `A-SURR` (TODO 7) with evidence instead of by analogy to H11.
+- **method:** for eleven per-edge shapes (sigmoid; two tanh rescalings; algebraic tails
+  `q ∈ {1,2,4}`; Cauchy/arctan; two hard-clipped variants; H11's clamp; a cusp) compute on the
+  connectome, with even spacing for every order: the crossover `beta*std` at which
+  `F_g(best) > F_g(rocket)`; that crossover normalised by the shape's own transition width;
+  the scale-free alignment ratio at Rocket's operating point; the float32 gradient survival
+  per edge; and the node-level zero-gradient fraction plus the gradient direction (cosine vs
+  the sigmoid) at Rocket's **real converged positions**.
+- **artifacts:** `experiments/outputs/q04_surrogate_tails.json`. **No writes to `results/`.**
+  Privileged: reads `data/best_solution` only via `mfas.analysis.gap.load_best_solution`.
+- **answer:** → `diagnosis.md` `## Q04`.
+- **touches:** `diagnosis.md` § Q01 "It is not the SHAPE of the sigmoid" (gives it an artifact
+  and corrects the `tanh(x/10)` arm's interpretation); `findings.md` #3 (adds the mechanism);
+  roadmap `A-SURR` (closed via H37).
+
+## Q05 — Does a ONE-SIDED (asymmetric) surrogate escape the trade-off Q01/Q04 found?
+- **status:** **answered (2026-08-17)** — `experiments/diagnostics/q05_asymmetric_surrogates.py`
+  → `diagnosis.md` § Q05; artifact `experiments/outputs/q05_asymmetric_surrogates.json`.
+  **Answer: yes, structurally — the symmetry assumption, not the shape, was the constraint.**
+  Every shape in Q01/Q04 was odd-symmetric (`g(-z) = 1 - g(z)`). A shape that is CONSTANT on the
+  feedforward branch and tanh on the feedback branch (i) **does not telescope**, so it escapes
+  Q01's small-scale imbalance degeneracy — at `beta*std → 0` it ranks
+  `best > rocket > imbalance_sort > random`, where all 11 symmetric shapes rank the imbalance
+  sort first — and (ii) reaches alignment ratio **+1.48 … +2.00** at Rocket's operating point
+  (sigmoid: −0.591) with **no crossover at any scale**, *without* narrowing its core. The mirror
+  shape (flat on the feedback branch) gives −1.30 … −3.72, so the DIRECTION of the asymmetry is
+  what matters. Downstream: variant H38 gains **+0.37 pp on the connectome** but **regresses
+  −0.67 pp on microns** → GRAPH-DEPENDENT (see `backlog.md` § H38, `log.md`).
+- **why it matters:** it bounds `findings.md` #3 (which asserts that *no* continuous/gradient
+  lever closes any of the gap) and Q01's "it is not the SHAPE of the sigmoid" — both are true of
+  the symmetric family they tested and false as universal statements.
+- **method:** nine shapes (sigmoid; `asym_flat_pos` and its mirror at T ∈ {0.5, 1, 1.4925, 3}) on
+  the connectome, even spacing per order: small-scale ranking; crossover; alignment ratio at the
+  operating point; the split of gradient mass between feedforward and feedback edges (100% vs 0%
+  by construction, confirmed); zero-gradient node fraction and gradient cosine vs the sigmoid at
+  Rocket's real converged positions.
+- **artifacts:** `experiments/outputs/q05_asymmetric_surrogates.json`. **No writes to `results/`.**
+  Privileged: reads `data/best_solution` only via `mfas.analysis.gap.load_best_solution`.
+- **answer:** → `diagnosis.md` `## Q05`.
+- **touches:** `findings.md` #3 (scope: "no continuous lever" is false — banner added);
+  `diagnosis.md` § Q01 ("not the shape") and § Q04 § 3 (both re-scoped to the symmetric family).

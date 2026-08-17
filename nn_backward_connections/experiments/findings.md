@@ -192,6 +192,32 @@ isolates the bottleneck as the **continuous-relaxation basin itself, not the gra
 sharpening #3: no continuous lever closes the gap *regardless of gradient source*. The continuous family
 is now exhausted (`experiments/proto_h34_perturbsort.py`; killed by prototype gate, no large-graph compute).
 
+> **⚠ #3 IS BEING REVISED (2026-08-17).** Its scope claim — that *no* continuous/gradient lever
+> in the Rocket class closes any of the gap — was tested on its last untried axis and **broke**.
+> A **one-sided (asymmetric) surrogate** gains **+0.37 pp on the connectome** as pure Rocket
+> (H38, 3 seeds, screen PASS at 9× the gate). The sub-claims about *symmetric* surrogates,
+> rank-space and gradient estimators stand; the universal quantifier does not. See § Q04/Q05 in
+> `diagnosis.md` and the Phase-6.5 entries in `log.md`; the finding will be rewritten once H38's
+> microns arm and CONFIRM stage land.
+
+**Phase-6.5 (a) — the surrogate TAIL axis is closed, at equal core width (H37/H37B, KILL).**
+The natural repair of #3's misalignment — a surrogate that ranks the better order higher at the
+achievable scale — was built. Q04 (`experiments/outputs/q04_surrogate_tails.json`) first proved
+the naive versions are no-ops (`(tanh(z/2)+1)/2 == sigmoid(z)` to 2.2e-16 absolute, so a
+"slower-decaying tanh" is the killed H03/A-SCALE β axis) and then found the symmetric shape that
+does repair the ranking: an algebraic `z^-4` tail with a narrow core, alignment ratio **+0.173**
+vs the sigmoid's **−0.591**. It **lost**: −2.834 pp (hard synthetic) and **−0.932 pp on the
+connectome over 3 seeds** through the frozen runner; the tail-isolating arm at matched core width
+lost −0.451 pp. The load-bearing comparison holds core width FIXED at the sigmoid's 2.1973 and
+varies only the tail: alignment −0.591 → −0.519 → −0.461 against Δ_synthetic 0 → −0.459 → −1.686.
+**No tail beats the exponential one at equal core width.** Honest scope, per the critic: mouse
+contributes no significant evidence at n=3 (no arm differs from the sigmoid); across *different*
+widths the statistic merely re-labels core width (Spearman(width, Δ) = +0.83 vs
+Spearman(A, Δ) = −0.89), i.e. the already-killed β axis; and the earlier claim that this
+"explains the H11 kill mechanistically" is **RETRACTED** — it contradicts the anti-correlation it
+was paired with, and H11's clamp was in fact the only arm to beat the sigmoid on the synthetic
+(+0.107 pp, within noise). Full evidence: `diagnosis.md` § Q04, `log.md` (2026-08-17 entries).
+
 ## #4 — A cheap full-range discrete sift recovers ~half the connectome gap with NO MIP (Phase 6)
 
 > **⚙ UPDATED by Phase 6.2 (2026-06-23).** H30's sift sweep cap was raised **12 → 40** on

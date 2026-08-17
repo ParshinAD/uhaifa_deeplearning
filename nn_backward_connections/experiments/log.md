@@ -17,10 +17,13 @@ Append-only lab notebook. Each entry: date, hypothesis, command, result (traced 
 <!-- The table below is auto-generated; do not edit by hand. -->
 
 <!-- BEGIN AGGREGATED RESULTS (auto-generated) -->
-_Generated 2026-06-22T16:57:21Z from 250 run(s)._
+_Generated 2026-08-17T19:28:52Z from 279 run(s)._
 
 | algo | dataset | n_seeds | pct mean±std | score mean±std | wall_clock_s (mean) | seeds | config_hash | git_commit |
 |---|---|---|---|---|---|---|---|---|
+| A_INIT | connectome | 3 | 82.9472 ± 0.0044 | 34,764,940 ± 1,848 | 2410.1 | [42, 123, 999] | a13b47 | eb769e4bc7e |
+| A_INIT | microns | 2 | 83.1237 ± 0.0013 | 12,801,518 ± 204 | 31241.3 | [42, 123] | eb3418 | eb769e4bc7e |
+| A_INIT | mouse | 3 | 92.4359 ± 0.0000 | 8.4662 ± 0.0000 | 1.7 | [42, 123, 999] | 362dcd | eb769e4bc7e |
 | H01 | connectome | 3 | 82.0510 ± 0.0290 | 34,389,329 ± 12,134 | 78.7 | [42, 123, 999] | fdb0b2 | 704221ab778 |
 | H01 | mouse | 3 | 92.1625 ± 0.0242 | 8.4412 ± 0.0022 | 2.0 | [42, 123, 999] | 434027 | 704221ab778 |
 | H02 | connectome | 21 | 82.9299 ± 0.0010 | 34,757,692 ± 415 | 93.8 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 1414, 1618, 1732, 2236, 2718, 5005, 6004, 7003, 8002, 9001, 31415] | 059689 | 9cc9c34eb98, f36e02847a9 |
@@ -46,11 +49,16 @@ _Generated 2026-06-22T16:57:21Z from 250 run(s)._
 | H16 | microns | 3 | 83.1033 ± 0.0000 | 12,798,371 ± 1 | 577.2 | [42, 123, 999] | c5c44a | 32d290734ec |
 | H16 | mouse | 3 | 92.6131 ± 0.0000 | 8.4825 ± 0.0000 | 2.1 | [42, 123, 999] | afe423 | 9cc9c34eb98 |
 | H19 | mouse | 3 | 90.1263 ± 0.0000 | 8.2547 ± 0.0000 | 2.4 | [42, 123, 999] | 5dceca | 3275f5cce2d |
-| H30 | connectome | 11 | 83.7805 ± 0.0096 | 35,114,220 ± 4,041 | 151.7 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 31415] | 1976d9 | 7dc17e20460 |
+| H30 | connectome | 14 | 83.7872 ± 0.0167 | 35,117,027 ± 7,014 | 169.5 | [7, 42, 42, 42, 42, 123, 123, 123, 123, 999, 999, 999, 999, 31415] | 1976d9 | 7dc17e20460, eb8a8d2b0df |
 | H30 | microns | 11 | 83.2067 ± 0.0012 | 12,814,293 ± 185 | 728.4 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 31415] | 954bab | 7dc17e20460 |
-| H30 | mouse | 26 | 92.9018 ± 0.0000 | 8.5089 ± 0.0000 | 2.7 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 1111, 1234, 1414, 1618, 1732, 2222, 2236, 2718, 3333, 4444, 5555, 6666, 7777, 8888, 9999, 31415] | ff2174 | 7dc17e20460 |
+| H30 | mouse | 29 | 92.9018 ± 0.0000 | 8.5089 ± 0.0000 | 2.6 | [7, 42, 42, 42, 42, 123, 123, 123, 123, 999, 999, 999, 999, 1111, 1234, 1414, 1618, 1732, 2222, 2236, 2718, 3333, 4444, 5555, 6666, 7777, 8888, 9999, 31415] | ff2174 | 7dc17e20460, eb8a8d2b0df |
 | H31 | connectome | 3 | 83.7899 ± 0.0132 | 35,118,149 ± 5,522 | 165.3 | [42, 123, 999] | 80c75b | 2b3f6c64809 |
 | H31 | mouse | 3 | 92.9018 ± 0.0000 | 8.5089 ± 0.0000 | 3.0 | [42, 123, 999] | 8a4eac | 2b3f6c64809 |
+| H35 | connectome | 3 | 83.9101 ± 0.0060 | 35,168,516 ± 2,504 | 266.3 | [42, 123, 999] | 8f52fb | eb8a8d2b0df |
+| H35 | microns | 3 | 83.2045 ± 0.0005 | 12,813,964 ± 71 | 724.4 | [42, 123, 999] | 134019 | eb8a8d2b0df |
+| H35 | mouse | 3 | 92.9018 ± 0.0000 | 8.5089 ± 0.0000 | 1.8 | [42, 123, 999] | f0b547 | eb8a8d2b0df |
+| H37 | connectome | 3 | 82.4450 ± 0.0280 | 34,554,477 ± 11,738 | 175.6 | [42, 123, 999] | 23393f | af6c5b8ae48 |
+| H37B | connectome | 3 | 81.9637 ± 0.0249 | 34,352,723 ± 10,450 | 178.3 | [42, 123, 999] | 6fbacd | af6c5b8ae48 |
 | baseline_multistart | connectome | 3 | 82.0507 ± 0.0293 | 34,389,211 ± 12,284 | 77.2 | [42, 123, 999] | 330c58 | 704221ab778 |
 | baseline_multistart | mouse | 3 | 92.1625 ± 0.0242 | 8.4412 ± 0.0022 | 1.9 | [42, 123, 999] | c6938b | 704221ab778 |
 | baseline_passthrough | connectome | 21 | 82.8838 ± 0.0224 | 34,738,365 ± 9,388 | 419.0 | [7, 42, 42, 42, 123, 123, 123, 999, 999, 999, 1414, 1618, 1732, 2236, 2718, 5005, 6004, 7003, 8002, 9001, 31415] | f8cb3c | 8f0e5066211, 9cc9c34eb98, f36e02847a9 |
@@ -2490,3 +2498,381 @@ PYTHONPATH=src python experiments/diagnostics/q01_surrogate_ranking.py   # ~1 mi
   `config_hash = c2f06fd1728a`. Every comparison must additionally filter on `n_epochs_done`.
   This produced a real error during the A-INIT screen (microns baseline 83.0704 instead of 83.1168,
   Δ inflated ~7×), caught before it was reported.
+
+---
+
+## 2026-08-17 — A-SURR → H37/H37B: algebraic-tail surrogate — KILL (theory PASS, practice FAIL on 3 fixtures)
+
+- **Hypothesis (backlog A-SURR / H37):** replace Rocket's sigmoid with a surrogate whose tail
+  decays ALGEBRAICALLY (`g(z)=1/2+1/2·sign(z)(1−(1+|z|)^−4)`) instead of exponentially, so the
+  long-range pairs the sigmoid sends to numerically-zero force keep a correctly-signed pull.
+  Two arms: **H37** at core width matched to the sigmoid (isolates the tail), **H37B** at the
+  native narrow width (the arm static theory said should win).
+
+#### Theory gate (Q04) — PASS
+`experiments/diagnostics/q04_surrogate_tails.py` → `experiments/outputs/q04_surrogate_tails.json`
+(connectome, float64, even spacing per order — Q01's convention).
+- Proved `(tanh(z/2)+1)/2 == sigmoid(z)` to **2.2e-16** ⇒ the literal TODO-7 reading ("use a
+  slower-decaying tanh") is the sigmoid at a different `beta`, i.e. the killed H03/A-SCALE axis.
+  This also **corrects the interpretation of Q01's four-shape table**, whose "slow tanh" arm was
+  `tanh(x/10) = sigmoid(x/5)` — it never varied the tail. That table had **no committed
+  artifact**; it is now re-measured and reproduces.
+- Alignment law across 11 shapes: the crossover sits at **179–233 × width(g)** ⇒ shape is ~85% a
+  `beta` rescaling. The residual axis is the tail exponent, which sets what a narrow core costs:
+  at matched width 0.495 a sigmoid freezes **42.5%** of node gradients, an algebraic `z^−4` tail
+  **0.006%** — and only the latter both aligns (+0.173 vs −0.591) and stays mobile.
+
+#### Prototype gate (mouse + hard synthetic, 3 seeds, CPU) — FAIL
+`experiments/proto_h37_tails.py` → `experiments/outputs/proto_h37_tails.json`. Autograd for the
+new shape verified against central differences (max err 1.9e-11). Four predictions were
+**pre-registered in the script before the run**; P1 (`poly_q4` > sigmoid) FAILED on both proxies:
+H37B −0.220 pp (mouse) / **−2.834 pp** (hard synthetic); the width-matched H37 −0.018 / −0.459;
+the H03-style sharpened-sigmoid control −2.117 on the synthetic (P3 held).
+
+#### Primary dataset (connectome, 3 seeds, frozen runner, role `implement`) — FAIL
+Comparator `baseline_passthrough` at matched seeds and 20k epochs = **82.8958 ± 0.0187**.
+
+| variant | s42 | s123 | s999 | mean ± std | Δ | 95% CI lo | screen (+0.04) |
+|---|---|---|---|---|---|---|---|
+| H37 | 82.4152 | 82.4492 | 82.4707 | 82.4450 ± 0.0280 | **−0.4508** | −0.4807 | **FAIL** |
+| H37B | 81.9727 | 81.9355 | 81.9828 | 81.9637 ± 0.0249 | **−0.9321** | −0.9621 | **FAIL** |
+
+All 6 per-seed deltas negative; misses the gate by 11×/23× in the wrong direction.
+Result JSONs: `results/*-H37-connectome-s{42,123,999}-implement-23393f.json`,
+`results/*-H37B-connectome-s{42,123,999}-implement-6fbacd.json`.
+Frozen integrity verified (`eval/frozen_guard.py` → OK; `git diff` on the 4 frozen files empty).
+Compute-matched on `total_grad_steps` (20,000 both); **wall-clock NOT matched — 161–190 s vs
+~90 s baseline** (the `(1+|z|)^−4` kernel), disclosed; it only strengthens the kill.
+
+#### Decision: **KILL**. Not escalated to microns/mouse through the frozen runner — the protocol
+kills on a failed connectome screen, and mouse was covered at the prototype gate.
+
+#### What the cycle produced (why it was worth running)
+A new, artifact-backed mechanism rather than another bare negative: **static surrogate alignment
+anti-correlates with achieved score.** The two shapes that fix the misalignment finding #3
+identified are the two *worst* optimizers. Alignment demands a narrow core; a narrow core is a
+short-range interaction; the gap is long-range (p50 ≈ 22,580 ranks). Corroborating signature: the
+narrow-core arms converge to a smaller position spread (mouse final std 15.9/16.9 vs 25.1).
+This also explains the **H11 kill mechanistically** (its clamp is the worst cell measured:
+alignment −1.063 AND 65.8% frozen nodes) and closes the continuous family's last untested axis.
+Written up in `diagnosis.md` § Q04 and `questions.md` Q04 (answered).
+
+**Reproduce** (env `allen`, repo root):
+```
+PYTHONPATH=src python experiments/diagnostics/q04_surrogate_tails.py
+PYTHONPATH=src python experiments/proto_h37_tails.py
+for S in 42 123 999; do for E in H37 H37B; do \
+  python -m eval.run_variant --exp $E --dataset connectome --seed $S --out results/ \
+    --role implement --device auto; done; done
+```
+
+#### Critic verdict (2026-08-17)
+
+Adjudicating two separate claims: **(A) the KILL of H37/H37B**, and **(B) the promoted
+diagnostic "static surrogate alignment anti-correlates with achieved score"**. Verdict:
+**A = PASS (keep the kill)**; **B = ITERATE (over-claimed as written; must be qualified before
+it stays in `findings.md`)**.
+
+**1. Frozen-file integrity — PASS.** `python eval/frozen_guard.py` → `frozen integrity OK`.
+`git diff --stat HEAD -- src/mfas/metrics.py eval/harness.py eval/aggregate.py
+tests/test_metrics.py` → empty. All 6 run JSONs log `frozen-oracle integrity: OK`
+(`experiments/h37_connectome_runs.log`). Nothing outside the intended files was touched by this
+cycle: the other dirty paths (`results/*.csv`, `outputs/*.png`, notebooks, `.claude/settings.json`)
+all have mtimes from Jun 21 – Jul 6, i.e. pre-date 2026-08-17.
+
+**2. Leakage — PASS.** `H37.py`/`H37B.py` import only `..baseline.rocket`, `..io`, `..metrics`;
+no `best_solution`, no `mfas.analysis`, no target constant, no dataset branch beyond the
+`_EPOCHS` dict that is byte-identical to `baseline_passthrough`. The oracle is used exactly as
+the baseline uses it (best-by-oracle tracking of whole position vectors). Q04 reads
+`data/best_solution` only via `mfas.analysis.gap.load_best_solution`; the only `results/` string
+in either diagnostic is a **read** of `results/rocket_best_positions.npy`. No diagnostic wrote to
+`results/`.
+
+**3. Reproducibility — PASS on numbers, FAIL on the commit invariant.** All 6 JSONs were
+re-scored from their saved `_positions.npy` with the frozen scorer: logged `pct` == re-scored
+`pct` to 1e-9 on all six (no hand-editing). `python -m eval.aggregate` independently reproduces
+`H37 82.4450 ± 0.0280` and `H37B 81.9637 ± 0.0249`. Δ, std and the CI half-width (0.0299 =
+1.96·0.0187·√(2/3)) all re-derive. **But invariant #5 is currently violated:** `H37.py`,
+`H37B.py`, both diagnostics, both `experiments/outputs/*.json` and all 6 result JSONs are
+**untracked**, and `git cat-file af6c5b8:.../H37.py` fails — so `git checkout af6c5b8` + the
+logged command reproduces *nothing*. **Commit before this entry is final.** Minor provenance
+nit: the "~90 s baseline" wall-clock figure traces to no comparator run — the three matched-seed
+`baseline_passthrough` runs logged **75.6 / 75.3 / 1918.9 s** (s999 hit machine contention), and
+the 21-run aggregate mean is 419 s. Replace "~90 s baseline" with "75 s at s42/s123; the s999
+comparator run logged 1,919 s, so wall-clock is not comparable at all".
+
+**4. Significance / fairness of the KILL — PASS.**
+- Comparator correct: `baseline_passthrough`, `role=implement`, seeds {42,123,999}, all
+  `n_epochs_done == 20000`. The `ainit_RESUME.md` comparator trap does **not** apply.
+- `total_grad_steps` 20,000 == 20,000; same device (`Apple MPS`), same `torch-2.8.0`.
+- Loop diffed line-by-line against `baseline/rocket.py`: identical except the surrogate line
+  (only comments and the unused `init_positions`/`logger` hooks differ).
+- Surrogate re-verified independently: monotone non-decreasing over z ∈ [−10⁴,10⁴] (float64),
+  bounded (0,1), g(0)=0.5; autograd == q/2·(1+|z|)^−(q+1) to rel-err 0 at z ∈ {±1e-12, ±3.7,
+  ±50, ±1e3, ±1e6}.
+- **Not an MPS artifact:** CPU vs MPS agree to 1.2e-7 on both value and gradient at Δ-scales
+  1.4 / 200 / 20,000; no NaN/Inf; positions neither exploded nor collapsed (connectome final
+  std 150–172 for H37, 128–130 for H37B, vs baseline 141–142).
+- Effect size is ~11×/23× the screen threshold with all 6 per-seed deltas negative. Nothing
+  found that could plausibly flip the sign.
+- **One real defect, immaterial to the verdict:** the docstrings claim the autograd derivative
+  is `(Q/2)(1+|z|)^−(Q+1)`, "verified … max err 1.9e-11". At **z == 0 exactly** autograd returns
+  **0.0**, not 2.0, because `torch.sign(0) = 0`; `check_grads`' probe set
+  `[-50,-7.3,-1,-0.2,0.35,1,4,33]` omits z=0, so the check cannot see it. The connectome has 0
+  self-loops and exact float32 position ties are vanishingly rare, so the runs are unaffected —
+  but the docstring claim is false as stated and the probe set should include 0.
+
+**5. Overfitting / robustness of the KILL — PASS with a disclosed scope limit.** Connectome is
+significant and unambiguous. The hard synthetic is significant (poly_q4 t = −7.4). **Mouse is
+not:** re-deriving from `proto_h37_tails.json`, *no* arm differs significantly from the sigmoid
+(SE of the difference at n=3: poly_q4 −0.220 ± 0.144, t = −1.53; every other arm |t| < 2.8).
+Mouse was also never run through the frozen runner. The kill survives this (a kill only needs
+the connectome screen), but the *wording* does not — see below.
+
+---
+
+##### Attack on the promoted diagnostic (B) — findings that must change the text
+
+**B1. "P1 … FAILED on both proxies" is selective reporting of a pre-registered test.**
+`proto_h37_tails.json → prediction_check` records **`P3_sigmoid_sharp_le_sigmoid: false` on
+mouse** and **`P4_h11_lt_sigmoid: false` on hard_synthetic**. Only P2 held on both. `log.md`
+reports "(P3 held)" for the synthetic and is silent on P4; `backlog.md` says "P3 held decisively
+on the synthetic" and omits P4 entirely. Pre-registration is only worth something if all four
+outcomes are reported. **Replace** "P1 (`poly_q4` > sigmoid) FAILED on both proxies" with
+"P1 FAILED on both proxies; **P2 held on both; P3 held on the synthetic but FAILED on mouse
+(sigmoid_sharp +0.004 pp); P4 FAILED on the synthetic (h11_clip +0.107 pp)** — 3 of 4
+pre-registered predictions failed on at least one fixture."
+
+**B2. "This also explains the H11 kill mechanistically" — RETRACT.** It contradicts the very
+claim it sits next to. If low alignment ⇒ high score (claim B), then H11's −1.063 (the *worst*
+alignment measured) predicts H11 should be the *best* shape — and in this cycle's own data it
+is: `h11_clip_M5` is the **only** arm that beat the sigmoid on the hard synthetic (+0.107 pp)
+and is within noise on mouse (−0.030, t = −0.72). The logged H11 kill was −0.039 pp, the
+*smallest* penalty in the whole campaign, while its alignment/frozen-fraction cells are the
+worst — that is the opposite of "explained". Delete the sentence from `diagnosis.md` § Q04,
+`findings.md` and `backlog.md`, or replace with: "The H11 clamp is the worst cell in the static
+table (alignment −1.063, 65.8% frozen) **yet was the best-performing non-sigmoid arm at the
+prototype gate (+0.107 pp synthetic, −0.030 pp mouse, both within noise) — a direct
+counterexample to reading either static column as a performance predictor.**"
+
+**B3. "It lost everywhere" / "the two aligned shapes are the two worst optimizers" — over-stated.**
+True on the hard synthetic and (for the 3 arms run there) on the connectome; **false on mouse**,
+where the aligned `sigmoid_sharp` is the *best* arm (+0.004) and nothing is significant. Rank
+correlation between alignment A and Δ, re-derived over the 7 arms with a measured A:
+**Spearman = −0.893 on the hard synthetic, −0.071 on mouse** (i.e. no relationship), and −1.00
+over the 3 connectome arms. **Replace** "It **lost everywhere**: −0.220 pp (mouse), −2.834 pp
+(hard synthetic), and −0.932 pp on the connectome" with "It lost on every fixture, decisively
+where the test has power: **−2.834 pp (hard synthetic, t = −7.4) and −0.932 pp (connectome,
+3 seeds, frozen runner); the mouse point estimate is −0.220 pp but is inside noise (t = −1.53,
+n = 3) and mouse was not run through the frozen runner.**"
+
+**B4. The alignment ratio is measured on the CONNECTOME and then tabulated against mouse and
+synthetic deltas.** `H37B.py`'s docstring discloses this honestly; `diagnosis.md` § Q04's §3
+table and `findings.md` do not. A is a property of (shape, graph, best-order, rocket-order) —
+the mouse column has no such measurement at all, which is exactly why the mouse column shows no
+correlation. The hard synthetic *does* carry a reference order (`ref_order` from
+`make_hard_synthetic_graph`), so A **could** have been measured there and was not. Add the
+caveat, or (better, ~10 min) measure A on the hard synthetic and report the within-graph
+correlation.
+
+**B5. The one genuinely load-bearing check the write-up did not run — and it comes out in the
+claim's favour.** At **fixed** core width 2.1973 (so the β/width axis is held constant), critic
+re-derivation on the connectome gives A = −0.5906 (sigmoid) → −0.5185 (poly q4 w-matched) →
+−0.4606 (poly q1 w-matched), i.e. monotonically *better* alignment, against Δ_synthetic
+0 → −0.459 → −1.686 and Δ_mouse 0 → −0.018 → −0.101: a perfect monotone anti-correlation in
+both fixtures. This is stronger evidence than anything currently cited and should replace the
+weak corroboration. **Caveat that must accompany it:** within a fixed width, "better aligned"
+and "heavier tail" are the same one-parameter family here, so this shows an anti-correlation,
+not a mechanism.
+
+**B6. Across arms, A is essentially a monotone function of `width(g)`, so the "new mechanism" is
+largely the old β axis restated.** § 1 of the same section says so explicitly ("alignment is
+bought by narrowing the core — that is the β axis"). Re-derived: Spearman(width, Δ) = +0.83 on
+the synthetic vs Spearman(A, Δ) = −0.89 — the same signal. **Do not call this "a genuinely new,
+artifact-backed mechanism"** without stating that A carries no predictive power independent of
+core width except within the fixed-width triple of B5.
+
+**B7. The "179–233 × width ⇒ shape is ~85% a β rescaling" law is an artifact of the
+`g = 0.9` threshold.** Re-derived crossover/width spread (max/min) as the width threshold varies:
+0.55 → 3.59×, 0.75 → 2.00×, 0.875 → **1.18×**, 0.90 → **1.25×**, 0.95 → 2.51×, 0.99 → **12.52×**
+(at 0.99 the ratio runs 15.2 for poly q1 to 190.2 for the H11 clamp). There is a genuine plateau
+at 0.85–0.90, but the law is not definition-independent. Also note 4 of the 11 rows (sigmoid,
+sigmoid_sharp, tanh_half, tanh_slow_x10) are *the same function* at different β and are
+constant-ratio by construction, so the effective n is ~7. **Replace** "the crossover sits at
+**179–233 × width(g)** ⇒ shape is ~85% a `beta` rescaling" with "**with `width(g)` defined at
+g = 0.9 the crossover is 179–233 × width across eleven shapes (≈ ±13%); the constancy holds only
+for thresholds in ≈ [0.85, 0.90] — at g = 0.99 the same ratio spans 12× — so this is a useful
+normalisation at that threshold, not a shape-independent law.**" Drop the unsourced "~85%"
+(it appears in no artifact).
+
+**B8. "`tanh_half` is bit-identical to the sigmoid everywhere" is contradicted by the artifact
+it cites.** `q04_surrogate_tails.json → node_gradient_at_rocket_positions`:
+`sigmoid frac_nodes_zero_grad = 0.161100` vs `tanh_half = 0.049031`. Two mathematically
+identical functions give a **3.3× different frozen-node fraction** — because the *derivative
+formula* differs (`s(1−s)` vs `0.25/cosh²(z/2)`). Worse, the artifact's own
+`tanh_identity.max_rel_err_float64 = **1.0**` (at z = −40 the tanh form returns exactly 0 while
+the sigmoid returns 4.25e-18) — the write-up quotes only `max_abs_err = 2.2e-16`, the one metric
+that hides the tail, in a section whose entire subject is the tail. And under *torch* autograd
+(what actually runs) `0.5(tanh(z/2)+1)` freezes at |z| ≈ 17.8 on **both** sides whereas
+`torch.sigmoid` freezes at z > +17.8 but survives to z < −100 — so the tanh form would freeze
+*more*, not less. **Replace** "the `tanh_half` row is bit-identical to the sigmoid everywhere"
+with "`tanh_half` is the same *function* as the sigmoid (identical crossover 473.02, alignment
+−0.5908, gradient cosine 1.000000), but **not the same numerics**: its frozen-node fraction is
+4.9% vs the sigmoid's 16.1% and its deep-tail relative error is 1.0, because the two closed-form
+derivatives underflow at different points. The Q01 correction stands on the analytic identity
+(`tanh(x/10) = sigmoid(x/5)` is a pure β rescaling); it does **not** license 'tanh is a no-op'
+in finite precision." Related: the `q04_surrogate_tails.py` docstring's "σ′ … underflows to
+exactly 0 in float32 past |z| ~ 103" is only true on the negative side — on the positive
+(already-feedforward) side `s(1−s)` is exactly 0 from **z ≈ 17.3**. Fix the number.
+
+**B9. Q01's four-shape table does NOT fully reproduce — the cusp row disagrees.**
+`shape_ranking_table.cusp_sqrt` at std 141 gives **`imbalance_sort > rocket > best`**, whereas
+`diagnosis.md` Q01's table records `Rocket > best > imbalance` for `|x|^0.5`. (Q04 also
+re-measured `sign(z)√|z|`, not the literal `|x|^0.5` the Q01 table names.) **Replace** "it is
+re-measured here and its ranking rows reproduce — … except the two narrow-core shapes below"
+with "three of the four rows reproduce; **the cusp row does not** — `sign(z)√|z|` gives
+`imbalance > rocket > best` at std 141, not the `rocket > best > imbalance` Q01 recorded (and
+Q04 measured `sign(z)√|z|`, while Q01's table names `|x|^0.5`). Two further shapes
+(`poly_q4`, `sigmoid_sharp`) also break the pattern." The claim that the four-shape table had
+**no committed artifact is CORRECT** — verified: `q01_surrogate_ranking.json` has keys
+`[config, git_commit, graph, orders, small_scale, F_curves, crossover, at_operating_scale,
+operating_decomposition, resolution]` and no shape family, and `q01_surrogate_ranking.py`
+implements only the sigmoid. But `diagnosis.md` Q01 still ends with "Artifacts:
+`q01_surrogate_ranking.json` (regimes, decomposition, crossover, **shape comparison**)" — a
+provenance claim Q04 proves false and did not fix, even though `questions.md` Q04 lists
+`diagnosis.md` § Q01 under "touches". Fix that line.
+
+**B10. "H37 isolates the TAIL with core sharpness held fixed" — qualify.** Matching at g = 0.9
+does **not** match the core: g′(0) = 0.4508 for H37 vs 0.2500 for the sigmoid, i.e. H37 is
+**1.80× steeper at the origin** (H37B is 8.00×). No single SCALE matches both; the slope-matched
+arm is SCALE = 8 and was **not** run. **Replace** "Isolates the TAIL with core sharpness held
+fixed. This is the honest test of the new axis" with "matches the g = 0.9 transition width
+exactly, but is still **1.80× steeper at the origin** (g′(0) 0.4508 vs 0.2500); no single scale
+matches both width and slope, so the tail is isolated only up to that residual." Note the
+`poly_q1_wmatch` vs `poly_q4_wmatch` pair (near-identical g′(0) of 1.82× and 1.80×, Δ_synthetic
+−1.686 vs −0.459) **does** identify the tail exponent separately from slope — that comparison,
+not H37 alone, is the cycle's real evidence that the tail axis is dead. Use it.
+
+**B11. The H37 alignment was inferred, not measured — critic measured it: A = −0.5185**
+(even spacing, β·std = 148, connectome; −0.4393 under Rocket's own spacing). This *helps* the
+claim: on the connectome the three run arms order A = −0.591 (sigmoid) < −0.519 (H37) < +0.173
+(H37B) against scores 82.896 > 82.445 > 81.964, a perfect anti-correlation. Put the measured
+number in and delete the inference-from-the-width-law.
+
+**B12. Even-spacing convention — NOT load-bearing (PASS).** Critic re-derived A under Rocket's
+own optimized spacing (best order embedded on `sort(rocket_positions)`): sigmoid −0.503,
+H37 −0.439, H37B +0.259, sigmoid_sharp +0.227, h11 −1.033, slope-matched poly −0.858. **No sign
+flips**, magnitudes shift ≤ 0.10. The convention can stay; say that it was checked.
+
+**B13. Weak corroborations to drop or fix.** (i) "narrow-core arms converge to a smaller position
+spread (mouse final std 15.9/16.9 vs 25.1)" — 16.88 is `poly_q4` (native, narrow) and 15.87 is
+`sigmoid_sharp`, so the attribution is right, but on the **primary** dataset H37 converges to std
+**150–172, larger than the baseline's 141**, and still loses 0.45 pp, so "smaller spread" explains
+neither H37 nor the significant synthetic losses. Raw std is also not comparable across shapes
+without dividing by the shape's width. Either normalise it (β·std/width: 67 baseline, 79 H37,
+274 H37B) or drop it. (ii) The causal link "the gap is long-range (p50 ≈ 22,580 ranks)" leans on
+a number `roadmap.md` Q03 itself flags as **stale** (measured against H02's 82.93% order before
+H30/H35 closed 0.98 pp). Repeat that caveat wherever the number carries the argument.
+
+##### Recommendation
+
+- **KEEP the kill of H37/H37B**, exactly as scored. It is clean, leakage-free, budget-matched,
+  reproduced from positions, and 11–23× the screen threshold in the wrong direction on the
+  primary dataset. **Blocking:** commit the cycle (invariant #5) — nothing is tracked yet.
+- **ITERATE on the promoted diagnostic.** Apply B1–B4 and B7–B10 verbatim before it stays in
+  `findings.md`; fold in B5, B11, B12 which strengthen it. As written it is **not** a "new
+  mechanism": across arms it is the known width/β axis re-labelled (B6), it is null on mouse
+  (B3), and it is stated in the same paragraph as a claim it contradicts (B2). Downgrade
+  `findings.md` from "static surrogate alignment anti-correlates with achieved score" to
+  "**at fixed core width, better-aligned (heavier-tailed) surrogates score strictly worse on
+  every fixture tested (n = 3 shapes × 2 fixtures + 3 arms on the connectome); across widths the
+  statistic adds nothing to core width, which is the already-killed A-SCALE/H03 axis.**"
+- **One cheap falsifier before the axis is declared closed** (~6 min, 3 seeds, connectome):
+  run `poly_q4` at **SCALE = 8** — the slope-matched arm, g′(0) identical to the sigmoid,
+  measured **A = −0.903, i.e. *worse* aligned than the sigmoid**. Claim B predicts it should
+  **beat** the sigmoid. If it loses too, the honest conclusion is "every deviation from the
+  sigmoid loses and alignment explains nothing", and B must be retracted rather than qualified.
+  A connectome-side `sigmoid_sharp` (β × 4.4361 for the whole run) control is the other missing
+  arm — H03 only ramped β to 4.0 over the last 25% of epochs, so the whole-run sharpening axis
+  has never been measured on the primary dataset.
+
+---
+
+## 2026-08-17 — A-SURR part 2 → H38: one-sided (ASYMMETRIC) surrogate — GRAPH-DEPENDENT (big connectome win, microns regression)
+
+- **Origin.** After H37 closed the tail exponent *within odd-symmetric shapes*, the researcher
+  asked: what if the surrogate is **constant on the positive branch and tanh on the negative
+  one**? Every shape tested until then obeyed `g(-z) = 1 - g(z)`. Dropping that assumption is a
+  different move — and on the fly connectome it is by far the largest pure-Rocket gain measured
+  in this project.
+- **Hypothesis (H38):** `g(z) = 1` for `z >= M`, `g(z) = 1 + tanh((z-M)/T)` for `z < M`, with
+  `(M,T) = (0.75, 1.5)`. Comfortably-feedforward edges get ZERO gradient; the whole budget pulls
+  feedback edges toward correctness.
+
+#### Theory gate (Q05) — PASS
+`experiments/diagnostics/q05_asymmetric_surrogates.py` → `experiments/outputs/q05_asymmetric_surrogates.json`.
+Two properties no symmetric shape has: (1) **it does not telescope** — Q01's small-scale collapse
+into the imbalance objective needs the sum over ALL edges, whereas here the first-order term runs
+over the order-dependent VIOLATED subset; measured, at `beta*std → 0` it ranks
+`best > rocket > imbalance_sort > random` (correct) where all 11 symmetric shapes put the
+imbalance sort first. (2) **alignment ratio +1.48 … +2.00** at the operating point (sigmoid
+−0.591) with **no crossover** in `beta*std` ∈ [1e-2, 1e6]. The mirror shape gives −1.30 … −3.72.
+
+#### A degeneracy derived before running, then confirmed
+At `M = 0`, `g(0) = 1` ⇒ `P = const` attains `F = Σ ŵ`, the surrogate's **global maximum**,
+strictly above every ordering, and the dynamics contract into it. Verified: `F(collapse) == W_hat`
+exactly; the `M = 0` arm collapses to final position std **0.0005** on the hard synthetic (58.24%
+vs the sigmoid's 73.68%). `M > 0` removes it (`g(0) = 0.5379`).
+
+#### Prototype gate — PASS (plateau, not a knife edge)
+`proto_h38_asym.json` + `proto_h38_sweep.json`: 6×3 `(M,T)` grid, broad positive ridge on mouse;
+10-seed deep re-run of the mouse-optimal arm 92.9886 ± 0.0273 vs sigmoid 92.3615 ± 0.0606.
+`(0.75, 1.5)` chosen as **the only grid point positive on both proxies** (+0.396 mouse, +0.404
+synthetic). Optimum is graph-dependent — disclosed, not hidden.
+
+#### Primary datasets (frozen runner, 3 seeds 42/123/999, role `implement`, budget-matched)
+
+| dataset | baseline | H38 | Δ | 95% CI lo | gate | outcome |
+|---|---|---|---|---|---|---|
+| **connectome** | 82.8958 ± 0.0187 | **83.2626 ± 0.0108** | **+0.3668** | +0.3368 | +0.04 | **PASS (9×)** |
+| **microns** | 83.1172 ± 0.0006 | 82.4482 ± 0.0094 | **−0.6689** | −0.6700 | +0.002 | **FAIL** |
+| mouse | 92.0696 ± 0.2624 | 92.2053 ± 0.2602 | +0.1357 | — | > −0.26 | non-inferior ✓ |
+
+All three connectome seeds positive (+0.354 / +0.358 / +0.389); all three microns seeds negative.
+**Verdict per the Phase-5 decision table (microns ✗ / connectome ✓ / mouse ✓): GRAPH-DEPENDENT.**
+
+#### Controls (connectome, 3 seeds each) — both decisive
+| control | Δ | rules out |
+|---|---|---|
+| H38C — mirror (flat on the FEEDBACK side) | **−2.8890** | "any one-sided shape"; the induced smaller position scale. The **direction** of the asymmetry is the mechanism |
+| H38D — plain sigmoid at `beta × 4`, whole run | **−0.5804** | the `beta`/scale axis (A-SCALE ≡ H03) — and this is a *stronger* control than H03, which only ramped beta over the last 25% of epochs |
+
+#### Integrity
+Frozen guard OK; `git diff` on the 4 frozen files empty; all 6 connectome position vectors
+re-score to their logged `pct` to 1e-9; leakage grep clean (imports: `baseline.rocket`, `io`,
+`metrics` only); device parity checked (variant and comparator both Apple MPS). Gain is **not** a
+best-by-oracle sampling artifact — it is the same on the FINAL-epoch score (mouse +0.392 vs
++0.396; synthetic +0.360 vs +0.404). Compute matched on `total_grad_steps` (20,000);
+**wall-clock NOT matched: ~115 s vs ~75 s baseline (≈1.5×)** — disclosed.
+**Known defect:** `torch.where` returns autograd 0 exactly at `z == M` instead of the
+left-derivative `1/T` — a measure-zero kink, immaterial in float practice, documented rather than
+claimed away.
+
+#### Decision: **GRAPH-DEPENDENT — keep, scope explicitly, do NOT promote to a general finding.**
+Open follow-ups: (i) CONFIRM stage on connectome at 5 seeds; (ii) diagnose the microns
+regression — prime suspect is that `M`/`T` are absolute constants in `z` units while microns is
+~4× denser (155 vs 41 average degree) and runs 80k epochs, so a size/density-scaled `(M,T)` may
+be needed. Any re-tuning must **not** be selected on microns and then reported on microns.
+
+**Reproduce** (env `allen`, repo root):
+```
+PYTHONPATH=src python experiments/diagnostics/q05_asymmetric_surrogates.py
+PYTHONPATH=src python experiments/proto_h38_asym.py
+cd experiments && PYTHONPATH=../src:. python proto_h38_sweep.py && cd ..
+for S in 42 123 999; do for E in H38 H38C H38D; do \
+  python -m eval.run_variant --exp $E --dataset connectome --seed $S --out results/ \
+    --role implement --device auto; done; done
+for S in 42 123 999; do for D in mouse microns; do \
+  python -m eval.run_variant --exp H38 --dataset $D --seed $S --out results/ \
+    --role implement --device auto; done; done
+```
