@@ -44,10 +44,12 @@ with a free global scale, `gap.optimize_spacing`) vs **Rocket's converged surrog
 | 0.50 | 14,673 | 14,402 | **+271** |
 | 1.05 (convergence) | 14,679 | 14,440 | **+238** |
 
-**best's order out-surrogates Rocket's solution at *every* β.** If the surrogate were misaligned,
-the higher-discrete best ordering would score *lower* on the surrogate; it scores **higher**. So the
-sigmoid surrogate correctly ranks best above Rocket's solution — **the surrogate is not the
-bottleneck; the optimizer is.** This holds across the whole β schedule (no β-dependent flip).
+**Read this table with its scope.** It grants **each order its own optimal spacing** (free scale).
+Under that comparison best's order out-surrogates Rocket's at every β. That is NOT the situation
+optimization is in: at a **common** scale — Rocket's operating std ≈ 141 — the ranking **reverses**
+and the surrogate prefers Rocket's own order across the whole cyclic β range (§ Q01). So the correct
+reading is: the surrogate is aligned only if the better order is also granted a much larger scale;
+at the achievable scale it is **misaligned**, and that is the bottleneck.
 
 **Drift probe (corroborating, diagnostic-only).** Initialising Rocket *at* the 84.61% ordering and
 running its optimization:
@@ -60,14 +62,11 @@ running its optimization:
 
 Under every schedule tried **at even spacing (std≈0.58)**, gradient ascent on the surrogate flows
 the near-optimal solution back down to Rocket's ~82.9% plateau (dipping into the 76–79% range first).
-At the time this read as: best is *not a reachable or even holdable attractor* of Adam-on-sigmoid.
-
-> **⚠ CORRECTED by Q01 (2026-08-01).** The "not **holdable**" half was an **artefact of the even
-> spacing** (std≈0.58 — ~200× below the operating scale). From the best order's surrogate-optimal
-> spacing P\* (std≈53,626) the score **HOLDS exactly** under small- and Rocket-default lr. Best IS a
-> stable attractor at its own scale; only **reachability** fails (Adam-on-σ never navigates to P\*
-> from a generic start). See § Q01 below. The gap is still a real optimization-landscape problem —
-> just a **reachability**, not a **stability**, one.
+The mechanism is measured in § Q01: at that scale the gradient is the **order-independent** imbalance
+vector (cos ≥ 0.98 between the gradients evaluated at three completely different starting orders),
+and Adam's per-coordinate step (≈ lr regardless of gradient magnitude) traverses ~8.6× the entire
+position spread in 1000 steps — so any input order, good or bad, is overwritten. These runs measure
+the small-scale blind regime; they say nothing about the optimum's stability.
 
 ### Step 4 — init→plateau curve (rules DIRECTION I down)
 Post-Rocket plateau vs init quality, leakage-safe inits:
@@ -119,10 +118,10 @@ a Stage-B prototype graph must inject far more feedback / strong-connectivity to
 
 ## Selected direction(s) — rule-based, ranked by diagnostic magnitude
 
-Evidence: (1) **OPTIMIZATION-GAP** confirmed — best out-surrogates Rocket at all β; surrogate
-aligned. (2) DIRECTION I has a **flat init→plateau** (≤0.06 pp) → down-ranked. (3) **Best is not
-*reachable* by free gradient flow from a generic start** (it IS a holdable attractor at its own
-scale — corrected by § Q01; the earlier "not holdable" was an even-spacing artefact). (4) Kendall-τ
+Evidence: (1) the surrogate is aligned only when each order is granted its own optimal spacing; at
+the common operating scale it **prefers Rocket's own order** (§ Q01). (2) DIRECTION I has a **flat
+init→plateau** (≤0.06 pp) → down-ranked. (3) **Best is not *reachable* by free gradient flow from a
+generic start** — at β·std ≈ 148 no local step points toward it. (4) Kendall-τ
 0.61 → moderate, distributed reordering (partial-basin difference). Per the pre-registered tree
 (1a dominant → DIRECTION O), and refined by (3):
 
@@ -144,8 +143,8 @@ scale — corrected by § Q01; the earlier "not holdable" was an even-spacing ar
    (a good basin that the dynamics can now hold).
 
 **Honest ceiling read.** Because a perfect init is not *reached* by gradient flow from a generic
-start (⚠ corrected — it IS retained at its own scale; the "collapse" was an even-spacing artefact,
-§ Q01 — so the barrier is reachability, not stability), and the gap is a distributed reordering
+start (the surrogate does not rank it higher at the achievable β·std, § Q01), and the gap is a
+distributed reordering
 rather than recoverable ties, a large share of the 1.69 pp may be
 **irreducible to continuous optimization** and genuinely require discrete refinement (the paper's
 Crane phase). Stage B will quantify how much O/R recovers; the prototype-first gate on a *hard*
@@ -155,100 +154,149 @@ synthetic + mouse decides whether any variant earns connectome compute.
 
 ---
 
-## Q01 — Why does starting Rocket from the best solution drift the score DOWN?
+## Q01 — Why does starting Rocket from the best solution lose score?
 
-**Answer (2026-08-01): it does NOT drift when you start from the true low-loss point. The logged
-"collapse" was a SCALE artefact of the probe, not a property of the optimum.** This corrects the
-over-strong half of finding #3 ("best is unreachable/unholdable … under *every* schedule/scale").
+**Answer (2026-08-17).** Because Rocket does not optimize an *order* — it optimizes *coordinates*,
+and the surrogate it maximizes is a different objective at every scale. Embedding a given order
+requires choosing a spacing, and everything depends on the single product **β·std**. At Rocket's
+operating scale the surrogate **does not rank the better order higher**, so moving away from the
+best order is correct behaviour *for the surrogate* — not a failure of the optimizer, and not
+evidence about the optimum's stability.
 
-**The subtlety.** The surrogate F(pos) = Σ σ(β·Δ)·ŵ depends on position **gaps**, not on the order
-alone. So the best *order* embedded at an arbitrary (even) spacing is **not** a low-loss point — the
-gaps are wrong even though the ranking is optimal. Gradient descent correctly flees that high-loss
-point, and in doing so it **reshuffles the order**, which is what drops the discrete score. The
-original drift probe (`diagnosis.json`) started from the best order at **even spacing in [−1,1]
-(std≈0.58)** — ~90,000× below the surrogate-optimal scale — so it measured the flight from a
-high-loss point, not the stability of the optimum.
+Primary artifact: `experiments/outputs/q01_surrogate_ranking.json`
+(`experiments/diagnostics/q01_surrogate_ranking.py`, connectome, float64, even spacing for every
+order so the comparison is like-for-like).
 
-**Evidence** (`experiments/diagnostics/q01_drift_from_optimum.py` → `experiments/outputs/q01_drift.json`
-+ `q01_hold_from_optimum.png`, `q01_scale_sweep.png`; connectome, β=1.05, seed 42):
+### The three regimes of the surrogate
 
-| quantity | value | reading |
+`F(P) = Σ_e ŵ_e · σ(β·Δ_e)`, `Δ_e = p_tgt − p_src`, `ŵ = w/max(w)`. Reference points that do not
+depend on β: blind floor `0.5·Σŵ = 8,713.54`; saturation ceilings (= discrete score / max w)
+`best = 14,745.87`, `Rocket = 14,449.86`.
+
+**(1) β·std → 0 — the surrogate becomes a DIFFERENT problem.** With `σ(x) = ½ + x/4 + O(x³)`:
+
+    F(P) = Ŵ/2 + (β/4)·Σ_e ŵ_e Δ_e + O((β·std)³) = Ŵ/2 − (β/4)·⟨c, P⟩ + O((β·std)³)
+
+with `c_k = out_ŵ(k) − in_ŵ(k)`. The edge sum **telescopes** into a node-level quantity: it no
+longer knows which node precedes which, only where each node sits, weighted by its own imbalance.
+By the rearrangement inequality the maximizer over permutations is the **imbalance sort**, not the
+feedforward optimum. Measured at std = 0.001, β = 1.05 (linear model reproduces F to **3.1e-10**
+relative):
+
+| order | discrete % | ⟨c,P⟩ @std=1 | F @std=0.001 | surrogate's preference |
+|---|---|---|---|---|
+| imbalance sort | 69.6345 | −14,810.51 | **8,717.431** | **1st** |
+| Rocket | 82.9161 | −9,098.92 | 8,715.931 | 2nd |
+| best | **84.6147** | −6,749.25 | 8,715.315 | **3rd** |
+| random | 50.1583 | −78.32 | 8,713.563 | 4th |
+
+The surrogate's ranking is **exactly inverted** relative to the truth, and it is ordered by `−⟨c,P⟩`
+alone. Per-edge monotonicity is intact the whole time — what fails is that comparing two whole
+*orders* is not the same as improving one edge at a time.
+
+**(2) β·std ≈ 148 — Rocket's operating point. The better order still loses, by 175.**
+Write `F = ceiling − smoothing_loss`, where the ceiling is the true objective in ŵ units and the
+smoothing loss is what the surrogate discounts for edges that are only *narrowly* correct
+(σ ≈ 0.5 instead of 1). At std = 141, β = 1.05:
+
+| order | ceiling | F | smoothing loss | F as % of ceiling |
+|---|---|---|---|---|
+| best | 14,745.87 | 14,215.43 | **530.44** | 96.403% |
+| Rocket | 14,449.86 | **14,390.31** | 59.54 | 99.588% |
+| imbalance sort | 12,135.26 | 12,129.27 | 6.00 | 99.951% |
+| random | 8,741.13 | 8,740.73 | 0.41 | 99.995% |
+
+    best's true advantage        +296.02
+    best's EXTRA smoothing loss  −470.90
+    net surrogate advantage      −174.88   → the surrogate prefers the WORSE order
+
+The best order's genuine +296 advantage is **more than cancelled** by the 8.9× larger smoothing
+loss it pays: it wins many of its edges *narrowly*, and the surrogate discounts narrow wins toward
+0.5. Rocket's order, being the surrogate's own optimum, has arranged wide margins on the heavy
+edges and sits at 99.6% of its own ceiling. (Spacing-dependent but robust: at the best order's own
+optimized spacing at std ≈ 141 it still loses, `q01_drift.json` `beta_analysis.at_std141`,
+β ∈ {0.05, 0.30, 1.05} → −1,240.8 / −596.6 / −223.1.)
+
+**(3) β·std ≈ 470 — the crossover, which Rocket never reaches.** Log-interpolated (not a grid
+node), on a 61-point grid:
+
+| β | crossover std | **β·std** |
 |---|---|---|
-| best_solution discrete | 84.6147% | the target |
-| **P\*** = best order at surrogate-optimal spacing | F=14,745.8, **std≈53,626**, disc 84.6147% | the true low-loss point (large scale) |
-| Rocket reference | F=14,438.5, std≈141, disc 82.9161% | Rocket's basin is **lower-F** |
-| **F(P\*) − F(Rocket)** | **+307.3** | GD *ascends* F ⇒ from P\* it cannot flow to Rocket |
-| **‖∇F(P\*)‖** | **4.9e-4** (max 2.1e-4) | P\* is a **critical point** (local max of the surrogate) |
-| **HOLD from P\***, Adam lr ∈ {5e-4, 5e-3, **5e-2**} | 84.6147% → **84.6147%** (min 84.6146%) | holds exactly — even at Rocket's default lr |
+| 0.05 | 9,403.3 | **470.2** |
+| 0.30 | 1,565.3 | **469.6** |
+| 1.05 | 447.9 | **470.3** |
 
-**The drift is entirely a function of position SCALE** (same optimal *shape*, rescaled; drop after
-1000 Adam steps at lr 5e-3):
+The invariance across three βs is the direct verification that **F sees only the product β·std**.
+Rocket operates at β·std ≈ 1.05 × 141 = **148**, a factor **3.2** below the crossover, and the
+cyclic schedule caps β at 1.05 — so the regime where the surrogate would prefer the better order is
+never entered.
 
-| std(pos) | 0.58 | 2 | 10 | 50 | **141** | 500 | 5000 | 53000 |
-|---|---|---|---|---|---|---|---|---|
-| ‖∇F‖ @start | 19.9 | 15.6 | 10.2 | 5.2 | 3.5 | 1.7 | 0.41 | 5e-4 |
-| discrete **drop** (pp) | **5.51** | 4.32 | 2.35 | 0.97 | **0.47** | 0.18 | 0.009 | **0.00** |
+### It is not the SHAPE of the sigmoid
 
-At the logged even-spacing scale (std≈0.58) the drop is 5.5 pp; at Rocket's operating scale
-(std≈141) it is 0.47 pp; at the true optimal scale (std≈53k) it is 0.00 pp. So:
+Four per-edge shapes, same orders, same spacings — sigmoid, a slower-decaying tanh (`tanh(x/10)`),
+a hard-clipped ramp (H11's exact form, M = 5), and a cusped shape (`|x|^0.5`, deliberately
+non-differentiable at 0):
 
-- **The intuition is correct.** From the genuine loss-minimizing configuration P\*, small-lr — and
-  even Rocket-default-lr — GD **holds** the best score; there is no lower-F basin to fall into.
-- **The logged collapse was methodological**, not physical: it started ~200× (in std) too small,
-  where the best order is a *high-loss* point that GD correctly leaves (reshuffling the order).
-- **What survives from #3 (unchanged):** Adam-on-σ does not *navigate to* P\* from a cold or
-  Rocket-scale start (the init→plateau curve is flat; Rocket converges to its own std≈141, lower-F
-  basin). The barrier is **reachability**, not **stability** — the optimum is a stable attractor at
-  its own scale; the optimizer just never gets there on its own.
+| shape | ranking at std = 0.01 | ranking at std = 141 |
+|---|---|---|
+| sigmoid | imbalance > Rocket > best | Rocket > best > imbalance |
+| slow tanh | imbalance > Rocket > best | Rocket > best > imbalance |
+| hard clip | imbalance > Rocket > best | Rocket > best > imbalance |
+| cusp `\|x\|^0.5` | imbalance > Rocket > best | Rocket > best > imbalance |
 
-**Why (the deeper cause): the surrogate is SCALE-BLIND and prefers the best order only above a
-large scale.** F depends on gaps, so the *same* best order has a different surrogate value at
-different scales — and the best order out-surrogates Rocket **only above std≈459** (`q01_F_vs_scale.png`):
+**All four agree at both scales.** The bias is therefore not a defect of the sigmoid but a property
+of the whole family `Σ_e ŵ_e · g(Δ_e)`: any objective that scores an edge by a function of the two
+nodes' *distance* rewards spreading nodes by imbalance, and the true objective (a function of the
+*sign* only) is exactly the member of that family with zero gradient everywhere. Changing `g`
+moves along this trade-off; it does not escape it. Escaping it requires leaving the family — which
+is what rank-space methods do, and why the discrete sift (H30/H35) recovers what no continuous
+lever has.
 
-| std(pos) | 0.29 (≈[0,1]) | 0.58 | 50 | **141 (Rocket)** | **459 (crossover)** | 5000 | 53626 (P\*) |
-|---|---|---|---|---|---|---|---|
-| F(best order) | 9,224 | 9,669 | 13,921 | **14,273** | ≈14,439 | 14,689 | 14,746 |
-| vs F(Rocket)=14,439 | −5,215 | −4,770 | −518 | **−165** | 0 | +250 | +307 |
+### What this does NOT establish
 
-(discrete score of the best order = 84.61% at every scale — the order never changes; only F moves.)
-
-- At std→0 every Δ→0 ⇒ σ→0.5 for all edges ⇒ F→0.5·Σŵ = **8,714**: the surrogate goes fully blind.
-- **At Rocket's own operating scale (std≈141) the best order has LOWER F than Rocket** (14,273 <
-  14,438). So a non-ideal-but-well-spread order (Rocket) genuinely beats the ideal-but-squished order
-  *in the surrogate's own currency*. The best order only wins once positions spread past std≈459 — a
-  regime Rocket never enters (its positions converge to std≈141).
-- This is the mechanistic core of the plateau: **at the achievable scale the continuous relaxation
-  does not even rank the better order higher**, so no local gradient step points toward it.
+- **Nothing about the stability of the optimum.** A "hold" measured at very large scale is a frozen
+  optimizer, not stability: at std ≈ 5·10⁴ over 99.99% of edges have |β·Δ| > 37, σ′ underflows, and
+  *every* configuration holds — Rocket's own 82.92% order holds just as exactly as the 84.61% one.
+  Giving Adam a step size proportional to the scale (lr = 19 at std 53,626) reproduces a −0.389 pp
+  drop, comparable to the −0.430 pp drop at std 141.
+- **‖∇F‖ near zero is not evidence of a critical point** — the norm is not scale-free (the
+  dimensionless `‖∇F‖·std` is *larger* at large scale), and F has **no finite-scale maximum**: it
+  increases monotonically with scale toward the discrete ceiling.
+- **The drop is governed by how far Adam travels, not by local steepness.** Across the scale sweep
+  the drop is monotone in `lr·T/std` over six decades and *anti*-correlated with `‖∇F‖·std`. Adam's
+  per-coordinate step is ≈ lr regardless of gradient magnitude, so at std ≈ 0.58 it traverses ~8.6×
+  the entire position spread in 1000 steps and overwrites any input order. At small scale that
+  gradient is also order-independent: cos between the gradients evaluated at the best order,
+  Rocket's order and a random order is ≥ 0.98.
 
 ### Insights & how to use
-1. **The plateau is a surrogate-SCALE property, not an optimizer failure.** At std≈141 Rocket's own
-   order is (locally) surrogate-optimal; the better order isn't preferred there. This *sharpens* #3:
-   the gap is not "the optimizer is too weak" but "the relaxation, at its natural scale, points the
-   wrong way." Reconciles with the scale-fair alignment (each order at its *own* optimal spacing ⇒
-   best wins by +307): alignment holds only when the best order is granted a large scale.
-2. **This is exactly why discrete refinement (H30/H35) works and continuous levers don't.** The sift
-   operates in rank space and is immune to the surrogate's scale-blindness — it finds the reordering
-   the surrogate cannot "see" at std≈141, recovering ~half the gap with 0 gradient steps (#4/#5). Q01
-   is the mechanistic "why" behind that. Conversely it predicts the continuous Track-A levers are
-   dead ends: alt-surrogate (A-SURR / killed H11/H34) reshapes σ but not the operating scale;
-   tight-init (A-INIT) starts *smaller*, deeper in the blind regime.
-3. **The one continuous lever the crossover suggests — and why it's already dead.** Push the optimizer
-   to operate above the crossover (scale/temperature annealing) so the surrogate becomes discriminative.
-   But **β and position-scale are the SAME knob**: F sees only the product **β·std** (verified — F(best)
-   is bit-identical at (β=1.05,std=141), (β=0.3,std=493), (β=3.0,std=49), all β·std≈148). So "scale
-   annealing" (roadmap **A-SCALE**) *is* "sharper terminal β" (**H03, already KILLED**, connectome
-   −0.038 pp) — same lever, and Adam normalises the extra β gradient-prefactor. Both hit the same wall:
-   at large β·std, σ saturates ⇒ **vanishing gradient** on correct edges (why the schedule caps β≤1.05
-   and re-melts; the H19 soft-rank stall is the same failure). β-invariants: the blind floor
-   (0.5·Σŵ=8,714) and the saturation ceilings (best 14,746, Rocket 14,450) don't depend on β; across
-   the whole cyclic range β∈[0.05,1.05] at std≈141 the best order is **never** preferred, so the plateau
-   conclusion is robust to β, not an artefact of β=1.05. Net: the discrete sift already achieves what a
-   scale/β lever gropes toward.
 
-**Reproduce:** `PYTHONPATH=src python experiments/diagnostics/q01_drift_from_optimum.py`
-(env `allen`, ~3–6 min). Artifacts: `q01_drift.json`, `q01_hold_from_optimum.png`,
-`q01_scale_sweep.png`, `q01_F_vs_scale.png`. Supersedes the exploratory
-`dr_tmp/drift_from_optimal_spacing.py` and `dr_tmp/drift_scale_sweep.py`.
+1. **The plateau is a property of the relaxation's scale, not of the optimizer.** At the achievable
+   β·std the continuous surrogate does not rank the better order higher, so no local gradient step
+   points toward it. This is the mechanistic core of finding #3.
+2. **This is why discrete refinement works and continuous levers do not.** The sift operates on
+   ranks and is immune to the whole β·std trade-off — it finds the reordering the surrogate cannot
+   see at β·std ≈ 148, recovering ~0.98 pp with 0 gradient steps (findings #4/#5).
+3. **β and position-scale are the SAME knob**, verified two ways: F is bit-identical at
+   (β=1.05, std=141), (β=0.3, std=493), (β=3.0, std=49) — all β·std ≈ 148 — and the crossover lands
+   at β·std ≈ 470 for all three βs. So "scale annealing" (roadmap **A-SCALE**) *is* "sharper
+   terminal β" (**H03, already KILLED**, connectome −0.038 pp). Both hit the same wall: at large
+   β·std, σ saturates ⇒ vanishing gradient (why the schedule caps β ≤ 1.05 and re-melts; the H19
+   soft-rank stall is the same failure). Across the whole cyclic range β ∈ [0.05, 1.05] at std ≈ 141
+   the best order is **never** preferred, so the conclusion is robust to β.
+4. **Gradient coverage at the operating point, with the honest caveat.** At β = 1.05 on Rocket's
+   converged positions, 99% of the *edge-level* gradient mass sits on 2.83% of edges (159,866 of
+   5,657,719); |β·Δ| < 5 covers 1.70% of weight but 95.6% of that mass. After in/out cancellation at
+   the *node* level, however, 99% of ‖∇F‖₁ is spread over 42.8% of nodes — so "the surrogate
+   discounts almost all edges" is fair, while "the optimizer sees only a sliver of the graph" is not.
+
+**Reproduce** (env `allen`, from the repo root):
+```
+PYTHONPATH=src python experiments/diagnostics/q01_surrogate_ranking.py     # ~1 min, the primary artifact
+PYTHONPATH=src python experiments/diagnostics/q01_drift_from_optimum.py    # ~3-6 min, scale sweep + beta_analysis
+```
+Artifacts: `q01_surrogate_ranking.json` (regimes, decomposition, crossover, shape comparison);
+`q01_drift.json` + `q01_scale_sweep.png`, `q01_F_vs_scale.png` (scale sweep, β analysis).
 
 ---
 

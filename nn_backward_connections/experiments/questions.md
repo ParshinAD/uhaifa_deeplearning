@@ -31,31 +31,31 @@ Contract: `experiments/PROTOCOL.md` § "Track B — Diagnostics". In one line:
 
 ---
 
-## Q01 — Why does starting Rocket from the best solution drift the score DOWN?
-- **status:** **answered (2026-08-01)** — `experiments/diagnostics/q01_drift_from_optimum.py` →
-  `diagnosis.md` § Q01; `findings.md` #3 corrected. **The intuition holds:** from the true low-loss
-  point P\* (best order's surrogate-optimal spacing, std≈53,626, a critical point with F(P\*) >
-  F(Rocket)+307), small-lr **and Rocket-default-lr** Adam **hold 84.6147% exactly**. The logged
-  "collapse" was a **scale artefact** (even-spacing init, std≈0.58, ~200× too small). Barrier is
-  **reachability**, not stability.
-- **why it matters:** `findings.md` #3 currently claims the best order is "unreachable/unholdable
-  by Adam-on-σ under **every** schedule/scale". Prior scratch work contradicts the "every scale"
-  strength: it is **holdable at the right scale**. The finding needs correcting for thesis
-  correctness (this is a rigor issue, not a new win).
-- **method:** consolidate the two existing probes and make the scale dependence explicit:
-  - `dr_tmp/drift_from_optimal_spacing.py` — from the true low-loss point P* (surrogate-optimal
-    spacing of the best order, std≈141), constant β, small lr → does the discrete score hold?
-    (result so far: **holds 84.61%** for lr ∈ {5e-4, 5e-3, 5e-2}; ‖∇F(P*)‖≈5e-4, a real local max).
-  - `dr_tmp/drift_scale_sweep.py` — same shape rescaled across std ∈ {0.58 … 5e4}: quantify the
-    drop vs scale (drop 4.55 at std 0.6 → 0.44 at std 141 → ~0 at std 5e3). The logged "collapse"
-    used even-spacing init at std≈0.58, ~200× below Rocket's operating scale.
-  - fill the intermediate std grid (2/10/50/500) and save a disc-vs-step plot.
-- **artifacts:** promote the two scripts to `experiments/diagnostics/`, fix their hardcoded
-  `results/*_positions.npy` path (point at the committed `results/rocket_best_positions.npy` or
-  regenerate), write a `experiments/outputs/drift_scale.json` + plot. **No writes to `results/`.**
-- **answer:** → `diagnosis.md` `## Q01` (to be written); then annotate `findings.md` #3.
-- **touches:** `findings.md` #3 (soften "every scale"; the reachability-from-cold-start and the
-  optimization-gap sub-claims are unaffected and stay).
+## Q01 — Why does starting Rocket from the best solution lose score?
+- **status:** **answered (2026-08-17)** — `experiments/diagnostics/q01_surrogate_ranking.py` →
+  `experiments/outputs/q01_surrogate_ranking.json` → `diagnosis.md` § Q01; `findings.md` #3 rewritten.
+  **Answer:** Rocket optimizes coordinates, not an order, and its surrogate is a different objective at
+  every scale (everything depends on the product β·std).
+  - **β·std → 0:** the edge sum telescopes, `F = Ŵ/2 − (β/4)·⟨c,P⟩ + O((β·std)³)` — the surrogate stops
+    being a relaxation of the feedforward objective and becomes "sort by weight imbalance". Measured at
+    std = 0.001 it ranks the imbalance sort (69.63% discrete) **above** Rocket (82.92%) **above** best
+    (84.61%) — exactly inverted — and the linear model reproduces F to 3.1e-10 relative.
+  - **β·std ≈ 148 (Rocket's operating point):** best's true advantage +296.02 is outweighed by its
+    8.9× larger smoothing loss (530.44 vs 59.54) → net **−174.88**: the surrogate prefers the worse
+    order. Narrow wins are discounted toward σ = 0.5.
+  - **β·std ≈ 470:** the crossover where best finally wins — invariant across β ∈ {0.05, 0.3, 1.05},
+    which independently verifies that F sees only β·std. Rocket never gets there (β caps at 1.05).
+  - **Not the sigmoid's shape:** sigmoid, slow tanh, hard clip and a cusped |x|^0.5 shape give the
+    *identical* ranking at both scales. The bias belongs to the family `Σ_e ŵ_e g(Δ_e)`, not to σ.
+  - **Explicitly NOT established:** anything about the optimum's stability. A "hold" at very large
+    scale is a frozen optimizer (σ′ underflows; Rocket's own worse order holds equally, and a
+    scale-matched lr reproduces a −0.39 pp drop).
+- **why it matters:** it is the mechanism behind `findings.md` #3 and the reason rank-space discrete
+  refinement (H30/H35) recovers what no continuous lever does.
+- **artifacts:** `experiments/outputs/q01_surrogate_ranking.json` (primary), `q01_drift.json` +
+  `q01_scale_sweep.png`, `q01_F_vs_scale.png` (scale sweep, β analysis). **No writes to `results/`.**
+- **touches:** `findings.md` #3 (rewritten), `diagnosis.md` Step 1 + Selected-directions (scope of the
+  "surrogate aligned" table now stated), `roadmap.md` Q01 row, `todo_origin.md` TODO 4.
 
 ## Q02 — How far apart are Rocket solutions across seeds (no greedy warm-start)?
 - **status:** **answered (2026-08-03)** — `experiments/diagnostics/q02_seed_distance.py` →

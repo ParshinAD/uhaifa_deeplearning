@@ -2421,3 +2421,72 @@ They keep a hardcoded `ROOT` and will not run unmodified from that directory —
    the H36 promote decision, which rests on the committed `siftfirst_*.json` control runs.
 
 Closing commands for both gaps are in `experiments/critic_evidence_2026-08-09/README.md`.
+
+---
+
+## 2026-08-17 — Q01 re-answered after an adversarial review (Track B)
+
+**Trigger.** The researcher asked for a plain-language account of why runs started from the best
+solution lose score, and asked for the existing answer to be red-teamed first. It did not survive.
+
+**What the review broke** (critic, read-only, artifacts + independent recomputes):
+1. **"P\* is a critical point / local max of F" — REFUTED.** The probe's own `F_vs_scale` keeps
+   rising past P\* (14,745.7993 → 14,745.8677 at std 51,021 → 100,000). F has no finite-scale
+   maximum; its supremum is the discrete ceiling. P\*'s std ≈ 53,626 is a hyperparameter of the
+   spacing optimizer (`SPACING_ITERS`/`SPACING_LR`), not a property of the graph, and P\* was never
+   archived.
+2. **"Adam HOLDS 84.6147% from P\* ⇒ the optimum is a stable attractor" — REFUTED (non-discriminative
+   test).** Controls: Rocket's own *worse* order also holds at std 53,626 (82.9161 → 82.9167); the
+   best order at an *arbitrary* spacing also holds (84.6147 → 84.6146); and with a scale-matched
+   step (lr = 19.02 at std 53,626) the same point **drops 0.389 pp**, comparable to the 0.430 pp
+   drop at std 141. At that scale >99.99% of edges have |β·Δ| > 37, σ′ underflows, and every
+   configuration is frozen. The test measured a frozen optimizer.
+3. **"F(P\*) − F(Rocket) = +307.3" — 96% a restatement of the discrete gap** (296.017 of 307.271),
+   compared across std 53,626 vs 141. Rescaling Rocket's own order to std 53,626 buys +11.3 for free.
+4. **"crossover at std ≈ 459" — a logspace grid node.** Also the `diagnosis.md` row "std 459 →
+   F ≈ 14,439 / diff 0" contradicted its own artifact (14,485.64 / +47.1), and four values in that
+   table had no artifact at all.
+5. **Mechanism "GD flees a high-loss point" — not supported.** Across the scale sweep the drop is
+   monotone in `lr·T/std` over six decades and *anti*-correlated with local steepness `‖∇F‖·std`.
+
+**The new measurement** (`experiments/diagnostics/q01_surrogate_ranking.py` →
+`experiments/outputs/q01_surrogate_ranking.json`; connectome, float64, even spacing for every order):
+
+| regime | result |
+|---|---|
+| β·std → 0 | F = Ŵ/2 − (β/4)⟨c,P⟩ + O((β·std)³); linear model exact to **3.1e-10** rel. at std 0.001. Ranking **inverted**: imbalance sort (69.63%) > Rocket (82.92%) > best (84.61%) |
+| β·std ≈ 148 (operating) | best ceiling 14,745.87 / F 14,215.43 / smoothing loss **530.44**; Rocket 14,449.86 / **14,390.31** / 59.54. **+296.02 − 470.90 = −174.88** → the surrogate prefers the worse order |
+| β·std ≈ **470** | crossover, log-interpolated on a 61-point grid: std 9,403.3 / 1,565.3 / 447.9 at β = 0.05 / 0.30 / 1.05 → **β·std = 470.2 / 469.6 / 470.3**. β-invariance independently verifies that F sees only β·std |
+| shape check | sigmoid, `tanh(x/10)`, hard clip (H11's form, M=5), cusp `\|x\|^0.5`: **all four give the identical ranking** at std 0.01 and at std 141 |
+
+The shape check falsified a prediction made before running it (that a surrogate non-differentiable
+at 0 would break the small-scale degeneracy — it does not; distance-weighting, not smoothness, is
+what favours the imbalance sort).
+
+**Conclusion now recorded.** The plateau is a property of the relaxation's **scale**: at the
+achievable β·std the surrogate does not rank the better order higher, so no local gradient step
+points toward it. Nothing here concerns the optimum's stability, and that clause is withdrawn from
+`findings.md` #3 rather than inverted. Finding #3's headline changed from "surrogate aligned →
+optimization gap" to "misaligned at the achievable scale" — the old alignment table is retained but
+its scope (each order granted its *own* optimal spacing) is now stated.
+
+Docs rewritten to carry only the current answer: `diagnosis.md` § Q01 + Step 1 + Selected
+directions, `findings.md` #3, `questions.md` Q01, `roadmap.md` Q01 row, `todo_origin.md` TODO 3/4.
+
+**Reproduce** (env `allen`, repo root):
+```
+PYTHONPATH=src python experiments/diagnostics/q01_surrogate_ranking.py   # ~1 min
+```
+
+**Also fixed here (critic findings on the in-flight A-INIT work):**
+- `src/mfas/experiments/A_INIT.py` was **untracked** while eight `results/*A_INIT*.json` recorded
+  `git_commit = eb769e4…+dirty` — the runs were not reproducible from the logged commit
+  (invariant #5). The module is committed in this commit; the screen JSONs predate it and their
+  `+dirty` marker is accurate, so the screen will be re-stated against this commit when microns
+  s999 lands and the A-INIT log entry is written.
+- **Systemic comparator defect (open, not fixed here):** `eval/run_variant.py:72` computes
+  `config_hash` from `(algo, dataset)` only, so `eval/aggregate.py` (frozen) silently averages runs
+  at different epoch budgets — microns `baseline_passthrough` at 20k and 80k share
+  `config_hash = c2f06fd1728a`. Every comparison must additionally filter on `n_epochs_done`.
+  This produced a real error during the A-INIT screen (microns baseline 83.0704 instead of 83.1168,
+  Δ inflated ~7×), caught before it was reported.

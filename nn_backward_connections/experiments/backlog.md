@@ -519,7 +519,7 @@ sharper diagnosis than Phase-3's "basin not dynamics" inference:
 1. **OPTIMIZATION-GAP, not surrogate-misalignment.** best's fixed order out-surrogates Rocket's
    converged solution at *every* β (Δsurrogate +238 to +1,153). The sigmoid surrogate correctly
    ranks the better order above Rocket's — the optimizer fails to reach/hold it.
-2. **best is not a holdable attractor.** Initialising Rocket *at* the 84.61% order and running it
+2. **best is not held by gradient flow at the scales tried.** Initialising Rocket *at* the 84.61% order and running it
    collapses to ~82.9% under cyclic AND constant β, dipping through 76–79% first. The **cyclic
    schedule that re-melts β→0.05** demonstrably destroys good orders.
 3. **init→plateau is flat on connectome** (82.87–82.93% over inits spanning 36–69%): better-init-alone
@@ -541,8 +541,8 @@ sharper diagnosis than Phase-3's "basin not dynamics" inference:
   *why* gradient flow drifts off best (scale blow-up saturating σ, surrogate≠discrete in the forward).
 
 **Honest ceiling read (applies to all H16+).** Because a perfect init is not *reachable* by gradient
-flow from a generic start (⚠ *corrected by Q01: it IS holdable at its own scale — the "collapse" was
-an even-spacing artefact; the barrier is reachability, not stability — see `diagnosis.md` § Q01*) and
+flow from a generic start (mechanism: at the achievable β·std the surrogate ranks the better order
+lower — see `diagnosis.md` § Q01) and
 the gap is a distributed reordering with no tie-slack, **a large share of the 1.69 pp may be
 irreducible to continuous optimization** and genuinely require discrete refinement (the paper's Crane
 MIP). Each entry below states honestly *why it might still beat 82.93%* and roughly *how much* —
@@ -1704,3 +1704,68 @@ Opened by the S1/S2 sizing gate (`experiments/log.md` 2026-08-09; probe
   3. A monotone best-by-oracle refinement "beating the incumbent" is near-tautological — the real
      test is magnitude vs seed noise on ≥3 seeds, and the wall-clock cost.
 - **status: open** — promoted by the sizing gate, not yet run as a variant cycle.
+
+---
+
+# Phase 6.4 backlog (A-INIT) — the initialization SCALE axis (2026-08-15)
+
+Opened by the roadmap's `A-INIT` (TODO 5). The roadmap listed it as **low priority, "doubly
+discouraged"**; the prototype gate **falsified that prior** on both proxies. Theory derived first,
+then measured: `experiments/proto_ainit_scale.py` → `experiments/outputs/proto_ainit_scale.json`,
+`proto_ainit_theory.png`, `proto_ainit_scale.png`.
+
+## A-INIT — very tight position initialization (`src/mfas/experiments/A_INIT.py`, std = 1e-4)
+- **One-line hypothesis:** shrinking the paper's `N(0,1)` init to `std = 1e-4` — nothing else
+  changed — beats `baseline_passthrough` on the exact metric AND removes its seed variance,
+  because at small `beta*std` the gradient collapses to the weight-imbalance vector.
+- **Theory (derived, then verified numerically).** With `sigma(x) = 1/2 + x/4 - x^3/48 + O(x^5)`
+  and `c_k = out_w_hat(k) - in_w_hat(k)`:
+
+      F(P) = W_hat/2 - (beta/4)<c,P> - (beta^3/48) sum_e w_hat_e D_e^3 + O((beta*D)^5)
+      grad_k F = -(beta/4) c_k + O((beta*std)^2)
+
+  Every *pairwise* (who-precedes-whom) term is suppressed as **(beta*std)^2**. Measured
+  log-log slope of the residual: **2.006** (mouse) / **1.996** (hard synthetic); predicted 2.
+  `cos(grad F, -c) = 1.000000` at `beta*std = 1e-6`. This is Q01's scale-blindness seen from the
+  gradient side rather than from `F`.
+- **Mechanism (measured, not assumed).** Because the small-scale gradient is a *constant vector*,
+  Adam (which normalizes per coordinate) keeps only `sign(c)`: the cloud splits into the two
+  imbalance blocks — the `sign(c)` split explains **96.5%** (mouse) / **93.2%** (synthetic) of
+  position variance after 20 steps — and then refines within blocks as the cubic term wakes up.
+  So Rocket **self-warm-starts from the imbalance signal** (the quantity GreedyAbs ranks on)
+  instead of spending steps undoing an uninformative random draw. The init is *forgotten*:
+  Spearman(final, init) = +0.03 / -0.02 at std <= 1e-4 vs +0.14 / +0.12 at std = 1, and
+  Spearman(final, -c) = +0.67 / +0.75.
+- **Prototype evidence (3 seeds, Rocket only, exact oracle):**
+
+  | proxy | std<=1e-4 | baseline std=1 | delta |
+  |---|---|---|---|
+  | mouse | **92.4359 ± 0.0000** | 92.1451 ± 0.2616 | **+0.2908 pp** |
+  | hard synthetic | **73.8395 ± 0.0000** | 73.5348 ± 0.2302 | **+0.3047 pp** |
+
+  The sweep is FLAT over `std ∈ [1e-6, 1e-2]` and degrades monotonically above it
+  (std=10 → −0.68 / −1.44 pp; std=100 → −13.6 / −12.0 pp), i.e. the effect is the *scale*, not a
+  lucky constant. **Zero seed variance** is the theory's signature, not a fluke of 3 seeds.
+- **Interaction with our findings (measured in the same run).**
+  1. **It is an ALTERNATIVE to H02, never an addition.** Compressing H02's greedy warm start to
+     std=1e-4 lands on *exactly* the tight-random score (mouse 92.4359 for both) — the same
+     mechanism that forgets a random init forgets a good one. H02 at its native std (0.577) still
+     wins (92.4793), so the confirmed win #1 is not threatened.
+  2. **The sift erases the whole axis.** After the H35 under-relaxed sift the spread across ALL
+     inits collapses from 0.4375 → **0.0483 pp** (mouse) and 1.3712 → 0.3621 pp (synthetic).
+     This is a third, independent confirmation of the Phase-6 cross-cutting insight (the discrete
+     refiner does the work) — and it means A-INIT cannot help the **champion** pipeline.
+- **What it is worth, honestly.** A free (0 extra gradient steps, 0 wall-clock, no greedy peel)
+  improvement to the *baseline*, and a **determinism** property that no other variant has. It is
+  NOT a route to the 84.61% target: it lives entirely below the sift.
+- **Comparator:** `baseline_passthrough` at matched seeds (this is a baseline-level knob, so the
+  champion comparator does not apply). Report vs H02 as context.
+- **Leakage:** trivially safe — the init is a scaled Gaussian; it reads neither the graph nor the
+  oracle. Compute-matched by construction (same `epochs`, same draw, one scalar factor).
+- **status: prototype PASS, screen PAUSED at 8/9 runs** <!-- 2026-08-16 theory verified (slope
+  2.006/1.996); proxies +0.29/+0.30 pp with zero seed variance; falsifies the roadmap's "doubly
+  discouraged" prior and diagnosis.md Q01 insight #2's prediction that a tight init is worse.
+  Screen so far: connectome +0.0514 pp (n=3, gate 0.04) PASS, microns +0.0069 pp (n=2 of 3, gate
+  0.002) PASS-pending, mouse +0.3663 pp non-inferior. Paused on battery with microns s999
+  outstanding; resume state + the one command in experiments/ainit_RESUME.md. No log.md entry
+  until the screen is complete. -->

@@ -109,43 +109,41 @@ second large connectome from a different species — the conclusion is now suppo
 graphs and has been pressure-tested by an independent verifier and critic. Full evidence:
 `experiments/log.md` (H01–H13 Phase-3 cycles + Phase-5 H11r/H03r entries).
 
-## #3 — The Rocket↔best gap is an OPTIMIZATION-GAP that continuous methods alone cannot close (Phase 4)
-
-> **⚠ PARTIALLY REVISED by #4 (Phase 6, 2026-06-22).** The "irreducible … explaining why the
-> paper's discrete **Crane MIP** is required" framing is **too strong**. A cheap, leakage-safe
-> **full-range (global) exact-gain insertion sift** (H30, finding #4) recovers **~51% of the 1.69 pp
-> connectome gap with NO MIP** (82.93% → 83.78%). What still stands is the *bounded-local* clause:
-> H30's bounded W=10 sift recovers ~0 (reproducing the H22 kill), so the residual is genuinely
-> **long-range / global** — but global ≠ MIP. Independent prior art (Vahidi 2025, arXiv:2506.13799)
-> reaches the **full 84.61%** on this exact graph with cheap greedy + *bounded-span* insertion + SCC,
-> **no MIP/spectral/GNN** — so the gap is reachable by cheap combinatorial refinement, not only by the
-> 20-day Crane MIP. The continuous-only sub-claims of #3 (surrogate-aligned optimization-gap; Adam-on-σ
-> cannot *reach* the best order) are unaffected and remain valid.
-
-> **⚠ FURTHER CORRECTED by Q01 (Track B, 2026-08-01).** The "unholdable / not a *stable* attractor"
-> half of #3 was **wrong** — it rested on a mis-scaled probe. Started from the best order's true
-> surrogate-optimal spacing **P\*** (std≈53,626, a critical point ‖∇F‖≈5e-4 with F(P\*) > F(Rocket)
-> by +307), small-lr **and Rocket-default-lr** Adam **HOLD 84.6147% exactly**. The logged "collapse"
-> was a **scale artefact** — the probe used even spacing (std≈0.58, ~200× below the operating scale),
-> where the best *order* is a high-loss point GD correctly flees. The optimum is a **stable attractor
-> at its own scale**; the surviving barrier is **reachability**, not stability. Evidence:
-> `diagnosis.md` § Q01, `experiments/diagnostics/q01_drift_from_optimum.py`.
+## #3 — At its achievable scale the continuous relaxation ranks the better order LOWER, so no gradient lever reaches it
 
 **Claim.** Against a downloaded near-optimal ordering (`data/best_solution`, **84.6147%**, vs Rocket-only
-**82.93%** → gap **≈1.69 pp**), the gap is a true **optimization-gap, not a surrogate-misalignment**: the
-sigmoid surrogate *correctly ranks the near-optimal order higher than Rocket's converged solution at every
-β*. Yet the gap is **not recoverable by the Rocket class of continuous/gradient optimization** — across the
-diagnosis and two pre-registered Stage-B directions, no continuous lever closes it; it is a distributed
-reordering with no discretization slack, and is therefore largely **irreducible to continuous methods**
-(explaining why the paper's discrete Crane phase is required to go further).
+**82.93%** → gap **≈1.69 pp**), the barrier is **not** "the surrogate points the right way but the optimizer
+is too weak". At the scale optimization actually runs at, the surrogate points the **wrong way**: at a common
+scale of std ≈ 141 it ranks **Rocket's own 82.92% order above the 84.61% order**, across the entire cyclic
+range β ∈ [0.05, 1.05]. The better order becomes preferred only above **β·std ≈ 470**; Rocket operates at
+**β·std ≈ 148** and its schedule caps β at 1.05, so that regime is never entered. Consequently no
+continuous/gradient lever in the Rocket class closes the gap — confirmed across the diagnosis and two
+pre-registered Stage-B directions — while **rank-space discrete refinement does** (findings #4/#5 recover
+0.98 pp of the 1.69 pp with 0 gradient steps).
+
+**The decomposition that explains it** (`experiments/outputs/q01_surrogate_ranking.json`, std = 141,
+β = 1.05, even spacing for both orders; `F = ceiling − smoothing_loss`, ceiling = discrete score / max w):
+
+| order | ceiling | F | smoothing loss | F as % of ceiling |
+|---|---|---|---|---|
+| best (84.6147%) | 14,745.87 | 14,215.43 | **530.44** | 96.403% |
+| Rocket (82.9161%) | 14,449.86 | **14,390.31** | 59.54 | 99.588% |
+
+    best's true advantage +296.02 − best's extra smoothing loss 470.90 = net −174.88
+
+The better order wins many of its edges *narrowly*, and the surrogate discounts a narrow win toward 0.5;
+Rocket's order, being the surrogate's own optimum, holds wide margins on the heavy edges. Full mechanism,
+the three scale regimes and the shape-independence check: `diagnosis.md` § Q01.
 
 **Evidence (all from `experiments/outputs/diagnosis.json` + `results/*.json`; reproduce via
 `experiments/diagnostics.py` and the Stage-B repro commands in `log.md`):**
 
 | probe | result | implication |
 |---|---|---|
-| decisive surrogate (scale-fair) | best's order out-surrogates Rocket at **every** β (+238 … +1153) | surrogate aligned → **optimization-gap**, not misalignment |
-| drift probe (init AT best, **even spacing**) | collapses 84.61% → 82.75–83.03% — but a **scale artefact** (std≈0.58); from optimal spacing P\* it **HOLDS** (Q01) | best is **not reachable** by Adam-on-σ from a generic start (it IS holdable at its own scale) |
+| **surrogate ranking at a COMMON scale** (std=141, the operating point) | Rocket's order out-surrogates best across all β ∈ [0.05, 1.05]; net −174.88 at β=1.05 | **misaligned at the achievable scale** — no gradient step points toward the better order |
+| **crossover scale** (61-point grid, log-interpolated) | best takes over only at **β·std ≈ 470**, invariant across β ∈ {0.05, 0.3, 1.05}; Rocket runs at 148 | the aligned regime is a factor **3.2** away and the schedule cannot reach it |
+| surrogate ranking granting **each order its own optimal spacing** | best wins (+238 … +1153) | alignment holds only if the better order is *also* granted a much larger scale — not the situation optimization is in |
+| starting AT the best order (even spacing, std≈0.58) | loses 84.61% → 82.75–83.03% | at small β·std the gradient is the order-independent imbalance vector (cos ≥ 0.98 across three different starting orders) and Adam overwrites any input order |
 | init→plateau (connectome) | **flat** 82.87–82.93% across inits 36–69% | better-init-alone ceiling ≤0.06 pp (DIRECTION I down) |
 | gap structure | 7.5% of weight flips; Kendall-τ 0.61; **0 ties**, near-ties 0.03% | distributed reordering, **no discretization slack** |
 | H16 (DIRECTION O: monotone β) | connectome **−0.27 pp** vs baseline (KILL) | β-schedule change can't beat the tuned cyclic baseline |
@@ -156,12 +154,14 @@ The Stage-B negative results were obtained on a **purpose-built hard synthetic**
 a gap demonstrably exists. The Rocket-only best remains **H02 = 82.93% connectome (hardened, CI lower
 +0.0391 @ n=15) / 92.48% mouse**.
 
-**Why it matters.** It quantifies the continuous/discrete boundary for Rocket: of the ~1.69 pp Crane gap,
-continuous optimization recovers **≈0** beyond H02's warm-start (~0.05 pp). The surrogate is faithful; the
-barrier is the non-convex landscape — a near-optimal ordering is not **reachable** by Adam-on-σ from a
-generic start (though it IS a *stable* attractor at its own scale — see Q01), and rank/scale/schedule
-reparametrizations don't change the reachability barrier. This is the mechanistic reason
-the paper needs a discrete MIP (Crane) to surpass Rocket.
+**Why it matters.** It quantifies the continuous/discrete boundary for Rocket: of the ~1.69 pp gap,
+continuous optimization recovers **≈0** beyond H02's warm-start (~0.05 pp). The cause is now mechanical
+rather than vague: the surrogate scores an edge by a function of the two nodes' *distance*, so it charges a
+"smoothing loss" for every narrowly-won edge, and at the achievable β·std that charge (470.90) exceeds the
+better order's true advantage (296.02). Rank/scale/schedule reparametrizations move along this trade-off
+without escaping it — and four different per-edge shapes (sigmoid, slow tanh, hard clip, cusp) produce the
+*identical* ranking at both small and operating scale (`diagnosis.md` § Q01). What escapes it is leaving the
+per-edge-distance family altogether, which is exactly what the rank-space discrete sift does (#4/#5).
 
 **Corroboration — the gap is also irreducible to *bounded-local* discrete refinement (H22 sizing,
 2026-06-22).** Sizing the Rocket↔best orientation flips by rank-distance (`experiments/size_localsearch.py`
