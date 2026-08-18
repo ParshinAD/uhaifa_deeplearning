@@ -2033,3 +2033,93 @@ paid exactly for the fine-scale structure the surrogate cannot resolve, and it w
 #4's unexplained "graph-dependent magnitude (~11×)" caveat. **Honest scope: n = 2 graphs, and mouse
 does NOT fit** (resolution 2.1 ranks yet +0.4225 pp sift gain — though mouse is tiny and
 near-saturated, σ = 0.26 pp). Hypothesis-grade, not a law; a third large connectome would test it.
+
+---
+
+# Phase 6.7 — A-SUB and A-ALT prototype gates (2026-08-18)
+
+Both are the researcher's TODO 2 and TODO 3, run as short gates on the primary dataset from
+orders already on disk (no Rocket run needed). Artifacts: `experiments/outputs/proto_asub_aalt.json`,
+`experiments/outputs/proto_asub_aalt_control.json`; script `experiments/proto_asub_aalt.py`.
+
+## A-SUB — "SGD on part of the neurons" (TODO 2): the DISCRETE reading PASSES
+
+**The continuous reading was NOT run, and that is a considered decision, not an omission.**
+Updating a random subset of position *coordinates* per gradient step is a pure dynamics knob:
+block-coordinate ascent has the SAME critical points as full-gradient ascent on a smooth
+objective, so it changes the path, not the fixed set — precisely the class that finding #2 found
+inert across 8 mechanisms, and the closest prior test (H13, stochastic edge subsampling) cost
+−0.84 pp on connectome. It would be a cheap falsifier, never a candidate.
+
+**The discrete reading is different and it wins.** H35's shipped rebuild moves EVERY mover a
+fraction `alpha` toward its exact-gain target. The stochastic recast moves each mover FULLY with
+probability `p`. The displacement fields agree in expectation at `alpha = p`
+(`E[key_i] = rank_i + p*(target_i - rank_i)`), so the two are directly comparable — ⚠ but only at
+the KEY level: the rank vector is `argsort(argsort(key))`, a nonlinear map, so this is what makes
+`p` and `alpha` the same axis, not a proof they are the same algorithm.
+
+Measured on connectome from a fixed pre-sift Rocket order (82.9314%), 22 sweeps, `k_full=6`:
+
+| rebuild | best pct | movers left | wall |
+|---|---|---|---|
+| Jacobi `alpha=1.0` (H30) | 83.8086 | 5,162 | 120 s |
+| under-relaxed `alpha=0.7` (**H35, shipped**) | 83.8931 | 1,386 | 81 s |
+| **stochastic `p=0.7`** (n=5 seeds) | **83.9047 ± 0.0009** | **64–173** | **63 s** |
+| stochastic `p=0.5` (n=2) | 83.8999 | 359–448 | 63 s |
+
+**Δ vs the shipped H35 rebuild = +0.0116 pp, all 5 seeds above it, σ = 0.0009 (~13σ), at ~20%
+LESS wall-clock.** Two pre-registered predictions were FALSIFIED: S1 ("stochastic matches
+deterministic within 0.01 pp") and S3 ("stochastic does not beat deterministic"). The
+expectation identity does not carry over to the dynamics.
+
+**Mechanism (supported by the mover counts, the direct signature).** The Jacobi limit cycle H35
+diagnosed is caused by *simultaneity* — conflicting nodes leapfrog because they all move at once.
+Under-relaxation damps the amplitude but keeps every node moving, so the oscillation survives at
+reduced size (1,386 movers left). Randomisation instead breaks the *symmetry* of each conflict:
+when two nodes want to swap, only one moves, and the conflict resolves. On the already-sifted
+order the stochastic rebuild reaches **0 movers — a true 1-opt fixed point** — where `alpha=0.7`
+still leaves 74. For a cycle caused by simultaneity, breaking simultaneity beats damping it.
+
+**status: PROTOTYPE PASS -> promote to a variant cycle (H39).** Needs: all 3 datasets, ≥3 seeds
+through the frozen runner, comparator = **H35 at matched seeds** (this replaces H35's rebuild,
+so H35 is the incumbent), plus the `p` sensitivity. Note it also fixes the microns
+under-convergence that H35's entry lists as an open caveat, since it converges far faster.
+
+## A-ALT — alternate discrete <-> gradient (TODO 3): weak positive, needs seeds
+
+`dr_tmp/kick_gate.py` existed but had **never been run** (no artifact). Q01's prediction is now
+confirmed for the first time on a *sifted* order (all previous drift probes used the reference
+best order). Kicking the 83.9035% H35 order with 150 Adam steps:
+
+| surrogate | std | beta*std | after kick | drift |
+|---|---|---|---|---|
+| sigmoid | 141 | 148 | 83.7591 | **−0.1444** |
+| sigmoid | 500 | 525 | 83.8679 | −0.0356 |
+| sigmoid | 1500 | 1575 | 83.8961 | −0.0074 |
+| H38 one-sided | 141 | 148 | 83.8468 | −0.0567 |
+| H38 one-sided | 500 | 525 | 83.8958 | −0.0077 |
+| H38 one-sided | 1500 | 1575 | 83.9033 | −0.0002 |
+
+**The Q01 vise is real and quantified:** at the operating scale the sigmoid pulls a good order
+DOWN by 0.14 pp; at a scale above the crossover it barely moves anything (the gradient is dead).
+H38's one-sided surrogate drifts **2.5× less** at the operating scale, exactly as its alignment
+ratio predicts — but it still drifts, so pre-registered A3 FAILED.
+
+**Attribution (the control the H36 critic taught us to run first).** A monotone best-by-oracle
+re-sift beats its input almost tautologically, so the kick must be compared against *the same
+re-sift with no kick*:
+
+| arm | result | net vs the 83.9035% input |
+|---|---|---|
+| plain re-sift, NO kick (control) | 83.9067 | +0.0032 pp |
+| H38 kick @ std 500 -> re-sift | 83.9246 | +0.0211 pp |
+| **attributable to the gradient kick** | | **+0.0179 pp** |
+
+So alternation is not merely "more sift" — but note what it structurally is: the kick *lowers*
+the score and the re-sift repairs it, i.e. a **perturb-and-repair (ruin & recreate) move**, the
+same family as **H31**, which was KILLED (Δ vs H30 = −0.0008 pp at ~1.9× wall). The distinction
+is that the perturbation here is gradient-guided rather than random, and that does appear to
+matter — but the effect is **single-seed, single-config, and ~1/6 of A-SUB's**.
+
+**status: open, LOWER priority than A-SUB.** Before building: ≥3 seeds × ≥2 kick configs, and
+the honest comparator is H31's ruin-and-recreate, not the raw incumbent.

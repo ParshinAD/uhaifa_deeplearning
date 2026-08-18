@@ -1,0 +1,221 @@
+{
+  "config": {
+    "dataset": "connectome",
+    "presift_positions": "results/20260621T090127Z-H02-connectome-s42-implement-059689_positions.npy",
+    "sifted_positions": "results/20260622T213942Z-H35-connectome-s42-implement-8f52fb_positions.npy",
+    "asub": {
+      "k_full": 6,
+      "max_sweeps": 22,
+      "alphas": [
+        1.0,
+        0.7
+      ],
+      "ps": [
+        0.7,
+        0.5
+      ],
+      "seeds": [
+        42,
+        123
+      ]
+    },
+    "aalt": {
+      "scales": [
+        141.0,
+        500.0,
+        1500.0
+      ],
+      "kick_steps": 150,
+      "lr": 0.05,
+      "beta": 1.05,
+      "grad_clip": 1.0,
+      "resift_sweeps": 22,
+      "k_full": 2,
+      "alpha": 0.7
+    }
+  },
+  "git_commit": "9e120edf7454193514d0ce1b7cf92e3b8feb10f3",
+  "inputs": {
+    "presift_pct": 82.93135394825094,
+    "sifted_pct": 83.90348037815582
+  },
+  "asub": {
+    "alpha_1.0": {
+      "best_pct": 83.80864389628772,
+      "movers": [
+        17623,
+        23179,
+        18820,
+        15647,
+        13381,
+        11687,
+        10500,
+        9535,
+        8488,
+        7938,
+        7267,
+        6824,
+        6427,
+        6140,
+        5900,
+        5688,
+        5492,
+        5381,
+        5287,
+        5254,
+        5185,
+        5162
+      ],
+      "final_movers": 5162,
+      "wall_s": 120.29571795463562
+    },
+    "alpha_0.7": {
+      "best_pct": 83.89307766453639,
+      "movers": [
+        17623,
+        23179,
+        18820,
+        15647,
+        13381,
+        11687,
+        10500,
+        8648,
+        8651,
+        7927,
+        6964,
+        6152,
+        5485,
+        4742,
+        3898,
+        3397,
+        2897,
+        2442,
+        2018,
+        1799,
+        1622,
+        1386
+      ],
+      "final_movers": 1386,
+      "wall_s": 81.42018675804138
+    },
+    "p_0.7": {
+      "per_seed_pct": [
+        83.90557523654064,
+        83.9039217777016
+      ],
+      "mean_pct": 83.90474850712113,
+      "std_pct": 0.001169171957501004,
+      "final_movers": [
+        122,
+        115
+      ],
+      "movers": [
+        17623,
+        23179,
+        18820,
+        15647,
+        13381,
+        11687,
+        10500,
+        7937,
+        6064,
+        4703,
+        3678,
+        2784,
+        2100,
+        1454,
+        1142,
+        827,
+        650,
+        475,
+        327,
+        251,
+        171,
+        122
+      ]
+    },
+    "p_0.5": {
+      "per_seed_pct": [
+        83.90036910784396,
+        83.89939802884324
+      ],
+      "mean_pct": 83.8998835683436,
+      "std_pct": 0.0006866565464772971,
+      "final_movers": [
+        448,
+        359
+      ],
+      "movers": [
+        17623,
+        23179,
+        18820,
+        15647,
+        13381,
+        11687,
+        10500,
+        7792,
+        6178,
+        5137,
+        4082,
+        3309,
+        2656,
+        2252,
+        1803,
+        1490,
+        1109,
+        887,
+        721,
+        605,
+        518,
+        448
+      ]
+    }
+  },
+  "aalt": {
+    "sigmoid_std141.0": {
+      "after_kick_pct": 83.75908069215552,
+      "drift_pp": -0.1443996860002983,
+      "beta_std": 148.05
+    },
+    "sigmoid_std500.0": {
+      "after_kick_pct": 83.86787971533117,
+      "drift_pp": -0.03560066282464902,
+      "beta_std": 525.0
+    },
+    "sigmoid_std1500.0": {
+      "after_kick_pct": 83.89608872522165,
+      "drift_pp": -0.007391652934174431,
+      "beta_std": 1575.0,
+      "resift_pct": 83.91949005897838,
+      "net_vs_input_pp": 0.016009680822563155
+    },
+    "H38_asym_std141.0": {
+      "after_kick_pct": 83.84680467647787,
+      "drift_pp": -0.05667570167794622,
+      "beta_std": 148.05
+    },
+    "H38_asym_std500.0": {
+      "after_kick_pct": 83.89576423690691,
+      "drift_pp": -0.007716141248906183,
+      "beta_std": 525.0,
+      "resift_pct": 83.9245601888961,
+      "net_vs_input_pp": 0.021079810740275207
+    },
+    "H38_asym_std1500.0": {
+      "after_kick_pct": 83.90329666050704,
+      "drift_pp": -0.00018371764878111208,
+      "beta_std": 1575.0,
+      "resift_pct": 83.91458455916151,
+      "net_vs_input_pp": 0.011104181005691771
+    }
+  },
+  "prediction_check": {
+    "S1_stochastic_matches_deterministic_within_0.01pp": false,
+    "S2_both_break_the_limit_cycle": true,
+    "S3_stochastic_does_not_beat_deterministic": false,
+    "A1_sigmoid_drifts_down_at_operating_scale": true,
+    "A2_sigmoid_frozen_at_large_scale": true,
+    "A3_h38_does_not_drift_down_at_operating_scale": false,
+    "A4_no_config_beats_the_input_after_resift": false
+  }
+}
