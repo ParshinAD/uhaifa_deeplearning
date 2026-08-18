@@ -1,0 +1,4 @@
+  late_ramp_lam0.3 pct=82.6084  delta=-0.3077 pp  std=   86.9  res= 475.1 ranks  112s
+  late_ramp_lam1.0 pct=82.0626  delta=-0.8535 pp  std=   66.0  res= 625.0 ranks  115s
+  fixed_bf280_lam1 pct=81.4468  delta=-1.4693 pp  std=   73.1  res= 564.8 ranks  117s
+saved

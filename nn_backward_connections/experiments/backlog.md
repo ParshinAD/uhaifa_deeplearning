@@ -1946,3 +1946,90 @@ suggests several moves that are NOT surrogate swaps and have never been tried he
 prototype, then connectome AND microns, then the controls in
 `surrogate_gate.REQUIRED_CONTROLS`. Do not skip the mirror and beta-rescale controls — they are
 what turned H38 from "a shape that wins" into "the direction of the asymmetry is the mechanism".
+
+---
+
+# Phase 6.5 backlog (A-MBAND) — the multi-band surrogate (2026-08-18)
+
+Opened directly from the Q01 mechanism (`diagnosis.md` § Q01): the surrogate's resolution on the
+connectome is ~293 ranks out of 136,648, so it is structurally blind to the narrow wins the
+near-optimal order is built from. This is the reformulation of the roadmap's `A-SURR` (TODO 7) that
+survived the earlier shape analysis — it changes the number of length scales, not the shape.
+
+## A-MBAND — add a second, rank-scale sigmoid band on top of the existing one
+- **One-line hypothesis:** `F = Σ ŵ σ(β_c Δ) + λ·Σ ŵ σ(β_f Δ)` with `β_f = ρ·n/(√12·std(P))`
+  (half-width = 1/ρ *ranks*, hence scale-free) lets the coarse band keep doing long-range transport
+  while the fine band supplies the reward for narrow wins the coarse band discounts to ~0.5.
+- **status: KILLED by prototype gate (2026-08-18)** — 12 arms, all negative, monotone in λ.
+
+**Gate 1 — ranking: PASS.** At the operating scale (std = 141, β = 1.05, even spacing) the
+single-band surrogate ranks Rocket's 82.92% order **above** the 84.61% order by −174.88. Adding the
+fine band **flips it**:
+
+| half-width | λ = 0.3 | λ = 1.0 | λ = 3.0 |
+|---|---|---|---|
+| 20 ranks | −133.49 | −36.91 | +239.04 |
+| 3.3 ranks | −102.84 | **+65.27** | **+545.57** |
+| 1.0 rank | −91.72 | **+102.32** | **+656.73** |
+| 0.33 rank | −86.82 | **+118.67** | **+705.76** |
+
+This is the first continuous objective in the project that prefers the better order **at Rocket's
+own operating scale**, with no rescaling. It was not enough.
+
+**Gate 2 — training: FAIL, decisively.** connectome, 20k epochs, seed 42, vs the λ=0 control
+(82.9161, which reproduces `baseline_passthrough`):
+
+| arm | pct | Δ vs control | final std | resulting resolution |
+|---|---|---|---|---|
+| control (λ=0) | **82.9161** | — | **165.4** | **249 ranks** |
+| ρ=1.0, λ=0.3 | 81.7728 | −1.1432 | 94.5 | 437 |
+| ρ=0.3, λ=1.0 | 81.3424 | −1.5737 | 94.6 | 437 |
+| ρ=1.0, λ=3.0 | 80.8884 | −2.0277 | 80.7 | 512 |
+| ρ=3.0, λ=3.0 | 80.4852 | −2.4308 | 84.5 | 488 |
+| late ramp (λ=0.3 from 50%) | 82.6084 | −0.3077 | 86.9 | 475 |
+| late ramp (λ=1.0 from 50%) | 82.0626 | −0.8535 | 66.0 | 625 |
+| fixed β_f = 280 (non-adaptive) | 81.4468 | −1.4693 | 73.1 | 565 |
+
+**Measured failure mechanism — the intervention is self-defeating.** In *every* arm the position
+scale collapses (165 → 66–107), so the effective resolution gets **worse** (249 → 437–625 ranks),
+which is the opposite of the intended effect. The two controls localise the cause: it is **not** the
+adaptive `β_f` self-amplifying (fixing `β_f = 280` collapses the scale just as hard), and it is
+**not** an early-training transient (ramping λ in only after 50% still collapses it). The cause is
+the fine band's gradient magnitude: `β_f/β_c ≈ 267`, so for any node with a short-range neighbour the
+fine band dominates the per-coordinate Adam step, the node's position is set by a local tug-of-war
+instead of by global structure, and the coarse band's "spread out" signal never accumulates.
+
+**What this buys us (the reason the kill is worth its compute).** It is the sharpest available
+evidence for finding #3: even when the continuous objective is **repaired so that it demonstrably
+ranks the better order higher**, optimizing it is *worse* than optimizing the misaligned one.
+Correct ranking is necessary but not sufficient — the binding constraint is the gradient dynamics,
+not the objective's preference. This is strictly stronger than H34's result (which showed a
+non-vanishing gradient estimator still loses).
+
+**Revival condition.** Only if a mechanism is found that adds fine-scale reward **without** letting
+its gradient dominate the coarse band — e.g. per-band gradient normalization, or applying the fine
+band to a *disjoint* parameter (a residual offset) rather than to the same positions. The λ→0 sliver
+(λ ≤ 0.03) is untested but the 12-arm trend is monotone toward the control, so no positive region is
+predicted there.
+
+**Reproduce** (env `allen`, repo root; ~18 min sweep + ~6 min rescue on MPS):
+```
+PYTHONPATH=src python experiments/proto_amband.py --stage resolution   # the pathology audit
+PYTHONPATH=src python experiments/proto_amband.py --stage ranking      # gate 1
+PYTHONPATH=src python experiments/proto_amband.py --stage sweep --datasets connectome   # gate 2
+```
+Artifacts: `experiments/outputs/proto_amband.json` (`resolution`, `ranking`, `sweep`, `rescue`),
+logs `experiments/amband_sweep.log`, `experiments/amband_rescue.log`.
+
+### Side result kept from Stage A — resolution predicts where the sift pays
+
+| graph | n | converged std | resolution | H30 sift gain (finding #4) |
+|---|---|---|---|---|
+| connectome | 136,648 | 141.0 | **292.6 ranks** | **+0.847 pp** |
+| microns | 67,534 | 908.4 | **22.5 ranks** | **+0.078 pp** |
+
+Resolution ratio 13.0× vs sift-gain ratio 10.9× — consistent with the idea that the discrete sift is
+paid exactly for the fine-scale structure the surrogate cannot resolve, and it would explain finding
+#4's unexplained "graph-dependent magnitude (~11×)" caveat. **Honest scope: n = 2 graphs, and mouse
+does NOT fit** (resolution 2.1 ranks yet +0.4225 pp sift gain — though mouse is tiny and
+near-saturated, σ = 0.26 pp). Hypothesis-grade, not a law; a third large connectome would test it.

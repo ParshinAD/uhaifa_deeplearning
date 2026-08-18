@@ -2876,3 +2876,61 @@ for S in 42 123 999; do for D in mouse microns; do \
   python -m eval.run_variant --exp H38 --dataset $D --seed $S --out results/ \
     --role implement --device auto; done; done
 ```
+
+---
+
+## 2026-08-18 — A-MBAND multi-band surrogate: KILLED by prototype gate (Track A)
+
+**Origin.** Proposed by the researcher after the Q01 mechanism was established: if one blur width
+cannot serve both a 1-rank pair and a 100,000-rank pair, use two. This is the one reformulation of
+`A-SURR` (TODO 7) that the earlier shape analysis did not already cover — it changes the number of
+length scales rather than the shape of a single one.
+
+**Gate 1 (ranking) PASSED.** With a fine band at half-width ≤ ~3 ranks and λ ≥ 1, the surrogate
+ranks the 84.61% order above Rocket's 82.92% order at Rocket's own operating scale (+65 … +706,
+vs −174.88 for the single band). First continuous objective in the project to do so without
+rescaling.
+
+**Gate 2 (training) FAILED on all 12 arms**, monotone in λ: best −0.3077 pp (late-ramped λ=0.3),
+worst −2.4308 pp. Full table in `backlog.md` § A-MBAND.
+
+**The failure mechanism is measured, not guessed.** Position scale collapses in every arm
+(control 165.4 → 66–107), so the *effective resolution gets worse* (249 → 437–625 ranks) — the
+intervention destroys the very thing it was built to improve. Two controls localise the cause:
+- fixing `β_f = 280` (non-adaptive, cannot self-amplify) still collapses the scale → not a
+  feedback loop between `β_f` and `std`;
+- ramping λ in only after 50% of training still collapses it → not an early transient.
+The cause is gradient magnitude: `β_f/β_c ≈ 267`, so any node with a short-range neighbour has its
+Adam step decided by the fine band alone, and the coarse band's global spreading signal never
+accumulates.
+
+**Why this kill is worth its compute (~25 min MPS).** It converts finding #3 from "the surrogate is
+misaligned at the achievable scale" into something sharper: **repairing the alignment does not
+help — it hurts.** Correct ranking is necessary but not sufficient; the binding constraint is the
+gradient dynamics. Strictly stronger than H34 (non-vanishing gradient estimator still loses), and it
+closes the "maybe a better objective would work" line of enquiry with a direct experiment rather
+than an argument.
+
+**Side result (kept, hypothesis-grade).** The Stage-A resolution audit measured, at each graph's
+converged *Rocket positions* (not rank vectors — the H35 artifacts store ranks and were rejected by
+a guard):
+
+| graph | n | std | resolution | H30 sift gain |
+|---|---|---|---|---|
+| connectome | 136,648 | 141.0 | 292.6 ranks | +0.847 pp |
+| microns | 67,534 | 908.4 | 22.5 ranks | +0.078 pp |
+| mouse | 148 | 21.5 | 2.1 ranks | +0.423 pp |
+
+Resolution ratio (connectome/microns) 13.0× vs sift-gain ratio 10.9× — a candidate explanation for
+finding #4's unexplained "graph-dependent magnitude (~11×)". **mouse does not fit**, so this is n=2
+and hypothesis-grade only.
+
+**Reproduce:**
+```
+PYTHONPATH=src python experiments/proto_amband.py --stage resolution
+PYTHONPATH=src python experiments/proto_amband.py --stage ranking
+PYTHONPATH=src python experiments/proto_amband.py --stage sweep --datasets connectome
+```
+Artifacts: `experiments/outputs/proto_amband.json`, `experiments/amband_{sweep,rescue}.log`.
+No large-graph variant cycle was spent: the kill is entirely at the prototype gate, and nothing was
+written to `results/`.
