@@ -1916,3 +1916,33 @@ connectome.
   prime suspect is that `M` and `T` are absolute constants in `z` units while microns is ~4×
   denser (155 vs 41 average degree) and runs 80k epochs, so a size/density-scaled `(M, T)` may be
   required; any re-tuning **must not** be selected on microns and then reported on microns.
+
+---
+
+# Optimizer-design idea carried forward from H38 (2026-08-17)
+
+**A-VIOL — "spend gradient only on violated constraints" as a general optimizer principle.**
+
+H38 is a *specific* surrogate, but the reason it works is not specific to it: **the gradient
+budget should go to edges that are currently WRONG, not to widening margins that are already
+won.** The sigmoid spends its gradient symmetrically around `Delta = 0` — half of it defending
+edges that are already feedforward. Measured at Rocket's converged connectome order, only
+**20.6%** of the sigmoid's gradient mass sits on feedback edges (which carry 17.1% of `w_hat`);
+the one-sided form puts **100%** there, and the mirror form (0%) loses −2.889 pp. That ordering
+0% → 20.6% → 100% against −2.889 → 0 → +0.367 pp is the cleanest single statement of the effect
+we have.
+
+This is a *constraint-satisfaction* view of MFAS rather than a smooth-relaxation view, and it
+suggests several moves that are NOT surrogate swaps and have never been tried here:
+
+| id | idea | note |
+|---|---|---|
+| **A-VIOL-1** | **Density-scaled `(M, T)`** — the open follow-up that decides whether H38 generalizes. `M`/`T` are absolute constants in `z` units, but microns is ~4× denser (155 vs 41 avg degree) and runs 80k epochs; a margin defined relative to the local `Delta` distribution (e.g. a quantile of `|Delta|` over incident edges) may fix the −0.669 pp microns regression. **Must not be tuned on microns and then reported on microns.** |
+| A-VIOL-2 | **Violation-weighted sampling** rather than a one-sided shape: keep the sigmoid but sample/weight the loss toward currently-violated edges. Distinct from the killed H06 (weight-aware reweighting, which used *input* weights, not the *current* violation state) and from H13 (uniform random subsampling, −0.84 pp). |
+| A-VIOL-3 | **Margin as a schedule**, not a constant: anneal `M` the way `beta` is annealed, so the "already won" set is defined loosely early and tightly late. Cheap; composes with the existing cyclic schedule. |
+| A-VIOL-4 | **Compose with the discrete refiner.** Everything above is pure Rocket. H38's order has never been fed to the H35 under-relaxed sift. Since findings #4/#5 show the sift does most of the work, the question "does a +0.37 pp better starting order survive the sift, or does the sift erase it?" is the highest-value cheap experiment in this group — and A-INIT already showed the sift *can* erase an init advantage (spread 0.4375 → 0.0483 pp on mouse). |
+
+**Gate for all of these:** `mfas.analysis.surrogate_gate` (cheap checks first), then the proxy
+prototype, then connectome AND microns, then the controls in
+`surrogate_gate.REQUIRED_CONTROLS`. Do not skip the mirror and beta-rescale controls — they are
+what turned H38 from "a shape that wins" into "the direction of the asymmetry is the mechanism".
