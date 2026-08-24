@@ -1,0 +1,7 @@
+=== baseline_passthrough microns s42 80k ===
+2026-06-22 02:31:10,841 INFO mfas.run_variant [20260621T232155Z-baseline_passthrough-microns-s42-implement-c2f06f] DONE  score=12,800,464.0000  pct=83.1169%  epochs=80000  wall=555.2s
+=== baseline_passthrough microns s123 80k ===
+2026-06-22 02:40:20,908 INFO mfas.run_variant [20260621T233111Z-baseline_passthrough-microns-s123-implement-c2f06f] DONE  score=12,800,441.0000  pct=83.1167%  epochs=80000  wall=548.6s
+=== baseline_passthrough microns s999 80k ===
+2026-06-22 02:49:27,748 INFO mfas.run_variant [20260621T234021Z-baseline_passthrough-microns-s999-implement-c2f06f] DONE  score=12,800,621.0000  pct=83.1179%  epochs=80000  wall=545.5s
+BASELINE_80K_DONE

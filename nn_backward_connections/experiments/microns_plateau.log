@@ -1,0 +1,13 @@
+device: Apple MPS
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+BUDGET 80000: final best_pct=83.1165% (score=12,800,410.0)
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+BUDGET 120000: final best_pct=83.1175% (score=12,800,564.0)
+   traj iter~30000: best_pct=83.1106%
+   traj iter~60000: best_pct=83.1169%
+   traj iter~75000: best_pct=83.1173%
+   traj iter~90000: best_pct=83.1175%
+   traj iter~105000: best_pct=83.1175%
+   traj iter~120000: best_pct=83.1175%
