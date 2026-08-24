@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260815T162358Z-A_INIT-connectome-s42-implement-a13b47",
+  "algo": "A_INIT",
+  "dataset": "connectome",
+  "seed": 42,
+  "score": 34764020.0,
+  "pct": 82.94498722935677,
+  "wall_clock_s": 80.6951630115509,
+  "git_commit": "eb769e4bc7e518d67f6c5c2a72063bc521aa5941+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "a13b47663bd9",
+  "timestamp": "2026-08-15T16:25:27Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260815T162358Z-A_INIT-connectome-s42-implement-a13b47_positions.npy",
+  "experiment_id": "A_INIT",
+  "role": "implement",
+  "hypothesis": "Shrinking Rocket's N(0,1) init to std=1e-4 (nothing else changed) beats the baseline on the exact feedforward metric and removes its seed variance, because at small beta*std the gradient reduces to the weight-imbalance vector -(beta/4)c, so the optimizer self-warm-starts from the imbalance signal instead of undoing an uninformative random draw.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

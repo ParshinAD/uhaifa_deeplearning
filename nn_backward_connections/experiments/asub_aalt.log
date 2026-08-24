@@ -1,0 +1,35 @@
+inputs: pre-sift Rocket order 82.9314% | H35 sifted order 83.9035%
+
+=== A-SUB: stochastic subset vs deterministic under-relaxation (from the 82.9314% order, 22 sweeps) ===
+                   variant   best pct  final movers    wall
+   deterministic alpha=1.0    83.8086          5162  120.3s
+   deterministic alpha=0.7    83.8931          1386   81.4s
+      stochastic p=0.7 s42    83.9056           122   63.2s
+     stochastic p=0.7 s123    83.9039           115   63.6s
+      stochastic p=0.5 s42    83.9004           448   64.2s
+     stochastic p=0.5 s123    83.8994           359   62.9s
+
+=== A-ALT: gradient kick from the 83.9035% sifted order (150 Adam steps, device=mps) ===
+   surrogate     std  beta*std  after kick     drift
+     sigmoid     141     148.1     83.7591   -0.1444
+     sigmoid     500     525.0     83.8679   -0.0356
+     sigmoid    1500    1575.0     83.8961   -0.0074
+    H38_asym     141     148.1     83.8468   -0.0567
+    H38_asym     500     525.0     83.8958   -0.0077
+    H38_asym    1500    1575.0     83.9033   -0.0002
+
+  re-sift (alpha=0.7, 22 sweeps) of the least-damaged configs; net vs the 83.9035% input:
+        H38_asym_std1500.0: 83.9146%  net +0.0111 pp
+         sigmoid_std1500.0: 83.9195%  net +0.0160 pp
+         H38_asym_std500.0: 83.9246%  net +0.0211 pp
+
+PRE-REGISTERED CHECKS:
+     S1_stochastic_matches_deterministic_within_0.01pp: FAILS
+                         S2_both_break_the_limit_cycle: HOLDS
+             S3_stochastic_does_not_beat_deterministic: FAILS
+             A1_sigmoid_drifts_down_at_operating_scale: HOLDS
+                      A2_sigmoid_frozen_at_large_scale: HOLDS
+         A3_h38_does_not_drift_down_at_operating_scale: FAILS
+             A4_no_config_beats_the_input_after_resift: FAILS
+
+wrote experiments/outputs/proto_asub_aalt.json

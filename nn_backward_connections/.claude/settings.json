@@ -1,4 +1,11 @@
 {
+  "permissions": {
+  "allow": [
+    "Bash(Rscript *)",
+    "Bash(python3 -c ' *)",
+    "Bash(cd *)"
+  ]
+},
   "hooks": {
     "PreToolUse": [
       {

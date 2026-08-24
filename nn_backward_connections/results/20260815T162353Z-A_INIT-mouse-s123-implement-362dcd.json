@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260815T162353Z-A_INIT-mouse-s123-implement-362dcd",
+  "algo": "A_INIT",
+  "dataset": "mouse",
+  "seed": 123,
+  "score": 8.466237262244583,
+  "pct": 92.43589717636036,
+  "wall_clock_s": 1.6733930110931396,
+  "git_commit": "eb769e4bc7e518d67f6c5c2a72063bc521aa5941+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "362dcd664d3a",
+  "timestamp": "2026-08-15T16:23:55Z",
+  "total_weight": 9.159036176272162,
+  "n_epochs_done": 5000,
+  "best_positions_path": "results/20260815T162353Z-A_INIT-mouse-s123-implement-362dcd_positions.npy",
+  "experiment_id": "A_INIT",
+  "role": "implement",
+  "hypothesis": "Shrinking Rocket's N(0,1) init to std=1e-4 (nothing else changed) beats the baseline on the exact feedforward metric and removes its seed variance, because at small beta*std the gradient reduces to the weight-imbalance vector -(beta/4)c, so the optimizer self-warm-starts from the imbalance signal instead of undoing an uninformative random draw.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 5000
+}

@@ -1,0 +1,13 @@
+  [connectome]        control seed=42    pct=82.9161  std=   165.4  res=  249.5 ranks  75s
+  [connectome]  rho0.3_lam0.3 seed=42    pct=81.6347  std=   107.4  res=  384.4 ranks  112s
+  [connectome]  rho0.3_lam1.0 seed=42    pct=81.3424  std=    94.6  res=  436.5 ranks  109s
+  [connectome]  rho0.3_lam3.0 seed=42    pct=81.0692  std=    84.1  res=  491.1 ranks  110s
+  [connectome]  rho1.0_lam0.3 seed=42    pct=81.7728  std=    94.5  res=  436.9 ranks  109s
+  [connectome]  rho1.0_lam1.0 seed=42    pct=81.3016  std=    85.3  res=  483.9 ranks  112s
+  [connectome]  rho1.0_lam3.0 seed=42    pct=80.8884  std=    80.7  res=  511.5 ranks  112s
+  [connectome]  rho3.0_lam0.3 seed=42    pct=81.4756  std=    93.3  res=  442.2 ranks  113s
+  [connectome]  rho3.0_lam1.0 seed=42    pct=80.8756  std=    89.4  res=  461.8 ranks  114s
+  [connectome]  rho3.0_lam3.0 seed=42    pct=80.4852  std=    84.5  res=  488.3 ranks  115s
+  [connectome] best arm: control  (control 82.9161)
+
+wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/experiments/outputs/proto_amband.json  (1089.9s)

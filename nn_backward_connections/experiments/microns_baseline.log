@@ -1,0 +1,7 @@
+=== passthrough microns seed 123 ===
+2026-06-22 01:48:09,423 INFO mfas.run_variant [20260621T224548Z-baseline_passthrough-microns-s123-implement-c2f06f] DONE  score=12,786,173.0000  pct=83.0241%  epochs=20000  wall=140.1s
+=== passthrough microns seed 999 ===
+2026-06-22 01:50:30,187 INFO mfas.run_variant [20260621T224810Z-baseline_passthrough-microns-s999-implement-c2f06f] DONE  score=12,786,109.0000  pct=83.0237%  epochs=20000  wall=139.3s
+=== PLATEAU PROBE: baseline_rocket microns seed 42 epochs 40000 ===
+2026-06-22 01:55:09,867 INFO mfas.harness [20260621T225031Z-baseline_rocket-microns-s42-4727ce] DONE  score=12,797,820  pct=83.0997%  epochs=40000  wall=278.2s
+ALL_BASELINE_RUNS_DONE

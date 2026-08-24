@@ -519,7 +519,7 @@ sharper diagnosis than Phase-3's "basin not dynamics" inference:
 1. **OPTIMIZATION-GAP, not surrogate-misalignment.** best's fixed order out-surrogates Rocket's
    converged solution at *every* β (Δsurrogate +238 to +1,153). The sigmoid surrogate correctly
    ranks the better order above Rocket's — the optimizer fails to reach/hold it.
-2. **best is not a holdable attractor.** Initialising Rocket *at* the 84.61% order and running it
+2. **best is not held by gradient flow at the scales tried.** Initialising Rocket *at* the 84.61% order and running it
    collapses to ~82.9% under cyclic AND constant β, dipping through 76–79% first. The **cyclic
    schedule that re-melts β→0.05** demonstrably destroys good orders.
 3. **init→plateau is flat on connectome** (82.87–82.93% over inits spanning 36–69%): better-init-alone
@@ -541,8 +541,8 @@ sharper diagnosis than Phase-3's "basin not dynamics" inference:
   *why* gradient flow drifts off best (scale blow-up saturating σ, surrogate≠discrete in the forward).
 
 **Honest ceiling read (applies to all H16+).** Because a perfect init is not *reachable* by gradient
-flow from a generic start (⚠ *corrected by Q01: it IS holdable at its own scale — the "collapse" was
-an even-spacing artefact; the barrier is reachability, not stability — see `diagnosis.md` § Q01*) and
+flow from a generic start (mechanism: at the achievable β·std the surrogate ranks the better order
+lower — see `diagnosis.md` § Q01) and
 the gap is a distributed reordering with no tie-slack, **a large share of the 1.69 pp may be
 irreducible to continuous optimization** and genuinely require discrete refinement (the paper's Crane
 MIP). Each entry below states honestly *why it might still beat 82.93%* and roughly *how much* —
@@ -1662,3 +1662,464 @@ best-by-oracle whole-vector acceptance.
 - **H36 (proposed):** cycle-triggered α — run pure Jacobi until oscillation is detected (candidate
   dips while movers plateau), THEN switch to under-relaxation. Would make H35 a clean 3-dataset
   general win (microns no longer penalized by a fixed short budget). Untried.
+
+---
+
+# Phase 6.3 backlog (H36) — collective (multi-node) discrete moves (2026-08-09)
+
+Opened by the S1/S2 sizing gate (`experiments/log.md` 2026-08-09; probe
+`experiments/size_collective_moves.py`, artifacts `experiments/outputs/collective_moves_sizing.json`
++ `experiments/outputs/siftfirst_*.json`). Closes the roadmap's `A-SCC` question and opens `A-PAIR`.
+
+## H36 — Collective discrete refinement: paired backward-edge relocation + block-SCC condensation
+- **Hypothesis:** After H35, appending a **collective** (multi-node) discrete phase — alternating
+  (a) Vahidi-Alg-2 **paired relocation** of a backward edge's two endpoints over the whole span
+  between them, and (b) Vahidi-Alg-3 **block-SCC** condensation refinement on contiguous rank
+  windows — raises the exact feedforward metric beyond H35, at **0 extra gradient steps**.
+- **Rationale (measured, not assumed):** H35's sift is a *single-node* move. With the single-node
+  class first exhausted to a fixed point as a control, the collective phase still gains
+  **connectome +0.0599 pp (seed 42; 94.5% of the total is outside the single-node class)** and
+  **microns +0.00601 ± 0.00025 pp (n=3, 95% CI lower +0.00561, vs the 0.002 pp gate)**. Mouse gains
+  +0.0539 pp, 100% of it from the paired move. Every move's gain is exact by the contiguous-interval
+  lemma and oracle-verified (`experiments/diagnostics/verify_collective_moves.py`: max error 1.6e-14).
+- **Design axis:** discrete refinement, collective move class (post-Rocket, post-sift).
+- **Expected effect:** ≥ the sized numbers — the sizing is a **lower bound**: it examined only the
+  top 200k of ~1.19M backward edges (≈50% of connectome backward weight), and a full-K single S1
+  pass gains **2.5×** more (+0.04293 vs +0.01736 pp). Round count (6) had not converged on connectome.
+- **Est. compute cost:** **expensive in wall-clock, free in gradient steps.** The sized configuration
+  costs 359 s of collective rounds + 204 s of control on top of H35's 219 s on connectome = **~2.6×**,
+  which **breaches the campaign's ~2× wall ceiling** — declare this up front and consider it a
+  budget knob (rounds, top-K) rather than a fixed cost.
+- **Comparator:** **H35 at matched seeds** (the incumbent), not `baseline_passthrough`. Report the
+  pure-Rocket score, the H35 score and the H36 score separately per CLAUDE.md.
+- **Leakage:** safe. Gains use ranks + input edge weights only; the frozen oracle only accepts/rejects
+  whole candidate vectors. The probe never reads `data/best_solution`.
+- **Measurement:** standard — both large connectomes + mouse, ≥3 seeds SCREEN, CONFIRM at 5/20 with
+  95% CI lower bound > 0 vs H35.
+- **Spec requirements carried from the critic (do not drop):**
+  1. Sift to a 1-opt fixed point **before and between** collective rounds — H35's returned order is
+     NOT a fixed point (163 / 608 / 0 movers left), so without this the gain is mis-attributed
+     (on microns the uncontrolled headline was ~60% single-node).
+  2. Report K-sensitivity; top-K truncation under-states the paired move by ~2.5×.
+  3. A monotone best-by-oracle refinement "beating the incumbent" is near-tautological — the real
+     test is magnitude vs seed noise on ≥3 seeds, and the wall-clock cost.
+- **status: open** — promoted by the sizing gate, not yet run as a variant cycle.
+
+---
+
+# Phase 6.4 backlog (A-INIT) — the initialization SCALE axis (2026-08-15)
+
+Opened by the roadmap's `A-INIT` (TODO 5). The roadmap listed it as **low priority, "doubly
+discouraged"**; the prototype gate **falsified that prior** on both proxies. Theory derived first,
+then measured: `experiments/proto_ainit_scale.py` → `experiments/outputs/proto_ainit_scale.json`,
+`proto_ainit_theory.png`, `proto_ainit_scale.png`.
+
+## A-INIT — very tight position initialization (`src/mfas/experiments/A_INIT.py`, std = 1e-4)
+- **One-line hypothesis:** shrinking the paper's `N(0,1)` init to `std = 1e-4` — nothing else
+  changed — beats `baseline_passthrough` on the exact metric AND removes its seed variance,
+  because at small `beta*std` the gradient collapses to the weight-imbalance vector.
+- **Theory (derived, then verified numerically).** With `sigma(x) = 1/2 + x/4 - x^3/48 + O(x^5)`
+  and `c_k = out_w_hat(k) - in_w_hat(k)`:
+
+      F(P) = W_hat/2 - (beta/4)<c,P> - (beta^3/48) sum_e w_hat_e D_e^3 + O((beta*D)^5)
+      grad_k F = -(beta/4) c_k + O((beta*std)^2)
+
+  Every *pairwise* (who-precedes-whom) term is suppressed as **(beta*std)^2**. Measured
+  log-log slope of the residual: **2.006** (mouse) / **1.996** (hard synthetic); predicted 2.
+  `cos(grad F, -c) = 1.000000` at `beta*std = 1e-6`. This is Q01's scale-blindness seen from the
+  gradient side rather than from `F`.
+- **Mechanism (measured, not assumed).** Because the small-scale gradient is a *constant vector*,
+  Adam (which normalizes per coordinate) keeps only `sign(c)`: the cloud splits into the two
+  imbalance blocks — the `sign(c)` split explains **96.5%** (mouse) / **93.2%** (synthetic) of
+  position variance after 20 steps — and then refines within blocks as the cubic term wakes up.
+  So Rocket **self-warm-starts from the imbalance signal** (the quantity GreedyAbs ranks on)
+  instead of spending steps undoing an uninformative random draw. The init is *forgotten*:
+  Spearman(final, init) = +0.03 / -0.02 at std <= 1e-4 vs +0.14 / +0.12 at std = 1, and
+  Spearman(final, -c) = +0.67 / +0.75.
+- **Prototype evidence (3 seeds, Rocket only, exact oracle):**
+
+  | proxy | std<=1e-4 | baseline std=1 | delta |
+  |---|---|---|---|
+  | mouse | **92.4359 ± 0.0000** | 92.1451 ± 0.2616 | **+0.2908 pp** |
+  | hard synthetic | **73.8395 ± 0.0000** | 73.5348 ± 0.2302 | **+0.3047 pp** |
+
+  The sweep is FLAT over `std ∈ [1e-6, 1e-2]` and degrades monotonically above it
+  (std=10 → −0.68 / −1.44 pp; std=100 → −13.6 / −12.0 pp), i.e. the effect is the *scale*, not a
+  lucky constant. **Zero seed variance** is the theory's signature, not a fluke of 3 seeds.
+- **Interaction with our findings (measured in the same run).**
+  1. **It is an ALTERNATIVE to H02, never an addition.** Compressing H02's greedy warm start to
+     std=1e-4 lands on *exactly* the tight-random score (mouse 92.4359 for both) — the same
+     mechanism that forgets a random init forgets a good one. H02 at its native std (0.577) still
+     wins (92.4793), so the confirmed win #1 is not threatened.
+  2. **The sift erases the whole axis.** After the H35 under-relaxed sift the spread across ALL
+     inits collapses from 0.4375 → **0.0483 pp** (mouse) and 1.3712 → 0.3621 pp (synthetic).
+     This is a third, independent confirmation of the Phase-6 cross-cutting insight (the discrete
+     refiner does the work) — and it means A-INIT cannot help the **champion** pipeline.
+- **What it is worth, honestly.** A free (0 extra gradient steps, 0 wall-clock, no greedy peel)
+  improvement to the *baseline*, and a **determinism** property that no other variant has. It is
+  NOT a route to the 84.61% target: it lives entirely below the sift.
+- **Comparator:** `baseline_passthrough` at matched seeds (this is a baseline-level knob, so the
+  champion comparator does not apply). Report vs H02 as context.
+- **Leakage:** trivially safe — the init is a scaled Gaussian; it reads neither the graph nor the
+  oracle. Compute-matched by construction (same `epochs`, same draw, one scalar factor).
+- **status: prototype PASS, screen PAUSED at 8/9 runs** <!-- 2026-08-16 theory verified (slope
+  2.006/1.996); proxies +0.29/+0.30 pp with zero seed variance; falsifies the roadmap's "doubly
+  discouraged" prior and diagnosis.md Q01 insight #2's prediction that a tight init is worse.
+  Screen so far: connectome +0.0514 pp (n=3, gate 0.04) PASS, microns +0.0069 pp (n=2 of 3, gate
+  0.002) PASS-pending, mouse +0.3663 pp non-inferior. Paused on battery with microns s999
+  outstanding; resume state + the one command in experiments/ainit_RESUME.md. No log.md entry
+  until the screen is complete. -->
+
+---
+
+# Phase 6.5 backlog (A-SURR) — the surrogate TAIL-EXPONENT axis (2026-08-17)
+
+Opened by the roadmap's `A-SURR` (TODO 7: "alternate surrogate — flat top/bottom, slower-decaying
+tanh"). The roadmap listed it **low / near-dead** by analogy to H11 and H34. Analogy is not
+evidence, so it was run properly: theory gate first (Q04), then a prototype gate, then the
+primary dataset. All three agree — but the analogy was right for the wrong reason, and the
+mechanism that emerged is new (see `diagnosis.md` § Q04).
+
+## H37 / H37B — algebraic-tail surrogate (`src/mfas/experiments/H37{,B}.py`)
+- **One-line hypothesis:** replacing the sigmoid's EXPONENTIAL tail with an ALGEBRAIC one,
+  `g(z) = 1/2 + 1/2 sign(z)(1 - (1+|z|)^-4)`, raises the exact feedforward metric, because the
+  long-range pairs the sigmoid sends to (numerically) zero force keep a correctly-signed pull —
+  and finding #3 says the recoverable weight IS long-range (flip rank-distance p50 ≈ 22,580).
+- **Two arms, because "shape" hides two axes.** `width(g)` := the `z` at which `g` reaches 0.9.
+  - **H37** — `SCALE = 4.4361` so `width` equals the sigmoid's **exactly** (2.1973). Isolates
+    the TAIL with core sharpness held fixed. This is the honest test of the new axis.
+  - **H37B** — `SCALE = 1` (native width 0.4954). The arm the static theory predicted would
+    win: the ONLY shape measured that ranks the near-optimal order ABOVE Rocket's own at
+    Rocket's operating scale (alignment ratio **+0.173** vs the sigmoid's **−0.591**) while
+    leaving essentially every node mobile (0.006% zero gradients vs 42.5% for a width-matched
+    sigmoid).
+- **Why the literal reading of TODO 7 is NOT this hypothesis (proved, not argued):**
+  `(tanh(z/2)+1)/2 == sigmoid(z)` to **2.2e-16**, so a "tanh surrogate" IS the sigmoid and a
+  "slower-decaying tanh" `tanh(z/a)` is the sigmoid at `beta·2/a` — a pure move along the
+  `beta*std` axis that H03/A-SCALE already killed (and it makes the surrogate's ranking worse:
+  alignment −1.90 at `a=10`). A HARD flat top/bottom is the H11 form, already killed. Only the
+  tail EXPONENT was genuinely untested. See `diagnosis.md` § Q04.
+- **Theory gate (Q04): PASS** — `experiments/outputs/q04_surrogate_tails.json`. Established the
+  ~200×width alignment law across 11 shapes and the 7,000× difference in frozen-node fraction
+  between an exponential and an algebraic tail at matched width.
+- **Prototype gate: FAIL (all arms).** 3 seeds, everything else identical to baseline
+  (`experiments/outputs/proto_h37_tails.json`), Δ vs sigmoid in pp:
+
+  | arm | mouse | hard synthetic |
+  |---|---|---|
+  | H37B `poly z^-4` native | −0.220 | **−2.834** |
+  | sigmoid @ matched width (H03 control) | +0.004 | **−2.117** |
+  | H37 `poly z^-4` @ matched width | −0.018 | −0.459 |
+  | `poly z^-1` | −0.130 | −0.708 |
+  | `poly z^-1` @ matched width | −0.101 | −1.686 |
+  | H11 clamp M=5 (anchor) | −0.030 | +0.107 *(within noise, σ≈0.38)* |
+
+  All four pre-registered predictions were recorded before the run; **P1 (`poly_q4` > sigmoid)
+  FAILED on both proxies**, P2 held on both, P3 held decisively on the synthetic.
+- **Primary-dataset confirmation of the kill (connectome, 3 seeds, frozen runner, role
+  `implement`, budget-matched `baseline_passthrough` = 82.8958 ± 0.0187):**
+
+  | variant | per-seed | mean ± std | Δ | 95% CI lo | screen (gate +0.04) |
+  |---|---|---|---|---|---|
+  | H37 | 82.4152 / 82.4492 / 82.4707 | 82.4450 ± 0.0280 | **−0.4508** | −0.4807 | **FAIL** |
+  | H37B | 81.9727 / 81.9355 / 81.9828 | 81.9637 ± 0.0249 | **−0.9321** | −0.9621 | **FAIL** |
+
+  Every one of the 6 per-seed deltas is negative; the miss is 11× (H37) and 23× (H37B) the
+  screen threshold **in the wrong direction**.
+- **status: KILLED** (theory gate PASS → prototype gate FAIL → primary-dataset FAIL). Not run on
+  microns or mouse through the frozen runner: the protocol kills a variant that fails the
+  connectome screen, and mouse was already covered at the prototype gate.
+- **What it bought (the reason this was worth running).** A genuinely new, artifact-backed
+  mechanism, written up as `diagnosis.md` § Q04 and finding #3's Phase-6.5 corroboration:
+  **static surrogate alignment ANTI-correlates with achieved score** — the two shapes whose
+  surrogate ranks the better order higher are the two worst optimizers (−2.1 / −2.8 pp on the
+  gap-bearing fixture). Alignment requires a narrow core, a narrow core is a short-range
+  interaction, and short-range interactions cannot perform the long-range reordering the gap
+  consists of. This also explains the H11 kill mechanistically (its clamp is the worst cell in
+  the table: alignment −1.063 AND 65.8% frozen nodes) and closes the continuous family's last
+  untested axis.
+- **Leakage:** safe. Both variants read only positions, `beta` and the input `hat_w`; the frozen
+  oracle is used exactly as baseline (best-by-oracle tracking). Only the Q04 *diagnostic* reads
+  `data/best_solution`, via `mfas.analysis.gap`. Frozen-file integrity verified before and after.
+- **Compute honesty:** compute-matched on the protocol's basis (`total_grad_steps` = 20,000 for
+  both arms and the comparator). **Wall-clock is NOT matched and must be disclosed:** ~161–190 s
+  vs the baseline's ~90 s, because `(1+|z|)^-4` costs more per step than `sigmoid`. Since the
+  arms lost, the wall-clock penalty only strengthens the kill.
+
+---
+
+# Phase 6.6 backlog (A-SURR, part 2) — the SYMMETRY axis (2026-08-17)
+
+H37 closed the tail exponent *within odd-symmetric shapes*. The researcher then asked the
+question that turned the cycle around: **what if the surrogate is constant on the positive
+branch and tanh on the negative one?** Every shape tested up to that point satisfied
+`g(-z) = 1 - g(z)`; dropping that assumption is a different move, and it works on the fly
+connectome.
+
+## H38 — one-sided (asymmetric) surrogate: flat above a margin, tanh below
+- **One-line hypothesis:** with `g(z) = 1` for `z >= M` and `g(z) = 1 + tanh((z-M)/T)` for
+  `z < M`, comfortably-feedforward edges receive **zero** gradient, so the entire budget pulls
+  FEEDBACK edges toward correctness instead of widening margins that are already won.
+- **Theory gate (Q05): PASS, on two structural grounds no symmetric shape has**
+  (`experiments/outputs/q05_asymmetric_surrogates.json`):
+  1. **It does not telescope.** Q01's small-scale degeneracy (the surrogate collapsing into the
+     node-level imbalance objective `W/2 - (beta/4)<c,P>`) requires the edge sum to run over ALL
+     edges; here the first-order term runs over the VIOLATED subset, which is order-dependent.
+     Measured: at `beta*std -> 0` this shape ranks `best > rocket > imbalance_sort > random`
+     (correct) where all 11 symmetric shapes rank the imbalance sort first.
+  2. **Alignment ratio +1.48 … +2.00** at Rocket's operating point (sigmoid: −0.591), with **no
+     crossover anywhere** in `beta*std` ∈ [1e-2, 1e6] — it never prefers the worse order.
+- **A degeneracy was derived BEFORE any run, then confirmed.** At `M = 0`, `g(0) = 1`, so the
+  collapsed configuration `P = const` attains `F = sum_e w_hat_e`, the surrogate's **global
+  maximum**, strictly above every ordering — and the dynamics flow into it (a violated edge pulls
+  its endpoints together). Confirmed numerically: `F(collapse) == W_hat` exactly, and the `M = 0`
+  arm collapses to final position std **0.0005** on the hard synthetic, scoring 58.24% vs the
+  sigmoid's 73.68%. The margin `M > 0` is what removes it (`g(0) = 0.5379 < 1`).
+- **Prototype gate: PASS.** 6×3 grid over `(M, T)` on mouse + hard synthetic
+  (`proto_h38_asym.json`, `proto_h38_sweep.json`) shows a **plateau, not a knife edge** (a broad
+  positive ridge on mouse). `(M, T) = (0.75, 1.5)` was selected as **the only grid point positive
+  on BOTH proxies** (mouse +0.396, synthetic +0.404), not the mouse-optimal (0.25, 0.75) which is
+  +0.627 on mouse but −6.30 on the synthetic. **The optimum is graph-dependent — disclosed.**
+- **Primary datasets (frozen runner, 3 seeds, role `implement`, budget-matched):**
+
+  | dataset | baseline | H38 | Δ | gate | verdict |
+  |---|---|---|---|---|---|
+  | **connectome** | 82.8958 ± 0.0187 | **83.2626 ± 0.0108** | **+0.3668** (CI_lo +0.3368) | +0.04 | **PASS, 9×** |
+  | **microns** | 83.1172 ± 0.0006 | **82.4482 ± 0.0094** | **−0.6689** (CI_lo −0.6700) | +0.002 | **FAIL (regression)** |
+  | mouse | 92.0696 ± 0.2624 | 92.2053 ± 0.2602 | +0.1357 | > −0.26 | non-inferior ✓ |
+
+  **Verdict per the Phase-5 decision table (microns ✗ / connectome ✓ / mouse ✓):
+  GRAPH-DEPENDENT — a real fly-connectome effect, NOT a general win.**
+  All three connectome seeds positive (+0.354/+0.358/+0.389). For scale: the only previously
+  CONFIRMED pure-Rocket win, H02, is +0.0508 pp on connectome — H38 is **7× larger**, and at
+  83.26% pure Rocket it exceeds H02's 82.93% by +0.33 pp.
+- **Controls — both decisive, both run on the connectome at 3 seeds:**
+
+  | control | Δ vs baseline | what it rules out |
+  |---|---|---|
+  | **H38C** mirror (flat on the FEEDBACK side) | **−2.8890** | not "any one-sided shape", and not the smaller position scale such a shape induces — the **direction** of the asymmetry is the mechanism |
+  | **H38D** plain sigmoid at `beta × 4`, whole run | **−0.5804** | not the `beta`/position-scale axis (A-SCALE ≡ H03). Stronger than H03 itself, which only ramped beta over the last 25% of epochs |
+
+- **Not a best-by-oracle sampling artifact:** the gain is the same on the FINAL-epoch score as on
+  the tracked best (mouse +0.392 vs +0.396; synthetic +0.360 vs +0.404).
+- **Leakage:** safe — `grep` clean for `best_solution` / `analysis.gap` / any target constant;
+  imports are `baseline.rocket`, `io`, `metrics` only; the frozen oracle is used exactly as the
+  baseline uses it. Frozen integrity verified before and after; all 6 connectome position vectors
+  re-score to their logged `pct` to 1e-9. Device parity checked (variant and comparator both MPS).
+- **Compute:** matched on `total_grad_steps` (20,000). **Wall-clock NOT matched and disclosed:**
+  ~115 s vs the baseline's ~75 s on connectome (≈1.5×), from the `tanh` + `where` kernel.
+- **Known defect (documented, not hidden):** `torch.where` makes autograd return 0 exactly at
+  `z == M` instead of the left-derivative `1/T`; a measure-zero kink, immaterial in float
+  practice, but the claim is "verified except at the kink", not "verified everywhere".
+- **status: CONFIRMED-PENDING — screen PASSED on connectome, FAILED on microns.** Next steps, in
+  order: (i) CONFIRM stage on connectome at 5 seeds; (ii) diagnose the microns regression — the
+  prime suspect is that `M` and `T` are absolute constants in `z` units while microns is ~4×
+  denser (155 vs 41 average degree) and runs 80k epochs, so a size/density-scaled `(M, T)` may be
+  required; any re-tuning **must not** be selected on microns and then reported on microns.
+
+---
+
+# Optimizer-design idea carried forward from H38 (2026-08-17)
+
+**A-VIOL — "spend gradient only on violated constraints" as a general optimizer principle.**
+
+H38 is a *specific* surrogate, but the reason it works is not specific to it: **the gradient
+budget should go to edges that are currently WRONG, not to widening margins that are already
+won.** The sigmoid spends its gradient symmetrically around `Delta = 0` — half of it defending
+edges that are already feedforward. Measured at Rocket's converged connectome order, only
+**20.6%** of the sigmoid's gradient mass sits on feedback edges (which carry 17.1% of `w_hat`);
+the one-sided form puts **100%** there, and the mirror form (0%) loses −2.889 pp. That ordering
+0% → 20.6% → 100% against −2.889 → 0 → +0.367 pp is the cleanest single statement of the effect
+we have.
+
+This is a *constraint-satisfaction* view of MFAS rather than a smooth-relaxation view, and it
+suggests several moves that are NOT surrogate swaps and have never been tried here:
+
+| id | idea | note |
+|---|---|---|
+| **A-VIOL-1** | **Density-scaled `(M, T)`** — the open follow-up that decides whether H38 generalizes. `M`/`T` are absolute constants in `z` units, but microns is ~4× denser (155 vs 41 avg degree) and runs 80k epochs; a margin defined relative to the local `Delta` distribution (e.g. a quantile of `|Delta|` over incident edges) may fix the −0.669 pp microns regression. **Must not be tuned on microns and then reported on microns.** |
+| A-VIOL-2 | **Violation-weighted sampling** rather than a one-sided shape: keep the sigmoid but sample/weight the loss toward currently-violated edges. Distinct from the killed H06 (weight-aware reweighting, which used *input* weights, not the *current* violation state) and from H13 (uniform random subsampling, −0.84 pp). |
+| A-VIOL-3 | **Margin as a schedule**, not a constant: anneal `M` the way `beta` is annealed, so the "already won" set is defined loosely early and tightly late. Cheap; composes with the existing cyclic schedule. |
+| A-VIOL-4 | **Compose with the discrete refiner.** Everything above is pure Rocket. H38's order has never been fed to the H35 under-relaxed sift. Since findings #4/#5 show the sift does most of the work, the question "does a +0.37 pp better starting order survive the sift, or does the sift erase it?" is the highest-value cheap experiment in this group — and A-INIT already showed the sift *can* erase an init advantage (spread 0.4375 → 0.0483 pp on mouse). |
+
+**Gate for all of these:** `mfas.analysis.surrogate_gate` (cheap checks first), then the proxy
+prototype, then connectome AND microns, then the controls in
+`surrogate_gate.REQUIRED_CONTROLS`. Do not skip the mirror and beta-rescale controls — they are
+what turned H38 from "a shape that wins" into "the direction of the asymmetry is the mechanism".
+
+---
+
+# Phase 6.5 backlog (A-MBAND) — the multi-band surrogate (2026-08-18)
+
+Opened directly from the Q01 mechanism (`diagnosis.md` § Q01): the surrogate's resolution on the
+connectome is ~293 ranks out of 136,648, so it is structurally blind to the narrow wins the
+near-optimal order is built from. This is the reformulation of the roadmap's `A-SURR` (TODO 7) that
+survived the earlier shape analysis — it changes the number of length scales, not the shape.
+
+## A-MBAND — add a second, rank-scale sigmoid band on top of the existing one
+- **One-line hypothesis:** `F = Σ ŵ σ(β_c Δ) + λ·Σ ŵ σ(β_f Δ)` with `β_f = ρ·n/(√12·std(P))`
+  (half-width = 1/ρ *ranks*, hence scale-free) lets the coarse band keep doing long-range transport
+  while the fine band supplies the reward for narrow wins the coarse band discounts to ~0.5.
+- **status: KILLED by prototype gate (2026-08-18)** — 12 arms, all negative, monotone in λ.
+
+**Gate 1 — ranking: PASS.** At the operating scale (std = 141, β = 1.05, even spacing) the
+single-band surrogate ranks Rocket's 82.92% order **above** the 84.61% order by −174.88. Adding the
+fine band **flips it**:
+
+| half-width | λ = 0.3 | λ = 1.0 | λ = 3.0 |
+|---|---|---|---|
+| 20 ranks | −133.49 | −36.91 | +239.04 |
+| 3.3 ranks | −102.84 | **+65.27** | **+545.57** |
+| 1.0 rank | −91.72 | **+102.32** | **+656.73** |
+| 0.33 rank | −86.82 | **+118.67** | **+705.76** |
+
+This is the first continuous objective in the project that prefers the better order **at Rocket's
+own operating scale**, with no rescaling. It was not enough.
+
+**Gate 2 — training: FAIL, decisively.** connectome, 20k epochs, seed 42, vs the λ=0 control
+(82.9161, which reproduces `baseline_passthrough`):
+
+| arm | pct | Δ vs control | final std | resulting resolution |
+|---|---|---|---|---|
+| control (λ=0) | **82.9161** | — | **165.4** | **249 ranks** |
+| ρ=1.0, λ=0.3 | 81.7728 | −1.1432 | 94.5 | 437 |
+| ρ=0.3, λ=1.0 | 81.3424 | −1.5737 | 94.6 | 437 |
+| ρ=1.0, λ=3.0 | 80.8884 | −2.0277 | 80.7 | 512 |
+| ρ=3.0, λ=3.0 | 80.4852 | −2.4308 | 84.5 | 488 |
+| late ramp (λ=0.3 from 50%) | 82.6084 | −0.3077 | 86.9 | 475 |
+| late ramp (λ=1.0 from 50%) | 82.0626 | −0.8535 | 66.0 | 625 |
+| fixed β_f = 280 (non-adaptive) | 81.4468 | −1.4693 | 73.1 | 565 |
+
+**Measured failure mechanism — the intervention is self-defeating.** In *every* arm the position
+scale collapses (165 → 66–107), so the effective resolution gets **worse** (249 → 437–625 ranks),
+which is the opposite of the intended effect. The two controls localise the cause: it is **not** the
+adaptive `β_f` self-amplifying (fixing `β_f = 280` collapses the scale just as hard), and it is
+**not** an early-training transient (ramping λ in only after 50% still collapses it). The cause is
+the fine band's gradient magnitude: `β_f/β_c ≈ 267`, so for any node with a short-range neighbour the
+fine band dominates the per-coordinate Adam step, the node's position is set by a local tug-of-war
+instead of by global structure, and the coarse band's "spread out" signal never accumulates.
+
+**What this buys us (the reason the kill is worth its compute).** It is the sharpest available
+evidence for finding #3: even when the continuous objective is **repaired so that it demonstrably
+ranks the better order higher**, optimizing it is *worse* than optimizing the misaligned one.
+Correct ranking is necessary but not sufficient — the binding constraint is the gradient dynamics,
+not the objective's preference. This is strictly stronger than H34's result (which showed a
+non-vanishing gradient estimator still loses).
+
+**Revival condition.** Only if a mechanism is found that adds fine-scale reward **without** letting
+its gradient dominate the coarse band — e.g. per-band gradient normalization, or applying the fine
+band to a *disjoint* parameter (a residual offset) rather than to the same positions. The λ→0 sliver
+(λ ≤ 0.03) is untested but the 12-arm trend is monotone toward the control, so no positive region is
+predicted there.
+
+**Reproduce** (env `allen`, repo root; ~18 min sweep + ~6 min rescue on MPS):
+```
+PYTHONPATH=src python experiments/proto_amband.py --stage resolution   # the pathology audit
+PYTHONPATH=src python experiments/proto_amband.py --stage ranking      # gate 1
+PYTHONPATH=src python experiments/proto_amband.py --stage sweep --datasets connectome   # gate 2
+```
+Artifacts: `experiments/outputs/proto_amband.json` (`resolution`, `ranking`, `sweep`, `rescue`),
+logs `experiments/amband_sweep.log`, `experiments/amband_rescue.log`.
+
+### Side result kept from Stage A — resolution predicts where the sift pays
+
+| graph | n | converged std | resolution | H30 sift gain (finding #4) |
+|---|---|---|---|---|
+| connectome | 136,648 | 141.0 | **292.6 ranks** | **+0.847 pp** |
+| microns | 67,534 | 908.4 | **22.5 ranks** | **+0.078 pp** |
+
+Resolution ratio 13.0× vs sift-gain ratio 10.9× — consistent with the idea that the discrete sift is
+paid exactly for the fine-scale structure the surrogate cannot resolve, and it would explain finding
+#4's unexplained "graph-dependent magnitude (~11×)" caveat. **Honest scope: n = 2 graphs, and mouse
+does NOT fit** (resolution 2.1 ranks yet +0.4225 pp sift gain — though mouse is tiny and
+near-saturated, σ = 0.26 pp). Hypothesis-grade, not a law; a third large connectome would test it.
+
+---
+
+# Phase 6.7 — A-SUB and A-ALT prototype gates (2026-08-18)
+
+Both are the researcher's TODO 2 and TODO 3, run as short gates on the primary dataset from
+orders already on disk (no Rocket run needed). Artifacts: `experiments/outputs/proto_asub_aalt.json`,
+`experiments/outputs/proto_asub_aalt_control.json`; script `experiments/proto_asub_aalt.py`.
+
+## A-SUB — "SGD on part of the neurons" (TODO 2): the DISCRETE reading PASSES
+
+**The continuous reading was NOT run, and that is a considered decision, not an omission.**
+Updating a random subset of position *coordinates* per gradient step is a pure dynamics knob:
+block-coordinate ascent has the SAME critical points as full-gradient ascent on a smooth
+objective, so it changes the path, not the fixed set — precisely the class that finding #2 found
+inert across 8 mechanisms, and the closest prior test (H13, stochastic edge subsampling) cost
+−0.84 pp on connectome. It would be a cheap falsifier, never a candidate.
+
+**The discrete reading is different and it wins.** H35's shipped rebuild moves EVERY mover a
+fraction `alpha` toward its exact-gain target. The stochastic recast moves each mover FULLY with
+probability `p`. The displacement fields agree in expectation at `alpha = p`
+(`E[key_i] = rank_i + p*(target_i - rank_i)`), so the two are directly comparable — ⚠ but only at
+the KEY level: the rank vector is `argsort(argsort(key))`, a nonlinear map, so this is what makes
+`p` and `alpha` the same axis, not a proof they are the same algorithm.
+
+Measured on connectome from a fixed pre-sift Rocket order (82.9314%), 22 sweeps, `k_full=6`:
+
+| rebuild | best pct | movers left | wall |
+|---|---|---|---|
+| Jacobi `alpha=1.0` (H30) | 83.8086 | 5,162 | 120 s |
+| under-relaxed `alpha=0.7` (**H35, shipped**) | 83.8931 | 1,386 | 81 s |
+| **stochastic `p=0.7`** (n=5 seeds) | **83.9047 ± 0.0009** | **64–173** | **63 s** |
+| stochastic `p=0.5` (n=2) | 83.8999 | 359–448 | 63 s |
+
+**Δ vs the shipped H35 rebuild = +0.0116 pp, all 5 seeds above it, σ = 0.0009 (~13σ), at ~20%
+LESS wall-clock.** Two pre-registered predictions were FALSIFIED: S1 ("stochastic matches
+deterministic within 0.01 pp") and S3 ("stochastic does not beat deterministic"). The
+expectation identity does not carry over to the dynamics.
+
+**Mechanism (supported by the mover counts, the direct signature).** The Jacobi limit cycle H35
+diagnosed is caused by *simultaneity* — conflicting nodes leapfrog because they all move at once.
+Under-relaxation damps the amplitude but keeps every node moving, so the oscillation survives at
+reduced size (1,386 movers left). Randomisation instead breaks the *symmetry* of each conflict:
+when two nodes want to swap, only one moves, and the conflict resolves. On the already-sifted
+order the stochastic rebuild reaches **0 movers — a true 1-opt fixed point** — where `alpha=0.7`
+still leaves 74. For a cycle caused by simultaneity, breaking simultaneity beats damping it.
+
+**status: PROTOTYPE PASS -> promote to a variant cycle (H39).** Needs: all 3 datasets, ≥3 seeds
+through the frozen runner, comparator = **H35 at matched seeds** (this replaces H35's rebuild,
+so H35 is the incumbent), plus the `p` sensitivity. Note it also fixes the microns
+under-convergence that H35's entry lists as an open caveat, since it converges far faster.
+
+## A-ALT — alternate discrete <-> gradient (TODO 3): weak positive, needs seeds
+
+`dr_tmp/kick_gate.py` existed but had **never been run** (no artifact). Q01's prediction is now
+confirmed for the first time on a *sifted* order (all previous drift probes used the reference
+best order). Kicking the 83.9035% H35 order with 150 Adam steps:
+
+| surrogate | std | beta*std | after kick | drift |
+|---|---|---|---|---|
+| sigmoid | 141 | 148 | 83.7591 | **−0.1444** |
+| sigmoid | 500 | 525 | 83.8679 | −0.0356 |
+| sigmoid | 1500 | 1575 | 83.8961 | −0.0074 |
+| H38 one-sided | 141 | 148 | 83.8468 | −0.0567 |
+| H38 one-sided | 500 | 525 | 83.8958 | −0.0077 |
+| H38 one-sided | 1500 | 1575 | 83.9033 | −0.0002 |
+
+**The Q01 vise is real and quantified:** at the operating scale the sigmoid pulls a good order
+DOWN by 0.14 pp; at a scale above the crossover it barely moves anything (the gradient is dead).
+H38's one-sided surrogate drifts **2.5× less** at the operating scale, exactly as its alignment
+ratio predicts — but it still drifts, so pre-registered A3 FAILED.
+
+**Attribution (the control the H36 critic taught us to run first).** A monotone best-by-oracle
+re-sift beats its input almost tautologically, so the kick must be compared against *the same
+re-sift with no kick*:
+
+| arm | result | net vs the 83.9035% input |
+|---|---|---|
+| plain re-sift, NO kick (control) | 83.9067 | +0.0032 pp |
+| H38 kick @ std 500 -> re-sift | 83.9246 | +0.0211 pp |
+| **attributable to the gradient kick** | | **+0.0179 pp** |
+
+So alternation is not merely "more sift" — but note what it structurally is: the kick *lowers*
+the score and the re-sift repairs it, i.e. a **perturb-and-repair (ruin & recreate) move**, the
+same family as **H31**, which was KILLED (Δ vs H30 = −0.0008 pp at ~1.9× wall). The distinction
+is that the perturbation here is gradient-guided rather than random, and that does appear to
+matter — but the effect is **single-seed, single-config, and ~1/6 of A-SUB's**.
+
+**status: open, LOWER priority than A-SUB.** Before building: ≥3 seeds × ≥2 kick configs, and
+the honest comparator is H31's ruin-and-recreate, not the raw incumbent.

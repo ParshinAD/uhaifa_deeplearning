@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260817T195803Z-H38D-connectome-s123-implement-35b501",
+  "algo": "H38D",
+  "dataset": "connectome",
+  "seed": 123,
+  "score": 34519103.0,
+  "pct": 82.36062910744646,
+  "wall_clock_s": 89.5409049987793,
+  "git_commit": "0ed2b0dafd64d48258454370eac1b4830fce0583+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "35b50121f116",
+  "timestamp": "2026-08-17T19:59:41Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260817T195803Z-H38D-connectome-s123-implement-35b501_positions.npy",
+  "experiment_id": "H38D",
+  "role": "implement",
+  "hypothesis": "SCALE CONTROL for H38: plain sigmoid at beta x4 for the whole run (the A-SCALE/H03 axis). Original H38 text follows. One-sided ASYMMETRIC surrogate g(z)=1 for z>=M, 1+tanh((z-M)/T) for z<M with (M,T)=(0.75,1.5): comfortably-feedforward edges get ZERO gradient, so the whole budget pulls FEEDBACK edges toward correctness. Unlike every previously-tested (odd-symmetric) shape it does not telescope into Q01's imbalance degeneracy at small beta*std, and its alignment ratio is +1.48..+2.00 vs the sigmoid's -0.591 with no crossover at any scale. M>0 is required: at M=0 the collapsed configuration P=const is the surrogate's GLOBAL maximum (verified: collapses to pos std 5e-4, 58.24% vs 73.68% on the hard synthetic). (M,T) selected on mouse+synthetic only (the sole grid point positive on both); a beta-rescaled sigmoid control does NOT reproduce the gain, so this is not the killed A-SCALE/H03 axis.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

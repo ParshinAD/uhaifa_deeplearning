@@ -1,0 +1,24 @@
+2026-08-17 22:04:20,388 INFO mfas.run_variant frozen-oracle integrity: OK
+2026-08-17 22:04:20,388 INFO mfas.run_variant [20260817T190420Z-H37B-connectome-s123-implement-6fbacd] loading dataset=connectome
+2026-08-17 22:04:28,582 INFO mfas.run_variant   GraphData(name='connectome', n_nodes=136,648, n_edges=5,657,719, total_weight=41,912,141, weight_dtype=int64)
+2026-08-17 22:04:28,592 INFO mfas.run_variant   device=Apple MPS | variant=H37B role=implement
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+2026-08-17 22:07:24,852 INFO mfas.run_variant [20260817T190420Z-H37B-connectome-s123-implement-6fbacd] DONE  score=34,340,904.0000  pct=81.9355%  epochs=20000  wall=176.1s
+2026-08-17 22:07:24,852 INFO mfas.run_variant   wrote results/20260817T190420Z-H37B-connectome-s123-implement-6fbacd.json
+2026-08-17 22:07:25,862 INFO mfas.run_variant frozen-oracle integrity: OK
+2026-08-17 22:07:25,862 INFO mfas.run_variant [20260817T190725Z-H37-connectome-s999-implement-23393f] loading dataset=connectome
+2026-08-17 22:07:34,029 INFO mfas.run_variant   GraphData(name='connectome', n_nodes=136,648, n_edges=5,657,719, total_weight=41,912,141, weight_dtype=int64)
+2026-08-17 22:07:34,041 INFO mfas.run_variant   device=Apple MPS | variant=H37 role=implement
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+2026-08-17 22:10:41,143 INFO mfas.run_variant [20260817T190725Z-H37-connectome-s999-implement-23393f] DONE  score=34,565,249.0000  pct=82.4707%  epochs=20000  wall=187.0s
+2026-08-17 22:10:41,143 INFO mfas.run_variant   wrote results/20260817T190725Z-H37-connectome-s999-implement-23393f.json
+2026-08-17 22:10:41,966 INFO mfas.run_variant frozen-oracle integrity: OK
+2026-08-17 22:10:41,967 INFO mfas.run_variant [20260817T191041Z-H37B-connectome-s999-implement-6fbacd] loading dataset=connectome
+2026-08-17 22:10:50,115 INFO mfas.run_variant   GraphData(name='connectome', n_nodes=136,648, n_edges=5,657,719, total_weight=41,912,141, weight_dtype=int64)
+2026-08-17 22:10:50,125 INFO mfas.run_variant   device=Apple MPS | variant=H37B role=implement
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+2026-08-17 22:14:00,149 INFO mfas.run_variant [20260817T191041Z-H37B-connectome-s999-implement-6fbacd] DONE  score=34,360,739.0000  pct=81.9828%  epochs=20000  wall=189.9s
+2026-08-17 22:14:00,149 INFO mfas.run_variant   wrote results/20260817T191041Z-H37B-connectome-s999-implement-6fbacd.json

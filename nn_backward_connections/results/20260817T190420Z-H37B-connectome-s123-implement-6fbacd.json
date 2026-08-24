@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260817T190420Z-H37B-connectome-s123-implement-6fbacd",
+  "algo": "H37B",
+  "dataset": "connectome",
+  "seed": 123,
+  "score": 34340904.0,
+  "pct": 81.93545636334827,
+  "wall_clock_s": 176.1403398513794,
+  "git_commit": "af6c5b8ae4829e32bd16588d8f5c2fb7fc566671+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "6fbacd6647f4",
+  "timestamp": "2026-08-17T19:07:24Z",
+  "total_weight": 41912141.0,
+  "n_epochs_done": 20000,
+  "best_positions_path": "results/20260817T190420Z-H37B-connectome-s123-implement-6fbacd_positions.npy",
+  "experiment_id": "H37B",
+  "role": "implement",
+  "hypothesis": "Same algebraic-tail surrogate as H37 but at its NATIVE narrow core width (g(z)=0.5+0.5*sign(z)*(1-(1+|z|)^-4), z=beta*Delta, SCALE=1). This is the ONLY shape measured that ranks the near-optimal connectome order ABOVE Rocket's own order at Rocket's operating scale (alignment ratio +0.173 vs the sigmoid's -0.591) while leaving essentially every node mobile (0.006% zero gradients vs 42.5% for a width-matched sigmoid). Tests directly whether fixing the surrogate's static MISALIGNMENT (finding #3) raises the exact metric. Pre-registered caveat: this arm already lost the cheap prototype gate (mouse -0.220 pp, hard synthetic -2.834 pp); it is run on the connectome because the alignment property it exploits is connectome-specific and unmeasurable on those proxies.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 20000
+}

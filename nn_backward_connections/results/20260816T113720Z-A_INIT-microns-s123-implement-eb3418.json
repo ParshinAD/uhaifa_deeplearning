@@ -1,0 +1,26 @@
+{
+  "exp_id": "20260816T113720Z-A_INIT-microns-s123-implement-eb3418",
+  "algo": "A_INIT",
+  "dataset": "microns",
+  "seed": 123,
+  "score": 12801662.0,
+  "pct": 83.12466880256343,
+  "wall_clock_s": 540.2501790523529,
+  "git_commit": "eb769e4bc7e518d67f6c5c2a72063bc521aa5941+dirty",
+  "env": {
+    "python": "3.9.23",
+    "jax_or_torch": "torch-2.8.0",
+    "cuda": null,
+    "gpu": "Apple MPS"
+  },
+  "config_hash": "eb3418f93ed3",
+  "timestamp": "2026-08-16T11:46:21Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 80000,
+  "best_positions_path": "results/20260816T113720Z-A_INIT-microns-s123-implement-eb3418_positions.npy",
+  "experiment_id": "A_INIT",
+  "role": "implement",
+  "hypothesis": "Shrinking Rocket's N(0,1) init to std=1e-4 (nothing else changed) beats the baseline on the exact feedforward metric and removes its seed variance, because at small beta*std the gradient reduces to the weight-imbalance vector -(beta/4)c, so the optimizer self-warm-starts from the imbalance signal instead of undoing an uninformative random draw.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 80000
+}

@@ -1,0 +1,4 @@
+connectome  restart plain Jacobi sift        x20 sweeps: 83.90348% -> 83.90676%  = +0.00328 pp  (72s, movers sweep0=163)
+connectome  restart H35 under-relaxed sift   x20 sweeps: 83.90348% -> 83.90657%  = +0.00309 pp  (72s, movers sweep0=163)
+microns     restart plain Jacobi sift        x12 sweeps: 83.20505% -> 83.21060%  = +0.00555 pp  (148s, movers sweep0=608)
+microns     restart H35 under-relaxed sift   x12 sweeps: 83.20505% -> 83.21054%  = +0.00549 pp  (146s, movers sweep0=608)

@@ -1,0 +1,199 @@
+{
+  "probe": "S1/S2 collective-move sizing (roadmap A-SCC gate)",
+  "git_commit": "907bc82237cd360272a144261814b4dca67a46bc+dirty",
+  "config": {
+    "seed": 42,
+    "s1_top_k": 1200000,
+    "s1_checkpoints": [
+      100,
+      500,
+      1000,
+      2000,
+      5000,
+      10000,
+      20000
+    ],
+    "s2_block_sizes": [
+      64,
+      256,
+      1024,
+      4096,
+      16384
+    ],
+    "s2_small_scc_max": 10,
+    "verify_every": 2000,
+    "iter_rounds": 0
+  },
+  "datasets": {
+    "connectome": {
+      "dataset": "connectome",
+      "n_nodes": 136648,
+      "n_edges": 5657719,
+      "n_self_loops_dropped": 0,
+      "total_weight": 41912141.0,
+      "h35_positions_file": "20260622T213942Z-H35-connectome-s42-implement-8f52fb_positions.npy",
+      "h35_pct": 83.90348037815582,
+      "S1_paired_backward_move": {
+        "n_backward_edges": 1194565,
+        "backward_weight": 6746396.0,
+        "candidates_examined": 1194565,
+        "min_candidate_weight": 2.0,
+        "independent_sum_at_initial_order_weight": 28538.0,
+        "independent_sum_at_initial_order_pp": 0.06809005533742597,
+        "independent_positive_candidates": 4678,
+        "pass1_seconds": 302.5,
+        "moves_applied": 5203,
+        "realized_gain_weight": 17994.0,
+        "realized_gain_pp": 0.042932667171548214,
+        "oracle_before_pct": 83.90348037815582,
+        "oracle_after_pct": 83.94641304532736,
+        "oracle_verified": true,
+        "move_span_ranks": {
+          "mean": 10830.495483374976,
+          "median": 4773.0,
+          "p90": 25104.800000000003,
+          "max": 134492
+        },
+        "gain_curve": [
+          {
+            "candidates": 100,
+            "applied": 1,
+            "gain_weight": 9.0,
+            "gain_pp": 2.147349141624619e-05
+          },
+          {
+            "candidates": 500,
+            "applied": 6,
+            "gain_weight": 201.0,
+            "gain_pp": 0.00047957464162949826
+          },
+          {
+            "candidates": 1000,
+            "applied": 11,
+            "gain_weight": 345.0,
+            "gain_pp": 0.0008231505042894373
+          },
+          {
+            "candidates": 2000,
+            "applied": 13,
+            "gain_weight": 354.0,
+            "gain_pp": 0.0008446239957056835
+          },
+          {
+            "candidates": 5000,
+            "applied": 18,
+            "gain_weight": 443.0,
+            "gain_pp": 0.0010569729663774514
+          },
+          {
+            "candidates": 10000,
+            "applied": 39,
+            "gain_weight": 848.0,
+            "gain_pp": 0.0020232800801085297
+          },
+          {
+            "candidates": 20000,
+            "applied": 108,
+            "gain_weight": 1854.0,
+            "gain_pp": 0.004423539231746715
+          }
+        ],
+        "pass2_seconds": 372.0
+      },
+      "S2_block_scc": [
+        {
+          "block_size": 64,
+          "offset": 0,
+          "n_blocks": 2136,
+          "n_blocks_improved": 50,
+          "intra_block_feedback_ceiling_weight": 32806.0,
+          "gain_topo_weight": 321.0,
+          "gain_small_scc_weight": 58.0,
+          "small_scc_upper_bound_weight": 28876.0,
+          "n_small_sccs_examined": 2566,
+          "total_gain_weight": 379.0,
+          "intra_block_feedback_ceiling_pp": 0.07827326215570805,
+          "total_gain_pp": 0.000904272582973034,
+          "oracle_before_pct": 83.90348037815582,
+          "oracle_after_pct": 83.90438465073879,
+          "oracle_verified": true,
+          "seconds": 0.4
+        },
+        {
+          "block_size": 256,
+          "offset": 0,
+          "n_blocks": 534,
+          "n_blocks_improved": 132,
+          "intra_block_feedback_ceiling_weight": 62213.0,
+          "gain_topo_weight": 754.0,
+          "gain_small_scc_weight": 229.0,
+          "small_scc_upper_bound_weight": 36977.0,
+          "n_small_sccs_examined": 3407,
+          "total_gain_weight": 983.0,
+          "intra_block_feedback_ceiling_pp": 0.14843670238654713,
+          "total_gain_pp": 0.0023453824513522225,
+          "oracle_before_pct": 83.90348037815582,
+          "oracle_after_pct": 83.90582576060717,
+          "oracle_verified": true,
+          "seconds": 0.3
+        },
+        {
+          "block_size": 1024,
+          "offset": 0,
+          "n_blocks": 134,
+          "n_blocks_improved": 116,
+          "intra_block_feedback_ceiling_weight": 171048.0,
+          "gain_topo_weight": 1346.0,
+          "gain_small_scc_weight": 198.0,
+          "small_scc_upper_bound_weight": 42179.0,
+          "n_small_sccs_examined": 4115,
+          "total_gain_weight": 1544.0,
+          "intra_block_feedback_ceiling_pp": 0.40811086219623094,
+          "total_gain_pp": 0.0036838967496315685,
+          "oracle_before_pct": 83.90348037815582,
+          "oracle_after_pct": 83.90716427490545,
+          "oracle_verified": true,
+          "seconds": 0.4
+        },
+        {
+          "block_size": 4096,
+          "offset": 0,
+          "n_blocks": 34,
+          "n_blocks_improved": 34,
+          "intra_block_feedback_ceiling_weight": 557393.0,
+          "gain_topo_weight": 1858.0,
+          "gain_small_scc_weight": 212.0,
+          "small_scc_upper_bound_weight": 33674.0,
+          "n_small_sccs_examined": 2926,
+          "total_gain_weight": 2070.0,
+          "intra_block_feedback_ceiling_pp": 1.3299082001084126,
+          "total_gain_pp": 0.0049389030257366235,
+          "oracle_before_pct": 83.90348037815582,
+          "oracle_after_pct": 83.90841928118155,
+          "oracle_verified": true,
+          "seconds": 0.3
+        },
+        {
+          "block_size": 16384,
+          "offset": 0,
+          "n_blocks": 9,
+          "n_blocks_improved": 9,
+          "intra_block_feedback_ceiling_weight": 1711883.0,
+          "gain_topo_weight": 722.0,
+          "gain_small_scc_weight": 25.0,
+          "small_scc_upper_bound_weight": 7866.0,
+          "n_small_sccs_examined": 587,
+          "total_gain_weight": 747.0,
+          "intra_block_feedback_ceiling_pp": 4.084456100679753,
+          "total_gain_pp": 0.0017822997875484338,
+          "oracle_before_pct": 83.90348037815582,
+          "oracle_after_pct": 83.90526267794337,
+          "oracle_verified": true,
+          "seconds": 0.3
+        }
+      ],
+      "iterated_S1_S2": null,
+      "seconds": 685.7
+    }
+  }
+}
