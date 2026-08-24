@@ -8,9 +8,22 @@
 
 campaign:
   name: phase7-autonomous
-  branch: auto/campaign
-  sandbox_root: D:/1/bot/UHaifa/deep_learning/mfas_autoresearch
-  # Everything below this path is writable by the campaign. Nothing above it ever is.
+  branch: auto/campaign-v2
+  # Was `auto/campaign` until 2026-08-25. That branch and `phase6-global-discrete` had run in
+  # parallel on two machines for ten days, so neither reproduced the whole record from a
+  # checkout. The operator merged both into `main` and cut this branch from the unified `main`,
+  # so the campaign resumes knowing the other track's results — in particular H37/H38 (the
+  # surrogate axis) and the surrogate gate, which the campaign had never seen. `auto/campaign`
+  # is kept as the historical branch: do not run on it, do not merge it forward.
+  #
+  # TWO IDs WERE REASSIGNED IN THAT MERGE. This campaign's H37 -> H54 and H38 -> H55, because
+  # the same numbers on the other track carry committed modules and logged results/*.json.
+  # experiments/ID_MAP.md is the authoritative namespace; queue.json entries carry `former_id`.
+  sandbox_root:
+    # Machine-specific: whichever of these is this checkout's worktree root.
+    windows: D:/1/bot/UHaifa/deep_learning/mfas_autoresearch
+    macos: /Users/abed359/IdeaProjects/university/mfas_autoresearch
+  # Everything below that path is writable by the campaign. Nothing above it ever is.
   repo_subdir: nn_backward_connections
 
 # ─────────────────────────────────────────────────────────────────────────────

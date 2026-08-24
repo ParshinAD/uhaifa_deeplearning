@@ -5,6 +5,27 @@ the numbers, `state.json` holds where we are, and `experiments/PROTOCOL.md` (§ 
 statistics. If this file and the code disagree, the code that produced a logged number wins —
 then fix this file.
 
+> ### ⚠ What changed on 2026-08-25 — read before the first cycle on this branch
+>
+> The campaign now runs on **`auto/campaign-v2`**, cut from a `main` that merges the old
+> `auto/campaign` with **`phase6-global-discrete`** — a track that ran in parallel on a MacBook
+> for ten days and that this campaign had never seen. Three consequences, all load-bearing:
+>
+> 1. **Two IDs were reassigned.** This campaign's `H37` → **`H54`** and `H38` → **`H55`**; the
+>    surviving `H37`/`H38` are the other track's surrogate variants, which have committed modules
+>    and logged runs. `experiments/ID_MAP.md` is the authoritative namespace — read it before
+>    allocating an ID or citing one written before this date.
+> 2. **The surrogate axis is much better mapped than `killed.json` implies.** `M1-continuous-exhausted`
+>    was written before H37/H38 existed. It is now *sharper*, not weaker: the symmetric surrogate
+>    family is closed, but **dropping symmetry** (H38: gradient only on violated edges) gained
+>    **+0.3668 pp** on connectome while losing **−0.6689 pp** on MICrONS. That is the largest
+>    gradient-side result in the project and it is graph-dependent, not general. There is also a
+>    reusable **surrogate gate** (`src/mfas/analysis/surrogate_gate.py`, tested) that any new
+>    surrogate proposal must pass before it costs compute.
+> 3. **`sota.json` was measured on CUDA.** If this checkout is the MacBook, queue item **P01**
+>    (hardware re-baseline) is outstanding again and every delta against a champion is a moving
+>    comparator until it is done. See § Hardware below — this is not optional.
+
 ## Mission
 
 Raise the exact feedforward percentage on the fly connectome from the current champion
@@ -42,9 +63,14 @@ reference solution exists and no MIP produced it. This is not a fishing expediti
 1. **Never touch a frozen file.** `src/mfas/metrics.py`, `eval/harness.py`, `eval/aggregate.py`,
    `tests/test_metrics.py` (+ `eval/frozen.sha256`, `eval/frozen_guard.py`). A hook blocks edits,
    the files are 0444, and `verify_frozen_manifest()` aborts any scored run if a hash moved.
-2. **Never write outside the sandbox.** Everything lives under
-   `/Users/abed359/IdeaProjects/university/mfas_autoresearch`. The original repo is read-only
-   reference. Never `git push`, never merge into `main` or `phase6-global-discrete`.
+2. **Never write outside the sandbox.** Everything lives under the campaign worktree
+   (`campaign.sandbox_root` in `campaign.yaml`); the rest of the repository is read-only
+   reference. **The campaign never runs `git push` and never merges its branch into another
+   one** — those are operator actions. The operator did exactly that on 2026-08-25 (merging
+   `auto/campaign` and `phase6-global-discrete` into `main`, then cutting this branch from it),
+   which is why this branch already contains the other track's record. The rule is unchanged
+   for the campaign: stay on `auto/campaign-v2`, and never touch `main` or the historical
+   `auto/campaign` / `phase6-global-discrete`.
 3. **Never fabricate a number.** Every figure in every document traces to a `results/*.json` (or
    `experiments/outputs/*.json`) plus a re-runnable command. `autoresearch/audit.py` re-derives
    them mechanically; if the audit and the prose disagree, the prose is wrong.
