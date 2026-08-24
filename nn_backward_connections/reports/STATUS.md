@@ -188,20 +188,26 @@ epochs are already at the optimum; more is flat-to-negative) and the **starting 
 
 ## 8. Honest gaps and risks
 
-**1. The record is split across two diverged branches, and neither has the whole story.**
+**1. ~~The record is split across two diverged branches.~~ RESOLVED 2026-08-25.**
 
-| branch | ahead by | holds |
-|---|---|---|
-| `auto/campaign` | 39 commits | findings #6–#7, the champion pipeline (84.15%), H41–H52 |
-| `phase6-global-discrete` | 9 commits | H37/H38, the surrogate gate, A-SUB/A-ALT, this file |
+Both branches were merged into `main`, which now reproduces the whole record from one checkout:
+`auto/campaign` brought findings #6–#7, the champion pipeline (84.15%), H36 and H41–H52 and the
+`autoresearch/` campaign machinery; `phase6-global-discrete` brought H37/H38, the surrogate gate,
+A-SUB/A-ALT and this file. `pytest tests/ -q` is 344 passed on the merged tree, scorer parity
+included. Two files needed a decision, both recorded in the merge commit: finding **#3** exists on
+both sides under the same number and the phase6 text wins (it *is* the revision that survived the
+adversarial review); `log.md` keeps both narratives whole under explicit **Track 1 / Track 2**
+headers rather than interleaving them by date.
 
-`git checkout` of either branch reproduces only part of the record. **This must be resolved
-before the thesis** — it is the single highest-value piece of housekeeping.
+**2. ~~Variant IDs have collided across the branches.~~ RESOLVED 2026-08-25 — see
+[`experiments/ID_MAP.md`](../experiments/ID_MAP.md), which is now the authoritative namespace.**
 
-**2. Variant IDs have collided across the branches.** `H36`, `H37`, `H38` and `H39` each mean
-*different things* on the two branches (e.g. `H38` = "Gauss-Seidel sift, killed" on one and
-"one-sided surrogate, +0.37 pp" on the other). Any merge must renumber, and every citation by ID
-in the write-ups needs checking.
+`H37` and `H38` genuinely meant two things. The side with committed code and logged runs kept the
+ID (phase6's surrogates); the campaign's code-less entries became **`H54`** and **`H55`**. `H36`
+turned out not to be a collision but continuity — phase6 *proposed* it, the campaign *implemented*
+it. `H39` and `A-ALT` are the same idea under two labels. Historical citations in `log.md`,
+`findings.md`, `diagnosis.md` and `backlog.md` were deliberately **not** rewritten; disambiguate
+them by which track section they sit in.
 
 **3. Cross-branch numbers in this file were read from that branch's committed documents**
 (`findings.md`, `log.md`) — they are not re-verified here. The numbers from
@@ -224,7 +230,8 @@ at all because it has no reference solution.
 
 | file | what it holds | read it when |
 |---|---|---|
-| **this file** | current state, both branches | orientation |
+| **this file** | current state, both tracks | orientation |
+| `experiments/ID_MAP.md` | the authoritative `H##` namespace + the resolved ID collisions | citing or allocating any variant ID |
 | `experiments/findings.md` | the ranked confirmed wins, with full evidence tables | you need the numbers behind §4 |
 | `experiments/diagnosis.md` | the *why* — Q01–Q05 | you need §5 in depth |
 | `experiments/log.md` | full chronological journal, one entry per experiment | you need to know exactly what was run |
@@ -241,6 +248,7 @@ is not a gain; one git commit per experiment; and no algorithm may ever read the
 
 ---
 
-*Generated 18 Aug 2026. Numbers from `phase6-global-discrete` were re-scored against the frozen
-oracle on the day; numbers from `auto/campaign` are quoted from that branch's committed findings
-and log.*
+*Generated 18 Aug 2026; §8 items 1–2 updated 25 Aug 2026 when the two branches were merged into
+`main`. Numbers from the phase6 track were re-scored against the frozen oracle on the day; numbers
+from the campaign track are quoted from its committed findings and log, and were measured on
+different hardware (Windows/CUDA) — see `CLAUDE.md`, Hardware notes.*

@@ -5,16 +5,24 @@
 > The instructions in *this* file take precedence for work inside
 > `nn_backward_connections/`.
 
-> **⚙ THIS CHECKOUT IS THE AUTONOMOUS CAMPAIGN SANDBOX** (branch `auto/campaign`, Phase 7).
-> Read **`autoresearch/CAMPAIGN.md` first** — it is the standing brief and it overrides ordinary
-> defaults about scope and pace. Key differences from the original repo:
+> **⚙ IF THIS CHECKOUT IS AN AUTONOMOUS CAMPAIGN SANDBOX** — i.e. a worktree on a branch named
+> `auto/campaign*` — then read **`autoresearch/CAMPAIGN.md` first**. It is the standing brief and
+> it overrides ordinary defaults about scope and pace:
 > - variants are judged against the **champion** in `autoresearch/sota.json`, not the baseline;
 > - every run must finish within **3600 s**;
 > - `autoresearch/audit.py` must pass before any champion changes;
-> - nothing is ever written outside this worktree, pushed, or merged into another branch.
+> - nothing is ever written outside that worktree, pushed, or merged into another branch.
 >
 > Current state: `autoresearch/DASHBOARD.md`. One cycle: `/research-cycle`.
 > Unattended: `bash autoresearch/driver.sh`.
+>
+> On `main` those rules do not apply — `main` is the **unified record**, not a running campaign.
+
+> **📍 `main` carries the merged record of two parallel tracks** (merged 2026-08-25): the Phase-7
+> autonomous campaign, run on Windows/CUDA, and the Phase-6 surrogate track, run on macOS/MPS.
+> `experiments/log.md` is split into "Track 1" and "Track 2" from 2026-08-09 onward for exactly
+> that reason. **Scores measured on different devices are not directly comparable** — see
+> "Hardware notes" below before quoting a delta across the two.
 
 ## Research context
 
@@ -73,16 +81,35 @@ sub-algorithm (see "Current state" below).
 - `data/table_mouse.txt`: `src tgt weight` (float), mouse connectome — not yet used.
 
 ## Tech stack
-- Python 3.9 (conda env `allen`:
-  `/c/ProgramData/anaconda3/envs/allen/python.exe`)
+- Python 3.9 (conda env `allen`). The interpreter path is machine-specific — see
+  "Run everything via" at the bottom of this file.
 - PyTorch (Rocket: continuous positions as a learnable Parameter + Adam)
 - NumPy / Pandas, Matplotlib, SciPy (stats), nbformat (notebook generation)
 - networkx / igraph are reasonable choices for the random-graph study (confirm
   what's installed before relying on them).
 
 ## Hardware notes
-- `select_device("auto")` prefers MPS → CUDA → CPU. **This checkout runs on CUDA**
-  (NVIDIA RTX 4060 Laptop GPU); the MPS branch is dead code here.
+
+**Two machines produced the record on `main`. Know which one a number came from.**
+
+| | MacBook (Apple Silicon) | Windows 10 laptop |
+|---|---|---|
+| device | MPS | CUDA, NVIDIA RTX 4060 Laptop (8 GB) |
+| interpreter | `/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python` | `/c/ProgramData/anaconda3/envs/allen/python.exe` |
+| torch | 2.8.0 | 2.8.0+cu128 (CUDA 12.8) |
+| python | 3.9.23 | 3.9.25 |
+| shell | zsh | Git Bash (not WSL) |
+| produced | the baseline reproduction, H01–H35, the Q-track diagnostics, H37/H38, the surrogate gate | the whole Phase-7 campaign: P01–P09, H36, H41–H52, `autoresearch/sota.json` |
+
+The champion registry in `autoresearch/sota.json` was measured on **CUDA**. Re-measuring those
+champions on MPS is queue item **P01** and it has NOT been done on this side of the merge — until
+it is, any delta computed here against a `sota.json` number is a moving comparator in a form
+`config_hash` cannot detect, because the device is not part of it.
+
+What travels between machines is the **deterministic scorer**, not a training trajectory:
+`tests/test_metrics.py` scoring `results/rocket_best_positions.npy` to exactly 34,751,902.
+
+- `select_device("auto")` prefers MPS → CUDA → CPU, so the same code runs on both.
 - **Compute the discrete score on CPU**, not on the accelerator: large-magnitude float32
   index ops on MPS can occasionally return garbage and corrupt best-score tracking.
   (`torch_score` already does this — keep it, it is also what makes the score portable.)
@@ -93,15 +120,15 @@ sub-algorithm (see "Current state" below).
   a Welch CI computed from these seeds is degenerate (SE = 0 makes any positive delta look
   significant). Use the PROTOCOL CI (`audit.py` floors its σ at `baseline_sigma_pp`) together
   with `screen_delta_pp` as a minimum effect size. Verified in P01 — see `experiments/log.md`.
-- A connectome run is ~2.7× slower here than on the MacBook (591 s vs 219 s) — the loop is
+- A connectome run is ~2.7× slower on the RTX 4060 than on the MacBook (591 s vs 219 s) — the loop is
   gather/scatter over 5.7 M edges with atomic accumulation, i.e. memory-bound, where a 128-bit
   8 GB laptop card has no advantage over unified memory. Still far inside the 3600 s budget.
 
 ## Workflow conventions
 - **Notebooks are generated from `create_notebook.py`** via nbformat — they are
   build artifacts. Edit the `.py` generator, then regenerate; do not hand-edit the
-  `.ipynb` as the source of truth. Regenerate with:
-  `/c/ProgramData/anaconda3/envs/allen/python.exe create_notebook.py`
+  `.ipynb` as the source of truth. Regenerate with `$PY create_notebook.py`, where `$PY` is
+  this machine's `allen` interpreter (see "Run everything via").
 - Use **time limits** (`time_limit=`) on Rocket runs rather than fixed epoch counts
   when comparing — runtime differs a lot from the paper's GPUs.
 - Keep the reproduction notebook intact; put new experiments under `experiments/`
@@ -159,12 +186,19 @@ These govern the evaluation harness built under `src/mfas/`, `eval/`, `tests/`.
   authoritative reproduction claim rests on the deterministic **scorer-parity test**.
 
 ### Run everything via
-`/c/ProgramData/anaconda3/envs/allen/python.exe` (conda env `allen`, Python 3.9.25,
-torch 2.8.0+cu128). Shell is **Git Bash**, not WSL.
+The conda env `allen`, whichever machine you are on:
+
+```bash
+# MacBook / MPS
+PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
+# Windows laptop / CUDA (Git Bash, not WSL)
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+```
+
 One-command reproduction: `bash scripts/reproduce_baseline.sh`.
 
-**Interpreter changed with the port (2026-08-09).** Everything written before that date —
-`findings.md`, `experiments/backlog.md`, `dr_tmp/`, the diagnostics docstrings — quotes the
-MacBook path `/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python`. Those documents are
-left as written because they record how those numbers were actually produced; substitute the
-interpreter above when re-running any of them here. See `experiments/log.md` (P01).
+**The interpreter path in the older documents is the MacBook one.** Everything written before
+2026-08-09 — `findings.md`, `experiments/backlog.md`, `dr_tmp/`, the diagnostics docstrings —
+quotes `/opt/homebrew/...`; the Phase-7 campaign entries quote `/c/ProgramData/...`. Those
+documents are left as written because they record how those numbers were actually produced.
+Substitute your own `$PY` when re-running any of them. See `experiments/log.md` (P01).

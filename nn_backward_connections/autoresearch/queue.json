@@ -1,7 +1,7 @@
 {
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
-  "updated": "2026-08-17",
-  "next_free_id": "H54",
+  "updated": "2026-08-25",
+  "next_free_id": "H56",
   "next_free_protocol_id": "P10",
   "items": [
     {
@@ -175,7 +175,7 @@
       "outcome": "IN PROGRESS 2026-08-15 night. Grid running via experiments/proto_P07_sizing.py on an IDLE machine (operator asleep), which also supplies the idle-machine counter-measurement P07's own method step 1 asks for. Two arms already on disk from the aborted 2026-08-11 cycle: epochs=0 -> 83.11152%, epochs=2500 -> 83.12094%, against a champion of 83.2409% at 80,000 epochs. So the gradient phase buys ~0.13 pp for roughly its entire ~3200 s. Arms 5000/10000/20000 decide whether microns' runtime invariant can be met by SIZING rather than by weakening the cap."
     },
     {
-      "id": "H37",
+      "id": "H54",
       "title": "Cycle-triggered under-relaxation (fix the microns regression, make H35 a general win)",
       "status": "proposed",
       "priority": 3,
@@ -189,10 +189,12 @@
         "dr_tmp/exp_sweeps.json"
       ],
       "est_cost": "cheap (a detector plus a branch inside an existing refiner)",
-      "expected_pp": "microns +0.002 to +0.010; connectome ~0 (must not regress)"
+      "expected_pp": "microns +0.002 to +0.010; connectome ~0 (must not regress)",
+      "former_id": "H37",
+      "collision_note": "Renamed 2026-08-25 at the branch unification. This id previously read H37, but H37 was independently allocated on the phase6-global-discrete branch to a DIFFERENT hypothesis, which shipped a committed module (src/mfas/experiments/H37.py), tests and logged results/*-H37-*.json. This campaign entry has neither, so it is the side that moves. Historical references to 'H37' inside the Track-1 sections of experiments/log.md still mean THIS item and were deliberately left as written. See experiments/ID_MAP.md."
     },
     {
-      "id": "H38",
+      "id": "H55",
       "title": "Gauss-Seidel / block-sequential exact-gain sift",
       "status": "killed",
       "priority": 2,
@@ -208,7 +210,9 @@
       "est_cost": "medium (needs a blocked kernel to keep vectorization)",
       "expected_pp": "connectome +0.05 to +0.3 (speculative)",
       "outcome": "PROTOTYPE GATE 2026-08-16 -> KILLED (experiments/outputs/proto_H38_connectome.json, proto_H38_mouse.json). Block-sequential loses to the champion's under-relaxed Jacobi at EVERY block count and under BOTH damping schedules, from the same greedy-FAS start on connectome: K=2 damped -0.04685 / undamped -0.55312; K=4 -0.07366 / -0.11775; K=8 -0.13827 / -0.10571 pp. Same sign on mouse. It also costs K times more per sweep. PARITY: the K=1 arm reproduces sift_underrelaxed EXACTLY (83.44721 connectome, 93.08288 mouse), so every K>1 difference is the mechanism and not the harness. THE CONFOUND WAS TESTED, NOT ASSUMED AWAY: the first grid damped the block-sequential arms with alpha=0.7, which is the cure for the JACOBI collision that Gauss-Seidel does not have by construction - handicapping the arm with a treatment for a disease it lacks. Re-running undamped does NOT rescue it; at K=2 it is 12x worse. So damping helps sequential schemes too, which means under-relaxation's benefit is broader than the 'Jacobi 2-cycle cure' that underrelax.py's docstring attributes it to.",
-      "revival_if": "HONEST LIMITATION of this gate: at K<=8 each sub-step still moves ~n/K nodes simultaneously (68,324 at K=2), so the Jacobi collision is still present and the PURE Gauss-Seidel limit K=n was never reached. The trend across K=1,2,4,8 is monotonically AWAY from the champion, which is evidence against the limit rather than for it, but it is not a proof. A revival would need a kernel that reaches small blocks affordably - restricting jacobi_best_gaps to a block's incident edges (a block of n/K nodes touches ~m/K edges) recovers an O(m) sweep and would make K in the thousands testable. Only worth building if some other evidence suggests the limit behaves differently from the trend."
+      "revival_if": "HONEST LIMITATION of this gate: at K<=8 each sub-step still moves ~n/K nodes simultaneously (68,324 at K=2), so the Jacobi collision is still present and the PURE Gauss-Seidel limit K=n was never reached. The trend across K=1,2,4,8 is monotonically AWAY from the champion, which is evidence against the limit rather than for it, but it is not a proof. A revival would need a kernel that reaches small blocks affordably - restricting jacobi_best_gaps to a block's incident edges (a block of n/K nodes touches ~m/K edges) recovers an O(m) sweep and would make K in the thousands testable. Only worth building if some other evidence suggests the limit behaves differently from the trend.",
+      "former_id": "H38",
+      "collision_note": "Renamed 2026-08-25 at the branch unification. This id previously read H38, but H38 was independently allocated on the phase6-global-discrete branch to a DIFFERENT hypothesis, which shipped a committed module (src/mfas/experiments/H38.py), tests and logged results/*-H38-*.json. This campaign entry has neither, so it is the side that moves. Historical references to 'H38' inside the Track-1 sections of experiments/log.md still mean THIS item and were deliberately left as written. See experiments/ID_MAP.md."
     },
     {
       "id": "H39",
