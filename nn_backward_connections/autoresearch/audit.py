@@ -40,6 +40,10 @@ champion. It additionally FAILs on, all driven by ``campaign.yaml promotion_gate
 
   * ``delta_pp <= datasets.<ds>.min_promotion_delta_pp`` on any PRIMARY dataset;
   * ``protocol_ci_lower <= 0`` on any PRIMARY dataset;
+  * on a PRIMARY dataset whose two pools are BOTH degenerate (std <= ``zero_std_tol``), and
+    ADDITIONALLY to the CI above, failure of the relabelling robustness test — including the
+    absence of a registered study (P09, 2026-08-25; see ``autoresearch/relabel_gate.py``). Such a
+    pool carries no robustness evidence of its own, and before P09 it was required to carry none;
   * the SUPPORTING (mouse) pooled non-inferiority bound falling at or below
     ``datasets.<ds>.non_inferiority_pp``;
   * an empty variant pool, an empty comparator pool, or an empty ``per_dataset``;
@@ -75,6 +79,11 @@ _ROOT = _HERE.parent
 for _p in (str(_ROOT / "src"), str(_ROOT)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
+
+# P09 (2026-08-25): the significance test that applies when a pool has NO dispersion to build a
+# CI on. See autoresearch/relabel_gate.py for why the PROTOCOL CI cannot do that job here.
+sys.path.insert(0, str(_HERE))
+import relabel_gate  # noqa: E402
 
 FROZEN_PATHS = [
     "src/mfas/metrics.py",
@@ -712,6 +721,59 @@ def main() -> int:
                           f"worth a champion change whatever its CI says",
                           ok_detail=f"delta {delta:+.4f} pp clears the minimum effect size "
                                     f"{float(min_delta):+.4f} pp")
+
+            # ── ADDITIONAL requirement on a degenerate pool (P09, 2026-08-25) ────────────
+            # A pool with a single distinct value has no sampling error, so before P09 a
+            # degenerate-pool promotion carried NO robustness evidence at all. This gate demands
+            # some: that the improvement survives an exact symmetry of the problem (see
+            # relabel_gate). It can only ever REFUSE, so the campaign may impose it on itself.
+            #
+            # It does NOT replace require_protocol_ci_lower_gt below. Cycle 9 first wrote it as a
+            # replacement, which would have admitted the campaign's own pending result (H52
+            # connectome, refused on 2026-08-17) — and queue item P09 reserves that decision for
+            # the operator in as many words. The critic caught it. The two halves are unbundled:
+            # the tightening is in force, the retirement of the PROTOCOL CI waits for a human.
+            rule_cfg = g_primary.get("degenerate_pool_rule") or {}
+            degenerate = (c["std"] < zero_tol and v["std"] < zero_tol)
+            if bool(rule_cfg.get("enabled", False)) and degenerate:
+                min_R = int(rule_cfg.get("min_relabellings", 4))
+                if min_delta is None:
+                    # D3: `float(min_delta or 0.0)` would have degenerated the test to
+                    # "every delta > 0", which for a NESTED variant is a tautology. Refuse.
+                    rep.gated(f"relabel.{ds}", False,
+                              f"no minimum effect size is configured for {ds}, so the "
+                              f"relabelling test has no bar to apply — refusing rather than "
+                              f"defaulting to zero, which a nested variant clears by construction")
+                else:
+                    study = relabel_gate.load_study(args.variant, comp_id, ds)
+                    if study is None:
+                        rep.gated(f"relabel.{ds}", False,
+                                  f"both pools are degenerate (variant std={v['std']:.4g}, "
+                                  f"comparator std={c['std']:.4g}), so the seed pool carries no "
+                                  f"robustness evidence, and no relabelling study is registered "
+                                  f"for ({args.variant}, {comp_id}, {ds}) in "
+                                  f"experiments/outputs/relabel_index.json — run "
+                                  f"`experiments/proto_P09_relabel.py --dataset {ds} "
+                                  f"--comparator {comp_id} --variant {args.variant} "
+                                  f"--relabels {min_R}`")
+                    else:
+                        # D1: the identity row must reproduce THESE pools, not merely exist.
+                        ev = relabel_gate.evaluate(study, float(min_delta), min_R,
+                                                   variant_pct=v["mean"],
+                                                   comparator_pct=c["mean"])
+                        per_dataset[ds]["relabel"] = ev
+                        rep.gated(f"relabel.{ds}", ev["passed"],
+                                  f"the gain is not robust to node relabelling: "
+                                  + "; ".join(ev["reasons"]) + f" (study {ev['study_path']})",
+                                  ok_detail=f"robust to relabelling: {ev['n_relabellings']} "
+                                            f"non-identity relabelling(s) plus an identity row "
+                                            f"that reproduces the confirm pools; every delta in "
+                                            f"[{ev['delta_min_pp']:+.5f}, "
+                                            f"{ev['delta_max_pp']:+.5f}] pp and the paired "
+                                            f"one-sided 95% lower bound "
+                                            f"{ev['paired_lower_bound_pp']:+.5f} pp all clear "
+                                            f"the minimum effect size {ev['min_delta_pp']:+.5f} "
+                                            f"pp (study {ev['study_path']})")
 
             if g_primary.get("require_protocol_ci_lower_gt", None) is not None:
                 floor = float(g_primary["require_protocol_ci_lower_gt"])

@@ -1,0 +1,549 @@
+{
+  "item": "P09",
+  "dataset": "mouse",
+  "comparator": "H44",
+  "variant": "H52",
+  "seed": 42,
+  "n_nodes": 148,
+  "total_weight": 9.159036176272162,
+  "perm_seed_base": 909000,
+  "rows": [
+    {
+      "r": 0,
+      "identity": true,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.525494672962225,
+        "pct": 93.08288021668459,
+        "wall_clock_s": 0.7652163505554199,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04792189598083496,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.019945743892392898
+    },
+    {
+      "r": 1,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.525494672962225,
+        "pct": 93.08288021668459,
+        "wall_clock_s": 0.03993701934814453,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04908323287963867,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.019945743892392898
+    },
+    {
+      "r": 2,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.03951883316040039,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04754161834716797,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 3,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.525494672962225,
+        "pct": 93.08288021668459,
+        "wall_clock_s": 0.04001617431640625,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.05352306365966797,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.019945743892392898
+    },
+    {
+      "r": 4,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.525494672962225,
+        "pct": 93.08288021668459,
+        "wall_clock_s": 0.04033970832824707,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04775261878967285,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.019945743892392898
+    },
+    {
+      "r": 5,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.03957343101501465,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.047659873962402344,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 6,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.525494672962225,
+        "pct": 93.08288021668459,
+        "wall_clock_s": 0.042366981506347656,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04643082618713379,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.019945743892392898
+    },
+    {
+      "r": 7,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.03996396064758301,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04680156707763672,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 8,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.03922629356384277,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.045907020568847656,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 9,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.525494672962225,
+        "pct": 93.08288021668459,
+        "wall_clock_s": 0.03855443000793457,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04802393913269043,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.019945743892392898
+    },
+    {
+      "r": 10,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.525494672962225,
+        "pct": 93.08288021668459,
+        "wall_clock_s": 0.03755044937133789,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.05309247970581055,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.019945743892392898
+    },
+    {
+      "r": 11,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.03865623474121094,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04896235466003418,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 12,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.03853654861450195,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04957842826843262,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 13,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.04252767562866211,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04655909538269043,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 14,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.05003476142883301,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04752612113952637,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 15,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.038010597229003906,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.048508644104003906,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 16,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.04151105880737305,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.0461268424987793,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 17,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.03920173645019531,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04807162284851074,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 18,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.525494672962225,
+        "pct": 93.08288021668459,
+        "wall_clock_s": 0.03713083267211914,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.05008387565612793,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.019945743892392898
+    },
+    {
+      "r": 19,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.03851723670959473,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.046662092208862305,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 20,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.038515567779541016,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.050089120864868164,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 21,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.525494672962225,
+        "pct": 93.08288021668459,
+        "wall_clock_s": 0.04253363609313965,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04854297637939453,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.019945743892392898
+    },
+    {
+      "r": 22,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.040521860122680664,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04651165008544922,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 23,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.52268243237315,
+        "pct": 93.05217566944893,
+        "wall_clock_s": 0.03957986831665039,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04555106163024902,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.05065029112805064
+    },
+    {
+      "r": 24,
+      "identity": false,
+      "comparator": {
+        "exp": "H44",
+        "score": 8.525494672962225,
+        "pct": 93.08288021668459,
+        "wall_clock_s": 0.039522409439086914,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "variant": {
+        "exp": "H52",
+        "score": 8.527321510860956,
+        "pct": 93.10282596057698,
+        "wall_clock_s": 0.04710960388183594,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 0
+      },
+      "delta_pp": 0.019945743892392898
+    }
+  ],
+  "summary": {
+    "n_points": 25,
+    "comparator_pct_mean": 93.0644574883432,
+    "comparator_pct_std": 0.015352273617828871,
+    "variant_pct_mean": 93.10282596057698,
+    "variant_pct_std": 0.0,
+    "delta_mean_pp": 0.038368472233787546,
+    "delta_std_pp": 0.015352273617828871,
+    "delta_min_pp": 0.019945743892392898,
+    "delta_max_pp": 0.05065029112805064,
+    "n_positive": 25
+  }
+}

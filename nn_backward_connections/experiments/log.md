@@ -5007,3 +5007,304 @@ repository, so the flag can never clear). Filed, not fixed here.
 The pre-registration is what stopped a wrong report. Had the branch table not been sealed first, the
 0.0024 pp reading would have been reported as "the champion is 1-opt dry, so generator work is
 earned" — a conclusion about an order that is not the champion.
+
+---
+
+## 2026-08-17 — H52 (cycle 8): RECONSTRUCTED STUB — the cycle that promoted the mouse champion wrote no log section
+
+**This section is a reconstruction written on 2026-08-25 by cycle 9, not a cycle-8 record.** Cycle 8
+promoted a champion, updated `sota.json`, `state.json` and `queue.json`, and committed
+(`40259f1`) — but it never appended a section to this file. Its narrative went into the commit
+message and into `state.json.last_cycle_outcome` instead, which is why
+`autoresearch/verify_cycle.py` reports "no section for cycle 8 (item 'H52')". Nothing was
+fabricated to fill the gap: everything below is quoted from `40259f1`'s commit message and the
+artifacts it names, and no attempt is made to reconstruct reasoning that was never written down.
+
+**Hypothesis (H51/H52).** Add a fifth stage: sequential exact-gain pair relocation. Take a
+backward edge, extract BOTH endpoints, re-insert them adjacent at the best split inside the
+interval. Exact by the contiguous-block lemma, O(d(u)+d(v)) per candidate. The champion is blind
+to it by construction — 989 of 3,498 positive-gain pairs on its own connectome order have zero
+solo gain at both endpoints.
+
+**Confirm** (module committed at `5734d23` *before* the runs — the P08 procedure working):
+
+| dataset | H52 | comparator H42 | delta | seeds | std |
+|---|---|---|---|---|---|
+| connectome | 84.17502222088821 | 84.15409511053134 | +0.020927 pp | 5 | 0 |
+| mouse | 93.10282596057698 | 93.08288022 (H44) | +0.019946 pp | 20 | 0 |
+| microns | — | — | 0 of 67,534 positions differ | — | — |
+
+**Decision as recorded:** promoted on mouse only. The connectome leg was REFUSED by
+`audit.py --gate promotion` on `protocol_ci` and filed as **P09**. microns was untouched because
+stage 5 is disabled there (`_PAIR_MAX_POPS=0`) on runtime grounds — P07 as a hard budget, not a
+property of the move class.
+
+**The architectural finding, kept because it is load-bearing:** the identical move class applied
+as a disjoint BATCH gives +0.00193 pp (H45); applied one move at a time it gives +0.02233 pp —
+11.6×. A pair move's interval averages ~20,536 positions on a 136,648-position line, so disjoint
+intervals barely fit and the batched form discarded 99.9 % of what it found.
+
+*Lesson recorded against the process, not the science:* a cycle that promotes a champion and
+writes no log section leaves its successor to reconstruct it from a commit message.
+`verify_cycle.py` already WARNs on this; the WARN was correct and had been sitting unread.
+
+---
+
+## 2026-08-25 — P09 (cycle 9): the two significance criteria, measured — **ITERATE**. Half the change shipped, half held for the operator, H52 still refused
+
+**Item:** P09, priority 0, resumed from `state.json.current_item`.
+**Mode:** incremental (`cycles_since_score_move` 0, `consecutive_kills` 0,
+`cycles_since_literature_scan` 0, 4 viable science items queued against a `min_queue_depth` of 3).
+**Machine:** Windows 10 laptop, NVIDIA RTX 4060 Laptop GPU (CUDA 12.8), torch 2.8.0+cu128,
+python 3.9.25. Preflight: tree clean, branch `auto/campaign-v3` = `campaign.yaml`'s
+`campaign.branch`, `pytest tests/ -q` **386 passed** in 174.76 s.
+
+**Gates run:** novelty, prototype (mouse, 25 relabellings), the connectome study, critic.
+No screen and no confirm: P09 is a protocol item and produced no variant.
+
+**Headline, stated first because the honest verdict is the uncomfortable one.**
+The measurement worked and the campaign got the governance wrong. Cycle 9 resolved P09 as its
+option (b) — the one option of three that admits the campaign's own held result — on an item whose
+own text reserves the decision for the operator. The critic refused that, and it was right. The
+change was split: **the half that can only ever refuse a promotion is in force; the half that
+would admit one waits for a human.** `sota.json` is untouched, and H52's connectome leg is still
+refused, now by a gate strictly stronger than the one that refused it on 2026-08-17.
+
+### The question
+
+On 2026-08-17 the campaign's two connectome promotion criteria disagreed for the first time.
+H52's +0.020927 pp CLEARS `min_promotion_delta_pp` (0.012) and FAILS the PROTOCOL CI, whose
+threshold is `1.96 * baseline_sigma_pp * sqrt(2/n_c)` = `1.96 * 0.0189 * sqrt(2/5)` = 0.02343 pp.
+H36 (+0.1837) and H42 (+0.0569) had both cleared the higher bar, so the conflict never surfaced.
+P09 asked which criterion governs and explicitly forbade resolving it by re-running with more
+seeds — at n=7 the threshold falls to 0.0198 pp and admits H52 unchanged.
+
+### Two defects in the old rule, identified before anything was measured
+
+1. **The sigma is a fossil.** `baseline_sigma_pp = 0.0189` is a RANDOM-INIT baseline's dispersion
+   measured on Apple MPS, applied as the sigma floor of a comparison between two pipelines that
+   never draw from `seed` and whose CUDA confirm pools hold ONE distinct value each. The campaign
+   had already found and fixed this exact category error on the supporting dataset five days
+   earlier — `campaign.yaml` D4 says so in as many words — and left the primaries alone because
+   the floor had never bound there. It now binds.
+2. **The threshold is n-manipulable.** It scales as `sqrt(2/n_comparator)`. When every run returns
+   the same bits, `n` carries no information, yet 5 → 7 comparator seeds drops the bar by 15 %.
+
+### What was measured instead
+
+The quantity `baseline_sigma_pp` stands in for — *how much would this result move for reasons
+unrelated to the mechanism* — measured directly, through an exact symmetry of the problem.
+
+Relabelling the node indices produces an **isomorphic** graph: same edge multiset, same weights,
+same total weight, same set of achievable scores. Verified rather than asserted — the critic
+mapped `results/rocket_best_positions.npy` through every permutation used here and re-scored the
+parity anchor at exactly **34,751,902** each time. Nothing an algorithm *ought* to do changes;
+index-order tie-breaks do: greedy-FAS's ordering, the sift's sweep order, the SCC recursion's
+enumeration order. (Stage 5 does **not** move — its heap key is `(-weight, edge_index)` and edge
+row order is deliberately untouched. An earlier draft of this entry and of the script docstrings
+claimed otherwise; corrected in place, critic D7.)
+
+The design is **paired**: both arms run on the same relabelled graph, so nuisance common to both
+cancels, and `r = 0` is the identity, which must reproduce the recorded confirm numbers or the
+study is void.
+
+Script `experiments/proto_P09_relabel.py` (permutation seeds fixed at 909000 + r), scored by the
+frozen oracle with `verify_frozen_manifest()` first, writing to `experiments/outputs/` and never
+to `results/` — these are not harness runs and must never be pooled into a champion's evidence.
+
+### Pre-registration
+
+`experiments/outputs/proto_P09_prereg.json`, written at 16:04:31 and **before** the connectome
+study was launched at 16:04:34; the first data row could not exist before ~17:04. The critic
+verified that ordering independently from mtimes and the run log. It fixes the rule, both
+verdicts and a voiding condition, because P09 is the campaign choosing its own promotion
+threshold while holding an unpromoted result of its own.
+
+*Its own defect, D8:* it was never committed before the run. `git log --all --diff-filter=A --
+'experiments/outputs/proto_P09*'` returned nothing at the time of the study, so its precedence
+rested on an mtime and a `state.json` line — both writable by the agent that benefits. True in
+fact, unauditable in principle. The Track-2 S2 entry of the same day did this correctly ("sealed
+and committed in `ef6900e` BEFORE the run"). Filed as **P11**.
+
+### Prototype gate — mouse, 25 relabellings, comparator H44, ~3 min
+
+`experiments/outputs/proto_P09_mouse.json`. Identity reproduced the record exactly
+(H44 93.08288022, H52 93.10282596). Comparator sigma **0.015352 pp**; variant sigma **0.0**;
+minimum delta +0.019946 pp.
+
+This settled, before 4.2 h of connectome GPU was spent, that nuisance dispersion is **real and
+non-zero** even on a 148-node graph — so the honest floor is neither 0.2624 (the fossil there) nor
+~0 (measurement resolution) — and that the variant is *more* stable than the comparator, because
+stage 5 runs to convergence and washes out the tie-break sensitivity it inherits.
+
+### The connectome study — 5 paired points, 4.2 h GPU, detached
+
+`experiments/outputs/proto_P09_connectome.json`. Launched 16:04:34, finished 20:11 (14,787 s
+against 15,200 s predicted).
+
+| r | H42 (comparator) | H52 (variant) | delta | wall H42 | wall H52 |
+|---|---|---|---|---|---|
+| 0 (identity) | 84.15409511 | 84.17502222 | **+0.020927 pp** | 1153 s | 1801 s |
+| 1 | 84.12643248 | 84.14324384 | +0.016811 pp | 1150 s | 1803 s |
+| 2 | 84.12184908 | 84.13824767 | +0.016399 pp | 1165 s | 1850 s |
+| 3 | 84.15550043 | 84.17135503 | +0.015855 pp | 1155 s | 1787 s |
+| 4 | 84.11418066 | 84.13190584 | +0.017725 pp | 1138 s | 1785 s |
+
+- **The identity row reproduces the record exactly on both arms.** That is the study's validity
+  check and it is now enforced by code, not by prose (D1).
+- Comparator sigma **0.019124 pp**, variant sigma **0.019838 pp**.
+- Paired delta: mean **+0.017543 pp**, sd **0.002011 pp**, one-sided 95 % lower bound
+  **+0.015626 pp**, two-sided 95 % CI [+0.015046, +0.020041], min +0.015855, max +0.020927.
+- *Not* quoted as evidence: "5/5 positive". For a NESTED pair — H52 is H42's pipeline plus a
+  monotone stage, and its `variant_attrs.alt_best_pct` equals H42's confirm score exactly —
+  `delta_r >= 0` holds with probability 1. Positivity carries no information here; magnitudes do
+  (critic D4). The same fact makes the pairing exact rather than merely statistical.
+- The study's wall clocks (1138-1165 s for H42) are **not** comparable to harness runtimes
+  (1226-1238 s for the same runs) and must never be quoted as runtime evidence (D13).
+
+### What the numbers say
+
+**The fossil constant was well calibrated in magnitude and wrong in application.** Measured
+comparator nuisance sigma is 0.019124 pp against a fossil `baseline_sigma_pp` of 0.0189 — within
+1.2 %. That is close enough to be uncomfortable and is stated here rather than buried, because it
+is the strongest available argument for leaving the old gate alone. It does not survive contact
+with the pairing: the old gate applies a **marginal** dispersion **unpaired** to a difference of
+two arms that share the nuisance almost exactly, then divides by `sqrt(n_c)` over five identical
+reruns. The **paired** delta sigma is 0.002011 pp — 9.5× tighter.
+
+**Taken in its own frame the old rule is incoherent, not conservative.** If 0.0191 is the honest
+marginal dispersion, then the five confirm seeds are one sample repeated five times (P02:
+`make_init_positions` is unreachable), effective n = 1, and the self-consistent unpaired threshold
+is `1.96 × 0.019124 × sqrt(2)` = **0.053 pp** — more than double the 0.02343 pp actually applied.
+The old gate shrank an SE by `sqrt(5)` over five copies of one draw. This is an argument for the
+operator, not a licence for the campaign.
+
+**The campaign has been over-quoting its own precision.** A meaningless relabelling moves the
+connectome champion over a span of 0.0413 pp — roughly twice the entire H42 → H52 increment, and
+about 9 % of the 0.4606 pp remaining to the mission target. Every connectome figure in this record
+quoted to eight decimals is exact *for the canonical labelling* and no better than ±0.02 pp as a
+statement about the algorithm.
+
+**The headline delta is the most favourable of the five, but only slightly.** The identity delta
+(+0.020927) is the maximum; the mean is +0.017543, so the canonical figure runs ~19 % hot. Because
+both arms are inflated by nearly the same amount at the canonical labelling (+0.0197 and +0.0231
+above their own means), only **+0.0034 pp** of the headline delta is labelling luck. The delta is
+the transferable claim; the absolute percentage is not. Note the champion's own recorded score is
+*not* the luckiest of its five — r=3 gives H42 **84.15550043**, strictly better than the figure
+this campaign has quoted since 2026-08-10, for no algorithmic change at all. That observation is
+now queue item **H56**.
+
+### Verdict on P09: **ITERATE** — the tightening shipped, the retirement held
+
+The critic's central finding, accepted in full: `autoresearch/queue.json` P09 says "this entry
+exists so the decision is the operator's rather than the agent's", and cycle 9 resolved it anyway,
+choosing the one of three offered options that admits the campaign's own result. Option (c) —
+fix `n` in the protocol so it cannot be chosen after seeing the delta — cures the entire
+n-manipulability complaint at zero cost and still refuses H52; the campaign did not take it.
+
+So the change is unbundled, and only the half that can never pay the campaign was adopted:
+
+| half | status | why |
+|---|---|---|
+| **Require a relabelling study for a degenerate-pool primary promotion** | **IN FORCE** | It can only ever REFUSE. Before P09 a pool with zero dispersion needed no robustness evidence at all. A campaign may tighten its own gate unilaterally. |
+| **Retire `require_protocol_ci_lower_gt` for degenerate pools** | **HELD** | This is the half that admits a result already in hand. It is the operator's call. |
+
+Both gates therefore run. Live state, `autoresearch/audit_H52_connectome.json`:
+
+```
+[PASS] effect_size.connectome   delta +0.0209 pp clears the minimum effect size +0.0120 pp
+[PASS] relabel.connectome       robust to relabelling: 4 non-identity relabellings plus an
+                                identity row that reproduces the confirm pools; every delta in
+                                [+0.01585, +0.02093] pp and the paired one-sided 95% lower bound
+                                +0.01563 pp all clear +0.01200 pp
+[FAIL] protocol_ci.connectome   PROTOCOL CI lower bound -0.0025 does not clear +0.0000
+VERDICT: FAIL
+```
+
+**H52's connectome leg remains refused. `sota.json` is unchanged.** No new runs are needed for any
+branch of the operator's decision: ratification of the retirement flips it to promotable at zero
+further compute.
+
+### What was built
+
+- `autoresearch/relabel_gate.py` — the rule as code.
+- `autoresearch/audit.py` — the `degenerate_pool_rule` branch, ADDITIONAL to the PROTOCOL CI.
+- `autoresearch/campaign.yaml` — `promotion_gate.primary.degenerate_pool_rule`, with the
+  operator's evidence packet written into the block.
+- `tests/test_relabel_gate.py` — 16 tests. Suite **402 passed** (386 → 402).
+- `experiments/proto_P09_relabel.py`, `experiments/outputs/relabel_index.json` — the generator and
+  an explicit `(variant, comparator, dataset)` registry, never a glob.
+
+### Critic defects, and what was done about each
+
+The critic ran read-only, verified the isomorphism and the identity rows independently, and
+recomputed the paired statistics. Its full verdict block follows this list. Six findings changed
+code; the rest changed the record or the queue.
+
+| # | finding | disposition |
+|---|---|---|
+| D1 | the pre-registered VOIDING condition (identity must reproduce the confirm pool) was prose in the registry, read by no code | **FIXED** — `evaluate()` now takes the recorded pool means and refuses without them |
+| D2 | `load_study` trusted the registry key about what a file contains; a typo would attach the wrong study | **FIXED** — the study's own `variant`/`comparator`/`dataset` must agree |
+| D3 | `float(min_delta or 0.0)` fail-OPEN inside a gate advertised as fail-closed; for a nested variant "delta > 0" is a tautology | **FIXED** — refuses instead of defaulting |
+| D4 | "5/5 positive" and "25/25 positive" are vacuous for a nested pair | **FIXED in the record** — removed from the prereg's reading, this entry and `campaign.yaml`; the same fact is now cited as what makes the pairing exact |
+| D5 | the min-rule is stopping-rule sensitive, and rejecting a CI conflated *CI-against-zero* (manipulable) with *CI-against-a-fixed-effect* (consistent) | **FIXED** — a paired one-sided lower bound is now required alongside the min-rule; both pass here |
+| D6 | the study persists scalars only, so the ten runs a promotion turns on cannot be re-scored | **FIXED for future studies** — positions are now saved; the P09 study itself remains scalar-only and `sota.json` would have to say so |
+| D7 | docstrings claimed stage 5's candidate scan is perturbed by relabelling; it is not | **FIXED** in both files and here |
+| D8 | the pre-registration was never committed before the run | **FILED as P11**; true in fact, unauditable in principle |
+| D9 | no back-test of the new rule against H36/H42/H44 | **ACCEPTED as debt** — and sharper than filed: the sitting champions predate the rule and have no studies, so re-auditing them under `--gate promotion` now FAILS. Recorded in `campaign.yaml` and folded into **P10** |
+| D10 | an operator item was marked `"status": "done"` by agent action | **FIXED** — P09 is `awaiting-operator` |
+| D11 | microns is backed by ONE verify run, not a confirm pool | recorded here and in P07; microns stays on H42 |
+| D12 | the wall-clock control was never run, though the record refutes the objection | the critic derived it from `alt_log`: stage-4 gains decay ~0.31 per 33 s (cycles 67→71 +0.003300 pp, 72→76 +0.001035 pp), geometric remainder **< +0.0005 pp**, and even a no-decay extrapolation over the +575 s gives +0.0145 pp — short of +0.0209. Cited rather than left to a reader |
+| D13 | study wall clocks are not comparable to harness wall clocks | stated above |
+
+### What this cycle also fixed in the record
+
+Cycle 8 promoted a champion and wrote no `log.md` section — `verify_cycle.py` had been WARNing
+about it and nobody had read the WARN. A clearly-labelled reconstruction stub now precedes this
+entry, sourced only from commit `40259f1` and the artifacts it names.
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset mouse --relabels 24 \
+    --comparator H44 --variant H52
+PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset connectome --relabels 4 \
+    --comparator H42 --variant H52          # ~4.2 h, launch via autoresearch/detach.sh
+PYTHONPATH=src $PY autoresearch/audit.py --variant H52 --comparator champion \
+    --role confirm --comparator-role confirm --datasets connectome --gate promotion \
+    --out autoresearch/audit_H52_connectome.json    # exits 1: relabel PASS, protocol_ci FAIL
+PYTHONPATH=src $PY -m pytest tests/ -q               # 402 passed
+```
+
+### The operator's decision packet
+
+One decision, unchanged in shape from how P09 filed it, now with evidence behind it:
+
+- **(a) Keep both gates.** The 0.012–0.023 pp band stays unpromotable on connectome. Costs
+  +0.0209 pp of recorded score and leaves the campaign's own incoherence (effective n = 1 vs a
+  `sqrt(5)` divisor) in place.
+- **(b) Retire the PROTOCOL CI for degenerate pools**, leaving the relabelling gate and
+  `min_promotion_delta_pp`. Admits H52's connectome leg immediately, with no new runs.
+- **(c) Keep the CI but fix `n` in the protocol** so it cannot be chosen after seeing a delta.
+  Cures the n-manipulability at zero cost; still refuses H52.
+
+The campaign's own reading, offered as an argument and not acted on: the pairing makes the PROTOCOL
+CI measure the wrong quantity here, so (b) or (c) is right and (a) preserves a rule that is
+demonstrably not self-consistent. That reading is exactly what a campaign holding an unpromoted
+result would be expected to say, which is why the decision is not its own to make.
+
+### Critic verdict
+
+Full text: **`autoresearch/critic_P09_cycle9.md`** (a tracked artifact, not `dr_tmp/`, so a fresh
+checkout can read it — the defect P08 found the last time a cycle cited its own critic).
+
+- **Item 1, the P09 gate change — KEEP-WITH-CAVEATS on the artefact, REFUSE the self-resolution.**
+- **Item 2, H52 as connectome champion — REFUSE this cycle**, on governance, not on the number:
+  "under any reasonable statistic this gain is real … it is refused because the only thing standing
+  between it and the refusal of 2026-08-17 is a gate the campaign rewrote for itself eight days
+  later."
+
+Both verdicts were accepted in full and are what this cycle did. The critic's held `sota.json`
+caveat text is preserved in that file so a ratification does not have to re-derive it.
+

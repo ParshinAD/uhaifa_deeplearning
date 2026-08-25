@@ -1,0 +1,23 @@
+{
+  "_doc": "Registry of node-relabelling robustness studies (P09, 2026-08-25). autoresearch/audit.py reads this when a PRIMARY dataset's two pools are both degenerate (std <= zero_std_tol), i.e. when there is no sampling error for a CI to be computed on. Lookup is an EXACT (variant, comparator, dataset) triple on purpose: a study is evidence only for the pair it actually ran, and a glob could silently attach the wrong one. Generate a study with experiments/proto_P09_relabel.py; the rule it is judged by is autoresearch/relabel_gate.py and it was pre-registered in experiments/outputs/proto_P09_prereg.json.",
+  "updated": "2026-08-25",
+  "studies": {
+    "H52|H42|connectome": {
+      "path": "experiments/outputs/proto_P09_connectome.json",
+      "generated_by": "PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset connectome --relabels 4 --comparator H42 --variant H52",
+      "generated_at": "2026-08-25T16:04:34+03:00",
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU (CUDA)",
+      "n_relabellings": 4,
+      "identity_validates": "r=0 reproduced the recorded confirm numbers exactly: H42 84.15409511, H52 84.17502222"
+    },
+    "H52|H44|mouse": {
+      "path": "experiments/outputs/proto_P09_mouse.json",
+      "generated_by": "PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset mouse --relabels 24 --comparator H44 --variant H52",
+      "generated_at": "2026-08-25T15:55:00+03:00",
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU (CUDA)",
+      "n_relabellings": 24,
+      "identity_validates": "r=0 reproduced the recorded confirm numbers exactly: H44 93.08288022, H52 93.10282596",
+      "note": "mouse is a SUPPORTING dataset and is gated by non-inferiority, not by this rule. The study was the design pilot: it is what established that nuisance dispersion is real and non-zero before 4.2 h of connectome GPU was spent."
+    }
+  }
+}

@@ -537,3 +537,65 @@ mouse — all ≤ the 2× ceiling. The four kills consumed only cheap CPU protot
 eigensolve timing benchmark for H33); no wasted large-graph variant cycles. All numbers trace to
 `results/*.json` (H30/H31) or `experiments/outputs/proto_h3{2,3,4}_*.json` (gates) with re-runnable
 commands in `experiments/log.md`. One git commit per experiment on branch `phase6-global-discrete`.
+
+
+---
+
+## #8 — The connectome score is labelling-conditional: a meaningless relabelling moves the champion by sigma = 0.019 pp (Phase 7, P09)
+
+**Claim.** The champion pipeline's feedforward percentage on the fly connectome is not a property of the
+algorithm alone. Relabelling the node indices produces an ISOMORPHIC graph -- identical edge multiset,
+identical weights, identical set of achievable scores -- yet the champion's score moves across a span of
+0.0413 pp. That is roughly twice the entire H42 -> H52 increment and about 9 % of the 0.4606 pp remaining
+to the mission target. Every connectome figure in this record is exact for the CANONICAL labelling of
+`data/connectome_graph.csv.gz` and no better than +/-0.02 pp as a statement about the algorithm.
+
+**Why an algorithm moves at all under a symmetry that changes nothing.** Index-order tie-breaks:
+greedy-FAS's ordering, the sift's sweep order, and the SCC recursion's enumeration order. Stage 5 is
+invariant (its heap key is `(-weight, edge_index)` and edge row order is untouched) and moves only through
+its input order.
+
+**Evidence** -- `experiments/outputs/proto_P09_connectome.json`, 5 paired points, 4.2 h GPU, CUDA/RTX 4060.
+Both arms run on the SAME relabelled graph, so the difference is matched. `r = 0` is the identity and
+reproduces the recorded confirm numbers exactly, which is the study's validity check.
+
+| r | H42 (champion) | H52 (+ stage 5) | delta |
+|---|---|---|---|
+| 0 (identity) | 84.15409511 | 84.17502222 | +0.020927 pp |
+| 1 | 84.12643248 | 84.14324384 | +0.016811 pp |
+| 2 | 84.12184908 | 84.13824767 | +0.016399 pp |
+| 3 | 84.15550043 | 84.17135503 | +0.015855 pp |
+| 4 | 84.11418066 | 84.13190584 | +0.017725 pp |
+
+- Champion sigma **0.019124 pp**; challenger sigma **0.019838 pp**.
+- Paired delta sigma **0.002011 pp** -- **9.5x tighter** than either arm. The labelling luck is almost
+  entirely shared, so it cancels in a matched comparison.
+- One relabelling (r=3) gives the CHAMPION 84.15550043, strictly better than the 84.15409511 this campaign
+  has quoted since 2026-08-10 -- for no algorithmic change whatsoever.
+- Corroborated on mouse at 25 relabellings (`experiments/outputs/proto_P09_mouse.json`): champion-arm sigma
+  0.015352 pp, so this is not a large-graph artifact.
+
+**Three consequences, in order of how much they should change behaviour.**
+
+1. **Report deltas, not absolutes.** The matched difference is the transferable claim; the absolute
+   percentage is labelling-conditional. Of H52's headline +0.020927 pp, only about +0.0034 pp is labelling
+   luck -- the mean over labellings is +0.017543 pp, so the canonical figure runs ~19 % hot but the effect
+   is real at every labelling measured.
+2. **A promotion on a degenerate pool now has to show this.** `campaign.yaml`
+   `promotion_gate.primary.degenerate_pool_rule` requires a relabelling study when both pools have zero
+   dispersion, which before P09 required no robustness evidence at all. It fails closed.
+3. **There is free dispersion lying around.** Seeds are inert here (P02), so relabelling is the only
+   randomisation this deterministic pipeline has. That reopens the multi-start axis that H01 closed for
+   want of any dispersion to harvest -- queue item **H56** -- and it raises a question the campaign has to
+   answer BEFORE running it: is a champion "the pipeline at the canonical labelling", or "the best order
+   the pipeline can reach"?
+
+**What this does NOT establish.** It is a CUDA/RTX 4060 measurement; the microns figure is unmeasured
+(~9.4 h to obtain, P07). Five points is the minimum the gate permits, and the min-rule it feeds is
+stopping-rule sensitive, which is why a paired lower bound is required alongside it.
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset connectome --relabels 4     --comparator H42 --variant H52     # ~4.2 h; launch detached via autoresearch/detach.sh
+PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset mouse --relabels 24     --comparator H44 --variant H52     # ~3 min
+```

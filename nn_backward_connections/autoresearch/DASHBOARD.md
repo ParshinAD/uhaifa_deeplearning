@@ -1,8 +1,8 @@
 # Campaign dashboard
 
-*Generated 2026-08-25 15:55 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-25 20:48 by `autoresearch/dashboard.py` — do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 8 · **mode:** `incremental` · **consecutive kills:** 0
+**Phase:** `quality` · **cycle:** 9 · **mode:** `incremental` · **consecutive kills:** 0
 
 ## Progress — connectome (Phase 1 target)
 
@@ -21,19 +21,19 @@
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H52** | 93.1028 ± 0.0 | 20 | ~1s | experiments/log.md 2026-08-17 (H52) |
 
-## Queue — 7 proposed / 26 total
+## Queue — 9 proposed / 29 total
 
 | # | id | title | status |
 |---|---|---|---|
-| 0 | `P01` | HARDWARE RE-BASELINE — re-measure the champions on this machine before any cyc | done |
+| 0 | `P01` | HARDWARE RE-BASELINE вЂ” re-measure the champions on this machine before any c | done |
 | 0 | `P05` | BLOCKING: stage 4 has no wall-clock guard and microns now runs 3398-3418 s aga | done |
 | 0 | `P07` | BLOCKING: the champion's microns configuration does not fit 3600 s on a loaded | in_progress |
 | 0 | `H43` | Re-allocate the microns budget: cut Rocket epochs 80,000 -> 20,000 and spend t | killed |
 | 0 | `H44` | Drop the gradient phase on mouse: _EPOCHS['mouse'] = 0 (greedy -> under-relaxe | confirmed |
 | 0 | `H50` | The reference ROUTE run standalone: ratio-greedy init + iterated exact-gain pa | killed |
 | 0 | `H48` | Ratio greedy init ((out_w+1)/(in_w+1)) instead of greedy-FAS - a +6.3 pp bette | killed |
-| 0 | `P09` | The campaign's two significance criteria disagree for the first time - decide  | proposed |
-| 1 | `P02` | The screen seeds are inert for deterministic variants — is 3x the compute buyi | done |
+| 0 | `P09` | The campaign's two significance criteria disagree for the first time - decide  | awaiting-operator |
+| 1 | `P02` | The screen seeds are inert for deterministic variants вЂ” is 3x the compute bu | done |
 | 1 | `H36` | SCC-decomposed recursive bounded-span insertion (the Vahidi route) | confirmed |
 | 1 | `H42` | Size up the stage-4 alternation budget - the curve was still rising when we cu | confirmed |
 | 1 | `H41` | Segment / block moves instead of single-node re-insertion | killed |
@@ -42,6 +42,7 @@
 
 | cycle | item | verdict | note |
 |---|---|---|---|
+| 9 | `P09` | **iterate** | Half the change shipped, half held for the operator. The relabelling-robustness  |
 | 8 | `H52` | **keep-partial** | New mouse champion 93.082880 -> 93.102826 (+0.01995 pp, 20/20, std 0) from a new |
 | 7 | `H44` | **keep** | NEW MOUSE CHAMPION, +0.16588 pp (92.917014 -> 93.082880), n=20 seeds, std 0, fro |
 | 6 | `P05` | **iterate** | The run-level wall-clock guard is built, armed by default and verified on 2 of 3 |

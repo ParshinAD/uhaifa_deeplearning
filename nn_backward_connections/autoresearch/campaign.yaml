@@ -273,6 +273,68 @@ promotion_gate:
     # PRIMARY datasets (connectome, microns): a promotion must show a real effect, twice over.
     require_delta_gt_min_effect: true       # delta_pp > datasets.<ds>.min_promotion_delta_pp
     require_protocol_ci_lower_gt: 0.0       # the sigma-floored CI of gates.confirm, now enforced
+
+    # ── P09 (2026-08-25). An ADDITIONAL requirement when the pools are degenerate. ────────
+    #
+    # READ THIS BEFORE CHANGING require_protocol_ci_lower_gt ABOVE. On 2026-08-17 the campaign's
+    # two connectome criteria disagreed for the first time: H52 scored +0.02093 pp, clearing
+    # min_promotion_delta_pp (0.012) and failing the PROTOCOL CI (0.02343 pp at n=5). Queue item
+    # P09 put three options to the OPERATOR and said, in terms, that the decision is the
+    # operator's rather than the agent's. Cycle 9 measured the question properly and then chose,
+    # unaided, the one option of the three that admits the campaign's own held result. Its critic
+    # refused that, and the change was SPLIT:
+    #
+    #   * THE TIGHTENING - the relabelling requirement below - is IN FORCE. It can only ever
+    #     refuse a promotion, so the campaign is free to impose it on itself.
+    #   * THE RETIREMENT of require_protocol_ci_lower_gt for degenerate pools - the half that
+    #     would ADMIT a result the campaign already holds - is NOT. It waits for the operator.
+    #
+    # So both gates run today and a degenerate-pool promotion must clear BOTH. H52's connectome
+    # leg accordingly remains refused, and the campaign's gate is strictly stronger than it was
+    # on 2026-08-17. See experiments/log.md 2026-08-25 for the operator's decision packet.
+    #
+    # WHAT WAS MEASURED, so the operator decides on evidence (4.2 h GPU, 5 paired points,
+    # experiments/outputs/proto_P09_connectome.json):
+    #   * Relabelling node indices yields an ISOMORPHIC graph - verified, not asserted: the
+    #     parity anchor re-scores to exactly 34,751,902 under every permutation used. Nothing an
+    #     algorithm ought to do changes; index-order tie-breaks do.
+    #   * The champion H42's own connectome score moves over 84.11418066 - 84.15550043 across
+    #     five labellings: sigma 0.019124 pp, span 0.0413 pp. One labelling (r=3) beats the
+    #     canonical figure the campaign has quoted since 2026-08-10.
+    #   * That measured sigma is within 1.2% of the fossil baseline_sigma_pp = 0.0189, so the
+    #     constant's MAGNITUDE was well calibrated. What is wrong with the PROTOCOL CI is its
+    #     APPLICATION: it applies a MARGINAL dispersion UNPAIRED to a difference of two arms that
+    #     share the nuisance almost exactly, then divides by sqrt(n_comparator) over a pool of
+    #     five identical reruns. The PAIRED delta sigma is 0.002011 pp - 9.5x tighter.
+    #   * Taken in its own unpaired frame the old rule is not merely conservative but incoherent:
+    #     the five confirm seeds are one sample repeated five times (P02), so effective n = 1 and
+    #     the self-consistent unpaired threshold would be 1.96*0.019124*sqrt(2) = 0.053 pp, more
+    #     than double what was actually applied.
+    # These are the operator's inputs. The campaign is not acting on them.
+    degenerate_pool_rule:
+      enabled: true
+      kind: relabelling_robustness         # autoresearch/relabel_gate.py
+      # Applies only when BOTH pools are degenerate (std <= zero_std_tol). A stochastic pipeline
+      # is untouched: it keeps require_protocol_ci_lower_gt and this rule is not consulted.
+      #
+      # TWO tests, both required, because each covers the other's defect:
+      #   1. min-rule: every delta_r > min_promotion_delta_pp. Monotone in the safe direction -
+      #      adding relabellings can only make it harder - but STOPPING-RULE SENSITIVE, since
+      #      P(some labelling falls below the bar) grows with R (~1.5% at R=4, ~25% at R=99 for
+      #      the observed dispersion), which rewards stopping at the floor.
+      #   2. paired one-sided 95% lower bound on the mean delta > min_promotion_delta_pp.
+      #      CONSISTENT: unlike a CI against ZERO, a CI against a FIXED non-zero effect size does
+      #      not relax as R grows - it converges on "the true mean delta exceeds 0.012". Cycle 9
+      #      first rejected any CI here by conflating those two cases; the critic corrected it.
+      # min_relabellings is a FLOOR, not an exact count. Fix R in each study's pre-registration.
+      min_relabellings: 4
+      evidence_index: experiments/outputs/relabel_index.json
+      generator: experiments/proto_P09_relabel.py
+      prereg: experiments/outputs/proto_P09_prereg.json
+      # KNOWN DEBT, stated rather than discovered later: the sitting champions predate this rule
+      # and have no studies, so re-auditing H36/H42 under --gate promotion FAILS here. That is a
+      # real gap in the record, not a bug. Cost to close: ~4.2 h per connectome pair, ~9.4 h per
+      # microns pair. Filed with P08/P10.
   supporting:
     # SUPPORTING datasets (mouse): non-inferiority only, against datasets.<ds>.non_inferiority_pp.
     #

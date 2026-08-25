@@ -1,0 +1,50 @@
+{
+  "item": "P09",
+  "written_at": "2026-08-25T16:04:00+03:00",
+  "written_before": "the connectome relabelling run was launched; experiments/outputs/proto_P09_connectome.json did not exist yet. The mouse pilot (proto_P09_mouse.json) WAS already in hand and is named below as the reason the design is believed to work at all.",
+  "why_this_file_exists": "P09 is the campaign deciding its own promotion threshold while it holds an unpromoted result of its own (H52 connectome, +0.02093 pp). Choosing the rule after seeing the numbers would be indistinguishable from choosing the rule that admits the result. So the rule is fixed here, in a tracked artifact, before the data that it will be applied to exists.",
+
+  "question": "campaign.yaml carries two connectome promotion criteria and on 2026-08-17 they disagreed for the first time. min_promotion_delta_pp = 0.012 passes H52; the PROTOCOL CI (z * max(std_comparator, baseline_sigma_pp) * sqrt(2/n_comparator) = 1.96 * 0.0189 * sqrt(2/5) = 0.02343 pp) fails it. Which governs?",
+
+  "two_defects_identified_before_measuring": {
+    "fossil_sigma": "baseline_sigma_pp = 0.0189 is the dispersion of a RANDOM-INIT baseline measured on Apple MPS. It is applied here as the sigma floor of a comparison between two pipelines that never draw from `seed` and whose CUDA confirm pools have exactly one distinct value each (std = 0). The campaign already diagnosed this exact category error on the supporting dataset (campaign.yaml D4, 2026-08-15: the same floor 'applied to a pipeline whose real dispersion is 0') and replaced it there. On the primaries the floor was left alone because it was conservative and had never bound. It now binds.",
+    "n_manipulability": "The threshold scales as sqrt(2/n_comparator). For a pipeline that returns the same bits every run, n carries zero information, yet moving the comparator pool from 5 to 7 seeds lowers the bar from 0.02343 to 0.01980 pp and admits H52 unchanged. A criterion that can be halved by repeating an identical computation is not a criterion. P09's own kill_condition forbids resolving it that way, and it was not done."
+  },
+
+  "what_is_measured_instead": "The quantity baseline_sigma_pp is a stand-in for -- how much would this result move for reasons unrelated to the mechanism -- measured directly. Relabelling the node indices (perm[i] replaces i throughout) yields an ISOMORPHIC graph: identical edge multiset, identical weights, identical set of achievable scores. Nothing an algorithm ought to do changes; every index-order tie-break does (greedy-FAS ordering, sift sweep order, SCC enumeration order, stage-5 candidate scan). The design is PAIRED -- both arms run on the same relabelled graph -- so delta_r is a matched difference. Script: experiments/proto_P09_relabel.py, permutation seeds fixed at 909000 + r.",
+
+  "pre_registered_decision_rule": {
+    "name": "relabelling robustness (replaces the PROTOCOL CI for a degenerate pool, on primaries)",
+    "applies_when": "the dataset is a primary AND the confirm pools of both arms are degenerate (sample std <= promotion_gate.zero_std_tol), i.e. there is no sampling error to build a CI on.",
+    "test": "PASS iff delta_r > datasets.<ds>.min_promotion_delta_pp for EVERY relabelling r in 0..R, with R >= 4. r = 0 is the identity and must reproduce the recorded confirm numbers exactly.",
+    "why_this_shape": "It is monotone in the RIGHT direction. Adding relabellings can only make the test harder to pass, never easier, so it cannot be gamed by re-running -- which is precisely the defect it replaces. It also asks the question that actually matters for a deterministic algorithm on a fixed instance: is the gain a property of the mechanism, or of the canonical labelling?",
+    "stochastic_pipelines_unchanged": "If either pool has real dispersion, the existing Welch/protocol CI stands exactly as written. This rule adds nothing and removes nothing there.",
+    "minimum_effect_size_unchanged": "min_promotion_delta_pp remains in force as a separate, independent requirement. Nothing below it is promotable whatever this test says."
+  },
+
+  "pre_registered_verdicts": {
+    "if_all_deltas_exceed_min_effect": "P09 resolves as its option (b): the fossil floor is retired on primaries for degenerate pools and replaced by the measured nuisance dispersion plus the robustness test above. H52's connectome leg (+0.02093 pp) becomes promotable and goes through audit --gate promotion + critic before any change to sota.json. It is NOT promoted by this decision alone.",
+    "if_any_delta_fails_min_effect": "P09 resolves as its option (a): both gates stay as written, the 0.012-0.023 pp band stays unpromotable on connectome, and H52's connectome leg stays refused -- but now for a MEASURED reason (the gain is labelling-dependent) instead of a fossil one.",
+    "if_the_identity_row_does_not_reproduce": "the study is void, nothing is decided, and the discrepancy is the finding."
+  },
+
+  "planned_run": {
+    "command": "PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset connectome --relabels 4 --comparator H42 --variant H52",
+    "points": 5,
+    "expected_wall_clock_s": 15200,
+    "note": "H42 ~1230 s + H52 ~1805 s per relabelling, from the recorded confirm runs."
+  },
+
+  "mouse_pilot_already_in_hand": {
+    "artifact": "experiments/outputs/proto_P09_mouse.json",
+    "comparator": "H44",
+    "variant": "H52",
+    "n_points": 25,
+    "identity_reproduces_recorded_confirm_numbers": true,
+    "comparator_pct_std_pp": 0.015352273617828871,
+    "variant_pct_std_pp": 0.0,
+    "delta_min_pp": 0.019945743892392898,
+    "n_positive": 25,
+    "reading": "Nuisance dispersion is REAL and non-zero even on a 148-node graph, so the honest floor is neither 0.2624 (the fossil) nor 0 (measurement resolution). The variant's own dispersion is 0 while the comparator's is not: stage 5 runs to convergence and washes out the tie-break sensitivity it inherits. Mouse is supporting and saturated, so this is a design check, not evidence about the primaries."
+  }
+}
