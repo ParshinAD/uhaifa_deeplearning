@@ -4956,3 +4956,54 @@ PYTHONPATH=src python experiments/proto_amband.py --stage sweep --datasets conne
 Artifacts: `experiments/outputs/proto_amband.json`, `experiments/amband_{sweep,rescue}.log`.
 No large-graph variant cycle was spent: the kill is entirely at the prototype gate, and nothing was
 written to `results/`.
+
+---
+
+## 2026-08-25 — S2: the champion does NOT reproduce on this machine (pre-registered branch REFUSED)
+
+**Pre-registration:** `experiments/prereg/S2_champion_residual.md`, sealed and committed in `ef6900e`
+BEFORE the run. Predicted `R < 0.01 pp`. Declared uninformative outcome #1: *if the reproduced
+connectome pct differs from the recorded `84.15409511` by more than `2.4e-06`, R is measured on a
+DIFFERENT order and says nothing about the champion — report the reproduction failure, do not report R.*
+
+**That is what happened.**
+
+| quantity | value |
+|---|---|
+| recorded champion (CUDA, RTX 4060) | 84.15409511 % |
+| reproduced here (Apple MPS) | **84.12517032 %** |
+| delta | **+0.028925 pp** = 12,000× the declared threshold |
+| wall | 734.1 s against a 3,450 s deadline → **no guard truncation** (outcome #2 did not fire) |
+
+Record: `results/20260825T083116Z-H42-connectome-s42-implement-f41d7e.json` (+ `_positions.npy`).
+Command: `$PY -m eval.run_variant --exp H42 --dataset connectome --seed 42 --role implement`.
+
+**The S2 branch is therefore NOT selected.** The three-way table (R≥0.05 halt / 0.01–0.05 pay ladder
+debt / R<0.01 proceed) is unusable because the order in hand is not the champion.
+
+### What was measured anyway, and what it is NOT
+
+Residual 1-opt of the order actually obtained: **108 movers (0.08 % of nodes), naive_sum 0.0024 pp**
+(`experiments/diagnostics/residual_1opt.py`). Against the calibration — anchor 17,949 / 0.5461 pp,
+reference 131 / 0.0010 pp — this order is essentially 1-opt dry, i.e. the pipeline converges the move
+class it owns. **This does not answer S2** and is not counted as the branch: it is a property of an
+MPS-produced order, not of the recorded champion.
+
+### The real finding: the COMPARATOR is broken on this hardware
+
+While the champion cannot be reproduced here, no candidate's contribution can be measured against it
+on this machine at all. Every advantage number the campaign would produce here is undefined.
+
+Three MPS values of the same variant now exist — 84.13438, 84.13902 (both agent-measured in a
+scratchpad, in NO run record) and **84.12517** (this run, logged) — spread 0.0139 pp, all *below*
+CUDA. That is consistent with run-to-run non-determinism **plus** a systematic device offset, but the
+two are not yet separated. A same-seed repeat (`--role verify`) is running to do exactly that.
+
+Note also `git_commit: ef6900e…+dirty` — the known provenance defect (the helper resolves the PARENT
+repository, so the flag can never clear). Filed, not fixed here.
+
+### Standing lesson
+
+The pre-registration is what stopped a wrong report. Had the branch table not been sealed first, the
+0.0024 pp reading would have been reported as "the champion is 1-opt dry, so generator work is
+earned" — a conclusion about an order that is not the champion.
