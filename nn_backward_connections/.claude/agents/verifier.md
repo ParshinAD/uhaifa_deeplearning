@@ -20,7 +20,8 @@ writes its own JSON) and you return your verdict as your final message.
 
 1. **Clean state.** `git status --porcelain` and `git diff --stat`. If any frozen file
    (`src/mfas/metrics.py`, `eval/harness.py`, `eval/aggregate.py`, `tests/test_metrics.py`) is
-   modified, FAIL immediately and report it. Confirm the branch is `auto/campaign`.
+   modified, FAIL immediately and report it. Confirm the branch matches `auto/campaign*` and
+   equals `campaign.branch` in `autoresearch/campaign.yaml`.
 
 2. **Re-run the SCREEN independently** — screen seeds, `--role verify`, all three datasets. Do not
    reuse the implementer's files for your decision.

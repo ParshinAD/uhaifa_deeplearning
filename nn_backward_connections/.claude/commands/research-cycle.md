@@ -14,13 +14,20 @@ Work in `nn_backward_connections/` (the campaign root). All paths below are rela
 ```bash
 PY=/c/ProgramData/anaconda3/envs/allen/python.exe
 git status --porcelain | head -20          # expect a clean-ish tree; NEVER proceed with frozen-file edits
-git rev-parse --abbrev-ref HEAD            # MUST be auto/campaign
-PYTHONPATH=src $PY -m pytest tests/ -q     # MUST be green (25 passed)
+git rev-parse --abbrev-ref HEAD            # MUST match auto/campaign* AND equal campaign.yaml's campaign.branch
+PYTHONPATH=src $PY -m pytest tests/ -q     # MUST be green (386 passed, ~175 s)
 ```
 
-If the branch is not `auto/campaign`, or a frozen file is modified, or tests fail: write the
-reason into `autoresearch/state.json` (`"mode": "blocked"`), print it, and stop. Do not "fix" a
-frozen file. Ever.
+If a frozen file is modified or tests fail: write the reason into `autoresearch/state.json`
+(`"mode": "blocked"`), print it, and stop. Do not "fix" a frozen file. Ever.
+
+**A branch-gate failure is the one exception: report it and stop, but do NOT write
+`mode: blocked`.** The wrong branch means the *checkout* is wrong, not the campaign, and
+`state.json` is shared across branches -- so parking the campaign there records a false
+"blocked" on a healthy record and needs a human to unpark it. Observed on 2026-08-25:
+three cycles aborted on this gate, two of them reasoned their way to refusing the write,
+and the driver's own no-op detector still halted the campaign after the third. Say which
+branch you are on and which one `campaign.yaml` names; that is enough to fix it.
 
 ## 1. Orient (read, in this order)
 

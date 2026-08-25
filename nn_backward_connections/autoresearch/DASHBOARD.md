@@ -1,6 +1,6 @@
 # Campaign dashboard
 
-*Generated 2026-08-25 12:50 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-25 15:55 by `autoresearch/dashboard.py` — do not hand-edit.*
 
 **Phase:** `quality` · **cycle:** 8 · **mode:** `incremental` · **consecutive kills:** 0
 
@@ -21,7 +21,7 @@
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H52** | 93.1028 ± 0.0 | 20 | ~1s | experiments/log.md 2026-08-17 (H52) |
 
-## Queue — 8 proposed / 26 total
+## Queue — 7 proposed / 26 total
 
 | # | id | title | status |
 |---|---|---|---|
@@ -29,7 +29,7 @@
 | 0 | `P05` | BLOCKING: stage 4 has no wall-clock guard and microns now runs 3398-3418 s aga | done |
 | 0 | `P07` | BLOCKING: the champion's microns configuration does not fit 3600 s on a loaded | in_progress |
 | 0 | `H43` | Re-allocate the microns budget: cut Rocket epochs 80,000 -> 20,000 and spend t | killed |
-| 0 | `H44` | Drop the gradient phase on mouse: _EPOCHS['mouse'] = 0 (greedy -> under-relaxe | proposed |
+| 0 | `H44` | Drop the gradient phase on mouse: _EPOCHS['mouse'] = 0 (greedy -> under-relaxe | confirmed |
 | 0 | `H50` | The reference ROUTE run standalone: ratio-greedy init + iterated exact-gain pa | killed |
 | 0 | `H48` | Ratio greedy init ((out_w+1)/(in_w+1)) instead of greedy-FAS - a +6.3 pp bette | killed |
 | 0 | `P09` | The campaign's two significance criteria disagree for the first time - decide  | proposed |
@@ -53,14 +53,14 @@
 
 ## Evidence
 
-- `results/*.json`: **458** run records across **30** variants
+- `results/*.json`: **459** run records across **30** variants
 - killed mechanisms on record: **17** (+7 deferred, 8 meta-rules)
 - literature notes: **6** (latest: `vahidi-2025.md`)
 
 ## Control
 
 ```bash
-cd /Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections
+cd D:\1\bot\UHaifa\deep_learning\mfas_autoresearch\nn_backward_connections
 nohup bash autoresearch/driver.sh > /dev/null 2>&1 &   # start
 tail -f autoresearch/logs/driver.log                   # watch
 touch autoresearch/STOP                                # stop after the current cycle

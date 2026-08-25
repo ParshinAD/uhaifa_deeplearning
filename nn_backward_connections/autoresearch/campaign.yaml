@@ -8,7 +8,11 @@
 
 campaign:
   name: phase7-autonomous
-  branch: auto/campaign
+  branch: auto/campaign-v3
+  # The sandbox branch. Any branch matching auto/campaign* is a campaign sandbox
+  # (CLAUDE.md); THIS name is the one the current run must be on. v3 was cut from
+  # generator/phase0 on 2026-08-25, which strictly contains auto/campaign (df36ef1)
+  # plus the five launch fixes -- see experiments/log.md.
   sandbox_root: D:/1/bot/UHaifa/deep_learning/mfas_autoresearch
   # Everything below this path is writable by the campaign. Nothing above it ever is.
   repo_subdir: nn_backward_connections
