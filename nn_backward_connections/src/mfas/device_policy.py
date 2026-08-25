@@ -8,12 +8,12 @@ This module exists so that decision cannot be violated by accident. It is not pr
 
 WHY, measured on this repo (same variant H42, same dataset, same seed 42, same commit):
 
-    CUDA (RTX 4060)   n=3   range = 0.000000 pp   -> bit-identical, genuinely deterministic
-    Apple MPS         n=2   range = 0.009983 pp   -> NOT deterministic
+    CUDA (RTX 4060)   n=3   range = 0.000000 pp, std 0.000000  -> bit-identical, deterministic
+    Apple MPS         n=5   range = 0.012035 pp, std 0.004588  -> NOT deterministic
 
     connectome minimum effect size (screen gate) = 0.012 pp
-    MPS same-seed range / gate                   = 0.83x
-    MPS-vs-CUDA offset (84.13016 vs 84.15410)    = 0.0239 pp = 2.0x the gate
+    MPS same-seed range / gate                   = 1.00x  (the noise spans the whole gate)
+    MPS-vs-CUDA offset (84.12839 vs 84.15410)    = 0.02570 pp = 2.1x the gate
 
 Two consequences follow, and both are enforced below rather than remembered:
 
@@ -67,17 +67,24 @@ DISPERSION: Dict[str, Dict[str, Any]] = {
         "note": "bit-identical; init comes from deterministic greedy-FAS so the RNG is never drawn",
     },
     "mps": {
-        "range_pp": 0.009983,
-        "n": 2,
+        "range_pp": 0.012035,
+        "std_pp": 0.004588,
+        "mean_pct": 84.128392,
+        "n": 5,
         "variant": "H42",
         "dataset": "connectome",
         "seed": 42,
         "records": [
             "20260825T083116Z-H42-connectome-s42-implement-f41d7e",
             "20260825T084524Z-H42-connectome-s42-verify-f41d7e",
+            "20260825T085858Z-H42-connectome-s42-verify-f41d7e",
+            "20260825T091152Z-H42-connectome-s42-verify-f41d7e",
+            "20260825T094138Z-H42-connectome-s42-verify-f41d7e",
         ],
-        "note": "PROVISIONAL: n=2 is a range, not a sigma. Not a gating device, so not on the "
-                "critical path; retained as the evidence for the policy, not as a gate constant.",
+        "note": "n=5 same-seed. The range 0.012035 pp is essentially the connectome screen gate "
+                "(0.012 pp) itself, so a single MPS run carries a full gate's worth of pure "
+                "device noise -- which is exactly why MPS may not gate. Not a gate constant; the "
+                "evidence for the policy.",
     },
 }
 
