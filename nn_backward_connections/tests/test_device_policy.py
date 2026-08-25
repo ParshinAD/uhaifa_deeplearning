@@ -75,14 +75,6 @@ def test_windows_artifact_paths_normalise():
     assert p.parts[0] == "results" and p.name.endswith(".npy")
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="KNOWN DEBT: .gitignore:30 excludes results/*_positions.npy, so the champion's "
-           "ordering has never left the machine that produced it and cannot be evaluated "
-           "here. tools/pin_champion.py fixes this going forward, but the CUDA champion "
-           "must be pinned ON the RTX box. When that lands this test XPASSes and the "
-           "marker must be removed.",
-)
 def test_cuda_champion_ordering_is_retained_in_the_repo():
     """The chosen workflow depends on this: the laptop must open what the RTX box wrote."""
     p = normalise_artifact_path(_load(CUDA_REC)["best_positions_path"])
@@ -144,11 +136,22 @@ def test_pinned_mps_champion_round_trips_through_the_oracle():
     _pin_mod().verify(npz)  # raises SystemExit on any mismatch
 
 
-def test_pin_refuses_when_the_artifact_is_absent():
-    """The refusal must be explicit and actionable, never a silent skip."""
+def test_pin_refuses_when_the_artifact_is_absent(tmp_path):
+    """The refusal must be explicit and actionable, never a silent skip.
+
+    Machine-independent by construction: it copies a real record and repoints it at an
+    ordering that does not exist. Asserting against the CUDA record itself only exercised
+    this branch on a machine where that run's artifact was missing -- on the RTX box that
+    produced it (and after D3 pinned it) the record resolves, and the test measured
+    "already pinned" instead of the refusal it names.
+    """
     mod = _pin_mod()
+    rec = _load(CUDA_REC)
+    rec["best_positions_path"] = "results/no_such_run_positions.npy"
+    absent = tmp_path / f"{CUDA_REC}.json"
+    absent.write_text(json.dumps(rec))
     with pytest.raises(SystemExit, match="never committed|not on this machine"):
-        mod.pin(ROOT / "results" / f"{CUDA_REC}.json")
+        mod.pin(absent)
 
 
 def test_positions_to_rank_rejects_a_non_permutation():
