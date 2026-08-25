@@ -13,7 +13,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"D:/1/bot/UHaifa/deep_learning/mfas_autoresearch/nn_backward_connections/.claude/hooks/protect-frozen-files.sh\""
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/protect-frozen-files.sh\""
           }
         ]
       }
