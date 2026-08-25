@@ -1,0 +1,161 @@
+{
+  "item": "H47",
+  "role": "prototype-ceiling",
+  "dataset": "mouse",
+  "champion_variant": "H52",
+  "champion_pct": 93.10282596057698,
+  "total_weight": 9.159036176272162,
+  "n_nodes": 148,
+  "note": "STRICT upper bound: max within-window gain <= weight of backward intra edges, because a window cannot score more than its total intra weight. No DP, so it is valid at any k including k=32 (the champion's min_block).",
+  "ceiling_by_k": {
+    "8": {
+      "ceiling_gain_pp": 1.4352148191519427,
+      "ceiling_pct_if_fully_realised": 94.53804077972893,
+      "worst_case_offset": 6,
+      "n_backward_intra": 13,
+      "n_intra_edges": 65,
+      "per_offset": [
+        {
+          "k": 8,
+          "offset": 0,
+          "n_intra_edges": 50,
+          "n_backward_intra": 4,
+          "ceiling_gain_weight": 0.01064732844221364
+        },
+        {
+          "k": 8,
+          "offset": 2,
+          "n_intra_edges": 68,
+          "n_backward_intra": 9,
+          "ceiling_gain_weight": 0.10851838632000123
+        },
+        {
+          "k": 8,
+          "offset": 4,
+          "n_intra_edges": 69,
+          "n_backward_intra": 11,
+          "ceiling_gain_weight": 0.11828183206729684
+        },
+        {
+          "k": 8,
+          "offset": 6,
+          "n_intra_edges": 65,
+          "n_backward_intra": 13,
+          "ceiling_gain_weight": 0.13145184449334552
+        }
+      ]
+    },
+    "12": {
+      "ceiling_gain_pp": 1.8154205935389338,
+      "ceiling_pct_if_fully_realised": 94.91824655411592,
+      "worst_case_offset": 6,
+      "n_backward_intra": 19,
+      "n_intra_edges": 82,
+      "per_offset": [
+        {
+          "k": 12,
+          "offset": 0,
+          "n_intra_edges": 79,
+          "n_backward_intra": 11,
+          "ceiling_gain_weight": 0.07575662900852112
+        },
+        {
+          "k": 12,
+          "offset": 3,
+          "n_intra_edges": 90,
+          "n_backward_intra": 17,
+          "ceiling_gain_weight": 0.14095708181474453
+        },
+        {
+          "k": 12,
+          "offset": 6,
+          "n_intra_edges": 82,
+          "n_backward_intra": 19,
+          "ceiling_gain_weight": 0.16627502891372575
+        },
+        {
+          "k": 12,
+          "offset": 9,
+          "n_intra_edges": 84,
+          "n_backward_intra": 12,
+          "ceiling_gain_weight": 0.11705654320836532
+        }
+      ]
+    },
+    "16": {
+      "ceiling_gain_pp": 2.5867313048524503,
+      "ceiling_pct_if_fully_realised": 95.68955726542944,
+      "worst_case_offset": 4,
+      "n_backward_intra": 24,
+      "n_intra_edges": 117,
+      "per_offset": [
+        {
+          "k": 16,
+          "offset": 0,
+          "n_intra_edges": 91,
+          "n_backward_intra": 17,
+          "ceiling_gain_weight": 0.15645861530864613
+        },
+        {
+          "k": 16,
+          "offset": 4,
+          "n_intra_edges": 117,
+          "n_backward_intra": 24,
+          "ceiling_gain_weight": 0.23691965599439285
+        },
+        {
+          "k": 16,
+          "offset": 8,
+          "n_intra_edges": 90,
+          "n_backward_intra": 11,
+          "ceiling_gain_weight": 0.06756198647253536
+        },
+        {
+          "k": 16,
+          "offset": 12,
+          "n_intra_edges": 96,
+          "n_backward_intra": 17,
+          "ceiling_gain_weight": 0.13303375823180208
+        }
+      ]
+    },
+    "32": {
+      "ceiling_gain_pp": 3.606554272634394,
+      "ceiling_pct_if_fully_realised": 96.70938023321139,
+      "worst_case_offset": 16,
+      "n_backward_intra": 42,
+      "n_intra_edges": 157,
+      "per_offset": [
+        {
+          "k": 32,
+          "offset": 0,
+          "n_intra_edges": 135,
+          "n_backward_intra": 24,
+          "ceiling_gain_weight": 0.1695549439289178
+        },
+        {
+          "k": 32,
+          "offset": 8,
+          "n_intra_edges": 174,
+          "n_backward_intra": 39,
+          "ceiling_gain_weight": 0.30086525903339356
+        },
+        {
+          "k": 32,
+          "offset": 16,
+          "n_intra_edges": 157,
+          "n_backward_intra": 42,
+          "ceiling_gain_weight": 0.3303256105474735
+        },
+        {
+          "k": 32,
+          "offset": 24,
+          "n_intra_edges": 109,
+          "n_backward_intra": 13,
+          "ceiling_gain_weight": 0.04115136666266134
+        }
+      ]
+    }
+  },
+  "wall_s_total": 0.003011465072631836
+}

@@ -5665,3 +5665,227 @@ Artifacts: `experiments/outputs/proto_H57_prereg.json` (sealed at `d3d10ca`),
 `experiments/evidence/proto_H57_prefix_rank_connectome.npy` (the shared prefix, sha16
 `e5d171c68bafd9bd`). Sources re-analysed: `experiments/outputs/proto_P09_connectome.json`,
 `experiments/outputs/proto_H42.json`.
+
+
+## 2026-08-25 — Cycle 12 · H47: exact subset-DP at the SCC recursion's leaves — **KILL at the prototype rung**
+
+**Mode: DIVERGENT — forced, and executed as divergent for the first time in the campaign.**
+`cycles_since_score_move` = 3, against
+`campaign.yaml: escalation.divergent_after_k_cycles_without_score_move: 3`. The last champion
+change was cycle 8 (H52, mouse only); cycles 9, 10 and 11 moved no score.
+`consecutive_kills` = 2, so the secondary trigger had *not* fired — the primary one had.
+`cycles_since_literature_scan` = 3 (< 5), so a scan was not due by the counter; divergent mode
+calls for one anyway and one was run.
+
+**Preflight.** Tree clean; branch `auto/campaign-v3` = `campaign.yaml` `campaign.branch`;
+`PYTHONPATH=src $PY -m pytest tests/ -q` → **402 passed** in 173.12 s. No frozen file modified.
+
+**What divergent mode was made to mean here.** It forbids a variant of the current design, and it
+forbids answering "we have stopped making progress" with an infrastructure item. Both exclusions
+bite, so the disposition of every proposed science item was written down *before* any run, in
+`autoresearch/lit/divergence-cycle12.md`:
+
+| item | level attacked | divergent? | disposition |
+|---|---|---|---|
+| H54 (p3) | a schedule constant inside the existing refiner | no | deferred, still `proposed` |
+| H58 (p3) | node labelling / tie-break structure | no | deferred, still `proposed` |
+| H39 (p4) | continuous ↔ discrete hybrid | nominally | **dropped-by-novelty** |
+| H47 (p5) | the decomposition's terminal case | **yes** | **TAKEN** |
+| H40 (p6) | destroy-repair move class | yes | deferred (medium cost, no cheap gate) |
+
+H47 is not the highest-priority science item. It is the highest-priority item that actually
+attacks a different level, which is what divergent mode asks for, and its gate costs **zero GPU**.
+
+### Gate 0 — H39 dropped at the novelty rung, no compute spent
+
+Recorded here because a dropped item is a decision, not an omission. H39 shares an axis with
+**M1-continuous-exhausted**, whose revival condition requires an explanation of how the variant
+escapes Q01's scale-blindness. H39's stated escape is that Q01 showed the optimum is *"HOLDABLE at
+its own scale"*. Q01's own **"What this does NOT establish"** section retracts exactly that:
+
+> *Nothing about the stability of the optimum. A "hold" measured at very large scale is a frozen
+> optimizer, not stability: at std ≈ 5·10⁴ over 99.99% of edges have |β·Δ| > 37, σ′ underflows, and
+> every configuration holds — Rocket's own 82.92% order holds just as exactly as the 84.61% one.*
+
+The item was written before that section existed and quotes a superseded reading of its own primary
+artifact. Q01 then closes the vice on both sides: below the crossover (β·std ≈ 470) the surrogate
+does not rank the better order higher (measured net −174.88 at the operating point), and above it σ
+saturates so the gradient vanishes. There is no scale at which a gradient phase both **prefers** the
+better order and can **travel** toward it — so H39's own kill condition is already answered by a
+logged artifact (`q01_surrogate_ranking.json`, `q01_drift.json`) at zero cost. Revival condition
+recorded with it: only for a phase outside the family `Σ_e w_e·g(Δ_e)`, e.g. Q05's one-sided
+surrogate once its degeneracy is removed. This drops the **stated mechanism**, not the hybrid
+direction.
+
+### Hypothesis (H47)
+
+`SccRecursiveRefiner._refine` (`src/mfas/refine/scc_recursive.py:212`) opens with
+`if nb <= self.min_block or eidx.size == 0: return`, and `min_block = 32`; the refiner also
+preserves each SCC's internal relative order by construction (`:248`). So the champion's structural
+stage **optimises nothing at all below 32 nodes** — not badly, but literally not at all. Vahidi 2025
+Algorithms 3 and 5 both exhaustively permute sub-SCCs of size ≤ 9. Making that base case exact by
+Held-Karp subset DP,
+`f[S] = max_{j∈S} ( f[S∖{j}] + Σ_{i∈S∖{j}} w(i→j) )`,
+should recover weight that neither the single-node sift nor the block refiner can reach.
+
+### Gate 1 — novelty: **PASS**, and the boundary is exact
+
+H47 sits in the one gap the record leaves open at this scale:
+
+| prior | what it closed | number |
+|---|---|---|
+| **M4** (proven half) | bounded-window **single-node** local search, W ≤ 100 | reachable pool 0.0270 pp |
+| **H45** | **2-node** joint pair relocation, global range | +0.00193 pp exact |
+| **H46** | **coarse** block permutation, 17,081–68,324 nodes | exactly **+0.000000 pp** |
+| **H47** | **k ≤ 16 joint** exact permutation of contiguous micro-blocks | ← this cycle |
+
+It is not a rank window and not single-node: it is the terminal case of a structurally-derived
+recursion, optimising over all `k!` orderings jointly. M4's standing directive — *"prefer
+global-range or structurally decomposed (SCC / block) move classes"* — is satisfied, not violated.
+A single-node sift can sit at a fixed point while a 16-node block is far from its joint optimum.
+
+**Honest prior, recorded in `divergence-cycle12.md` before the measurement:** M4 is the strongest
+argument against, the H47 queue entry says so itself, and the expectation was that it dies at its
+gate. It was taken because the gate is minutes of CPU and the *diagnostic* number is one the
+campaign does not own.
+
+### Gate 2 — prototype: **FAIL** on both primaries
+
+Method (`experiments/proto_H47_leaf_dp.py`, CPU only, **zero GPU**): tile the champion's own stored
+final order with disjoint contiguous k-node windows and solve each **exactly**. By the
+contiguous-block lemma the windows compose additively, so the summed gain **is** the realised delta
+— and it was checked against the frozen oracle on **every round of every k on all three datasets,
+with zero mismatches**. Three exact reductions keep it cheap: a window with no backward intra edge
+is already optimal; untouched nodes are irrelevant; and the intra-window digraph splits into weakly
+connected components that are independent. Input orders are tracked evidence, and each reproduces
+its champion exactly before anything else runs (connectome **84.15409511%**, microns
+**83.24085291%**, mouse **93.10282596%**) — the guard against H46's glob defect, where a prototype
+silently measured a just-killed run instead of the champion.
+
+**Converged exact gain vs the bar** (6 rounds, alternating offsets):
+
+| dataset | k=8 | k=12 | k=16 | bar | verdict |
+|---|---|---|---|---|---|
+| connectome | +0.001694 | +0.003288 | **+0.004342** | 0.012 | **2.8× short** |
+| microns | +0.000974 | +0.001299 | **+0.001727** | 0.002 | short |
+| mouse | +0.016389 | +0.050392 | **+0.050392** | 0.01 | clears — see below |
+
+**The generous arm, run so the kill cannot be blamed on where the cuts fell:** k=16, **every**
+offset 0..15, 16 rounds, 1030.9 s of CPU → **+0.005337 pp** (final 84.15943247%, every round
+oracle-exact). Still 2.25× short.
+
+**Allocation, the second independent ground:** +0.005337 pp for 1030.9 s is **5.18e-6 pp/s**,
+against stage 4's measured marginal rate of 3.45e-4 pp/s — **67× worse**. The default k=16 arm is
+30× worse. Even if the effect-size bar did not exist, the seconds are better spent where they
+already go.
+
+**Mouse is the one positive, and it is a SCALE ARTEFACT — stated, not buried.** +0.050392 pp does
+clear mouse's 0.01 pp `min_promotion_delta_pp`. But mouse has **148 nodes**, so a 16-node window is
+**10.8%** of its line, against **0.0117%** of the connectome's — a factor of ~900. The connectome
+window at mouse's *relative* scale is k ≈ 14,800, which sits inside the band **H46 already measured
+at exactly +0.000000 pp**. The two results are at different relative scales and do not contradict
+each other. Q01's own cautionary tale — a probe run 200× below the operating scale that produced a
+"collapse" and stood as a finding for weeks — is the reason this is checked rather than promoted.
+A mouse-only variant was **not** pursued: it would be a champion move bought at a scale the mission
+target does not have, and CAMPAIGN.md's "a gain that lives on one dataset" clause exists for this.
+
+### The result that outlives the item — new meta-rule **M11-capacity-is-not-achievability**
+
+The gate also measured, for the first time on the **same order at the same scale**, the strict upper
+bound alongside the exact optimum. A window can never score more than its total intra weight, so the
+most any reordering can gain is the weight of its currently-**backward** intra edges — one O(m) pass,
+no DP, therefore valid at **any** k, including k=32 (the champion's real `min_block`) where
+Held-Karp cannot go:
+
+| dataset | ceiling @ k=16 | exact realised | **realisation** |
+|---|---|---|---|
+| connectome | **+0.479839 pp** | +0.004342 pp | **0.90%** |
+| microns | +0.037609 pp | +0.001727 pp | 4.59% |
+| mouse | +2.586731 pp | +0.050392 pp | 1.95% |
+
+Connectome ceilings keep climbing with k: **+0.614244** (k=32), +0.739681 (64), +0.865799 (128),
+**+1.439876 pp** (k=1024) — while H46 measured the *achievable* gain at 17,081–68,324 nodes as
+exactly 0.000000 pp. **The backward weight confined inside 16-node windows (+0.479839 pp) is larger
+than the entire remaining 0.4606 pp gap to the reference, and 99.1% of it is unreachable.**
+
+M4's amendment asserted this in words — *"a ceiling is not an achievable amount — flipping window
+edges creates new feedback"* — but never measured it. M11 makes it operative: **a "reachable pool" /
+"ceiling" / "confined weight" statistic is not evidence that a move class will pay, and must never
+again be quoted as the justification for building one.** Quote a ceiling only with its realisation
+ratio; if the ratio is unmeasured, say so. This retires a whole style of argument that has appeared
+in this campaign's queue rationales more than once.
+
+### Gates 3–5 — screen, confirm, critic: **NOT RUN**, deliberately
+
+`gates_run` = `["novelty", "prototype"]`. A prototype-rung kill is terminal: the connectome gain is
+2.8× below the bar at the best k, 2.25× below it under a deliberately generous 16-offset arm, and
+67× short on allocation. There is no configuration left for a screen to measure — k cannot be
+raised past ~20 (Held-Karp is 2^k), and the ceiling curve shows the achievability ratio *falling*,
+not rising, as k grows. No variant module was written, so nothing was committed to
+`src/mfas/experiments/`.
+
+### Literature scan (divergent mode step 1) — `autoresearch/lit/scan-cycle12.md`
+
+Run by the `scout` subagent concurrently with the prototype. Three results, of which the first is
+for the operator and the second is checkable and was checked:
+
+1. **The mission target is probably MIP-descended.** Vahidi 2025 is +0.0087 pp and the
+   Vahidi–Koutis 2026 entry that *is* our 84.6147% target is +0.0109 pp above Bader et al.'s
+   Rocket + **Crane MIP** — both inside one `screen_delta_pp`. Independent non-MIP precedent above
+   the champion exists only up to 84.5875% (Hashorva) and 84.4019% (Zheng–Tang–Okubo), both
+   unpublished. SSRN 6221201 returned **403 for the third time**, so the target's algorithm remains
+   unknown to this campaign. CAMPAIGN.md's claim that the gap is reachable *without a MIP* rests on
+   the existence of a non-MIP solution file; the scan weakens the confidence that it is reachable
+   *cheaply*. **Flagged for the operator — not acted on unilaterally.**
+2. **`scc_recursive.py:222` condenses the RAW digraph.** Verified independently by reading the
+   source, not taken from the subagent: the matrix is built with `np.ones(eidx.size)`, so a
+   reciprocal pair is an unbreakable 2-cycle even at 100:1 weights. The rank-aggregation literature
+   points at the **net** digraph, whose SCCs strictly refine ours. → **H60**.
+3. **A formulation-level move the stack does not have:** FAS *minimality* asks a reachability
+   question (if `v` cannot reach `u` through forward edges, `w_uv` is free) rather than a
+   position-space gain question. → **H59**.
+
+Queued as **H59** (p1), **H60** (p1), **H61** (p3), all with CPU-only gates. Honest negatives from
+the scan are recorded in the file: nothing revives M1, ejection chains are empty after two scans,
+and every PDF failed to yield text this session.
+
+### Decision — **KILL**
+
+`consecutive_kills` 2 → **3**. `cycles_since_score_move` 3 → **4**; divergent mode stays on and the
+secondary trigger now also fires. `sota.json` **UNTOUCHED** — no score moved.
+
+**Cost of the cycle:** ~26 min of CPU (463.1 s + 100.2 s + 0.6 s DP runs, 1030.9 s generous arm,
+~16 s of ceiling passes), **0 s of GPU**, plus 173 s of preflight tests.
+
+### Reproduce
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY experiments/proto_H47_leaf_dp.py --dataset connectome --ks 8 12 16 --rounds 6
+PYTHONPATH=src $PY experiments/proto_H47_leaf_dp.py --dataset microns    --ks 8 12 16 --rounds 6
+PYTHONPATH=src $PY experiments/proto_H47_leaf_dp.py --dataset mouse      --ks 8 12 16 --rounds 8
+# the generous arm (every offset, 16 rounds) - 1030.9 s
+PYTHONPATH=src $PY experiments/proto_H47_leaf_dp.py --dataset connectome --ks 16 --rounds 16 \
+    --offset-stride 1 --out experiments/outputs/proto_H47_connectome_generous.json
+# the strict upper bound, valid at any k (seconds)
+PYTHONPATH=src $PY experiments/proto_H47_leaf_dp.py --dataset connectome --ceiling-ks 8 12 16 32 64 128 1024
+PYTHONPATH=src $PY experiments/proto_H47_leaf_dp.py --dataset microns    --ceiling-ks 8 12 16 32
+PYTHONPATH=src $PY experiments/proto_H47_leaf_dp.py --dataset mouse      --ceiling-ks 8 12 16 32
+```
+
+### For the next cycle
+
+- **Divergent mode is still on** (`cycles_since_score_move` = 4) and `consecutive_kills` = 3, so
+  both triggers are now active. The queue's two best divergent items are the fresh **H59** and
+  **H60**, both p1, both CPU-only gates, both attacking levels this campaign has never touched
+  (reachability/minimality, and the condensation relation itself).
+- **M11 applies immediately to H59 and H60.** H59's gate is a `Σw_reclaimable` figure and H60's is a
+  one-pass refiner delta. The first is a *capacity* statistic of exactly the kind M11 was written
+  about — require the realised number, not the pool.
+- `experiments/proto_H47_leaf_dp.py` is a **reusable asset**: it takes any stored order, costs no
+  GPU, and reports both the exact micro-block optimum and the ceiling. If H60 changes what sits
+  inside a block, re-running it is the natural follow-up measurement — and is H47's stated revival
+  condition.
+- **P09 is still `awaiting-operator`** and cycle 12 did not touch it. **P07** remains open and
+  blocking. The scan's target-recalibration finding (item 1 above) is a second thing now waiting on
+  the operator.

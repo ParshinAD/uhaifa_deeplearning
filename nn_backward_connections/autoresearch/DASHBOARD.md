@@ -1,8 +1,8 @@
 # Campaign dashboard
 
-*Generated 2026-08-25 23:06 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-25 23:52 by `autoresearch/dashboard.py` — do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 11 · **mode:** `incremental` · **consecutive kills:** 2
+**Phase:** `quality` · **cycle:** 12 · **mode:** `divergent` · **consecutive kills:** 3
 
 ## Progress — connectome (Phase 1 target)
 
@@ -21,11 +21,11 @@
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H52** | 93.1028 ± 0.0 | 20 | ~1s | experiments/log.md 2026-08-17 (H52) |
 
-## Queue — 9 proposed / 31 total
+## Queue — 10 proposed / 34 total
 
 | # | id | title | status |
 |---|---|---|---|
-| 0 | `P01` | HARDWARE RE-BASELINE вЂ” re-measure the champions on this machine before any c | done |
+| 0 | `P01` | HARDWARE RE-BASELINE РІР‚вЂќ re-measure the champions on this machine before a | done |
 | 0 | `P05` | BLOCKING: stage 4 has no wall-clock guard and microns now runs 3398-3418 s aga | done |
 | 0 | `P07` | BLOCKING: the champion's microns configuration does not fit 3600 s on a loaded | in_progress |
 | 0 | `H43` | Re-allocate the microns budget: cut Rocket epochs 80,000 -> 20,000 and spend t | killed |
@@ -33,7 +33,7 @@
 | 0 | `H50` | The reference ROUTE run standalone: ratio-greedy init + iterated exact-gain pa | killed |
 | 0 | `H48` | Ratio greedy init ((out_w+1)/(in_w+1)) instead of greedy-FAS - a +6.3 pp bette | killed |
 | 0 | `P09` | The campaign's two significance criteria disagree for the first time - decide  | awaiting-operator |
-| 1 | `P02` | The screen seeds are inert for deterministic variants вЂ” is 3x the compute bu | done |
+| 1 | `P02` | The screen seeds are inert for deterministic variants РІР‚вЂќ is 3x the comput | done |
 | 1 | `H36` | SCC-decomposed recursive bounded-span insertion (the Vahidi route) | confirmed |
 | 1 | `H42` | Size up the stage-4 alternation budget - the curve was still rising when we cu | confirmed |
 | 1 | `H41` | Segment / block moves instead of single-node re-insertion | killed |
@@ -42,6 +42,7 @@
 
 | cycle | item | verdict | note |
 |---|---|---|---|
+| 12 | `H47` | **kill** | Exact subset-DP at the SCC recursion's leaves, killed at the prototype rung for  |
 | 11 | `H57` | **kill** | Prefix-shared tail multi-start, killed at the prototype rung for ~2.1 h by a pre |
 | 10 | `H56` | **kill** | Relabelling multi-start, killed at the prototype rung for 2.55 s of GPU. Runtime |
 | 9 | `P09` | **iterate** | Half the change shipped, half held for the operator. The relabelling-robustness  |
@@ -57,8 +58,8 @@
 ## Evidence
 
 - `results/*.json`: **459** run records across **30** variants
-- killed mechanisms on record: **19** (+7 deferred, 10 meta-rules)
-- literature notes: **6** (latest: `vahidi-2025.md`)
+- killed mechanisms on record: **20** (+7 deferred, 11 meta-rules)
+- literature notes: **8** (latest: `vahidi-2025.md`)
 
 ## Control
 

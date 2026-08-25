@@ -1,0 +1,272 @@
+{
+  "item": "H47",
+  "role": "prototype-ceiling",
+  "dataset": "connectome",
+  "champion_variant": "H42",
+  "champion_pct": 84.15409511053134,
+  "total_weight": 41912141.0,
+  "n_nodes": 136648,
+  "note": "STRICT upper bound: max within-window gain <= weight of backward intra edges, because a window cannot score more than its total intra weight. No DP, so it is valid at any k including k=32 (the champion's min_block).",
+  "ceiling_by_k": {
+    "8": {
+      "ceiling_gain_pp": 0.3491780579760886,
+      "ceiling_pct_if_fully_realised": 84.50327316850742,
+      "worst_case_offset": 2,
+      "n_backward_intra": 23555,
+      "n_intra_edges": 85382,
+      "per_offset": [
+        {
+          "k": 8,
+          "offset": 0,
+          "n_intra_edges": 85567,
+          "n_backward_intra": 23536,
+          "ceiling_gain_weight": 145517.0
+        },
+        {
+          "k": 8,
+          "offset": 2,
+          "n_intra_edges": 85382,
+          "n_backward_intra": 23555,
+          "ceiling_gain_weight": 146348.0
+        },
+        {
+          "k": 8,
+          "offset": 4,
+          "n_intra_edges": 85414,
+          "n_backward_intra": 23536,
+          "ceiling_gain_weight": 142712.0
+        },
+        {
+          "k": 8,
+          "offset": 6,
+          "n_intra_edges": 85588,
+          "n_backward_intra": 23620,
+          "ceiling_gain_weight": 143672.0
+        }
+      ]
+    },
+    "12": {
+      "ceiling_gain_pp": 0.42253866248445765,
+      "ceiling_pct_if_fully_realised": 84.5766337730158,
+      "worst_case_offset": 3,
+      "n_backward_intra": 28282,
+      "n_intra_edges": 103287,
+      "per_offset": [
+        {
+          "k": 12,
+          "offset": 0,
+          "n_intra_edges": 102888,
+          "n_backward_intra": 28051,
+          "ceiling_gain_weight": 175255.0
+        },
+        {
+          "k": 12,
+          "offset": 3,
+          "n_intra_edges": 103287,
+          "n_backward_intra": 28282,
+          "ceiling_gain_weight": 177095.0
+        },
+        {
+          "k": 12,
+          "offset": 6,
+          "n_intra_edges": 103221,
+          "n_backward_intra": 28132,
+          "ceiling_gain_weight": 175376.0
+        },
+        {
+          "k": 12,
+          "offset": 9,
+          "n_intra_edges": 102849,
+          "n_backward_intra": 28025,
+          "ceiling_gain_weight": 174753.0
+        }
+      ]
+    },
+    "16": {
+      "ceiling_gain_pp": 0.4798394813569653,
+      "ceiling_pct_if_fully_realised": 84.6339345918883,
+      "worst_case_offset": 12,
+      "n_backward_intra": 31415,
+      "n_intra_edges": 115709,
+      "per_offset": [
+        {
+          "k": 16,
+          "offset": 0,
+          "n_intra_edges": 115791,
+          "n_backward_intra": 31287,
+          "ceiling_gain_weight": 200073.0
+        },
+        {
+          "k": 16,
+          "offset": 4,
+          "n_intra_edges": 115201,
+          "n_backward_intra": 31060,
+          "ceiling_gain_weight": 195256.0
+        },
+        {
+          "k": 16,
+          "offset": 8,
+          "n_intra_edges": 115120,
+          "n_backward_intra": 31118,
+          "ceiling_gain_weight": 197185.0
+        },
+        {
+          "k": 16,
+          "offset": 12,
+          "n_intra_edges": 115709,
+          "n_backward_intra": 31415,
+          "ceiling_gain_weight": 201111.0
+        }
+      ]
+    },
+    "32": {
+      "ceiling_gain_pp": 0.6142444500747408,
+      "ceiling_pct_if_fully_realised": 84.76833956060608,
+      "worst_case_offset": 8,
+      "n_backward_intra": 38661,
+      "n_intra_edges": 146244,
+      "per_offset": [
+        {
+          "k": 32,
+          "offset": 0,
+          "n_intra_edges": 146367,
+          "n_backward_intra": 38563,
+          "ceiling_gain_weight": 254610.0
+        },
+        {
+          "k": 32,
+          "offset": 8,
+          "n_intra_edges": 146244,
+          "n_backward_intra": 38661,
+          "ceiling_gain_weight": 257443.0
+        },
+        {
+          "k": 32,
+          "offset": 16,
+          "n_intra_edges": 146236,
+          "n_backward_intra": 38445,
+          "ceiling_gain_weight": 254074.0
+        },
+        {
+          "k": 32,
+          "offset": 24,
+          "n_intra_edges": 145323,
+          "n_backward_intra": 38164,
+          "ceiling_gain_weight": 249071.0
+        }
+      ]
+    },
+    "64": {
+      "ceiling_gain_pp": 0.7396806572109976,
+      "ceiling_pct_if_fully_realised": 84.89377576774234,
+      "worst_case_offset": 16,
+      "n_backward_intra": 45292,
+      "n_intra_edges": 177339,
+      "per_offset": [
+        {
+          "k": 64,
+          "offset": 0,
+          "n_intra_edges": 178338,
+          "n_backward_intra": 45583,
+          "ceiling_gain_weight": 309885.0
+        },
+        {
+          "k": 64,
+          "offset": 16,
+          "n_intra_edges": 177339,
+          "n_backward_intra": 45292,
+          "ceiling_gain_weight": 310016.0
+        },
+        {
+          "k": 64,
+          "offset": 32,
+          "n_intra_edges": 177521,
+          "n_backward_intra": 45131,
+          "ceiling_gain_weight": 307379.0
+        },
+        {
+          "k": 64,
+          "offset": 48,
+          "n_intra_edges": 178217,
+          "n_backward_intra": 45197,
+          "ceiling_gain_weight": 306788.0
+        }
+      ]
+    },
+    "128": {
+      "ceiling_gain_pp": 0.865799244185593,
+      "ceiling_pct_if_fully_realised": 85.01989435471693,
+      "worst_case_offset": 96,
+      "n_backward_intra": 52039,
+      "n_intra_edges": 211963,
+      "per_offset": [
+        {
+          "k": 128,
+          "offset": 0,
+          "n_intra_edges": 213287,
+          "n_backward_intra": 52168,
+          "ceiling_gain_weight": 362368.0
+        },
+        {
+          "k": 128,
+          "offset": 32,
+          "n_intra_edges": 211776,
+          "n_backward_intra": 51702,
+          "ceiling_gain_weight": 358632.0
+        },
+        {
+          "k": 128,
+          "offset": 64,
+          "n_intra_edges": 211420,
+          "n_backward_intra": 51948,
+          "ceiling_gain_weight": 361162.0
+        },
+        {
+          "k": 128,
+          "offset": 96,
+          "n_intra_edges": 211963,
+          "n_backward_intra": 52039,
+          "ceiling_gain_weight": 362875.0
+        }
+      ]
+    },
+    "1024": {
+      "ceiling_gain_pp": 1.4398763355945,
+      "ceiling_pct_if_fully_realised": 85.59397144612583,
+      "worst_case_offset": 512,
+      "n_backward_intra": 85196,
+      "n_intra_edges": 388835,
+      "per_offset": [
+        {
+          "k": 1024,
+          "offset": 0,
+          "n_intra_edges": 378910,
+          "n_backward_intra": 81328,
+          "ceiling_gain_weight": 577304.0
+        },
+        {
+          "k": 1024,
+          "offset": 256,
+          "n_intra_edges": 386838,
+          "n_backward_intra": 83762,
+          "ceiling_gain_weight": 601770.0
+        },
+        {
+          "k": 1024,
+          "offset": 512,
+          "n_intra_edges": 388835,
+          "n_backward_intra": 85196,
+          "ceiling_gain_weight": 603483.0
+        },
+        {
+          "k": 1024,
+          "offset": 768,
+          "n_intra_edges": 385200,
+          "n_backward_intra": 82762,
+          "ceiling_gain_weight": 585155.0
+        }
+      ]
+    }
+  },
+  "wall_s_total": 13.122989654541016
+}
