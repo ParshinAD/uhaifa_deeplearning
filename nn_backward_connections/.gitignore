@@ -54,3 +54,8 @@ autoresearch/STOP
 # recreated on every launch. Never part of the record — the record is results/*.json.
 autoresearch/.sweep/
 autoresearch/.lock/
+
+# Champion orderings are TRACKED: the other machine must be able to evaluate them.
+# int32 ranks, compressed, re-scored on pin. See tools/pin_champion.py.
+!results/champions/
+!results/champions/*.npz
