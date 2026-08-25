@@ -1,0 +1,101 @@
+{
+  "item": "H59",
+  "dataset": "mouse",
+  "champion": "H52",
+  "champion_positions": "results\\20260816T211632Z-H52-mouse-s42-confirm-b458f1_positions.npy",
+  "champion_pct": 93.10282596057698,
+  "n_nodes": 148,
+  "n_edges": 583,
+  "n_self_loops": 0,
+  "total_weight": 9.159036176272162,
+  "budget": 400000,
+  "rounds_requested": 3,
+  "prereg": "experiments/prereg/H59_arc_reclamation.md",
+  "rounds": [
+    {
+      "round": 0,
+      "n_backward": 129,
+      "w_backward": 0.6317146654112061,
+      "n_tested": 129,
+      "scan_truncated": false,
+      "n_reclaimable": 5,
+      "w_reclaimable_CAPACITY": 0.00664554921437035,
+      "pp_reclaimable_CAPACITY": 0.07255729845883378,
+      "n_unknown": 0,
+      "w_unknown": 0.0,
+      "pp_unknown_upper_bound": 0.0,
+      "n_accepted": 5,
+      "w_accepted": 0.00664554921437035,
+      "n_conflicts": 0,
+      "pp_accepted": 0.07255729845883378,
+      "score_before": 8.527321510860956,
+      "score_after": 8.533967060075327,
+      "pct_before": 93.10282596057698,
+      "pct_after": 93.17538325903583,
+      "realised_delta_pp": 0.07255729845883718,
+      "lemma_holds": true,
+      "fatal": null,
+      "t_scan_s": 0.0010001659393310547,
+      "t_greedy_s": 0.0,
+      "t_round_s": 0.0010001659393310547,
+      "heaviest": [
+        {
+          "w": 0.00252740354050132,
+          "u": 133,
+          "v": 81
+        },
+        {
+          "w": 0.00163774887272771,
+          "u": 96,
+          "v": 50
+        },
+        {
+          "w": 0.00150109498132867,
+          "u": 84,
+          "v": 85
+        },
+        {
+          "w": 0.000586878906881911,
+          "u": 69,
+          "v": 45
+        },
+        {
+          "w": 0.00039242291293074,
+          "u": 69,
+          "v": 89
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "n_backward": 124,
+      "w_backward": 0.6250691161968357,
+      "n_tested": 124,
+      "scan_truncated": false,
+      "n_reclaimable": 0,
+      "w_reclaimable_CAPACITY": 0.0,
+      "pp_reclaimable_CAPACITY": 0.0,
+      "n_unknown": 0,
+      "w_unknown": 0.0,
+      "pp_unknown_upper_bound": 0.0,
+      "n_accepted": 0,
+      "w_accepted": 0.0,
+      "n_conflicts": 0,
+      "pp_accepted": 0.0,
+      "score_before": 8.533967060075327,
+      "score_after": 8.533967060075327,
+      "pct_before": 93.17538325903583,
+      "pct_after": 93.17538325903583,
+      "realised_delta_pp": 0.0,
+      "lemma_holds": true,
+      "fatal": null,
+      "t_scan_s": 0.001001119613647461,
+      "t_greedy_s": 0.0,
+      "t_round_s": 0.001001119613647461,
+      "heaviest": []
+    }
+  ],
+  "final_pct": 93.17538325903583,
+  "realised_delta_pp_total": 0.07255729845883718,
+  "wall_clock_s": 0.006000995635986328
+}
