@@ -5889,3 +5889,210 @@ PYTHONPATH=src $PY experiments/proto_H47_leaf_dp.py --dataset mouse      --ceili
 - **P09 is still `awaiting-operator`** and cycle 12 did not touch it. **P07** remains open and
   blocking. The scan's target-recalibration finding (item 1 above) is a second thing now waiting on
   the operator.
+
+---
+
+## 2026-08-26 — Cycle 13 · H60: condense the NET digraph, not the RAW one — **KILL at the screen**
+
+**Mode: DIVERGENT — both triggers active.** `cycles_since_score_move` = 4 (against
+`campaign.yaml: escalation.divergent_after_k_cycles_without_score_move: 3`) and
+`consecutive_kills` = 3. The last champion change was cycle 8 (H52, mouse only).
+`cycles_since_literature_scan` = 0 — cycle 12 ran the scan and it produced this item, so no
+scan was due or run.
+
+**Preflight.** Tree clean; branch `auto/campaign-v3` = `campaign.yaml` `campaign.branch`;
+`PYTHONPATH=src $PY -m pytest tests/ -q` → **402 passed** in 172.15 s. No frozen file modified.
+(The brief still says "386 passed"; the suite has grown. It is green, which is the gate.)
+
+**Item chosen.** H60 (p1, science, axis = *decomposition*), from cycle 12's literature scan.
+The competing p1 item was H59 (arc-set / reachability). H60 was taken because its gate is a
+REALISED refiner pass rather than a reclaimable-weight pool — H59's stated gate is a
+sum-of-reclaimable-weight figure, which is precisely the capacity statistic **M11** was written
+about, and it needs re-specifying before it is run. H60 attacks the decomposition level, which
+is what divergent mode asks for, and its prototype costs **zero GPU**.
+
+`gates_run`: **novelty, prototype, screen.** No confirm, no critic — the screen failed on a
+primary, which is terminal.
+
+### The hypothesis, and why the premise was not in doubt
+
+`SccRecursiveRefiner._refine` builds its condensation matrix over the RAW arc set
+(`src/mfas/refine/scc_recursive.py`, `coo_matrix((np.ones(eidx.size, dtype=np.int8), ...))`),
+so every reciprocal pair `u ↔ v` is an unbreakable 2-cycle — `u` and `v` land in one SCC and
+the refiner preserves each SCC's internal order by construction — **even at `w_uv = 100`,
+`w_vu = 1`**. Cycle 12 had already verified that line; this cycle did not re-litigate it.
+
+The reduction is exact, not a relaxation. For an unordered pair the ordering contributes
+`min(w_uv, w_vu)` plus `|w_uv − w_vu|` iff the heavier direction is forward, so with
+`C = Σ_pairs min(w_uv, w_vu)` (order-independent) and `D+ = {(u,v) : w_uv > w_vu}` carrying
+`d_uv = w_uv − w_vu`, maximising raw feedforward weight **is** maximising it on `D+`. `D+`'s
+arcs are a subset of `G`'s, so its SCCs strictly refine `G`'s. Substituting `D+` keeps the
+contiguous-block lemma intact and is still exactly monotone in the RAW score. All of that is
+proved in `src/mfas/refine/net_condense.py` and pinned by 26 tests in
+`tests/test_net_condense.py` (the exactness identity is checked over random orders on random
+graphs *and* on mouse; refinement is checked by containment of every `D+` component in a `G`
+component; monotonicity is checked round-by-round against the frozen scorer).
+
+### Gate 1 — novelty: PASS
+
+Nearest kills are H46 (coarse **position-range** block permutation) and H41 (segment moves).
+H60's blocks are SCCs of a different *structure graph*, not position ranges, so it shares no
+axis with either; it makes an existing confirmed class (H36) finer rather than adding a
+competing class. Not M1 (no continuous lever), not M9/M10 (no multi-start), and — the one that
+mattered — **not M11**, because the gate below is a realised delta measured by the frozen
+oracle, never a pool of confined weight.
+
+*Bookkeeping defect found in passing, not fixed here:* `autoresearch/killed.json` has no entry
+for **H43, H45, H46, H50 or H55**, all of which `queue.json` marks `killed`. The novelty rung
+is supposed to read `killed.json`; for those five it currently cannot. H60's own queue entry
+cites "`killed.json` H46 `revival_if`", which does not exist. Filed as **P12**.
+
+### Gate 2 — prototype: PASS on all three (and it OVERSTATED the result — see the finding)
+
+Two parts, both CPU-only, ~25 min total, zero GPU.
+
+**Part 1, standalone** (`experiments/proto_H60_net_condensation.py` →
+`experiments/outputs/proto_H60_{connectome,microns,mouse}.json`). Ten refiner rounds from each
+dataset's stored champion order, `raw` arm as control:
+
+| dataset | top-level SCCs, G → D+ | raw arm | net arm | incremental |
+|---|---|---|---|---|
+| connectome | 9,626 → 11,661 | +0.000568 | +0.005793 | **+0.005225** |
+| microns | 1,970 → 2,153 | +0.004922 | +0.007253 | **+0.002331** |
+| mouse | 46 → 54 | +0.000000 | +0.076760 | **+0.076760** |
+
+Connectome's standalone number is **below** its 0.012 pp bar. It was deliberately not treated
+as the gate, because H36's own history says a standalone condensation delta under-states the
+alternated one badly: one-shot top-level condensation measured **+0.00013 pp** while the same
+mechanism alternated with the sift became the campaign's largest score move, **+0.1837 pp**.
+
+**Part 2, composed** (`experiments/proto_H60_alternation.py` → `proto_H60_alt_*.json`) — which
+is also what **M8** requires: both arms from the champion's own order, matched cycles, matched
+constants, only the structure graph differing.
+
+| dataset | bar | control arm | net arm | composed Δ | redundancy fraction |
+|---|---|---|---|---|---|
+| connectome | 0.012 | +0.005039 / 315.0 s | +0.032516 / 301.4 s | **+0.027477** | **−0.9986** |
+| microns | 0.002 | +0.010662 / 164.6 s | +0.014110 / 158.2 s | **+0.003448** | **−0.9594** |
+| mouse | 0.01 | +0.000000 | +0.085531 | **+0.085531** | **−0.8808** |
+
+Every bar cleared, the net arm *cheaper* in wall clock on both primaries, and the redundancy
+fraction **negative** on all three — the single-node sift gains MORE alongside the net refiner,
+not less, so the classes are complementary. That is the exact opposite of H41's 91.9%. On this
+evidence the item went to the screen. **The screen then contradicted it.**
+
+### Module committed BEFORE the screen — `c75478c`
+
+The 2026-08-15 provenance finding (H36's 36 runs and 32 of H42's confirm runs cite commits
+where their own module does not exist) is why. All five H60 runs cite `c75478cc…+dirty`, and
+`src/mfas/experiments/H60.py` **does** exist at `c75478c`; the `+dirty` is `state.json`, which
+this cycle was writing as it went. Provenance is therefore satisfiable for H60 in a way it is
+still not for H36/H42 (P08/P10).
+
+New code: `src/mfas/refine/net_condense.py`; one optional `g_struct` keyword on
+`alternate_scc_sift` defaulting to today's behaviour; `src/mfas/experiments/H60.py` = H42 plus
+that one argument. Full suite after the change: **448 passed**.
+`tests/test_experiment_H60.py::test_default_g_struct_is_the_graph_itself` and
+`::test_H42_is_unchanged_by_the_new_keyword` pin that the sitting H36/H42/H52 champions are
+untouched by the new keyword.
+
+### Gate 3 — screen: **FAIL on connectome**
+
+`$PY autoresearch/seed_plan.py --variant H60 --role implement` → `class=deterministic`,
+runs=5. `bash autoresearch/sweep.sh --exp H60 --role implement --auto-seeds`, launched
+00:24:41, DONE rc=0 at 01:36:56.
+
+| dataset | seeds | H60 | champion | Δ | bar | wall (H60 → champion) | verdict |
+|---|---|---|---|---|---|---|---|
+| connectome | 42 | 84.16140564 | H42 84.15409511 | **+0.007311** | 0.012 | 1102.7 s → ~1238 s | **FAIL** |
+| microns | 42 | 83.24382034 | H42 83.24085291 | **+0.002967** | 0.002 | 3196.6 s → ~3418 s | PASS |
+| mouse | 42/123/999 | 92.91701410 | H52 93.10282596 | −0.185812 | ≥ −0.26 | 4.9 s | non-inferior |
+
+All five runs re-scored with the frozen oracle: **exact**, no mismatch. The three mouse runs
+agree to all digits, so the `deterministic` classification's tripwire holds and the 1-seed
+primary numbers are valid. The gate is `Δ > screen_delta_pp` on **both** primaries; connectome
+is short by a factor of 1.64, so the screen fails and the ladder stops here.
+
+*On the mouse row.* H60 is built on H42, and the mouse championship belongs to H52 (a different
+lineage: `epochs=0` from H44, plus H52's stage 5). H60's mouse score is **exactly** H42's
+92.91701410211007, so the −0.1858 pp is the H42↔H52 lineage gap and nothing the net graph did.
+Its *positions* differ from H42's in 126 of 148 entries — the net refiner does change the mouse
+trajectory, it just lands on the same score, which is H42's own documented finding that mouse
+is saturated at 92.917014 across every stage-4 allocation.
+
+### Gate 3b — can the shortfall be bought with cycles? **No, and it is measured**
+
+The obvious rescue is that H42's `_ALT_CYCLES['connectome'] = 77` was sized against the RAW
+curve's saturation, while H60's run is 135 s *cheaper* and sits at 1102.7 s of a 3450 s
+deadline — so there is budget for more cycles. That rescue is **falsified**:
+
+`$PY experiments/proto_H60_alternation.py --dataset connectome --cycles 40 --from-positions
+results/20260825T212443Z-H60-connectome-s42-implement-988dca_positions.npy`
+→ `experiments/outputs/proto_H60_size_connectome.json`
+
+Forty more net cycles from H60's own cycle-77 output gain **+0.003061 pp for 293.3 s**. That
+would put H60 at 117 cycles on +0.010372 pp — still under the 0.012 bar, with the per-cycle
+increments already decaying and 293 extra seconds spent. And the comparison that settles it:
+past cycle 77 the **net curve is FLATTER than the raw curve** (+0.003061 over 40 cycles vs the
+control arm's +0.005039 over 40 cycles from H42's order). The net refiner does not extend the
+curve; it takes its extra ground *earlier* and saturates *sooner*. There is no cycle count that
+closes a 0.004689 pp gap.
+
+### Verdict: **KILL**
+
+The mechanism is real, exact, monotone, cheaper, and positive on all three datasets — and it is
+**below the connectome minimum effect size, with the shortfall shown to be unbuyable.** Per the
+standing rule "if you are unsure whether something counts as a win: it does not."
+
+### The result that outlives the item → new meta-rule **M12**
+
+The prototype said +0.027477 pp on connectome. The screen said +0.007311 pp. The prototype was
+not noisy — it was **biased, in a direction and by an amount this campaign can now state**:
+
+| dataset | composed prototype | screen | overstatement |
+|---|---|---|---|
+| connectome | +0.027477 | +0.007311 | **3.76×** |
+| microns | +0.003448 | +0.002967 | 1.16× |
+| mouse | +0.085531 | **+0.000000** | unbounded |
+
+**Why.** A composed prototype run from the champion's own converged order pits a control arm
+that is already at (or near) its fixed point against a variant arm that is not. On connectome
+the control had only +0.005039 pp left in 40 cycles; on mouse it had **exactly 0.000000**. The
+variant arm, meanwhile, harvests ground that the real pipeline's control *also* harvests —
+earlier in its own trajectory, where the from-champion control can no longer re-take it. So
+"champion order + N cycles of X" minus "champion order + N cycles of Y" is **not** an estimator
+of "full pipeline with X" minus "full pipeline with Y". Mouse is the cleanest case: the
+prototype scored the mechanism at +0.085531 pp and the full pipeline at exactly zero.
+
+Note this sits *opposite* M8's and H36's caution, and both are true at once. The prototype rung
+is biased in **both** directions depending on where it starts: a standalone refiner measured
+from scratch **under**-states (H36: +0.00013 → +0.1837), and a composed variant measured from
+the champion's converged order **over**-states (H60: +0.027477 → +0.007311). The only unbiased
+measurement of a pipeline change is the pipeline. That does not make the prototype rung
+worthless — it cost 25 min of CPU here against 72 min of GPU for the screen — but its number is
+a *screening* number and must never be quoted as the expected screen result.
+
+### Two things worth more than the kill
+
+1. **microns gained +0.002967 pp AND gave back 201.6 s** (3196.6 s vs the champion's
+   3398–3418 s). **P07** is priority 0 and blocking precisely because the champion's microns
+   configuration does not fit 3600 s on a loaded machine. This is the first measured change
+   that moves microns in the right direction on *both* axes at once. It is NOT promoted — the
+   screen failed, there is no confirm, and a microns-only promotion would need its own 5-seed
+   confirm (~4.4 h). It is handed to P07 as evidence, and it is H60's revival condition.
+2. **connectome got 135 s cheaper too** (1102.7 s vs ~1238 s) for a positive, if insufficient,
+   delta. A structure-graph substitution that is strictly cheaper and never worse is a
+   different kind of asset from a score move.
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY -m pytest tests/test_net_condense.py tests/test_experiment_H60.py -q
+PYTHONPATH=src $PY experiments/proto_H60_net_condensation.py --dataset connectome --rounds 10
+PYTHONPATH=src $PY experiments/proto_H60_alternation.py --dataset connectome --cycles 40
+PYTHONPATH=src $PY experiments/proto_H60_alternation.py --dataset connectome --cycles 40 \
+    --from-positions results/20260825T212443Z-H60-connectome-s42-implement-988dca_positions.npy \
+    --out experiments/outputs/proto_H60_size_connectome.json
+bash autoresearch/sweep.sh --exp H60 --role implement --auto-seeds
+```

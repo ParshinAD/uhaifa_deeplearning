@@ -1,380 +1,393 @@
 {
- "_doc": "Do-not-repeat memory. Machine-readable index of every mechanism already falsified, with the evidence and \u0432\u0402\u201d critically \u0432\u0402\u201d the REVIVAL CONDITION that would make it worth re-testing. This is not a blacklist: it is a cost filter. The ideator MUST read it before proposing, and any proposal sharing an axis with an entry here MUST name the revival condition it satisfies.",
- "updated": "2026-08-25",
- "meta_rules": [
-  {
-   "id": "M1-continuous-exhausted",
-   "rule": "The continuous/gradient family is exhausted. Any new continuous-only hypothesis must explain why it escapes the scale-blindness of the surrogate (diagnosis.md Q01): F depends only on the product beta*std, and at Rocket's operating scale (std~141) the better order is NOT preferred by the surrogate at ANY beta in [0.05, 1.05]. Reshaping sigma does not move the operating scale.",
-   "evidence": "diagnosis.md Q01; findings.md #3 (H34 perturbed-sort falsifier: non-vanishing gradient, still -0.64 pp)"
-  },
-  {
-   "id": "M2-dynamics-null",
-   "rule": "Interventions on optimization DYNAMICS (optimizer, LR, beta schedule, clipping, EMA, restarts, gradient noise) re-converge to the plateau. Only the starting BASIN (H02) and DISCRETE refinement (H30/H35) ever moved the metric.",
-   "evidence": "findings.md #2 (9-hypothesis screen, 8 distinct mechanisms)"
-  },
-  {
-   "id": "M3-no-score-tail",
-   "rule": "Plain Rocket has no seed-to-seed score dispersion to harvest (connectome 82.8845 +/- 0.0225 pp) even though orderings differ (Spearman 0.958). Any best-of-K / multi-start / sampling idea must first show it CREATES score dispersion, or it harvests nothing.",
-   "evidence": "diagnosis.md Q02; H01 kill"
-  },
-  {
-   "id": "M8-credit-is-not-advantage",
-   "rule": "A move class's own stage credit is NOT its contribution, and a prototype showing that a class 'works' is NOT a screen. Move classes inside an alternating refiner compete for the same ground. MEASURED 2026-08-16: H41's segment class was credited +0.07010 pp on connectome while delivering +0.00570 pp net, because adding it cut the two existing classes' joint credit from 0.24058 to 0.17618 - 91.9% of what it found was already reachable. Judge a new move class ONLY by the composed champion-vs-variant delta at constant-for-constant matched settings, and REPORT THE REDUNDANCY FRACTION (old classes' credit before minus after, over the new class's credit). A class must also clear the marginal rate of the stage it is inserted into (stage 4 measured at 3.45e-4 pp/s on connectome, 4.33e-4 on microns), not merely be non-zero.",
-   "added": "2026-08-16",
-   "evidence": "H41 kill; experiments/log.md 2026-08-16 (H41 SCREEN); results/20260815T230344Z-H41-connectome-s42-implement-2081f3.json"
-  },
-  {
-   "id": "M4-local-is-empty",
-   "rule": "NARROWED 2026-08-16 - read the amendment before citing this rule. PROVEN: bounded-window single-node local search is empty for W <= 100 (leakage-safe reachable pool at W=100 is 0.0270 pp of a 0.4606 pp remaining gap; H30's W=10 arm measured ~0). DIRECTIVE, still in force: prefer global-range or structurally decomposed (SCC / block) move classes. NOT PROVEN, and formerly asserted here as if it were: that windows ABOVE 100 are empty. The headline figures this rule used to quote (W=100 -0.010 pp, W=1000 -0.170, W=5000 -0.405) are measure2_gap_flip_distance.net_pp = gain(W) - lose(W) from experiments/size_localsearch.py. That statistic measures how much of the REFERENCE ordering's own rearrangement is short-range - a property of the reference, not a bound on local search. A hill-climb never pays the `lose` term, it declines those moves, so a negative net_pp does not imply nothing is recoverable. The leakage-safe CEILING in the same artifact (measure1_reachable_pool) puts the reachable feedback pool at 0.4141 pp for W=1000 and 2.3225 pp for W=5000, so CAPACITY IS NOT THE BINDING CONSTRAINT above W=100. A ceiling is not an achievable amount - flipping window edges creates new feedback. Do not cite Vahidi 2025 either way: that method is uncapped/global-range, not bounded-span (autoresearch/lit/vahidi-2025.md).",
-   "amended": "2026-08-16",
-   "evidence": "experiments/outputs/localsearch_sizing.json (BOTH measures: measure1 is the ceiling, measure2 is the reference's structure); H22 kill (but see its amended record); H30's W=10 arm ~0; autoresearch/lit/vahidi-2025.md"
-  },
-  {
-   "id": "M5-no-ties",
-   "rule": "The continuous optimizer leaves 0 exact position ties and negligible near-ties (0.03% vs a 1.69 pp gap). Nothing is recoverable from tie-breaking or strict-'>' handling. Permanently closed.",
-   "evidence": "findings.md #2; H09 kill"
-  },
-  {
-   "id": "M6-init-is-flat",
-   "rule": "The init -> plateau curve is flat on connectome (82.87-82.93% across inits spanning 36-69% quality). Better-init-alone has a <=0.06 pp ceiling; H02 already took it. Init ideas only matter in combination with a mechanism that can HOLD the better basin.",
-   "evidence": "diagnosis.md Step 4"
-  },
-  {
-   "id": "M7-expensive-warmstarts-lose",
-   "rule": "Among discrete starting orders for the sift, cheap greedy-FAS is at least as good as expensive global linear-algebra embeddings. Trophic and magnetic-Laplacian warm-starts were both WORSE seeds, and the spectral one cost 304-507 s. Do not buy an expensive warm-start.",
-   "evidence": "findings.md Phase-6 summary; H32/H33 kills"
-  },
-  {
-   "id": "M9-dispersion-must-clear-the-bar",
-   "rule": "QUANTITATIVE form of M3, and it supersedes M3's existential test. Dispersion existing is not enough: best-of-R over R draws gains sigma * a_R over the mean (a_R = E[max of R standard normals]: a_2 = 0.5642, a_3 = 0.8463, a_4 = 1.0294), and R is NOT a free parameter - it is floor(runtime guard deadline / per-run wall clock). So a multi-start idea must show sigma >= min_promotion_delta_pp / a_R_feasible BEFORE it is built. On connectome at the champion's 1152.0 s/run the deadline allows R = 2, so the required sigma is 0.012 / 0.5641896 = 0.021269 pp. MEASURED relabelling sigma is 0.019124 pp - a 10% shortfall with no room to buy it back with R. Two corollaries. (1) The comparator is the CANONICAL score sota.json records, not the labelling mean; when canonical sits above the mean (here z = +1.029) best-of-R over RANDOM draws is a REGRESSION and only a canonical-anchored design is even monotone. (2) The matched-compute control is the measured saturation curve, not an assumption: doubling refinement seconds at ONE labelling buys +0.006275 pp against best-of-2's +0.000351 pp, i.e. ~18x more for the same clock. CAVEAT the rule carries with it: sigma is usually estimated from few points, and the chi-squared interval at n = 5 spans a factor of ~4.8 (here [0.011458, 0.054955] pp). Apply M9 to the point estimate to decide whether to BUILD, but do not call a kill secure on this ground alone unless the interval's relevant bound also clears - say which you used.",
-   "evidence": "experiments/outputs/proto_H56.json; experiments/outputs/proto_H42.json; H01 + H56 kills"
-  },
-  {
-   "id": "M10-the-dispersion-is-in-the-prefix",
-   "rule": "The relabelling nuisance of this pipeline is created almost entirely in the SHARED PREFIX (greedy-FAS tie-breaks -> Rocket), not in the refinement tail. MEASURED on connectome: whole-pipeline sigma 0.019124 pp (n = 5, proto_P09_connectome.json) vs TAIL-ONLY sigma 0.003731 pp from one fixed prefix (n = 8, proto_H57_connectome.json) - i.e. the tail holds ~4% of the variance and the prefix ~96%. CONSEQUENCE, and it is why this rule exists rather than being folded into M9: sharing the prefix to buy a bigger R is self-defeating. It multiplies R by about 2 (connectome R = 2 -> 4) while dividing sigma by about 5 (ratio 0.003731/0.019124 = 0.195), and a_R grows far too slowly to compensate - a_4/a_2 is only 1.82. So ANY design of the form 'pay the expensive prefix once, randomise the cheap tail R times' is dead on arithmetic before it is built, whatever the tail is. STRONGEST FORM OF THE EVIDENCE: over the nine measured arms the canonical labelling is the MAXIMUM, so the canonical-anchored best-of-R gains exactly 0.000000 pp at every R, by enumeration rather than by estimate. Together with M9 this closes the multi-start family: the only surviving door is a mechanism that WIDENS sigma at the champion's per-arm cost, and it has to widen the PREFIX's sigma, because that is where the dispersion is.",
-   "evidence": "experiments/outputs/proto_H57_connectome.json; experiments/outputs/proto_H57_decision.json; experiments/outputs/proto_P09_connectome.json; H01 + H56 + H57 kills"
-  },
-  {
-   "id": "M11-capacity-is-not-achievability",
-   "rule": "THE BINDING CONSTRAINT ON THIS CAMPAIGN IS ACHIEVABILITY, NOT CAPACITY - and the gap between them is about two orders of magnitude. M4's amendment asserted this in words ('a ceiling is not an achievable amount - flipping window edges creates new feedback'); H47 measured both numbers on the SAME order at the SAME scale for the first time. On the champion's connectome order, the weight of backward edges confined inside 16-node contiguous windows is +0.479839 pp - MORE than the entire remaining 0.4606 pp gap to the reference - yet the EXACT optimum over all k! orderings of those windows realises +0.004342 pp, which is 0.90% of it. microns 4.59%, mouse 1.95%. CONSEQUENCE, and this is the operative half: a 'reachable pool' / 'ceiling' / 'confined weight' statistic is NOT evidence that a move class will pay, and must never again be quoted as the justification for building one. It bounds the family from above and nothing more. The only admissible evidence is a realised gain from an exact or run optimum. Quote a ceiling only alongside its realisation ratio, and if the ratio is unmeasured, say so.",
-   "measured": "2026-08-25",
-   "evidence": [
-    "experiments/outputs/proto_H47_ceiling_connectome.json (ceiling +0.479839 pp at k=16)",
-    "experiments/outputs/proto_H47_connectome.json (exact realisation +0.004342 pp)",
-    "experiments/outputs/proto_H47_connectome_generous.json (+0.005337 pp at every offset, 16 rounds)",
-    "killed.json M4 amendment, which stated this without measuring it"
-   ],
-   "scope": "Measured at k <= 16 on all three datasets. The ceiling itself keeps rising with k on connectome (+0.614244 pp at k=32, +0.865799 at k=128, +1.439876 at k=1024) while H46 measured the achievable gain at 17,081-68,324 nodes as exactly 0.000000 pp, so the divergence between the two curves is documented at both ends of the scale range, not just at the micro end."
-  }
- ],
- "killed": [
-  {
-   "id": "H01",
-   "axis": "restarts / multi-start",
-   "mechanism": "K naive restarts, best-of-K by oracle",
-   "result_pp": {
-    "connectome": 0.0003,
-    "mouse": 0.0
-   },
-   "verdict": "screen fail",
-   "why_dead": "No score dispersion across seeds to harvest (see M3).",
-   "revival_if": "A variant demonstrably widens the seed score distribution (std >> 0.02 pp on connectome) before best-of-K is applied.",
-   "evidence": "experiments/log.md 2026-06-21 H01"
-  },
-  {
-   "id": "H03",
-   "axis": "beta schedule",
-   "mechanism": "sharper / extended terminal beta ramp",
-   "result_pp": {
-    "connectome": -0.0376,
-    "mouse": 0.0114,
-    "microns": -0.0092
-   },
-   "verdict": "screen fail (both phases)",
-   "why_dead": "beta and position scale are the SAME knob (F sees only beta*std). Sharper beta = larger effective scale = saturation and vanishing gradient. This also kills the roadmap item A-SCALE, which is identical.",
-   "revival_if": "A mechanism changes the operating scale WITHOUT saturating the sigmoid (e.g. per-edge normalized margins) \u0432\u0402\u201d must be argued against Q01's crossover analysis.",
-   "evidence": "experiments/log.md H03 / H03r; diagnosis.md Q01"
-  },
-  {
-   "id": "H04",
-   "axis": "in-loop refinement",
-   "mechanism": "periodic barycenter/local swaps inside the gradient loop",
-   "result_pp": {
-    "connectome": -0.0,
-    "mouse": 0.0
-   },
-   "verdict": "screen fail",
-   "why_dead": "Weak move (barycenter) inside a basin the gradient immediately re-flattens.",
-   "revival_if": "The in-loop move is the EXACT-GAIN sift (not barycenter) and the gradient phase is prevented from drifting (frozen scale / alternation). That is queue item H39, which is a distinct mechanism.",
-   "evidence": "experiments/log.md H04"
-  },
-  {
-   "id": "H05",
-   "axis": "optimizer",
-   "mechanism": "AdamW / decoupled weight decay (deliberate falsifier)",
-   "result_pp": {
-    "connectome": 0.0018,
-    "mouse": 0.0
-   },
-   "verdict": "screen fail",
-   "why_dead": "Strongest available dynamics knob; re-converged to the plateau. Cornerstone evidence for M2.",
-   "revival_if": "Never, for pure optimizer swaps. Only as part of a mechanism that changes the basin.",
-   "evidence": "experiments/log.md H05"
-  },
-  {
-   "id": "H06",
-   "axis": "objective / loss reweighting",
-   "mechanism": "degree/weight-aware emphasis on heavy and borderline edges",
-   "result_pp": {
-    "connectome": -0.038,
-    "mouse": -0.0794
-   },
-   "verdict": "screen fail (regressed both)",
-   "why_dead": "Reshaping the objective magnitude lowers quality; the faithful surrogate is already near-optimal for the dynamics.",
-   "revival_if": "Only if paired with evidence that the reweighting changes which ORDER the surrogate prefers at the operating scale (Q01 test).",
-   "evidence": "experiments/log.md H06"
-  },
-  {
-   "id": "H09",
-   "axis": "free-edge / tie recovery",
-   "mechanism": "anti-tie jitter on near-equal positions",
-   "result_pp": {
-    "connectome": -0.001,
-    "mouse": 0.0
-   },
-   "verdict": "self-falsified at the sizing gate (0 ties exist)",
-   "why_dead": "See M5. Permanently closed.",
-   "revival_if": "Never on these datasets.",
-   "evidence": "experiments/log.md H09"
-  },
-  {
-   "id": "H11",
-   "axis": "surrogate shape",
-   "mechanism": "margin / smooth-hinge surrogate",
-   "result_pp": {
-    "connectome": -0.0387,
-    "microns": 0.0007,
-    "mouse": 0.1264
-   },
-   "verdict": "kill (microns CI lower -0.0003; mouse gain was a single-seed fluctuation)",
-   "why_dead": "Shape change does not move the operating scale (M1).",
-   "revival_if": "Must satisfy M1's burden of proof.",
-   "evidence": "experiments/log.md H11 / H11r"
-  },
-  {
-   "id": "H13",
-   "axis": "gradient noise",
-   "mechanism": "mini-batch / stochastic edge subsampling",
-   "result_pp": {
-    "connectome": -0.8356,
-    "mouse": -0.0325
-   },
-   "verdict": "screen fail (large regression)",
-   "why_dead": "Noise in the loss destroys the plateau rather than escaping it.",
-   "revival_if": "Only as a DISCRETE stochastic move (random subset of movers in the sift) \u0432\u0402\u201d that is a different axis; see queue.",
-   "evidence": "experiments/log.md H13"
-  },
-  {
-   "id": "H16",
-   "axis": "beta schedule",
-   "mechanism": "monotone / graduated beta-continuation (no cyclic re-melt)",
-   "result_pp": {
-    "connectome": -0.2688
-   },
-   "verdict": "screen fail",
-   "why_dead": "The tuned cyclic schedule is better; monotone sharpening saturates early (same wall as H03).",
-   "revival_if": "See H03.",
-   "evidence": "experiments/log.md H16"
-  },
-  {
-   "id": "H19",
-   "axis": "rank-space surrogate",
-   "mechanism": "position -> soft-rank differentiable ranking",
-   "result_pp": {
-    "mouse": -1.94,
-    "hard_synthetic": -4.66
-   },
-   "verdict": "early exit (prototype fail)",
-   "why_dead": "O(1/n) rank gaps => vanishing gradient; the optimizer stalls (nodes do not move).",
-   "revival_if": "A rank relaxation with n-independent gaps AND a demonstrated escape from M1.",
-   "evidence": "experiments/log.md H19"
-  },
-  {
-   "id": "H48",
-   "axis": "starting basin",
-   "mechanism": "ratio-greedy init (out_w+1)/(in_w+1) replacing greedy-FAS, as a drop-in warm start",
-   "result_pp": {
-    "connectome": -0.01382,
-    "microns": 0.00266,
-    "mouse": -0.29202
-   },
-   "verdict": "screen FAIL 2026-08-16 (variant H49) - fails connectome and fails mouse non-inferiority",
-   "why_dead": "The init was measured +5.70387 pp better than ours (74.61730 vs 68.91343 on connectome, both on the frozen scorer, independently reproducing the reference family's Algorithm 1 claim). After stage 3 it was still +0.03456 pp ahead. After the FULL pipeline it was -0.01382 pp behind. The advantage did not wash out, it INVERTED. This is the third measured instance in 24 h of the refinement stack being non-monotone in the quality of its input, and it settles where the reference family's margin lives: NOT in the initial order.",
-   "revival_if": "Only paired with the refiner it was designed for (iterated exact-gain pair relocation - see H45's revival condition), measured as a whole pipeline against the champion. Never again as a drop-in warm start for the current stack.",
-   "evidence": "results/*-H49-*-implement-*.json; experiments/outputs/proto_H48_connectome.json, proto_H48_mouse.json; experiments/log.md 2026-08-16"
-  },
-  {
-   "id": "H41",
-   "axis": "discrete refinement / move class",
-   "mechanism": "exact-gain bounded-span SEGMENT moves (rigid contiguous-block relocation) as a third class inside stage 4",
-   "result_pp": {
-    "connectome": 0.0057,
-    "microns": 0.00139,
-    "mouse": 0.0
-   },
-   "verdict": "screen FAIL on both primaries (2026-08-16) - below screen_delta_pp 0.012 / 0.002",
-   "why_dead": "NOT emptiness - REDUNDANCY. The class fired 4,619 times on connectome (M4 and the handoff both predicted ZERO) and was credited +0.07010 pp, but adding it cut the other two classes' joint credit from 0.24058 to 0.17618, i.e. 91.9% of its ground was already reachable by single-node insertion + SCC block refinement. Net advantage +0.00570 pp. It also loses on allocation: 126.6 s for that net = 4.50e-5 pp/s against stage 4's measured 3.45e-4 pp/s. Implementation is correct and exact (145,386 (segment,target) pairs cross-checked against the frozen scorer with zero mismatches); the mechanism simply overlaps what is already there.",
-   "revival_if": "The redundancy is broken, not the ladder lengthened. A longer ladder alone is NOT a revival condition - the default ladder already fires 4,619 times and 91.9% of that is redundant, so more rungs plausibly buy more redundancy. Revive only if (a) the class is run where the others cannot reach - e.g. as the ONLY refiner from a different starting basin - or (b) an interleaving is found that stops the classes competing for the same ground, with the redundancy fraction reported. Any revival must report redundancy per M8.",
-   "evidence": "results/20260815T230344Z-H41-connectome-s42-implement-2081f3.json, results/20260815T232535Z-H41-microns-s42-implement-6c3e22.json, 3x results/*-H41-mouse-*-implement-f9ebb8.json; experiments/log.md 2026-08-16; src/mfas/refine/segment.py"
-  },
-  {
-   "id": "H22",
-   "axis": "discrete local search",
-   "mechanism": "bounded-window sifting / re-insertion",
-   "result_pp": {
-    "connectome": "<=0 for W>=100"
-   },
-   "verdict": "killed at the sizing gate (before building)",
-   "why_dead": "AMENDED 2026-08-16. Originally: 'See M4 - the recoverable weight is long-range.' That kill was taken AT THE SIZING GATE, BEFORE BUILDING, on measure2's net_pp - the statistic M4 has now been narrowed for misreading, because it describes the reference ordering rather than the reach of a hill-climb. By the leakage-safe ceiling in the same artifact a W=1000 window holds 0.4141 pp of reachable feedback against a 0.4606 pp remaining gap. This hypothesis was therefore never falsified by measurement; it was declined on a misread bound and never run.",
-   "revival_if": "EITHER (a) the window is replaced by a STRUCTURAL neighbourhood (SCC / block) rather than a rank window - that is H36, already shipped and confirmed; OR (b) NEW 2026-08-16: it is simply run, because the original evidentiary basis for declining it does not support the conclusion. Any revival must beat the CURRENT champion (connectome 84.1541), not the H30-era baseline this was filed against, and must justify its wall-clock against the measured stage-4 marginal rate of 3.45e-4 pp/s (experiments/log.md 2026-08-16) - a move class that is merely non-empty is not automatically worth its seconds.",
-   "amended": "2026-08-16",
-   "evidence": "experiments/outputs/localsearch_sizing.json"
-  },
-  {
-   "id": "H31",
-   "axis": "metaheuristic wrapper",
-   "mechanism": "ILS / LNS (ruin-and-recreate) around the H30 sift",
-   "result_pp": {
-    "connectome": -0.0008
-   },
-   "verdict": "screen fail at ~1.9x wall",
-   "why_dead": "Generic random ruin-and-recreate finds nothing the full-range sift has not already taken; it only costs wall-clock. Beat the sift on synthetic (+0.25 pp) but not on real graphs.",
-   "revival_if": "The destroy operator is STRUCTURE-AWARE (SCC-, block- or cycle-guided) rather than random, and the rebuild is exact-gain. Distinct mechanism.",
-   "evidence": "experiments/log.md H31"
-  },
-  {
-   "id": "H32",
-   "axis": "global warm-start",
-   "mechanism": "trophic-level Laplacian ordering -> sift",
-   "result_pp": {
-    "synthetic": -2.12,
-    "mouse": -1.26
-   },
-   "verdict": "killed by prototype gate",
-   "why_dead": "See M7.",
-   "revival_if": "Only as an ANALYSIS tool (Track C), not as a warm-start.",
-   "evidence": "experiments/outputs/proto_h32_trophic.json"
-  },
-  {
-   "id": "H33",
-   "axis": "global warm-start",
-   "mechanism": "magnetic-Laplacian directional spectral ordering -> sift",
-   "result_pp": {
-    "quality": -4.97
-   },
-   "verdict": "killed by prototype gate (quality AND cost)",
-   "why_dead": "Worse seed than greedy AND 304-507 s eigensolve (no AMG available). See M7.",
-   "revival_if": "Never as a warm-start at this scale without an AMG/multigrid eigensolver AND a quality argument.",
-   "evidence": "experiments/outputs/proto_h33_magnetic.json"
-  },
-  {
-   "id": "H34",
-   "axis": "continuous surrogate (structural)",
-   "mechanism": "perturbed / blackbox differentiable SORT (Berthet-style)",
-   "result_pp": {
-    "hard_synthetic": -0.643
-   },
-   "verdict": "killed by prototype gate \u0432\u0402\u201d FALSIFIED",
-   "why_dead": "The decisive falsifier for M1: the gradient is genuinely non-vanishing (398/400 nodes move) and it STILL loses to the plain sigmoid. The bottleneck is the relaxation basin, not the gradient estimator.",
-   "revival_if": "Never for continuous-only. This closed the family.",
-   "evidence": "experiments/outputs/proto_h34_perturbsort.json"
-  },
-  {
-   "id": "H56",
-   "axis": "restarts / multi-start",
-   "mechanism": "best-of-R over R randomly RELABELLED copies of the graph (relabelling is an exact isomorphism, so it perturbs only tie-breaks), full champion pipeline per arm",
-   "result_pp": {
-    "connectome_best_of_2_random_vs_canonical": -0.013893,
-    "connectome_best_of_2_canonical_anchored_vs_canonical": 0.000351,
-    "connectome_matched_compute_control_refinement": 0.006275,
-    "mouse": 0.0
-   },
-   "verdict": "killed by prototype gate - FALSIFIED on three independent grounds",
-   "why_dead": "The premise was right and the arithmetic still kills it. (1) RUNTIME: the guard deadline allows R = 2 on connectome (1152.0 s/run against 3450 s) and R = 1 on microns (3418 s/run), so the variant is the champion on a primary by construction and can never pass a screen that requires a delta on BOTH primaries. (2) EFFECT SIZE: at R = 2 the strongest (canonical-anchored, monotone) design gains +0.000351 pp measured / +0.001507 pp modelled against a 0.012 pp bar; the R that would clear the bar is 13, i.e. 14976 s = 4.16x the 3600 s hard cap. Plain random best-of-2 is a REGRESSION (-0.013893 pp) because the canonical labelling sits at z = +1.029. (3) MATCHED COMPUTE, the item's own kill condition: the same doubling spent on refinement at one labelling buys +0.006275 pp (measured off proto_H42.json's 143-cycle curve), ~18x more. On mouse the current champion H52 is EXACTLY relabelling-invariant - 41 fresh labellings at an independent permutation base, one distinct value, span 0.0 pp - so there is nothing to harvest there at any R. Note H01's revival condition ('std >> 0.02 pp') was NOT met by the measured 0.019124 pp; the novelty gate let H56 through on the mechanism difference (full-cost arms vs H01's budget-split arms) and the prototype then vindicated H01's threshold to within 6%. HONEST WEAKNESS, recorded rather than buried: sigma is a 5-point estimate with a 95% chi-squared interval of [0.011458, 0.054955] pp, and grounds (2) and (3) both scale with it - at the UPPER end the anchored best-of-2 gain would be +0.013473 pp, which clears the bar and beats the control. Ground (1), the microns runtime, is arithmetic and does not flip, and it carries the kill on its own.",
-   "revival_if": "Only via a design that changes the ARITHMETIC, not the framing. Either (a) the per-arm cost drops enough that R_feasible * a_R clears M9 - which is exactly queue item H57, prefix-shared tail multi-start, where sharing the greedy+Rocket+sift prefix makes R = 4 affordable and drops the required sigma to 0.011657 pp; or (b) a mechanism is shown to WIDEN the labelling sigma past 0.021269 pp at the champion's current per-run cost; or (c) the labelling sigma is RE-ESTIMATED at n >= 11 (~1.9 h of GPU, the same measurement H58 needs) and its LOWER confidence bound exceeds 0.021269 pp - the n = 5 estimate used here cannot rule that out. Any revival must additionally answer the microns leg, which is independent of sigma: at 3418 s/run against a 3450 s deadline the variant is bit-identical to the champion there, so the best it can ever be is a connectome-only partial promotion. Re-proposing best-of-R over full-cost pipeline runs at the point-estimate sigma is dead.",
-   "evidence": "experiments/outputs/proto_H56.json (incl. connectome.sigma_uncertainty); experiments/outputs/proto_H56_mouse.json; experiments/log.md 2026-08-25 (Cycle 10)"
-  },
-  {
-   "id": "H57",
-   "axis": "restarts / multi-start",
-   "mechanism": "best-of-R over R randomised refinement TAILS (stage 4, alternate_scc_sift) sharing ONE greedy-FAS + Rocket + first-sift prefix; the tails are randomised by node relabelling, an exact isomorphism, so only tie-breaks move",
-   "result_pp": {
-    "connectome_tail_only_sigma_pp": 0.003731,
-    "connectome_anchored_best_of_R_any_R": 0.0,
-    "connectome_random_only_best_of_4": -0.010532,
-    "connectome_matched_compute_control_one_longer_tail": 0.004707
-   },
-   "verdict": "killed by its own pre-registered prototype gate - FALSIFIED on three grounds",
-   "why_dead": "The item's open_question_to_settle_first was 'is the sigma in the prefix or the tail?', and the answer is the prefix. (1) EFFECT SIZE: tail-only sigma is 0.003731 pp against an M9 bar of 0.011658 pp (idle, R = 4) / 0.014180 pp (under P07 load, R = 3), short by 3.1x-3.8x. Unlike H56 this does NOT flip at the upper end of sigma's own chi-squared 95% interval: 0.007594 pp still fails the easier bar by 35%, so the kill is secure on the interval and not merely on the point estimate. (2) EXACT ENUMERATION: the canonical arm is the MAXIMUM of all nine measured arms, so the canonical-anchored best-of-R - the only monotone form, per M9 corollary (1) - gains exactly 0.000000 pp at every R and for every subset; plain random best-of-4 is -0.010532 pp, a regression. (3) MATCHED COMPUTE, the item's own kill condition: the same seconds on ONE longer tail buy at least +0.004707 pp (proto_H42.json, 77 -> 143 cycles, measured; longer arms are beyond the measured curve and that figure is a monotone lower bound). VALIDITY: the identity arm reproduced the champion's 84.15409511053134 exactly and the prefix reproduced its stage-3 83.91351804242117, so the study measured the champion's own pipeline. NOTE, correcting this cycle's own sealed pre-registration rather than the item: microns admits R = 3 under prefix-sharing (prefix 3172.3 s, tail 86.0 s), NOT R = 1 - so H56's runtime ground does not carry over and played no part in this kill. The connectome leg fails on its own and a screen requires a delta on both primaries.",
-   "revival_if": "Not by a cheaper R. M10 makes the whole 'share the prefix, randomise the tail' family dead on arithmetic, so a revival must WIDEN the dispersion rather than buy more draws of it, and must widen it where it lives - in the prefix. Two admissible routes, both unmeasured: (a) a tail randomisation strictly STRONGER than relabelling - e.g. a randomised split_fracs schedule, which is a real lever this study did not touch - shown to reach tail sigma >= 0.011658 pp WITHOUT perturbing the incoming order (perturbing it is ruin-and-recreate, killed H31 / conditionally revived H40, a different axis); or (b) a mechanism that widens the PREFIX sigma past 0.021269 pp at the champion's per-arm cost, which is H56 revival condition (b) and is unchanged. Re-proposing prefix-sharing at the measured tail sigma is dead.",
-   "evidence": "experiments/outputs/proto_H57_prereg.json (sealed at d3d10ca before launch); experiments/outputs/proto_H57_connectome.json; experiments/outputs/proto_H57_decision.json; experiments/log.md 2026-08-25 (Cycle 11)"
-  },
-  {
-   "id": "H47",
-   "title": "Exact subset-DP ordering at the SCC recursion's leaves (the champion optimises nothing below 32 nodes)",
-   "axis": "discrete refinement / exactness of an existing move class",
-   "killed_at": "2026-08-25",
-   "verdict": "prototype gate FAIL on both primaries (cycle 12)",
-   "why_dead": "NOT emptiness of the premise - the premise was TRUE and is now measured. SccRecursiveRefiner._refine really does return immediately for every block of <= 32 nodes (scc_recursive.py:212), so the champion optimises nothing at that scale, and there really is backward weight sitting there. It dies because that weight is almost entirely UNACHIEVABLE. Exact Held-Karp optimum of every contiguous k-node block, tiled over the champion's own stored final order, oracle-verified on every round of every k on all three datasets with zero mismatches: connectome +0.001694 / +0.003288 / +0.004342 pp converged at k = 8 / 12 / 16 against a 0.012 pp bar, i.e. 2.8x short at the best k; microns +0.001727 pp against 0.002. A deliberately generous arm (k=16, every offset 0..15, 16 rounds, 1030.9 s of CPU) reaches only +0.005337 pp, so the kill is not an artefact of where the cuts fell. It also loses on allocation by 67x: 5.18e-6 pp/s against stage 4's measured 3.45e-4 pp/s. MOUSE IS THE ONE POSITIVE AND IT IS A SCALE ARTEFACT, stated rather than buried: +0.050392 pp clears mouse's 0.01 bar, but mouse has 148 nodes, so k=16 is 10.8% of its line against 0.0117% of connectome's - a factor of ~900. The connectome window at mouse's RELATIVE scale is k ~ 14,800, which is inside the coarse band H46 already measured at exactly +0.000000 pp. The two results are at different relative scales and do not contradict each other.",
-   "revival": "Only if the ACHIEVABILITY number moves, not the capacity number. Concretely: a mechanism that first changes what sits inside a micro-block - e.g. H60's net-digraph condensation, which strictly refines the SCC blocks and therefore changes their contents - could be re-measured with this same gate, since experiments/proto_H47_leaf_dp.py takes any stored order and costs no GPU. Re-running it on an UNCHANGED champion order is forbidden: that is this measurement, and it is done. Also revivable if the champion's min_block ever stops being the operative cut (a redesign of the recursion), because the 0.0117%-of-line figure that makes this a micro-scale result would then no longer hold.",
-   "evidence": [
-    "experiments/outputs/proto_H47_connectome.json",
-    "experiments/outputs/proto_H47_microns.json",
-    "experiments/outputs/proto_H47_mouse.json",
-    "experiments/outputs/proto_H47_connectome_generous.json",
-    "experiments/outputs/proto_H47_ceiling_connectome.json",
-    "experiments/outputs/proto_H47_ceiling_microns.json",
-    "experiments/outputs/proto_H47_ceiling_mouse.json",
-    "experiments/proto_H47_leaf_dp.py",
-    "experiments/log.md 2026-08-25 (Cycle 12)"
-   ]
-  }
- ],
- "deferred_not_falsified": [
-  {
-   "id": "H07",
-   "axis": "LR schedule",
-   "note": "cosine/one-cycle; predicted null by M2"
-  },
-  {
-   "id": "H08",
-   "axis": "beta+LR joint",
-   "note": "subsumes killed H03 + low-EV H07"
-  },
-  {
-   "id": "H10",
-   "axis": "gradient clipping",
-   "note": "per-node / no global clip; predicted null by M2"
-  },
-  {
-   "id": "H12",
-   "axis": "weight averaging",
-   "note": "Polyak/EMA; predicted null by M2"
-  },
-  {
-   "id": "H17",
-   "axis": "basin hopping",
-   "note": "deferred by the drift probe; partially re-opened by Q01 (the optimum IS holdable at its own scale) \u0432\u0402\u201d but reachability, not stability, is the barrier"
-  },
-  {
-   "id": "H18",
-   "axis": "straight-through estimator",
-   "note": "deferred; must satisfy M1"
-  },
-  {
-   "id": "H20",
-   "axis": "Gumbel-Sinkhorn",
-   "note": "O(n^2), prototype-only; must satisfy M1"
-  }
- ]
+  "_doc": "Do-not-repeat memory. Machine-readable index of every mechanism already falsified, with the evidence and вЂ” critically вЂ” the REVIVAL CONDITION that would make it worth re-testing. This is not a blacklist: it is a cost filter. The ideator MUST read it before proposing, and any proposal sharing an axis with an entry here MUST name the revival condition it satisfies.",
+  "updated": "2026-08-26",
+  "meta_rules": [
+    {
+      "id": "M1-continuous-exhausted",
+      "rule": "The continuous/gradient family is exhausted. Any new continuous-only hypothesis must explain why it escapes the scale-blindness of the surrogate (diagnosis.md Q01): F depends only on the product beta*std, and at Rocket's operating scale (std~141) the better order is NOT preferred by the surrogate at ANY beta in [0.05, 1.05]. Reshaping sigma does not move the operating scale.",
+      "evidence": "diagnosis.md Q01; findings.md #3 (H34 perturbed-sort falsifier: non-vanishing gradient, still -0.64 pp)"
+    },
+    {
+      "id": "M2-dynamics-null",
+      "rule": "Interventions on optimization DYNAMICS (optimizer, LR, beta schedule, clipping, EMA, restarts, gradient noise) re-converge to the plateau. Only the starting BASIN (H02) and DISCRETE refinement (H30/H35) ever moved the metric.",
+      "evidence": "findings.md #2 (9-hypothesis screen, 8 distinct mechanisms)"
+    },
+    {
+      "id": "M3-no-score-tail",
+      "rule": "Plain Rocket has no seed-to-seed score dispersion to harvest (connectome 82.8845 +/- 0.0225 pp) even though orderings differ (Spearman 0.958). Any best-of-K / multi-start / sampling idea must first show it CREATES score dispersion, or it harvests nothing.",
+      "evidence": "diagnosis.md Q02; H01 kill"
+    },
+    {
+      "id": "M8-credit-is-not-advantage",
+      "rule": "A move class's own stage credit is NOT its contribution, and a prototype showing that a class 'works' is NOT a screen. Move classes inside an alternating refiner compete for the same ground. MEASURED 2026-08-16: H41's segment class was credited +0.07010 pp on connectome while delivering +0.00570 pp net, because adding it cut the two existing classes' joint credit from 0.24058 to 0.17618 - 91.9% of what it found was already reachable. Judge a new move class ONLY by the composed champion-vs-variant delta at constant-for-constant matched settings, and REPORT THE REDUNDANCY FRACTION (old classes' credit before minus after, over the new class's credit). A class must also clear the marginal rate of the stage it is inserted into (stage 4 measured at 3.45e-4 pp/s on connectome, 4.33e-4 on microns), not merely be non-zero.",
+      "added": "2026-08-16",
+      "evidence": "H41 kill; experiments/log.md 2026-08-16 (H41 SCREEN); results/20260815T230344Z-H41-connectome-s42-implement-2081f3.json"
+    },
+    {
+      "id": "M4-local-is-empty",
+      "rule": "NARROWED 2026-08-16 - read the amendment before citing this rule. PROVEN: bounded-window single-node local search is empty for W <= 100 (leakage-safe reachable pool at W=100 is 0.0270 pp of a 0.4606 pp remaining gap; H30's W=10 arm measured ~0). DIRECTIVE, still in force: prefer global-range or structurally decomposed (SCC / block) move classes. NOT PROVEN, and formerly asserted here as if it were: that windows ABOVE 100 are empty. The headline figures this rule used to quote (W=100 -0.010 pp, W=1000 -0.170, W=5000 -0.405) are measure2_gap_flip_distance.net_pp = gain(W) - lose(W) from experiments/size_localsearch.py. That statistic measures how much of the REFERENCE ordering's own rearrangement is short-range - a property of the reference, not a bound on local search. A hill-climb never pays the `lose` term, it declines those moves, so a negative net_pp does not imply nothing is recoverable. The leakage-safe CEILING in the same artifact (measure1_reachable_pool) puts the reachable feedback pool at 0.4141 pp for W=1000 and 2.3225 pp for W=5000, so CAPACITY IS NOT THE BINDING CONSTRAINT above W=100. A ceiling is not an achievable amount - flipping window edges creates new feedback. Do not cite Vahidi 2025 either way: that method is uncapped/global-range, not bounded-span (autoresearch/lit/vahidi-2025.md).",
+      "amended": "2026-08-16",
+      "evidence": "experiments/outputs/localsearch_sizing.json (BOTH measures: measure1 is the ceiling, measure2 is the reference's structure); H22 kill (but see its amended record); H30's W=10 arm ~0; autoresearch/lit/vahidi-2025.md"
+    },
+    {
+      "id": "M5-no-ties",
+      "rule": "The continuous optimizer leaves 0 exact position ties and negligible near-ties (0.03% vs a 1.69 pp gap). Nothing is recoverable from tie-breaking or strict-'>' handling. Permanently closed.",
+      "evidence": "findings.md #2; H09 kill"
+    },
+    {
+      "id": "M6-init-is-flat",
+      "rule": "The init -> plateau curve is flat on connectome (82.87-82.93% across inits spanning 36-69% quality). Better-init-alone has a <=0.06 pp ceiling; H02 already took it. Init ideas only matter in combination with a mechanism that can HOLD the better basin.",
+      "evidence": "diagnosis.md Step 4"
+    },
+    {
+      "id": "M7-expensive-warmstarts-lose",
+      "rule": "Among discrete starting orders for the sift, cheap greedy-FAS is at least as good as expensive global linear-algebra embeddings. Trophic and magnetic-Laplacian warm-starts were both WORSE seeds, and the spectral one cost 304-507 s. Do not buy an expensive warm-start.",
+      "evidence": "findings.md Phase-6 summary; H32/H33 kills"
+    },
+    {
+      "id": "M9-dispersion-must-clear-the-bar",
+      "rule": "QUANTITATIVE form of M3, and it supersedes M3's existential test. Dispersion existing is not enough: best-of-R over R draws gains sigma * a_R over the mean (a_R = E[max of R standard normals]: a_2 = 0.5642, a_3 = 0.8463, a_4 = 1.0294), and R is NOT a free parameter - it is floor(runtime guard deadline / per-run wall clock). So a multi-start idea must show sigma >= min_promotion_delta_pp / a_R_feasible BEFORE it is built. On connectome at the champion's 1152.0 s/run the deadline allows R = 2, so the required sigma is 0.012 / 0.5641896 = 0.021269 pp. MEASURED relabelling sigma is 0.019124 pp - a 10% shortfall with no room to buy it back with R. Two corollaries. (1) The comparator is the CANONICAL score sota.json records, not the labelling mean; when canonical sits above the mean (here z = +1.029) best-of-R over RANDOM draws is a REGRESSION and only a canonical-anchored design is even monotone. (2) The matched-compute control is the measured saturation curve, not an assumption: doubling refinement seconds at ONE labelling buys +0.006275 pp against best-of-2's +0.000351 pp, i.e. ~18x more for the same clock. CAVEAT the rule carries with it: sigma is usually estimated from few points, and the chi-squared interval at n = 5 spans a factor of ~4.8 (here [0.011458, 0.054955] pp). Apply M9 to the point estimate to decide whether to BUILD, but do not call a kill secure on this ground alone unless the interval's relevant bound also clears - say which you used.",
+      "evidence": "experiments/outputs/proto_H56.json; experiments/outputs/proto_H42.json; H01 + H56 kills"
+    },
+    {
+      "id": "M10-the-dispersion-is-in-the-prefix",
+      "rule": "The relabelling nuisance of this pipeline is created almost entirely in the SHARED PREFIX (greedy-FAS tie-breaks -> Rocket), not in the refinement tail. MEASURED on connectome: whole-pipeline sigma 0.019124 pp (n = 5, proto_P09_connectome.json) vs TAIL-ONLY sigma 0.003731 pp from one fixed prefix (n = 8, proto_H57_connectome.json) - i.e. the tail holds ~4% of the variance and the prefix ~96%. CONSEQUENCE, and it is why this rule exists rather than being folded into M9: sharing the prefix to buy a bigger R is self-defeating. It multiplies R by about 2 (connectome R = 2 -> 4) while dividing sigma by about 5 (ratio 0.003731/0.019124 = 0.195), and a_R grows far too slowly to compensate - a_4/a_2 is only 1.82. So ANY design of the form 'pay the expensive prefix once, randomise the cheap tail R times' is dead on arithmetic before it is built, whatever the tail is. STRONGEST FORM OF THE EVIDENCE: over the nine measured arms the canonical labelling is the MAXIMUM, so the canonical-anchored best-of-R gains exactly 0.000000 pp at every R, by enumeration rather than by estimate. Together with M9 this closes the multi-start family: the only surviving door is a mechanism that WIDENS sigma at the champion's per-arm cost, and it has to widen the PREFIX's sigma, because that is where the dispersion is.",
+      "evidence": "experiments/outputs/proto_H57_connectome.json; experiments/outputs/proto_H57_decision.json; experiments/outputs/proto_P09_connectome.json; H01 + H56 + H57 kills"
+    },
+    {
+      "id": "M11-capacity-is-not-achievability",
+      "rule": "THE BINDING CONSTRAINT ON THIS CAMPAIGN IS ACHIEVABILITY, NOT CAPACITY - and the gap between them is about two orders of magnitude. M4's amendment asserted this in words ('a ceiling is not an achievable amount - flipping window edges creates new feedback'); H47 measured both numbers on the SAME order at the SAME scale for the first time. On the champion's connectome order, the weight of backward edges confined inside 16-node contiguous windows is +0.479839 pp - MORE than the entire remaining 0.4606 pp gap to the reference - yet the EXACT optimum over all k! orderings of those windows realises +0.004342 pp, which is 0.90% of it. microns 4.59%, mouse 1.95%. CONSEQUENCE, and this is the operative half: a 'reachable pool' / 'ceiling' / 'confined weight' statistic is NOT evidence that a move class will pay, and must never again be quoted as the justification for building one. It bounds the family from above and nothing more. The only admissible evidence is a realised gain from an exact or run optimum. Quote a ceiling only alongside its realisation ratio, and if the ratio is unmeasured, say so.",
+      "measured": "2026-08-25",
+      "evidence": [
+        "experiments/outputs/proto_H47_ceiling_connectome.json (ceiling +0.479839 pp at k=16)",
+        "experiments/outputs/proto_H47_connectome.json (exact realisation +0.004342 pp)",
+        "experiments/outputs/proto_H47_connectome_generous.json (+0.005337 pp at every offset, 16 rounds)",
+        "killed.json M4 amendment, which stated this without measuring it"
+      ],
+      "scope": "Measured at k <= 16 on all three datasets. The ceiling itself keeps rising with k on connectome (+0.614244 pp at k=32, +0.865799 at k=128, +1.439876 at k=1024) while H46 measured the achievable gain at 17,081-68,324 nodes as exactly 0.000000 pp, so the divergence between the two curves is documented at both ends of the scale range, not just at the micro end."
+    },
+    {
+      "id": "M12-champion-start-overstates",
+      "rule": "A COMPOSED PROTOTYPE RUN FROM THE CHAMPION'S OWN CONVERGED ORDER SYSTEMATICALLY OVERSTATES a pipeline change, because the control arm starts at (or near) its own fixed point and the variant arm does not. The variant harvests ground the real pipeline's control ALSO harvests - earlier in its own trajectory, where a from-champion control can no longer re-take it. So `champion order + N cycles of X` minus `champion order + N cycles of Y` is NOT an estimator of `full pipeline with X` minus `full pipeline with Y`. MEASURED on H60, prototype vs screen on the same mechanism: connectome +0.027477 -> +0.007311 pp (3.76x overstatement), microns +0.003448 -> +0.002967 (1.16x), mouse +0.085531 -> EXACTLY +0.000000 (the control arm there had 0.000000 pp left, and the full pipeline gained nothing at all). SECOND HALF, and it is why this is a rule and not an erratum: the prototype rung is biased in BOTH directions depending on where it starts. A standalone refiner measured from scratch UNDER-states (H36: one-shot condensation +0.00013 pp -> +0.1837 pp alternated); a composed variant measured from the champion's converged order OVER-states. The only unbiased measurement of a pipeline change is the pipeline. OPERATIVE CONSEQUENCE: a composed-from-champion prototype number is a SCREENING number - fine for deciding whether to spend GPU, never quotable as the expected screen result, and never as evidence in a promotion argument. Quote it with its control arm's own remaining headroom beside it, which is what makes the bias visible.",
+      "added": "2026-08-26",
+      "evidence": "experiments/outputs/proto_H60_alt_{connectome,microns,mouse}.json vs results/*-H60-*-implement-*.json; experiments/log.md 2026-08-26 (Cycle 13)"
+    }
+  ],
+  "killed": [
+    {
+      "id": "H01",
+      "axis": "restarts / multi-start",
+      "mechanism": "K naive restarts, best-of-K by oracle",
+      "result_pp": {
+        "connectome": 0.0003,
+        "mouse": 0.0
+      },
+      "verdict": "screen fail",
+      "why_dead": "No score dispersion across seeds to harvest (see M3).",
+      "revival_if": "A variant demonstrably widens the seed score distribution (std >> 0.02 pp on connectome) before best-of-K is applied.",
+      "evidence": "experiments/log.md 2026-06-21 H01"
+    },
+    {
+      "id": "H03",
+      "axis": "beta schedule",
+      "mechanism": "sharper / extended terminal beta ramp",
+      "result_pp": {
+        "connectome": -0.0376,
+        "mouse": 0.0114,
+        "microns": -0.0092
+      },
+      "verdict": "screen fail (both phases)",
+      "why_dead": "beta and position scale are the SAME knob (F sees only beta*std). Sharper beta = larger effective scale = saturation and vanishing gradient. This also kills the roadmap item A-SCALE, which is identical.",
+      "revival_if": "A mechanism changes the operating scale WITHOUT saturating the sigmoid (e.g. per-edge normalized margins) вЂ” must be argued against Q01's crossover analysis.",
+      "evidence": "experiments/log.md H03 / H03r; diagnosis.md Q01"
+    },
+    {
+      "id": "H04",
+      "axis": "in-loop refinement",
+      "mechanism": "periodic barycenter/local swaps inside the gradient loop",
+      "result_pp": {
+        "connectome": -0.0,
+        "mouse": 0.0
+      },
+      "verdict": "screen fail",
+      "why_dead": "Weak move (barycenter) inside a basin the gradient immediately re-flattens.",
+      "revival_if": "The in-loop move is the EXACT-GAIN sift (not barycenter) and the gradient phase is prevented from drifting (frozen scale / alternation). That is queue item H39, which is a distinct mechanism.",
+      "evidence": "experiments/log.md H04"
+    },
+    {
+      "id": "H05",
+      "axis": "optimizer",
+      "mechanism": "AdamW / decoupled weight decay (deliberate falsifier)",
+      "result_pp": {
+        "connectome": 0.0018,
+        "mouse": 0.0
+      },
+      "verdict": "screen fail",
+      "why_dead": "Strongest available dynamics knob; re-converged to the plateau. Cornerstone evidence for M2.",
+      "revival_if": "Never, for pure optimizer swaps. Only as part of a mechanism that changes the basin.",
+      "evidence": "experiments/log.md H05"
+    },
+    {
+      "id": "H06",
+      "axis": "objective / loss reweighting",
+      "mechanism": "degree/weight-aware emphasis on heavy and borderline edges",
+      "result_pp": {
+        "connectome": -0.038,
+        "mouse": -0.0794
+      },
+      "verdict": "screen fail (regressed both)",
+      "why_dead": "Reshaping the objective magnitude lowers quality; the faithful surrogate is already near-optimal for the dynamics.",
+      "revival_if": "Only if paired with evidence that the reweighting changes which ORDER the surrogate prefers at the operating scale (Q01 test).",
+      "evidence": "experiments/log.md H06"
+    },
+    {
+      "id": "H09",
+      "axis": "free-edge / tie recovery",
+      "mechanism": "anti-tie jitter on near-equal positions",
+      "result_pp": {
+        "connectome": -0.001,
+        "mouse": 0.0
+      },
+      "verdict": "self-falsified at the sizing gate (0 ties exist)",
+      "why_dead": "See M5. Permanently closed.",
+      "revival_if": "Never on these datasets.",
+      "evidence": "experiments/log.md H09"
+    },
+    {
+      "id": "H11",
+      "axis": "surrogate shape",
+      "mechanism": "margin / smooth-hinge surrogate",
+      "result_pp": {
+        "connectome": -0.0387,
+        "microns": 0.0007,
+        "mouse": 0.1264
+      },
+      "verdict": "kill (microns CI lower -0.0003; mouse gain was a single-seed fluctuation)",
+      "why_dead": "Shape change does not move the operating scale (M1).",
+      "revival_if": "Must satisfy M1's burden of proof.",
+      "evidence": "experiments/log.md H11 / H11r"
+    },
+    {
+      "id": "H13",
+      "axis": "gradient noise",
+      "mechanism": "mini-batch / stochastic edge subsampling",
+      "result_pp": {
+        "connectome": -0.8356,
+        "mouse": -0.0325
+      },
+      "verdict": "screen fail (large regression)",
+      "why_dead": "Noise in the loss destroys the plateau rather than escaping it.",
+      "revival_if": "Only as a DISCRETE stochastic move (random subset of movers in the sift) вЂ” that is a different axis; see queue.",
+      "evidence": "experiments/log.md H13"
+    },
+    {
+      "id": "H16",
+      "axis": "beta schedule",
+      "mechanism": "monotone / graduated beta-continuation (no cyclic re-melt)",
+      "result_pp": {
+        "connectome": -0.2688
+      },
+      "verdict": "screen fail",
+      "why_dead": "The tuned cyclic schedule is better; monotone sharpening saturates early (same wall as H03).",
+      "revival_if": "See H03.",
+      "evidence": "experiments/log.md H16"
+    },
+    {
+      "id": "H19",
+      "axis": "rank-space surrogate",
+      "mechanism": "position -> soft-rank differentiable ranking",
+      "result_pp": {
+        "mouse": -1.94,
+        "hard_synthetic": -4.66
+      },
+      "verdict": "early exit (prototype fail)",
+      "why_dead": "O(1/n) rank gaps => vanishing gradient; the optimizer stalls (nodes do not move).",
+      "revival_if": "A rank relaxation with n-independent gaps AND a demonstrated escape from M1.",
+      "evidence": "experiments/log.md H19"
+    },
+    {
+      "id": "H48",
+      "axis": "starting basin",
+      "mechanism": "ratio-greedy init (out_w+1)/(in_w+1) replacing greedy-FAS, as a drop-in warm start",
+      "result_pp": {
+        "connectome": -0.01382,
+        "microns": 0.00266,
+        "mouse": -0.29202
+      },
+      "verdict": "screen FAIL 2026-08-16 (variant H49) - fails connectome and fails mouse non-inferiority",
+      "why_dead": "The init was measured +5.70387 pp better than ours (74.61730 vs 68.91343 on connectome, both on the frozen scorer, independently reproducing the reference family's Algorithm 1 claim). After stage 3 it was still +0.03456 pp ahead. After the FULL pipeline it was -0.01382 pp behind. The advantage did not wash out, it INVERTED. This is the third measured instance in 24 h of the refinement stack being non-monotone in the quality of its input, and it settles where the reference family's margin lives: NOT in the initial order.",
+      "revival_if": "Only paired with the refiner it was designed for (iterated exact-gain pair relocation - see H45's revival condition), measured as a whole pipeline against the champion. Never again as a drop-in warm start for the current stack.",
+      "evidence": "results/*-H49-*-implement-*.json; experiments/outputs/proto_H48_connectome.json, proto_H48_mouse.json; experiments/log.md 2026-08-16"
+    },
+    {
+      "id": "H41",
+      "axis": "discrete refinement / move class",
+      "mechanism": "exact-gain bounded-span SEGMENT moves (rigid contiguous-block relocation) as a third class inside stage 4",
+      "result_pp": {
+        "connectome": 0.0057,
+        "microns": 0.00139,
+        "mouse": 0.0
+      },
+      "verdict": "screen FAIL on both primaries (2026-08-16) - below screen_delta_pp 0.012 / 0.002",
+      "why_dead": "NOT emptiness - REDUNDANCY. The class fired 4,619 times on connectome (M4 and the handoff both predicted ZERO) and was credited +0.07010 pp, but adding it cut the other two classes' joint credit from 0.24058 to 0.17618, i.e. 91.9% of its ground was already reachable by single-node insertion + SCC block refinement. Net advantage +0.00570 pp. It also loses on allocation: 126.6 s for that net = 4.50e-5 pp/s against stage 4's measured 3.45e-4 pp/s. Implementation is correct and exact (145,386 (segment,target) pairs cross-checked against the frozen scorer with zero mismatches); the mechanism simply overlaps what is already there.",
+      "revival_if": "The redundancy is broken, not the ladder lengthened. A longer ladder alone is NOT a revival condition - the default ladder already fires 4,619 times and 91.9% of that is redundant, so more rungs plausibly buy more redundancy. Revive only if (a) the class is run where the others cannot reach - e.g. as the ONLY refiner from a different starting basin - or (b) an interleaving is found that stops the classes competing for the same ground, with the redundancy fraction reported. Any revival must report redundancy per M8.",
+      "evidence": "results/20260815T230344Z-H41-connectome-s42-implement-2081f3.json, results/20260815T232535Z-H41-microns-s42-implement-6c3e22.json, 3x results/*-H41-mouse-*-implement-f9ebb8.json; experiments/log.md 2026-08-16; src/mfas/refine/segment.py"
+    },
+    {
+      "id": "H22",
+      "axis": "discrete local search",
+      "mechanism": "bounded-window sifting / re-insertion",
+      "result_pp": {
+        "connectome": "<=0 for W>=100"
+      },
+      "verdict": "killed at the sizing gate (before building)",
+      "why_dead": "AMENDED 2026-08-16. Originally: 'See M4 - the recoverable weight is long-range.' That kill was taken AT THE SIZING GATE, BEFORE BUILDING, on measure2's net_pp - the statistic M4 has now been narrowed for misreading, because it describes the reference ordering rather than the reach of a hill-climb. By the leakage-safe ceiling in the same artifact a W=1000 window holds 0.4141 pp of reachable feedback against a 0.4606 pp remaining gap. This hypothesis was therefore never falsified by measurement; it was declined on a misread bound and never run.",
+      "revival_if": "EITHER (a) the window is replaced by a STRUCTURAL neighbourhood (SCC / block) rather than a rank window - that is H36, already shipped and confirmed; OR (b) NEW 2026-08-16: it is simply run, because the original evidentiary basis for declining it does not support the conclusion. Any revival must beat the CURRENT champion (connectome 84.1541), not the H30-era baseline this was filed against, and must justify its wall-clock against the measured stage-4 marginal rate of 3.45e-4 pp/s (experiments/log.md 2026-08-16) - a move class that is merely non-empty is not automatically worth its seconds.",
+      "amended": "2026-08-16",
+      "evidence": "experiments/outputs/localsearch_sizing.json"
+    },
+    {
+      "id": "H31",
+      "axis": "metaheuristic wrapper",
+      "mechanism": "ILS / LNS (ruin-and-recreate) around the H30 sift",
+      "result_pp": {
+        "connectome": -0.0008
+      },
+      "verdict": "screen fail at ~1.9x wall",
+      "why_dead": "Generic random ruin-and-recreate finds nothing the full-range sift has not already taken; it only costs wall-clock. Beat the sift on synthetic (+0.25 pp) but not on real graphs.",
+      "revival_if": "The destroy operator is STRUCTURE-AWARE (SCC-, block- or cycle-guided) rather than random, and the rebuild is exact-gain. Distinct mechanism.",
+      "evidence": "experiments/log.md H31"
+    },
+    {
+      "id": "H32",
+      "axis": "global warm-start",
+      "mechanism": "trophic-level Laplacian ordering -> sift",
+      "result_pp": {
+        "synthetic": -2.12,
+        "mouse": -1.26
+      },
+      "verdict": "killed by prototype gate",
+      "why_dead": "See M7.",
+      "revival_if": "Only as an ANALYSIS tool (Track C), not as a warm-start.",
+      "evidence": "experiments/outputs/proto_h32_trophic.json"
+    },
+    {
+      "id": "H33",
+      "axis": "global warm-start",
+      "mechanism": "magnetic-Laplacian directional spectral ordering -> sift",
+      "result_pp": {
+        "quality": -4.97
+      },
+      "verdict": "killed by prototype gate (quality AND cost)",
+      "why_dead": "Worse seed than greedy AND 304-507 s eigensolve (no AMG available). See M7.",
+      "revival_if": "Never as a warm-start at this scale without an AMG/multigrid eigensolver AND a quality argument.",
+      "evidence": "experiments/outputs/proto_h33_magnetic.json"
+    },
+    {
+      "id": "H34",
+      "axis": "continuous surrogate (structural)",
+      "mechanism": "perturbed / blackbox differentiable SORT (Berthet-style)",
+      "result_pp": {
+        "hard_synthetic": -0.643
+      },
+      "verdict": "killed by prototype gate вЂ” FALSIFIED",
+      "why_dead": "The decisive falsifier for M1: the gradient is genuinely non-vanishing (398/400 nodes move) and it STILL loses to the plain sigmoid. The bottleneck is the relaxation basin, not the gradient estimator.",
+      "revival_if": "Never for continuous-only. This closed the family.",
+      "evidence": "experiments/outputs/proto_h34_perturbsort.json"
+    },
+    {
+      "id": "H56",
+      "axis": "restarts / multi-start",
+      "mechanism": "best-of-R over R randomly RELABELLED copies of the graph (relabelling is an exact isomorphism, so it perturbs only tie-breaks), full champion pipeline per arm",
+      "result_pp": {
+        "connectome_best_of_2_random_vs_canonical": -0.013893,
+        "connectome_best_of_2_canonical_anchored_vs_canonical": 0.000351,
+        "connectome_matched_compute_control_refinement": 0.006275,
+        "mouse": 0.0
+      },
+      "verdict": "killed by prototype gate - FALSIFIED on three independent grounds",
+      "why_dead": "The premise was right and the arithmetic still kills it. (1) RUNTIME: the guard deadline allows R = 2 on connectome (1152.0 s/run against 3450 s) and R = 1 on microns (3418 s/run), so the variant is the champion on a primary by construction and can never pass a screen that requires a delta on BOTH primaries. (2) EFFECT SIZE: at R = 2 the strongest (canonical-anchored, monotone) design gains +0.000351 pp measured / +0.001507 pp modelled against a 0.012 pp bar; the R that would clear the bar is 13, i.e. 14976 s = 4.16x the 3600 s hard cap. Plain random best-of-2 is a REGRESSION (-0.013893 pp) because the canonical labelling sits at z = +1.029. (3) MATCHED COMPUTE, the item's own kill condition: the same doubling spent on refinement at one labelling buys +0.006275 pp (measured off proto_H42.json's 143-cycle curve), ~18x more. On mouse the current champion H52 is EXACTLY relabelling-invariant - 41 fresh labellings at an independent permutation base, one distinct value, span 0.0 pp - so there is nothing to harvest there at any R. Note H01's revival condition ('std >> 0.02 pp') was NOT met by the measured 0.019124 pp; the novelty gate let H56 through on the mechanism difference (full-cost arms vs H01's budget-split arms) and the prototype then vindicated H01's threshold to within 6%. HONEST WEAKNESS, recorded rather than buried: sigma is a 5-point estimate with a 95% chi-squared interval of [0.011458, 0.054955] pp, and grounds (2) and (3) both scale with it - at the UPPER end the anchored best-of-2 gain would be +0.013473 pp, which clears the bar and beats the control. Ground (1), the microns runtime, is arithmetic and does not flip, and it carries the kill on its own.",
+      "revival_if": "Only via a design that changes the ARITHMETIC, not the framing. Either (a) the per-arm cost drops enough that R_feasible * a_R clears M9 - which is exactly queue item H57, prefix-shared tail multi-start, where sharing the greedy+Rocket+sift prefix makes R = 4 affordable and drops the required sigma to 0.011657 pp; or (b) a mechanism is shown to WIDEN the labelling sigma past 0.021269 pp at the champion's current per-run cost; or (c) the labelling sigma is RE-ESTIMATED at n >= 11 (~1.9 h of GPU, the same measurement H58 needs) and its LOWER confidence bound exceeds 0.021269 pp - the n = 5 estimate used here cannot rule that out. Any revival must additionally answer the microns leg, which is independent of sigma: at 3418 s/run against a 3450 s deadline the variant is bit-identical to the champion there, so the best it can ever be is a connectome-only partial promotion. Re-proposing best-of-R over full-cost pipeline runs at the point-estimate sigma is dead.",
+      "evidence": "experiments/outputs/proto_H56.json (incl. connectome.sigma_uncertainty); experiments/outputs/proto_H56_mouse.json; experiments/log.md 2026-08-25 (Cycle 10)"
+    },
+    {
+      "id": "H57",
+      "axis": "restarts / multi-start",
+      "mechanism": "best-of-R over R randomised refinement TAILS (stage 4, alternate_scc_sift) sharing ONE greedy-FAS + Rocket + first-sift prefix; the tails are randomised by node relabelling, an exact isomorphism, so only tie-breaks move",
+      "result_pp": {
+        "connectome_tail_only_sigma_pp": 0.003731,
+        "connectome_anchored_best_of_R_any_R": 0.0,
+        "connectome_random_only_best_of_4": -0.010532,
+        "connectome_matched_compute_control_one_longer_tail": 0.004707
+      },
+      "verdict": "killed by its own pre-registered prototype gate - FALSIFIED on three grounds",
+      "why_dead": "The item's open_question_to_settle_first was 'is the sigma in the prefix or the tail?', and the answer is the prefix. (1) EFFECT SIZE: tail-only sigma is 0.003731 pp against an M9 bar of 0.011658 pp (idle, R = 4) / 0.014180 pp (under P07 load, R = 3), short by 3.1x-3.8x. Unlike H56 this does NOT flip at the upper end of sigma's own chi-squared 95% interval: 0.007594 pp still fails the easier bar by 35%, so the kill is secure on the interval and not merely on the point estimate. (2) EXACT ENUMERATION: the canonical arm is the MAXIMUM of all nine measured arms, so the canonical-anchored best-of-R - the only monotone form, per M9 corollary (1) - gains exactly 0.000000 pp at every R and for every subset; plain random best-of-4 is -0.010532 pp, a regression. (3) MATCHED COMPUTE, the item's own kill condition: the same seconds on ONE longer tail buy at least +0.004707 pp (proto_H42.json, 77 -> 143 cycles, measured; longer arms are beyond the measured curve and that figure is a monotone lower bound). VALIDITY: the identity arm reproduced the champion's 84.15409511053134 exactly and the prefix reproduced its stage-3 83.91351804242117, so the study measured the champion's own pipeline. NOTE, correcting this cycle's own sealed pre-registration rather than the item: microns admits R = 3 under prefix-sharing (prefix 3172.3 s, tail 86.0 s), NOT R = 1 - so H56's runtime ground does not carry over and played no part in this kill. The connectome leg fails on its own and a screen requires a delta on both primaries.",
+      "revival_if": "Not by a cheaper R. M10 makes the whole 'share the prefix, randomise the tail' family dead on arithmetic, so a revival must WIDEN the dispersion rather than buy more draws of it, and must widen it where it lives - in the prefix. Two admissible routes, both unmeasured: (a) a tail randomisation strictly STRONGER than relabelling - e.g. a randomised split_fracs schedule, which is a real lever this study did not touch - shown to reach tail sigma >= 0.011658 pp WITHOUT perturbing the incoming order (perturbing it is ruin-and-recreate, killed H31 / conditionally revived H40, a different axis); or (b) a mechanism that widens the PREFIX sigma past 0.021269 pp at the champion's per-arm cost, which is H56 revival condition (b) and is unchanged. Re-proposing prefix-sharing at the measured tail sigma is dead.",
+      "evidence": "experiments/outputs/proto_H57_prereg.json (sealed at d3d10ca before launch); experiments/outputs/proto_H57_connectome.json; experiments/outputs/proto_H57_decision.json; experiments/log.md 2026-08-25 (Cycle 11)"
+    },
+    {
+      "id": "H47",
+      "title": "Exact subset-DP ordering at the SCC recursion's leaves (the champion optimises nothing below 32 nodes)",
+      "axis": "discrete refinement / exactness of an existing move class",
+      "killed_at": "2026-08-25",
+      "verdict": "prototype gate FAIL on both primaries (cycle 12)",
+      "why_dead": "NOT emptiness of the premise - the premise was TRUE and is now measured. SccRecursiveRefiner._refine really does return immediately for every block of <= 32 nodes (scc_recursive.py:212), so the champion optimises nothing at that scale, and there really is backward weight sitting there. It dies because that weight is almost entirely UNACHIEVABLE. Exact Held-Karp optimum of every contiguous k-node block, tiled over the champion's own stored final order, oracle-verified on every round of every k on all three datasets with zero mismatches: connectome +0.001694 / +0.003288 / +0.004342 pp converged at k = 8 / 12 / 16 against a 0.012 pp bar, i.e. 2.8x short at the best k; microns +0.001727 pp against 0.002. A deliberately generous arm (k=16, every offset 0..15, 16 rounds, 1030.9 s of CPU) reaches only +0.005337 pp, so the kill is not an artefact of where the cuts fell. It also loses on allocation by 67x: 5.18e-6 pp/s against stage 4's measured 3.45e-4 pp/s. MOUSE IS THE ONE POSITIVE AND IT IS A SCALE ARTEFACT, stated rather than buried: +0.050392 pp clears mouse's 0.01 bar, but mouse has 148 nodes, so k=16 is 10.8% of its line against 0.0117% of connectome's - a factor of ~900. The connectome window at mouse's RELATIVE scale is k ~ 14,800, which is inside the coarse band H46 already measured at exactly +0.000000 pp. The two results are at different relative scales and do not contradict each other.",
+      "revival": "Only if the ACHIEVABILITY number moves, not the capacity number. Concretely: a mechanism that first changes what sits inside a micro-block - e.g. H60's net-digraph condensation, which strictly refines the SCC blocks and therefore changes their contents - could be re-measured with this same gate, since experiments/proto_H47_leaf_dp.py takes any stored order and costs no GPU. Re-running it on an UNCHANGED champion order is forbidden: that is this measurement, and it is done. Also revivable if the champion's min_block ever stops being the operative cut (a redesign of the recursion), because the 0.0117%-of-line figure that makes this a micro-scale result would then no longer hold.",
+      "evidence": [
+        "experiments/outputs/proto_H47_connectome.json",
+        "experiments/outputs/proto_H47_microns.json",
+        "experiments/outputs/proto_H47_mouse.json",
+        "experiments/outputs/proto_H47_connectome_generous.json",
+        "experiments/outputs/proto_H47_ceiling_connectome.json",
+        "experiments/outputs/proto_H47_ceiling_microns.json",
+        "experiments/outputs/proto_H47_ceiling_mouse.json",
+        "experiments/proto_H47_leaf_dp.py",
+        "experiments/log.md 2026-08-25 (Cycle 12)"
+      ]
+    },
+    {
+      "id": "H60",
+      "axis": "decomposition / structure graph of the SCC refiner",
+      "why_dead": "NOT the premise, and NOT emptiness - the mechanism is real, exact, monotone, cheaper and positive on all three datasets. It dies on EFFECT SIZE at the screen, and the shortfall is shown to be unbuyable. The premise was verified: scc_recursive.py condenses the RAW arc set (np.ones over every edge), so a reciprocal pair is an unbreakable 2-cycle even at 100:1 weights, and substituting the net digraph D+ = {(u,v): w_uv > w_vu} strictly refines the components while staying exactly monotone in the raw score (proved in src/mfas/refine/net_condense.py, pinned by 26 tests). SCREEN (1 seed on the primaries, class=deterministic; 3 mouse seeds agreed to all digits so the tripwire held; all 5 runs re-scored exact): connectome 84.16140564 vs H42's 84.15409511 = +0.007311 pp against a 0.012 bar, SHORT BY 1.64x -> FAIL; microns 83.24382034 vs 83.24085291 = +0.002967 pp against 0.002 -> PASS; mouse exactly H42's 92.91701410211007, i.e. the mechanism gained NOTHING there. The gate needs BOTH primaries, so the ladder stopped - no confirm, no critic. THE RESCUE WAS TESTED AND FALSIFIED: H42's 77 connectome cycles were sized against the RAW curve and H60's run is 135 s CHEAPER (1102.7 s of a 3450 s deadline), so more cycles were affordable - but 40 more net cycles from H60's own cycle-77 output gain only +0.003061 pp for 293.3 s, which lands at +0.010372 pp, still under the bar. Past cycle 77 the NET curve is FLATTER than the raw one (+0.003061 vs the control's +0.005039 over the same 40 cycles): the net refiner takes its extra ground EARLIER and saturates SOONER, so no cycle count closes a 0.004689 pp gap. Redundancy fraction was NEGATIVE on all three (-0.9986/-0.9594/-0.8808), so M8 is not the cause - the classes are genuinely complementary, there is simply not enough there.",
+      "revival_if": "NOT by re-sizing stage 4 - that is measured and closed above. Two admissible routes. (a) RUNTIME, not score, and this is the live one: on microns H60 gained +0.002967 pp AND GAVE BACK 201.6 s (3196.6 s vs the champion's 3398-3418 s). P07 is priority 0 and blocking because the champion's microns configuration does not fit 3600 s on a loaded machine. If P07 is worked as a runtime item, H60's microns leg is the evidence to start from, and a microns-only promotion is then a ~4.4 h 5-seed confirm away - it needs no new mechanism, only a decision that a cheaper-and-better microns leg is worth confirming on its own. (b) The net structure graph is applied somewhere the RAW one is still used and where the sift cannot already reach - stage 3, or the min_block=32 terminal case (D+ has more and smaller components, so the 32-node floor bites differently there). Note H47 already closed the sub-32 band on the RAW graph at +0.004342 pp exact, so (b) must argue why D+ changes what sits inside a block before it is built, per H47's own revival condition. NOT admissible: any argument from the composed prototype's +0.027477 pp - that number is the subject of M12.",
+      "evidence": "results/*-H60-*-implement-*.json; experiments/outputs/proto_H60_*.json; experiments/log.md 2026-08-26 (Cycle 13); module at commit c75478c"
+    }
+  ],
+  "deferred_not_falsified": [
+    {
+      "id": "H07",
+      "axis": "LR schedule",
+      "note": "cosine/one-cycle; predicted null by M2"
+    },
+    {
+      "id": "H08",
+      "axis": "beta+LR joint",
+      "note": "subsumes killed H03 + low-EV H07"
+    },
+    {
+      "id": "H10",
+      "axis": "gradient clipping",
+      "note": "per-node / no global clip; predicted null by M2"
+    },
+    {
+      "id": "H12",
+      "axis": "weight averaging",
+      "note": "Polyak/EMA; predicted null by M2"
+    },
+    {
+      "id": "H17",
+      "axis": "basin hopping",
+      "note": "deferred by the drift probe; partially re-opened by Q01 (the optimum IS holdable at its own scale) вЂ” but reachability, not stability, is the barrier"
+    },
+    {
+      "id": "H18",
+      "axis": "straight-through estimator",
+      "note": "deferred; must satisfy M1"
+    },
+    {
+      "id": "H20",
+      "axis": "Gumbel-Sinkhorn",
+      "note": "O(n^2), prototype-only; must satisfy M1"
+    }
+  ]
 }

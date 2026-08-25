@@ -1,0 +1,217 @@
+{
+  "exp_id": "20260825T214318Z-H60-microns-s42-implement-e5e86f",
+  "algo": "H60",
+  "dataset": "microns",
+  "seed": 42,
+  "score": 12820012.0,
+  "pct": 83.24382033714754,
+  "wall_clock_s": 3196.6254558563232,
+  "git_commit": "c75478cc2a6b0ac9356420cac3c45796a20d65dc+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "e5e86fa4540a",
+  "timestamp": "2026-08-25T22:36:35Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 80000,
+  "best_positions_path": "results\\20260825T214318Z-H60-microns-s42-implement-e5e86f_positions.npy",
+  "experiment_id": "H60",
+  "role": "implement",
+  "hypothesis": "The block refiner condenses the RAW digraph, so every reciprocal pair is an unbreakable 2-cycle regardless of how lopsided its weights are. Condensing the NET digraph instead strictly refines the components, stays exactly monotone, costs no extra cycles, and beats the champion on both primaries.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 80000,
+  "variant_attrs": {
+    "pure_best_score": 12802184.0,
+    "pure_best_pct": 83.12805829035923,
+    "sift_best_score": 12813817.0,
+    "sift_best_pct": 83.20359451934108,
+    "n_sift_sweeps": 12,
+    "sift_sweeps_requested": 12,
+    "sift_converged": false,
+    "sift_time_s": 84.3364098072052,
+    "sift_alpha": 0.7,
+    "sift_k_full": 6,
+    "alt_best_score": 12820012.0,
+    "alt_best_pct": 83.24382033714754,
+    "alt_increment_pp": 0.04022581780645851,
+    "n_alt_cycles": 5,
+    "alt_cycles_requested": 5,
+    "alt_time_s": 84.0477967262268,
+    "alt_min_block": 32,
+    "alt_sift_sweeps": 2,
+    "alt_log": [
+      {
+        "cycle": 0,
+        "split_frac": 0.5,
+        "after_scc_pct": 83.21187993395304,
+        "after_sift_pct": 83.2216328279555,
+        "best_pct": 83.2216328279555,
+        "t_scc_s": 2.4450151920318604,
+        "t_sift_s": 13.45215892791748,
+        "cum_wall_s": 15.89717411994934
+      },
+      {
+        "cycle": 1,
+        "split_frac": 0.382,
+        "after_scc_pct": 83.22600279976886,
+        "after_sift_pct": 83.2300221349137,
+        "best_pct": 83.2300221349137,
+        "t_scc_s": 2.2728524208068848,
+        "t_sift_s": 13.399702310562134,
+        "cum_wall_s": 31.56972885131836
+      },
+      {
+        "cycle": 2,
+        "split_frac": 0.618,
+        "after_scc_pct": 83.23269736282914,
+        "after_sift_pct": 83.23548946963412,
+        "best_pct": 83.23548946963412,
+        "t_scc_s": 2.8050358295440674,
+        "t_sift_s": 13.287205934524536,
+        "cum_wall_s": 47.66197061538696
+      },
+      {
+        "cycle": 3,
+        "split_frac": 0.25,
+        "after_scc_pct": 83.237508877114,
+        "after_sift_pct": 83.23986593471912,
+        "best_pct": 83.23986593471912,
+        "t_scc_s": 2.356778383255005,
+        "t_sift_s": 13.213831424713135,
+        "cum_wall_s": 63.233585834503174
+      },
+      {
+        "cycle": 4,
+        "split_frac": 0.75,
+        "after_scc_pct": 83.24169703732144,
+        "after_sift_pct": 83.24382033714754,
+        "best_pct": 83.24382033714754,
+        "t_scc_s": 4.010771036148071,
+        "t_sift_s": 13.356667757034302,
+        "cum_wall_s": 80.6020245552063
+      }
+    ],
+    "struct_graph": "net",
+    "net_build_s": 3.445772171020508,
+    "net_n_arcs": 9822852,
+    "net_const_c": 546622.0,
+    "refined_best_score": 12820012.0,
+    "refined_best_pct": 83.24382033714754,
+    "sift_log": [
+      {
+        "sweep": 0,
+        "alpha": 1.0,
+        "candidate_pct": 83.1616025316487,
+        "accepted": true,
+        "n_movers": 3539,
+        "wall": 7.823957204818726
+      },
+      {
+        "sweep": 1,
+        "alpha": 1.0,
+        "candidate_pct": 83.17985511822722,
+        "accepted": true,
+        "n_movers": 4584,
+        "wall": 7.4879889488220215
+      },
+      {
+        "sweep": 2,
+        "alpha": 1.0,
+        "candidate_pct": 83.18782885580048,
+        "accepted": true,
+        "n_movers": 3067,
+        "wall": 7.2071373462677
+      },
+      {
+        "sweep": 3,
+        "alpha": 1.0,
+        "candidate_pct": 83.18610164554438,
+        "accepted": false,
+        "n_movers": 2260,
+        "wall": 7.157503604888916
+      },
+      {
+        "sweep": 4,
+        "alpha": 1.0,
+        "candidate_pct": 83.19702332844196,
+        "accepted": true,
+        "n_movers": 1710,
+        "wall": 7.173166990280151
+      },
+      {
+        "sweep": 5,
+        "alpha": 1.0,
+        "candidate_pct": 83.2002569777184,
+        "accepted": true,
+        "n_movers": 1312,
+        "wall": 6.969515323638916
+      },
+      {
+        "sweep": 6,
+        "alpha": 0.7,
+        "candidate_pct": 83.19444549960109,
+        "accepted": false,
+        "n_movers": 998,
+        "wall": 6.882868051528931
+      },
+      {
+        "sweep": 7,
+        "alpha": 0.7,
+        "candidate_pct": 83.19565324812602,
+        "accepted": false,
+        "n_movers": 843,
+        "wall": 6.7798402309417725
+      },
+      {
+        "sweep": 8,
+        "alpha": 0.7,
+        "candidate_pct": 83.19781550758196,
+        "accepted": false,
+        "n_movers": 923,
+        "wall": 6.7894041538238525
+      },
+      {
+        "sweep": 9,
+        "alpha": 0.7,
+        "candidate_pct": 83.19999724685283,
+        "accepted": false,
+        "n_movers": 867,
+        "wall": 6.632952690124512
+      },
+      {
+        "sweep": 10,
+        "alpha": 0.7,
+        "candidate_pct": 83.20190626871482,
+        "accepted": true,
+        "n_movers": 817,
+        "wall": 6.762127637863159
+      },
+      {
+        "sweep": 11,
+        "alpha": 0.7,
+        "candidate_pct": 83.20359451934108,
+        "accepted": true,
+        "n_movers": 737,
+        "wall": 6.669947624206543
+      }
+    ]
+  },
+  "runtime_guard": {
+    "armed": true,
+    "source": "campaign",
+    "time_limit_s": 3450.0,
+    "reserve_s": 150.0,
+    "cap_s": 3600.0,
+    "warn_s": 3400.0,
+    "wall_clock_s": 3196.6254558563232,
+    "variant_wall_s": 3166.7039289474487,
+    "deadline_reached": false,
+    "stages_truncated": {},
+    "degraded": false,
+    "over_warn": false,
+    "over_cap": false
+  }
+}

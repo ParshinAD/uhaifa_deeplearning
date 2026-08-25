@@ -1,8 +1,8 @@
 # Campaign dashboard
 
-*Generated 2026-08-25 23:52 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-26 01:49 by `autoresearch/dashboard.py` — do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 12 · **mode:** `divergent` · **consecutive kills:** 3
+**Phase:** `quality` · **cycle:** 13 · **mode:** `divergent` · **consecutive kills:** 4
 
 ## Progress — connectome (Phase 1 target)
 
@@ -21,7 +21,7 @@
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H52** | 93.1028 ± 0.0 | 20 | ~1s | experiments/log.md 2026-08-17 (H52) |
 
-## Queue — 10 proposed / 34 total
+## Queue — 10 proposed / 35 total
 
 | # | id | title | status |
 |---|---|---|---|
@@ -42,6 +42,7 @@
 
 | cycle | item | verdict | note |
 |---|---|---|---|
+| 13 | `H60` | **kill** | Net-digraph condensation inside the SCC refiner, killed at the SCREEN. The proto |
 | 12 | `H47` | **kill** | Exact subset-DP at the SCC recursion's leaves, killed at the prototype rung for  |
 | 11 | `H57` | **kill** | Prefix-shared tail multi-start, killed at the prototype rung for ~2.1 h by a pre |
 | 10 | `H56` | **kill** | Relabelling multi-start, killed at the prototype rung for 2.55 s of GPU. Runtime |
@@ -53,12 +54,11 @@
 | 4 | `None` | **lost** | RECONSTRUCTED 2026-08-25 to make the history contiguous, NOT a real cycle record |
 | 3 | `H36` | **keep** | NEW CHAMPION on all three datasets - the first score move of the autonomous camp |
 | 2 | `P02` | **keep** | Protocol amendment, no algorithm change. Established BOTH legs: (A) a static cal |
-| 1 | `P01` | **done** | Port MacBook/MPS -> Windows/RTX 4060 (CUDA). 12 runs, 3 seeds x (H35 connectome, |
 
 ## Evidence
 
-- `results/*.json`: **459** run records across **30** variants
-- killed mechanisms on record: **20** (+7 deferred, 11 meta-rules)
+- `results/*.json`: **464** run records across **31** variants
+- killed mechanisms on record: **21** (+7 deferred, 12 meta-rules)
 - literature notes: **8** (latest: `vahidi-2025.md`)
 
 ## Control

@@ -151,6 +151,12 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dataset", required=True, choices=sorted(CHAMPION))
     ap.add_argument("--cycles", type=int, required=True)
+    ap.add_argument("--from-positions", default=None,
+                    help="Start from this positions .npy instead of the stored champion "
+                         "order, and run the NET arm only. Used for the SIZING question — "
+                         "how much is left on the net curve past the cycle count H42 sized "
+                         "for the RAW curve — where a continuation, not a control, is what "
+                         "is wanted.")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
@@ -160,18 +166,21 @@ def main() -> None:
 
     g = load_dataset(ds)
     total = float(g.total_weight)
-    pos = np.load(spec["positions"])
+    pos = np.load(args.from_positions or spec["positions"])
     base = score_from_positions(pos, g.src, g.tgt, g.weight)
     base_pct = pct(base, total)
-    assert abs(base_pct - spec["expect_pct"]) < 1e-3, (
-        f"stored order does not reproduce the champion: {base_pct} vs {spec['expect_pct']}")
+    if args.from_positions is None:
+        assert abs(base_pct - spec["expect_pct"]) < 1e-3, (
+            f"stored order does not reproduce the champion: {base_pct} vs "
+            f"{spec['expect_pct']}")
     rank0 = np.argsort(np.argsort(pos, kind="stable"), kind="stable").astype(np.int64)
 
     net = build_net_digraph(g.src, g.tgt, g.weight, g.n_nodes)
     g_net = SimpleNamespace(src=net["nsrc"], tgt=net["ntgt"], n_nodes=g.n_nodes)
 
     arms = {}
-    for arm, gs in (("raw", g), ("net", g_net)):
+    plan = (("net", g_net),) if args.from_positions else (("raw", g), ("net", g_net))
+    for arm, gs in plan:
         print(f"[{ds}] alternation arm {arm}, {args.cycles} cycles ...", flush=True)
         t0 = time.time()
         _, _, log = alternate_with_structure_graph(g, gs, rank0, n_cycles=args.cycles)
@@ -180,8 +189,14 @@ def main() -> None:
               f"{arms[arm]['wall_s']:.1f} s  (scc credit {arms[arm]['scc_credit_pp']:+.6f}, "
               f"sift credit {arms[arm]['sift_credit_pp']:+.6f})", flush=True)
 
-    d_scc = arms["net"]["scc_credit_pp"] - arms["raw"]["scc_credit_pp"]
-    d_sift = arms["raw"]["sift_credit_pp"] - arms["net"]["sift_credit_pp"]
+    if "raw" in arms:
+        d_scc = arms["net"]["scc_credit_pp"] - arms["raw"]["scc_credit_pp"]
+        d_sift = arms["raw"]["sift_credit_pp"] - arms["net"]["sift_credit_pp"]
+        composed = arms["net"]["delta_pp"] - arms["raw"]["delta_pp"]
+    else:
+        # Continuation mode: there is no control arm, so no composed delta and no
+        # redundancy fraction. Reporting a 0.0 here would read as a measurement.
+        d_scc = d_sift = composed = None
     out = {
         "hypothesis": "H60",
         "part": "composed alternation (M8)",
@@ -194,17 +209,19 @@ def main() -> None:
                       "alpha": _ALPHA, "min_block": _MIN_BLOCK,
                       "split_fracs": list(DEFAULT_SPLIT_FRACS)},
         "arms": arms,
-        "h60_composed_delta_pp": arms["net"]["delta_pp"] - arms["raw"]["delta_pp"],
+        "mode": "continuation" if args.from_positions else "control-vs-net",
+        "start_positions": args.from_positions or spec["positions"],
+        "h60_composed_delta_pp": composed,
         "extra_scc_credit_pp": d_scc,
         "sift_credit_given_up_pp": d_sift,
-        "redundancy_fraction": (d_sift / d_scc) if d_scc > 0 else None,
+        "redundancy_fraction": (d_sift / d_scc) if (d_scc or 0) > 0 else None,
         "wall_s_total": time.time() - t_start,
     }
     dest = Path(args.out or f"experiments/outputs/proto_H60_alt_{ds}.json")
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({k: out[k] for k in
-                      ("dataset", "base_pct", "h60_composed_delta_pp",
+                      ("dataset", "mode", "base_pct", "h60_composed_delta_pp",
                        "extra_scc_credit_pp", "sift_credit_given_up_pp",
                        "redundancy_fraction")}, indent=2))
     print(f"wrote {dest}")
