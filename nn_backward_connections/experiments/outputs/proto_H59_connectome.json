@@ -1,0 +1,178 @@
+{
+  "item": "H59",
+  "dataset": "connectome",
+  "champion": "H42",
+  "champion_positions": "results\\20260810T064240Z-H42-connectome-s42-confirm-f41d7e_positions.npy",
+  "champion_pct": 84.15409511053134,
+  "n_nodes": 136648,
+  "n_edges": 5657719,
+  "n_self_loops": 0,
+  "total_weight": 41912141.0,
+  "budget": 1000000,
+  "rounds_requested": 4,
+  "prereg": "experiments/prereg/H59_arc_reclamation.md",
+  "rounds": [
+    {
+      "round": 0,
+      "n_backward": 1178821,
+      "w_backward": 6641358.0,
+      "n_tested": 1178821,
+      "scan_truncated": false,
+      "n_reclaimable": 2508,
+      "w_reclaimable_CAPACITY": 8191.0,
+      "pp_reclaimable_CAPACITY": 0.019543263132274728,
+      "n_unknown": 0,
+      "w_unknown": 0.0,
+      "pp_unknown_upper_bound": 0.0,
+      "n_accepted": 2221,
+      "w_accepted": 7375.0,
+      "n_conflicts": 287,
+      "n_cycle_residue": 122589,
+      "pp_accepted": 0.017596333243868407,
+      "score_before": 35270783.0,
+      "score_after": 35278158.0,
+      "pct_before": 84.15409511053134,
+      "pct_after": 84.1716914437752,
+      "realised_delta_pp": 0.017596333243868407,
+      "lemma_holds": true,
+      "fatal": null,
+      "t_scan_s": 63.03178310394287,
+      "t_greedy_s": 375.80527424812317,
+      "t_round_s": 443.32699704170227,
+      "heaviest": [
+        {
+          "w": 39.0,
+          "u": 93741,
+          "v": 18097
+        },
+        {
+          "w": 31.0,
+          "u": 132387,
+          "v": 109810
+        },
+        {
+          "w": 28.0,
+          "u": 82508,
+          "v": 33070
+        },
+        {
+          "w": 26.0,
+          "u": 52667,
+          "v": 45277
+        },
+        {
+          "w": 21.0,
+          "u": 112751,
+          "v": 19104
+        },
+        {
+          "w": 21.0,
+          "u": 84000,
+          "v": 70310
+        },
+        {
+          "w": 19.0,
+          "u": 44837,
+          "v": 65848
+        },
+        {
+          "w": 19.0,
+          "u": 96282,
+          "v": 31122
+        },
+        {
+          "w": 19.0,
+          "u": 133629,
+          "v": 38882
+        },
+        {
+          "w": 18.0,
+          "u": 113151,
+          "v": 105139
+        },
+        {
+          "w": 18.0,
+          "u": 99745,
+          "v": 57848
+        },
+        {
+          "w": 18.0,
+          "u": 84000,
+          "v": 108227
+        },
+        {
+          "w": 16.0,
+          "u": 58551,
+          "v": 1058
+        },
+        {
+          "w": 16.0,
+          "u": 92935,
+          "v": 116526
+        },
+        {
+          "w": 15.0,
+          "u": 68657,
+          "v": 14923
+        },
+        {
+          "w": 15.0,
+          "u": 96281,
+          "v": 114855
+        },
+        {
+          "w": 15.0,
+          "u": 29906,
+          "v": 7161
+        },
+        {
+          "w": 15.0,
+          "u": 74179,
+          "v": 100622
+        },
+        {
+          "w": 14.0,
+          "u": 76121,
+          "v": 96053
+        },
+        {
+          "w": 14.0,
+          "u": 126049,
+          "v": 7576
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "n_backward": 1176600,
+      "w_backward": 6633983.0,
+      "n_tested": 1176600,
+      "scan_truncated": false,
+      "n_reclaimable": 0,
+      "w_reclaimable_CAPACITY": 0.0,
+      "pp_reclaimable_CAPACITY": 0.0,
+      "n_unknown": 0,
+      "w_unknown": 0.0,
+      "pp_unknown_upper_bound": 0.0,
+      "n_accepted": 0,
+      "w_accepted": 0.0,
+      "n_conflicts": 0,
+      "n_cycle_residue": 0,
+      "pp_accepted": 0.0,
+      "score_before": 35278158.0,
+      "score_after": 35278158.0,
+      "pct_before": 84.1716914437752,
+      "pct_after": 84.1716914437752,
+      "realised_delta_pp": 0.0,
+      "lemma_holds": true,
+      "fatal": null,
+      "t_scan_s": 58.418505907058716,
+      "t_greedy_s": 0.0,
+      "t_round_s": 60.443623304367065,
+      "heaviest": []
+    }
+  ],
+  "final_pct": 84.1716914437752,
+  "realised_delta_pp_total": 0.017596333243868407,
+  "wall_clock_s": 515.1128587722778
+}

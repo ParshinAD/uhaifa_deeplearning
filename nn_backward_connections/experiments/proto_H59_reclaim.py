@@ -131,32 +131,102 @@ def reachable(out_ptr, out_idx, in_ptr, in_idx, rank, v, u, budget):
     return False
 
 
-def reachable_with_extra(out_ptr, out_idx, extra, v, u):
-    """Is ``u`` reachable from ``v`` in ``F u S``?  Exact, unpruned.
+def reachable_in_subgraph(adj, v, u):
+    """Is ``u`` reachable from ``v`` in the small dict-of-lists digraph ``adj``?
 
-    Once arcs have been accepted into ``S`` they run leftward in the champion rank, so the
-    interval confinement above no longer holds and the search must be global. ``extra`` is a
-    dict node -> list of accepted successors; ``S`` is expected to be tiny, so keeping it on
-    the side is far cheaper than rebuilding a 4.5M-edge CSR per acceptance.
+    Used ONLY on the cyclic residue (see :func:`resolve_conflicts`), which is orders of
+    magnitude smaller than ``F``. A full DFS over ``F`` per candidate would be quadratic in
+    disguise - 4.5M edges walked ~1,500 times - and that is exactly what this avoids.
     """
     seen = {v}
     stack = [v]
     while stack:
         x = stack.pop()
-        for y in out_idx[out_ptr[x]:out_ptr[x + 1]]:
-            y = int(y)
-            if y == u:
-                return True
-            if y not in seen:
-                seen.add(y)
-                stack.append(y)
-        for y in extra.get(x, ()):
+        for y in adj.get(x, ()):
             if y == u:
                 return True
             if y not in seen:
                 seen.add(y)
                 stack.append(y)
     return False
+
+
+def kahn_residue(out_ptr, out_idx, indeg, n):
+    """Run Kahn's algorithm and return the set of nodes it CANNOT place.
+
+    A node survives iff it lies on a cycle or is reachable from one, so every cycle of the
+    graph is contained in the induced subgraph on the residue. That is what makes conflict
+    resolution cheap: only arcs with BOTH endpoints in the residue can possibly conflict.
+    """
+    deg = indeg.copy()
+    stack = [int(x) for x in np.flatnonzero(deg == 0)]
+    placed = 0
+    alive = np.ones(n, dtype=bool)
+    while stack:
+        x = stack.pop()
+        alive[x] = False
+        placed += 1
+        for y in out_idx[out_ptr[x]:out_ptr[x + 1]]:
+            y = int(y)
+            deg[y] -= 1
+            if deg[y] == 0:
+                stack.append(y)
+    return placed, alive
+
+
+def resolve_conflicts(F_src, F_tgt, reclaimable, n):
+    """Greedy heaviest-first re-add, exact, without ever walking ``F`` more than a few times.
+
+    Reclaimable arcs are pairwise INDEPENDENT with respect to ``F`` - each one alone closes no
+    cycle - but two of them together can, if ``F`` has a path from one's head to the other's
+    tail. So:
+
+    1. Try the whole batch at once. Kahn on ``F u R``; if it places every node the batch is
+       acyclic and every arc is accepted. This is the common case and costs one Kahn.
+    2. Otherwise Kahn's residue holds every cycle. Arcs outside it are accepted outright;
+       only arcs with both endpoints in the residue are re-added greedily, heaviest first,
+       against the induced subgraph - which is tiny.
+
+    Returns ``(acc_src, acc_tgt, acc_w, n_conflicts, n_residue)``.
+    """
+    R = sorted(reclaimable, key=lambda x: -x[0])
+    if not R:
+        return [], [], [], 0, 0
+    r_w = [x[0] for x in R]
+    r_u = np.asarray([x[1] for x in R], dtype=np.int64)
+    r_v = np.asarray([x[2] for x in R], dtype=np.int64)
+
+    A_src = np.concatenate([F_src, r_u])
+    A_tgt = np.concatenate([F_tgt, r_v])
+    a_ptr, a_idx = build_csr(A_src, A_tgt, n)
+    indeg = np.bincount(A_tgt, minlength=n).astype(np.int64)
+    placed, alive = kahn_residue(a_ptr, a_idx, indeg, n)
+    if placed == n:
+        return list(r_u), list(r_v), r_w, 0, 0
+
+    n_residue = int(alive.sum())
+    # Induced subgraph on the residue: it contains every cycle, so resolving here is exact.
+    m = (alive[F_src] & alive[F_tgt])
+    adj = {}
+    for a, b in zip(F_src[m].tolist(), F_tgt[m].tolist()):
+        adj.setdefault(a, []).append(b)
+
+    acc_src, acc_tgt, acc_w = [], [], []
+    n_conflicts = 0
+    for wt, u, v in R:
+        if not (alive[u] and alive[v]):
+            acc_src.append(u)                 # cannot be on any cycle
+            acc_tgt.append(v)
+            acc_w.append(wt)
+            continue
+        if reachable_in_subgraph(adj, v, u):
+            n_conflicts += 1
+            continue
+        acc_src.append(u)
+        acc_tgt.append(v)
+        acc_w.append(wt)
+        adj.setdefault(u, []).append(v)
+    return acc_src, acc_tgt, acc_w, n_conflicts, n_residue
 
 
 # ---------------------------------------------------------------------------
@@ -286,23 +356,14 @@ def main() -> int:
               f"unknown={n_unknown:,} (w={w_unknown:,.0f})  scan={t_scan:.0f}s", flush=True)
 
         # greedy heaviest-first re-add, acyclicity re-checked against F u S
-        acc_src, acc_tgt, acc_w = [], [], []
-        extra = {}
-        n_conflicts = 0
         t_g0 = time.time()
-        for wt, u, v in sorted(reclaimable, key=lambda x: -x[0]):
-            if extra and reachable_with_extra(out_ptr, out_idx, extra, v, u):
-                n_conflicts += 1
-                continue
-            acc_src.append(u)
-            acc_tgt.append(v)
-            acc_w.append(wt)
-            extra.setdefault(u, []).append(v)
+        acc_src, acc_tgt, acc_w, n_conflicts, n_residue = resolve_conflicts(
+            F_src, F_tgt, reclaimable, n)
         t_greedy = time.time() - t_g0
         w_S = float(sum(acc_w))
         print(f"[{args.dataset}] round {rnd}: accepted={len(acc_w):,} weight={w_S:,.0f} "
               f"({100.0 * w_S / total:.6f} pp)  conflicts={n_conflicts:,}  "
-              f"greedy={t_greedy:.0f}s", flush=True)
+              f"residue={n_residue:,}  greedy={t_greedy:.0f}s", flush=True)
 
         # one rank-stable topological re-sort of F u S, then the FROZEN oracle
         fatal = None
@@ -334,6 +395,7 @@ def main() -> int:
             n_unknown=n_unknown, w_unknown=w_unknown,
             pp_unknown_upper_bound=100.0 * w_unknown / total,
             n_accepted=len(acc_w), w_accepted=w_S, n_conflicts=n_conflicts,
+            n_cycle_residue=n_residue,
             pp_accepted=100.0 * w_S / total,
             score_before=float(cur_score), score_after=float(new_score),
             pct_before=pct(cur_score, total), pct_after=pct(new_score, total),

@@ -1,0 +1,178 @@
+{
+  "item": "H59",
+  "dataset": "microns",
+  "champion": "H42",
+  "champion_positions": "results\\20260810T074449Z-H42-microns-s42-confirm-f91b66_positions.npy",
+  "champion_pct": 83.24085291200831,
+  "n_nodes": 67534,
+  "n_edges": 10436569,
+  "n_self_loops": 0,
+  "total_weight": 15400557.0,
+  "budget": 1000000,
+  "rounds_requested": 4,
+  "prereg": "experiments/prereg/H59_arc_reclamation.md",
+  "rounds": [
+    {
+      "round": 0,
+      "n_backward": 2084531,
+      "w_backward": 2581002.0,
+      "n_tested": 2084531,
+      "scan_truncated": false,
+      "n_reclaimable": 4249,
+      "w_reclaimable_CAPACITY": 4331.0,
+      "pp_reclaimable_CAPACITY": 0.028122359470504864,
+      "n_unknown": 1,
+      "w_unknown": 1.0,
+      "pp_unknown_upper_bound": 6.493271639460833e-06,
+      "n_accepted": 2807,
+      "w_accepted": 2889.0,
+      "n_conflicts": 1442,
+      "n_cycle_residue": 65948,
+      "pp_accepted": 0.018759061766402345,
+      "score_before": 12819555.0,
+      "score_after": 12822444.0,
+      "pct_before": 83.24085291200831,
+      "pct_after": 83.25961197377471,
+      "realised_delta_pp": 0.018759061766402345,
+      "lemma_holds": true,
+      "fatal": null,
+      "t_scan_s": 222.031920671463,
+      "t_greedy_s": 843.1840627193451,
+      "t_round_s": 1075.3091053962708,
+      "heaviest": [
+        {
+          "w": 4.0,
+          "u": 17464,
+          "v": 8303
+        },
+        {
+          "w": 3.0,
+          "u": 39860,
+          "v": 63635
+        },
+        {
+          "w": 3.0,
+          "u": 28198,
+          "v": 34397
+        },
+        {
+          "w": 2.0,
+          "u": 30102,
+          "v": 15333
+        },
+        {
+          "w": 2.0,
+          "u": 63457,
+          "v": 25742
+        },
+        {
+          "w": 2.0,
+          "u": 15255,
+          "v": 8270
+        },
+        {
+          "w": 2.0,
+          "u": 7559,
+          "v": 48999
+        },
+        {
+          "w": 2.0,
+          "u": 15477,
+          "v": 59154
+        },
+        {
+          "w": 2.0,
+          "u": 44744,
+          "v": 44819
+        },
+        {
+          "w": 2.0,
+          "u": 3957,
+          "v": 40254
+        },
+        {
+          "w": 2.0,
+          "u": 22627,
+          "v": 2386
+        },
+        {
+          "w": 2.0,
+          "u": 61330,
+          "v": 4641
+        },
+        {
+          "w": 2.0,
+          "u": 17412,
+          "v": 56586
+        },
+        {
+          "w": 2.0,
+          "u": 8540,
+          "v": 45075
+        },
+        {
+          "w": 2.0,
+          "u": 40278,
+          "v": 20877
+        },
+        {
+          "w": 2.0,
+          "u": 38809,
+          "v": 54825
+        },
+        {
+          "w": 2.0,
+          "u": 45468,
+          "v": 59387
+        },
+        {
+          "w": 2.0,
+          "u": 44052,
+          "v": 2981
+        },
+        {
+          "w": 2.0,
+          "u": 22532,
+          "v": 55915
+        },
+        {
+          "w": 2.0,
+          "u": 19875,
+          "v": 6967
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "n_backward": 2081724,
+      "w_backward": 2578113.0,
+      "n_tested": 2081724,
+      "scan_truncated": false,
+      "n_reclaimable": 0,
+      "w_reclaimable_CAPACITY": 0.0,
+      "pp_reclaimable_CAPACITY": 0.0,
+      "n_unknown": 0,
+      "w_unknown": 0.0,
+      "pp_unknown_upper_bound": 0.0,
+      "n_accepted": 0,
+      "w_accepted": 0.0,
+      "n_conflicts": 0,
+      "n_cycle_residue": 0,
+      "pp_accepted": 0.0,
+      "score_before": 12822444.0,
+      "score_after": 12822444.0,
+      "pct_before": 83.25961197377471,
+      "pct_after": 83.25961197377471,
+      "realised_delta_pp": 0.0,
+      "lemma_holds": true,
+      "fatal": null,
+      "t_scan_s": 207.13701796531677,
+      "t_greedy_s": 0.0,
+      "t_round_s": 212.53212118148804,
+      "heaviest": []
+    }
+  ],
+  "final_pct": 83.25961197377471,
+  "realised_delta_pp_total": 0.018759061766402345,
+  "wall_clock_s": 1288.4873292446136
+}

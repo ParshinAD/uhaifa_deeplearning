@@ -9,7 +9,7 @@
   "n_self_loops": 0,
   "total_weight": 9.159036176272162,
   "budget": 400000,
-  "rounds_requested": 3,
+  "rounds_requested": 4,
   "prereg": "experiments/prereg/H59_arc_reclamation.md",
   "rounds": [
     {
@@ -27,6 +27,7 @@
       "n_accepted": 5,
       "w_accepted": 0.00664554921437035,
       "n_conflicts": 0,
+      "n_cycle_residue": 0,
       "pp_accepted": 0.07255729845883378,
       "score_before": 8.527321510860956,
       "score_after": 8.533967060075327,
@@ -35,9 +36,9 @@
       "realised_delta_pp": 0.07255729845883718,
       "lemma_holds": true,
       "fatal": null,
-      "t_scan_s": 0.0010001659393310547,
+      "t_scan_s": 0.0,
       "t_greedy_s": 0.0,
-      "t_round_s": 0.0010001659393310547,
+      "t_round_s": 0.0,
       "heaviest": [
         {
           "w": 0.00252740354050132,
@@ -81,6 +82,7 @@
       "n_accepted": 0,
       "w_accepted": 0.0,
       "n_conflicts": 0,
+      "n_cycle_residue": 0,
       "pp_accepted": 0.0,
       "score_before": 8.533967060075327,
       "score_after": 8.533967060075327,
@@ -89,13 +91,13 @@
       "realised_delta_pp": 0.0,
       "lemma_holds": true,
       "fatal": null,
-      "t_scan_s": 0.001001119613647461,
+      "t_scan_s": 0.0022177696228027344,
       "t_greedy_s": 0.0,
-      "t_round_s": 0.001001119613647461,
+      "t_round_s": 0.0022177696228027344,
       "heaviest": []
     }
   ],
   "final_pct": 93.17538325903583,
   "realised_delta_pp_total": 0.07255729845883718,
-  "wall_clock_s": 0.006000995635986328
+  "wall_clock_s": 0.006218671798706055
 }
