@@ -1,0 +1,54 @@
+{
+ "item": "H57",
+ "title": "Prefix-shared tail multi-start - is the relabelling dispersion IN the tail?",
+ "gate": "prototype",
+ "cycle": 11,
+ "sealed_at": "2026-08-25T21:40:00Z",
+ "sealed_before_launch": true,
+ "_doc": "Written and COMMITTED before any arm of the study was launched (queue item P11). The decision rule, the arm count and the validity gate below are fixed here so that no result can be re-framed after it is seen. Cycle 10 killed H56 with a rule of exactly this shape; the difference is that H56's threshold was computed from an already-logged study, and this one is computed from runs that did not yet exist when this file was sealed.",
+
+ "question": "H56 measured the WHOLE-pipeline relabelling sigma on connectome (0.019124 pp, n = 5). H57 can only harvest the part of it created by the refinement TAIL, because it shares one greedy-FAS + Rocket + first-sift prefix across all arms. Nothing has ever measured that split. If the dispersion is made by greedy-FAS tie-breaks it lives in the shared prefix, is unavailable to this design, and H57 is dead on arrival.",
+
+ "design": {
+  "dataset": "connectome",
+  "champion": "H42",
+  "seed": 42,
+  "prefix": "H42 stages 1-3 run ONCE on the canonical labelling: greedy_fas_order -> run_rocket(epochs=20000) -> sift_underrelaxed(k_full=6, alpha=0.7, max_sweeps=40). The post-sift rank is persisted and reused by every arm.",
+  "tail": "H42 stage 4 verbatim: alternate_scc_sift(n_cycles=77, sift_sweeps=2, k_full=2, alpha=0.7, min_block=32). Deterministic, CPU-only, draws from no RNG.",
+  "perturbation": "node relabelling, reusing experiments/proto_P09_relabel.relabel with its fixed _PERM_SEED_BASE = 909000. Arms r = 1..5 are therefore the SAME five labellings whose whole-pipeline scores proto_P09_connectome.json records, so the tail sigma and the whole-pipeline sigma are PAIRED on those five, not merely comparable.",
+  "arms": "r = 0 (identity) plus r = 1..8 (random). R_random = 8, fixed here, not chosen after looking.",
+  "why_relabelling_and_not_a_new_knob": "alternate_scc_sift takes no randomness argument and src/mfas/refine/ is production code the champion runs. Relabelling perturbs exactly the thing H57 would perturb - the index order the SCC enumeration and the inner sift sweep in - without editing a line of the pipeline, and it is an exact isomorphism, so the achievable set is untouched."
+ },
+
+ "validity_gate": {
+  "rule": "The identity arm (r = 0) is prefix + unrelabelled tail, i.e. the champion pipeline. It MUST reproduce H42's recorded connectome score exactly: 35270783 / 84.15409511053134.",
+  "if_it_fails": "The study is VOID, not negative: the prefix was not the champion's. Report the discrepancy, do not report a sigma, and do not decide H57 on it."
+ },
+
+ "decision_rule": {
+  "statistic": "tail_sigma_pp = sample std (ddof=1) of the pct over the 8 RANDOM arms. The identity arm is excluded from it - it is the comparator, not a draw.",
+  "threshold_formula": "required_sigma_pp = min_promotion_delta_pp / a_R, with min_promotion_delta_pp = 0.012 (campaign.yaml datasets.connectome) and a_R = E[max of R standard normals]. This is meta-rule M9, unchanged.",
+  "R_formula": "R_feasible = floor((guard_deadline_s - prefix_wall_s) / tail_wall_s), guard_deadline_s = 3450. prefix_wall_s and tail_wall_s are MEASURED by this study's own arms (median tail), not assumed. This is the only quantity the study is allowed to learn before the threshold is fixed, and it moves the threshold in the honest direction: a slower prefix buys fewer tails and RAISES the bar.",
+  "a_R_table": {"2": 0.5641895835477563, "3": 0.8462843753216345, "4": 1.0293753730039641, "5": 1.1629644736405101},
+  "PASS": "tail_sigma_pp >= required_sigma_pp -> H57 proceeds to the screen rung.",
+  "KILL": "tail_sigma_pp < required_sigma_pp -> H57 is killed at the prototype rung, which is H57's own stated kill_condition in queue.json.",
+  "reported_with_the_verdict_but_not_deciding_it": [
+   "the chi-squared 95% interval on tail_sigma_pp at n = 8 (M9's own caveat says to state which bound the kill rests on)",
+   "canonical_z inside the TAIL distribution - a second, independent reading of H58's premise, at n = 8 instead of n = 5",
+   "tail_share_of_variance = tail_sigma^2 / 0.019124^2, i.e. how the dispersion actually splits"
+  ]
+ },
+
+ "known_before_launch": {
+  "prefix_tail_split_measured": "results/20260810T214020Z-H42-connectome-s42-verify-f41d7e.json (CUDA, the only connectome run with per-stage timings): total 1483.9 s = prefix 652.2 s (greedy+Rocket) + first sift 134.4 s + tail 697.3 s. So the prefix is 53.0% and the tail 47.0% - the REVERSE of the estimate in queue.json's H57 rationale, which guessed prefix ~506 s / tail ~645 s from a CPU-only prototype. At that split R_feasible is 3 on this loaded measurement and 4 if scaled to the idle-machine 1231.7 s baseline, i.e. the bar is between 0.011657 and 0.014180 pp.",
+  "microns_is_out_of_reach_and_this_does_not_change_it": "microns spends ~3330 s of its 3418 s on the prefix (80000 Rocket epochs) and ~88 s on the tail, so R_feasible = 1 there whatever this study finds. H57 is a CONNECTOME-ONLY partial promotion at best. Stated up front, per the item's own method step 4 and H56's kill ground (1).",
+  "prior": "The tail is deep in saturation at 77 cycles - proto_H42.json measures 71 -> 142 cycles as worth only +0.006275 pp - so the expectation is tail_sigma << 0.019124. That is a prior, and it is why the study is 2 h and not 20."
+ },
+
+ "cost_estimate_s": {"prefix_gpu": 800, "tails_cpu_each": 700, "n_tails": 9, "total": 7100},
+ "reproduce": [
+  "PYTHONPATH=src $PY experiments/proto_H57_tail_sigma.py --arm prefix --dataset connectome",
+  "PYTHONPATH=src $PY experiments/proto_H57_tail_sigma.py --arm tails --dataset connectome --r-max 8"
+ ],
+ "writes": ["experiments/outputs/proto_H57_connectome.json"]
+}

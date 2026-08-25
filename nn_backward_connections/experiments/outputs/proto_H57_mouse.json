@@ -1,0 +1,87 @@
+{
+ "item": "H57",
+ "gate": "prototype",
+ "dataset": "mouse",
+ "date": "2026-08-25",
+ "champion": "H42",
+ "prereg": "experiments/outputs/proto_H57_prereg.json",
+ "perm_seed_base": 909000,
+ "r_max": 4,
+ "prefix": {
+  "dataset": "mouse",
+  "seed": 42,
+  "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "pure_best_pct": 92.47934218373807,
+  "sift_best_score": 8.508909693009656,
+  "sift_best_pct": 92.90180243040469,
+  "n_sift_sweeps": 5,
+  "t_greedy_s": 0.0009999275207519531,
+  "t_rocket_s": 4.815063238143921,
+  "t_sift_s": 0.0009975433349609375,
+  "prefix_wall_s": 4.817060708999634,
+  "rank_sha16": "6d607d06e2db1fa1",
+  "rank_path": "proto_H57_prefix_rank_mouse.npy"
+ },
+ "rows": [
+  {
+   "r": 0,
+   "identity": true,
+   "score": 8.510302935524168,
+   "pct": 92.91701410211007,
+   "tail_wall_s": 0.032004356384277344,
+   "n_alt_cycles": 32
+  },
+  {
+   "r": 1,
+   "identity": false,
+   "score": 8.510302935524168,
+   "pct": 92.91701410211007,
+   "tail_wall_s": 0.03591442108154297,
+   "n_alt_cycles": 32
+  },
+  {
+   "r": 2,
+   "identity": false,
+   "score": 8.510302935524168,
+   "pct": 92.91701410211007,
+   "tail_wall_s": 0.034085750579833984,
+   "n_alt_cycles": 32
+  },
+  {
+   "r": 3,
+   "identity": false,
+   "score": 8.510302935524168,
+   "pct": 92.91701410211007,
+   "tail_wall_s": 0.03299736976623535,
+   "n_alt_cycles": 32
+  },
+  {
+   "r": 4,
+   "identity": false,
+   "score": 8.510302935524168,
+   "pct": 92.91701410211007,
+   "tail_wall_s": 0.03269195556640625,
+   "n_alt_cycles": 32
+  }
+ ],
+ "summary": {
+  "n_random": 4,
+  "tail_mean_pct": 92.91701410211007,
+  "tail_sigma_pp": 0.0,
+  "tail_min_pct": 92.91701410211007,
+  "tail_max_pct": 92.91701410211007,
+  "tail_span_pp": 0.0,
+  "n_distinct": 1,
+  "identity_pct": 92.91701410211007,
+  "canonical_z": null,
+  "prefix_wall_s": 4.817060708999634,
+  "tail_wall_s_median": 0.03299736976623535,
+  "guard_deadline_s": 3450.0,
+  "r_feasible": 104407,
+  "a_r": 1.4236003060469846,
+  "required_sigma_pp": 0.008429332270460999,
+  "clears_m9": false,
+  "whole_pipeline_sigma_pp": 0.019124286772961963,
+  "tail_share_of_variance": 0.0
+ }
+}
