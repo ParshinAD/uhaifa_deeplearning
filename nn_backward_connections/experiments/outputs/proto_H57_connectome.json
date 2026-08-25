@@ -1,0 +1,119 @@
+{
+ "item": "H57",
+ "gate": "prototype",
+ "dataset": "connectome",
+ "date": "2026-08-25",
+ "champion": "H42",
+ "prereg": "experiments/outputs/proto_H57_prereg.json",
+ "perm_seed_base": 909000,
+ "r_max": 8,
+ "prefix": {
+  "dataset": "connectome",
+  "seed": 42,
+  "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "pure_best_pct": 82.92969571752491,
+  "sift_best_score": 35169952.0,
+  "sift_best_pct": 83.91351804242117,
+  "n_sift_sweeps": 40,
+  "t_greedy_s": 16.296482801437378,
+  "t_rocket_s": 395.79569482803345,
+  "t_sift_s": 119.559072971344,
+  "prefix_wall_s": 531.6512506008148,
+  "rank_sha16": "e5d171c68bafd9bd",
+  "rank_path": "proto_H57_prefix_rank_connectome.npy"
+ },
+ "rows": [
+  {
+   "r": 0,
+   "identity": true,
+   "score": 35270783.0,
+   "pct": 84.15409511053134,
+   "tail_wall_s": 599.1720998287201,
+   "n_alt_cycles": 77
+  },
+  {
+   "r": 1,
+   "identity": false,
+   "score": 35264030.0,
+   "pct": 84.13798283413868,
+   "tail_wall_s": 598.9022538661957,
+   "n_alt_cycles": 77
+  },
+  {
+   "r": 2,
+   "identity": false,
+   "score": 35266480.0,
+   "pct": 84.14382839569087,
+   "tail_wall_s": 597.9544043540955,
+   "n_alt_cycles": 77
+  },
+  {
+   "r": 3,
+   "identity": false,
+   "score": 35262780.0,
+   "pct": 84.13500040477531,
+   "tail_wall_s": 599.5911874771118,
+   "n_alt_cycles": 77
+  },
+  {
+   "r": 4,
+   "identity": false,
+   "score": 35263539.0,
+   "pct": 84.13681133588474,
+   "tail_wall_s": 599.3577778339386,
+   "n_alt_cycles": 77
+  },
+  {
+   "r": 5,
+   "identity": false,
+   "score": 35266852.0,
+   "pct": 84.14471596666942,
+   "tail_wall_s": 598.4550654888153,
+   "n_alt_cycles": 77
+  },
+  {
+   "r": 6,
+   "identity": false,
+   "score": 35264940.0,
+   "pct": 84.14015404271521,
+   "tail_wall_s": 597.1640584468842,
+   "n_alt_cycles": 77
+  },
+  {
+   "r": 7,
+   "identity": false,
+   "score": 35262812.0,
+   "pct": 84.13507675496702,
+   "tail_wall_s": 599.5334374904633,
+   "n_alt_cycles": 77
+  },
+  {
+   "r": 8,
+   "identity": false,
+   "score": 35265261.0,
+   "pct": 84.14091993057572,
+   "tail_wall_s": 598.9049341678619,
+   "n_alt_cycles": 77
+  }
+ ],
+ "summary": {
+  "n_random": 8,
+  "tail_mean_pct": 84.13931120817712,
+  "tail_sigma_pp": 0.003730995926610369,
+  "tail_min_pct": 84.13500040477531,
+  "tail_max_pct": 84.14471596666942,
+  "tail_span_pp": 0.009715561894111602,
+  "n_distinct": 8,
+  "identity_pct": 84.15409511053134,
+  "canonical_z": 3.962454702451504,
+  "prefix_wall_s": 531.6512506008148,
+  "tail_wall_s_median": 598.9049341678619,
+  "guard_deadline_s": 3450.0,
+  "r_feasible": 4,
+  "a_r": 1.029375373003964,
+  "required_sigma_pp": 0.011657554974315271,
+  "clears_m9": false,
+  "whole_pipeline_sigma_pp": 0.019124286772961963,
+  "tail_share_of_variance": 0.038060900124045074
+ }
+}

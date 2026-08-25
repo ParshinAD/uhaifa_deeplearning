@@ -1,0 +1,307 @@
+{
+ "item": "H57",
+ "gate": "prototype",
+ "date": "2026-08-25",
+ "cycle": 11,
+ "dataset": "connectome",
+ "prereg": "experiments/outputs/proto_H57_prereg.json",
+ "sources": [
+  "experiments/outputs/proto_H57_connectome.json",
+  "experiments/outputs/proto_P09_connectome.json",
+  "experiments/outputs/proto_H42.json"
+ ],
+ "validity": {
+  "identity_pct": 84.15409511053134,
+  "champion_pct": 84.15409511053134,
+  "reproduces_exactly": true,
+  "diff_pp": 0.0,
+  "rule": "prefix + identity tail IS the champion pipeline; if this is not exact the study is VOID rather than negative"
+ },
+ "tail_distribution": {
+  "n_random": 8,
+  "mean_pct": 84.13931120817712,
+  "sigma_pp": 0.003730995926610369,
+  "sigma_ci95_pp": [
+   0.00246683805606981,
+   0.007593591880244575
+  ],
+  "min_pct": 84.13500040477531,
+  "max_pct": 84.14471596666942,
+  "span_pp": 0.009715561894111602,
+  "n_distinct": 8,
+  "canonical_z": 3.962454702451504,
+  "canonical_rank_from_top": 1
+ },
+ "runtime": {
+  "prefix_wall_s": 531.6512506008148,
+  "tail_wall_s_median": 598.9049341678619,
+  "guard_deadline_s": 3450.0,
+  "r_feasible_idle": 4,
+  "r_feasible_under_p07_load": 3,
+  "p07_load_factor": 1.2,
+  "note": "R is not a free parameter - it is what the deadline pays for after the shared prefix. P07 is an OPEN blocking item, so the loaded row is the one a promotion would have to survive."
+ },
+ "m9": {
+  "min_promotion_delta_pp": 0.012,
+  "required_sigma_pp_idle": 0.011657554974315271,
+  "required_sigma_pp_under_load": 0.014179630807244128,
+  "a_r_idle": 1.029375373003964,
+  "a_r_loaded": 0.8462843753216345,
+  "measured_sigma_pp": 0.003730995926610369,
+  "clears_idle": false,
+  "clears_under_load": false,
+  "clears_at_sigma_ci_upper_idle": false
+ },
+ "exact_random_only": [
+  {
+   "r": 1,
+   "n_subsets": 8,
+   "mean_best_pct": 84.13931120817712,
+   "min_best_pct": 84.13500040477531,
+   "max_best_pct": 84.14471596666942,
+   "delta_vs_canonical_pp": -0.014783902354224665
+  },
+  {
+   "r": 2,
+   "n_subsets": 28,
+   "mean_best_pct": 84.14156592477583,
+   "min_best_pct": 84.13507675496702,
+   "max_best_pct": 84.14471596666942,
+   "delta_vs_canonical_pp": -0.012529185755511207
+  },
+  {
+   "r": 3,
+   "n_subsets": 56,
+   "mean_best_pct": 84.14280972563877,
+   "min_best_pct": 84.13681133588474,
+   "max_best_pct": 84.14471596666942,
+   "delta_vs_canonical_pp": -0.011285384892573802
+  },
+  {
+   "r": 4,
+   "n_subsets": 70,
+   "mean_best_pct": 84.14356321511434,
+   "min_best_pct": 84.13798283413868,
+   "max_best_pct": 84.14471596666942,
+   "delta_vs_canonical_pp": -0.010531895417003057
+  },
+  {
+   "r": 5,
+   "n_subsets": 56,
+   "mean_best_pct": 84.14405782972119,
+   "min_best_pct": 84.14015404271521,
+   "max_best_pct": 84.14471596666942,
+   "delta_vs_canonical_pp": -0.010037280810152538
+  },
+  {
+   "r": 6,
+   "n_subsets": 28,
+   "mean_best_pct": 84.14439020017069,
+   "min_best_pct": 84.14091993057572,
+   "max_best_pct": 84.14471596666942,
+   "delta_vs_canonical_pp": -0.009704910360653685
+  },
+  {
+   "r": 7,
+   "n_subsets": 8,
+   "mean_best_pct": 84.1446050202971,
+   "min_best_pct": 84.14382839569087,
+   "max_best_pct": 84.14471596666942,
+   "delta_vs_canonical_pp": -0.009490090234237414
+  },
+  {
+   "r": 8,
+   "n_subsets": 1,
+   "mean_best_pct": 84.14471596666942,
+   "min_best_pct": 84.14471596666942,
+   "max_best_pct": 84.14471596666942,
+   "delta_vs_canonical_pp": -0.009379143861920625
+  }
+ ],
+ "exact_canonical_anchored": [
+  {
+   "r": 1,
+   "n_subsets": 1,
+   "mean_best_pct": 84.15409511053134,
+   "min_best_pct": 84.15409511053134,
+   "max_best_pct": 84.15409511053134,
+   "delta_vs_canonical_pp": 0.0
+  },
+  {
+   "r": 2,
+   "n_subsets": 8,
+   "mean_best_pct": 84.15409511053134,
+   "min_best_pct": 84.15409511053134,
+   "max_best_pct": 84.15409511053134,
+   "delta_vs_canonical_pp": 0.0
+  },
+  {
+   "r": 3,
+   "n_subsets": 28,
+   "mean_best_pct": 84.15409511053133,
+   "min_best_pct": 84.15409511053134,
+   "max_best_pct": 84.15409511053134,
+   "delta_vs_canonical_pp": -1.4210854715202004e-14
+  },
+  {
+   "r": 4,
+   "n_subsets": 56,
+   "mean_best_pct": 84.15409511053134,
+   "min_best_pct": 84.15409511053134,
+   "max_best_pct": 84.15409511053134,
+   "delta_vs_canonical_pp": 0.0
+  },
+  {
+   "r": 5,
+   "n_subsets": 70,
+   "mean_best_pct": 84.15409511053137,
+   "min_best_pct": 84.15409511053134,
+   "max_best_pct": 84.15409511053134,
+   "delta_vs_canonical_pp": 2.842170943040401e-14
+  },
+  {
+   "r": 6,
+   "n_subsets": 56,
+   "mean_best_pct": 84.15409511053134,
+   "min_best_pct": 84.15409511053134,
+   "max_best_pct": 84.15409511053134,
+   "delta_vs_canonical_pp": 0.0
+  },
+  {
+   "r": 7,
+   "n_subsets": 28,
+   "mean_best_pct": 84.15409511053133,
+   "min_best_pct": 84.15409511053134,
+   "max_best_pct": 84.15409511053134,
+   "delta_vs_canonical_pp": -1.4210854715202004e-14
+  },
+  {
+   "r": 8,
+   "n_subsets": 8,
+   "mean_best_pct": 84.15409511053134,
+   "min_best_pct": 84.15409511053134,
+   "max_best_pct": 84.15409511053134,
+   "delta_vs_canonical_pp": 0.0
+  }
+ ],
+ "matched_compute_control": {
+  "source": "experiments/outputs/proto_H42.json (connectome, sift_sweeps=2)",
+  "max_measured_cycle": 143,
+  "rows": [
+   {
+    "r": 1,
+    "cycles": 77,
+    "pct": 84.15409511053134,
+    "cum_wall_s": 645.5034234523773,
+    "delta_vs_canonical_pp": 0.0,
+    "measured": true
+   },
+   {
+    "r": 2,
+    "cycles": 154,
+    "pct": null,
+    "cum_wall_s": null,
+    "delta_vs_canonical_pp": null,
+    "measured": false,
+    "lower_bound_pct": 84.15880257703847,
+    "lower_bound_delta_pp": 0.004707466507127833,
+    "note": "beyond the measured curve, which stops at cycle 143 (84.15880258). The curve is monotone, so that value is a LOWER bound on this arm, not an estimate."
+   },
+   {
+    "r": 3,
+    "cycles": 231,
+    "pct": null,
+    "cum_wall_s": null,
+    "delta_vs_canonical_pp": null,
+    "measured": false,
+    "lower_bound_pct": 84.15880257703847,
+    "lower_bound_delta_pp": 0.004707466507127833,
+    "note": "beyond the measured curve, which stops at cycle 143 (84.15880258). The curve is monotone, so that value is a LOWER bound on this arm, not an estimate."
+   },
+   {
+    "r": 4,
+    "cycles": 308,
+    "pct": null,
+    "cum_wall_s": null,
+    "delta_vs_canonical_pp": null,
+    "measured": false,
+    "lower_bound_pct": 84.15880257703847,
+    "lower_bound_delta_pp": 0.004707466507127833,
+    "note": "beyond the measured curve, which stops at cycle 143 (84.15880258). The curve is monotone, so that value is a LOWER bound on this arm, not an estimate."
+   }
+  ]
+ },
+ "microns_runtime": {
+  "source": "results/20260815T195540Z-H42-microns-s42-verify-f91b66.json",
+  "prefix_wall_s": 3172.3,
+  "tail_wall_s": 86.0,
+  "run_wall_s": 3258.2,
+  "r_feasible": 3,
+  "a_r": 0.8462843753216345,
+  "min_promotion_delta_pp": 0.002,
+  "required_sigma_pp": 0.0023632718012073545,
+  "tail_sigma_measured": false,
+  "corrects": "proto_H57_prereg.json known_before_launch, which said microns admits R = 1 and that H57 is therefore connectome-only. That was arithmetic on a wrong prefix figure (~3330 s assumed vs 3172.3 s measured).",
+  "still_true": "P07 is unaffected and still blocks: at the P07 load factor the microns PREFIX alone is ~3806 s, past the 3450 s deadline, so the champion's microns configuration does not fit a loaded machine with or without this variant."
+ },
+ "paired_with_p09": {
+  "shared_labellings": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "rows": [
+   {
+    "r": 1,
+    "whole_pipeline_pct": 84.12643248170023,
+    "tail_only_pct": 84.13798283413868,
+    "diff_pp": 0.01155035243844793
+   },
+   {
+    "r": 2,
+    "whole_pipeline_pct": 84.1218490842546,
+    "tail_only_pct": 84.14382839569087,
+    "diff_pp": 0.021979311436268745
+   },
+   {
+    "r": 3,
+    "whole_pipeline_pct": 84.15550043124736,
+    "tail_only_pct": 84.13500040477531,
+    "diff_pp": -0.020500026472049626
+   },
+   {
+    "r": 4,
+    "whole_pipeline_pct": 84.11418066187552,
+    "tail_only_pct": 84.13681133588474,
+    "diff_pp": 0.022630674009221252
+   }
+  ],
+  "whole_pipeline_sigma_pp": 0.019124286772961963,
+  "note": "Same permutations (perm_seed_base 909000), so these are paired. The whole-pipeline arm re-ran greedy-FAS and Rocket under the labelling; the tail-only arm reused ONE canonical prefix. The difference between the two sigmas is the share H57 cannot reach."
+ },
+ "variance_split": {
+  "tail_sigma_pp": 0.003730995926610369,
+  "whole_pipeline_sigma_pp": 0.019124286772961963,
+  "tail_share_of_variance": 0.038060900124045074,
+  "prefix_share_of_variance": 0.9619390998759549,
+  "caveat": "A share is only additive if the two sources are independent; they are not exactly. Read it as an order of magnitude, which is all the verdict needs."
+ },
+ "h58_premise": {
+  "canonical_rank_from_top": 1,
+  "n_arms": 9,
+  "exchangeability_p_one_sided": 0.1111111111111111,
+  "canonical_z_for_comparison": 3.962454702451504,
+  "z_vs_rank_warning": "the z is +3.96 and the rank test is p = 1/9 = 0.111. The z assumes normality and is estimated from 8 points; the rank is assumption-free. Quote the rank.",
+  "p09_comparison": "whole-pipeline study: canonical ranked 2 of 5, p = 0.4",
+  "new_mechanistic_reading": "This study suggests a DIFFERENT mechanism from the one H58 proposes. H58's story is that the FlyWire on-disk order carries biological structure. But here the prefix is ALWAYS canonical and only the tail's labelling moves, and canonical still wins outright - so what the identity arm has is not a special on-disk order, it is TIE-BREAK CONSISTENCY between the prefix that produced the incoming order (greedy-FAS and the sift both break ties by index) and the tail that refines it. The paired rows support this: at r = 3 the WHOLE-pipeline run, where prefix and tail share labelling 3, scored 84.15550043 - higher than the canonical champion - while canonical-prefix + labelling-3-tail scored only 84.13500040. Consistency, not canonicality.",
+  "what_this_changes_for_h58": "H58 should test consistency vs canonicality before it spends 1.9 h extending the whole-pipeline sample: the two readings make opposite predictions for a structural relabelling, and the consistency reading predicts NO 1x-cost win is available at all, because consistency is already what the champion has."
+ },
+ "verdict_grounds": {
+  "ground_1_effect_size": "sigma_tail = 0.003731 pp against a bar of 0.011658 pp (idle, R = 4) and 0.014180 pp (under P07 load, R = 3). Fails by 3.1x-3.8x. Unlike H56's kill, it does NOT flip at the upper end of sigma's own chi-squared interval: 0.007594 pp still fails the easier bar by 35%.",
+  "ground_2_exact_enumeration": "The canonical arm is the MAXIMUM of all 9 arms, so the canonical-anchored best-of-R gains EXACTLY 0.000000 pp at every R and for every subset - this is exact enumeration, not a normal-theory estimate. Random-only best-of-4 is -0.010532 pp, a regression.",
+  "ground_3_matched_compute": "The item's own kill condition. The same seconds spent on ONE longer tail buy at least +0.004707 pp (proto_H42.json, 77 -> 143 cycles, measured), against H57's exactly zero.",
+  "structural_finding": "96.2% of the relabelling variance is created in the SHARED prefix. That is the item's own open_question_to_settle_first, answered against it."
+ },
+ "verdict": "KILL"
+}

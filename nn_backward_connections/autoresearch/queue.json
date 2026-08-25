@@ -582,7 +582,7 @@
     {
       "id": "H57",
       "title": "Prefix-shared tail multi-start: pay the expensive prefix once, randomise only the refinement tail",
-      "status": "proposed",
+      "status": "killed",
       "priority": 2,
       "kind": "science",
       "axis": "restarts / multi-start",
@@ -599,13 +599,14 @@
       ],
       "est_cost": "prototype ~1.4 h CPU, no GPU; screen only if the prototype clears M9",
       "expected_pp": "unknown by design - the prototype measures the one quantity that decides it",
-      "open_question_to_settle_first": "Is the labelling sigma mostly created by greedy-FAS tie-breaks (in the shared prefix, hence UNAVAILABLE to this design) or by the refinement sweep order (in the tail, hence available)? H56 measured only the whole-pipeline sigma, 0.019124 pp. If most of it lives in the prefix this item is dead on arrival and the 1.4 h prototype is what says so."
+      "open_question_to_settle_first": "Is the labelling sigma mostly created by greedy-FAS tie-breaks (in the shared prefix, hence UNAVAILABLE to this design) or by the refinement sweep order (in the tail, hence available)? H56 measured only the whole-pipeline sigma, 0.019124 pp. If most of it lives in the prefix this item is dead on arrival and the 1.4 h prototype is what says so.",
+      "outcome": "KILLED at the prototype rung 2026-08-25 (cycle 11), for ~2.1 h. The open question the item itself named is answered against it: the relabelling sigma lives in the SHARED PREFIX (~96% of the variance), not the tail (~4%). Tail-only sigma 0.003731 pp vs an M9 bar of 0.011658/0.014180 pp, and the kill does not flip at the upper end of sigma's chi-squared interval. The canonical arm was the MAXIMUM of nine, so the anchored best-of-R gains exactly 0.000000 pp at every R by enumeration. Matched compute (the item's own kill condition) prefers one longer tail by >= +0.004707 pp. New meta-rule M10. One thing the item got backwards and one this cycle got backwards: the prefix is 53% of the run, not 44%; and microns admits R = 3 under prefix-sharing, not R = 1 as this cycle's prereg asserted."
     },
     {
       "id": "H58",
       "title": "Deliberate labelling: choose ONE good index order instead of sampling R",
       "status": "proposed",
-      "priority": 4,
+      "priority": 3,
       "kind": "science",
       "axis": "starting basin / tie-break structure",
       "hypothesis": "The on-disk node index order carries structure that the pipeline's tie-breaks exploit, so a labelling chosen by a STRUCTURAL statistic beats a random one - at 1x cost, which is what makes it a mechanism rather than extra compute.",
@@ -618,11 +619,13 @@
         "experiments/outputs/proto_H56.json (canonical_z = +1.029, rank 2 of 5, labelling distribution)",
         "experiments/outputs/proto_P09_connectome.json (the 5 measured labellings)",
         "autoresearch/killed.json M6-init-is-flat, M7-expensive-warmstarts-lose, H48",
-        "experiments/log.md 2026-08-25 (Cycle 10)"
+        "experiments/log.md 2026-08-25 (Cycle 10)",
+        "experiments/outputs/proto_H57_connectome.json",
+        "experiments/outputs/proto_H57_decision.json"
       ],
       "est_cost": "premise test ~1.9 h GPU; screen normal cost only if the premise holds",
       "expected_pp": "unknown; bounded above by M6's <= 0.06 pp init ceiling on connectome",
-      "open_question_to_settle_first": "Is the canonical labelling systematically better, or is n = 5 showing noise? Nothing in this item is worth building until that is answered, and the answer costs ~1.9 h."
+      "open_question_to_settle_first": "AMENDED 2026-08-25 (cycle 11), and the amendment is cheaper than the original plan. H57's study gives a second, independent reading of the premise for free: the canonical labelling ranked 1 of 9 tail-relabelling arms (exchangeability p = 1/9 = 0.111; the z of +3.96 assumes normality on 8 points - quote the rank), alongside P09's rank 2 of 5 (p = 0.4). But it also suggests a DIFFERENT mechanism from this item's. In H57 the prefix was ALWAYS canonical and only the tail's labelling moved, and canonical still won outright - so the identity arm's advantage is not a special on-disk order, it is TIE-BREAK CONSISTENCY between the prefix that produced the incoming order (greedy-FAS and the sift both break ties by index) and the tail that refines it. The paired evidence agrees: at r = 3 the WHOLE-pipeline run, prefix and tail sharing labelling 3, reached 84.15550043 - above the canonical champion - while canonical-prefix + labelling-3-tail reached only 84.13500040. SO: test consistency vs canonicality BEFORE spending the 1.9 h GPU premise study. The two readings make opposite predictions, and the consistency reading predicts NO 1x-cost win exists at all, because consistency is already what the champion has."
     }
   ]
 }

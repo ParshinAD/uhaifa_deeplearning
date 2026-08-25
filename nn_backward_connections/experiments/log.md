@@ -5505,3 +5505,163 @@ PYTHONPATH=src $PY experiments/proto_H56_multistart.py --arm analysis     # CPU,
 Artifacts: `experiments/outputs/proto_H56.json`, `experiments/outputs/proto_H56_mouse.json`.
 Sources re-analysed: `experiments/outputs/proto_P09_connectome.json`,
 `experiments/outputs/proto_P09_mouse.json`, `experiments/outputs/proto_H42.json`.
+
+---
+
+## 2026-08-25 — Cycle 11 · H57: prefix-shared tail multi-start — **KILL at the prototype rung**
+
+**Mode: incremental.** `cycles_since_score_move` = 2 (< 3, so divergence was not yet forced),
+`consecutive_kills` = 1, `cycles_since_literature_scan` = 2 (< 5), and the queue held six
+`proposed` SCIENCE items (H54, H39, H40, H47, H57, H58), so neither divergence nor ideation was
+due. Three items tie at priority 2 — P08, P10 and H57 — and the science item was taken, on the
+campaign's own standing lesson that infrastructure must not crowd out the research agenda.
+P09 remains `awaiting-operator` and was **not** touched.
+
+**Preflight.** Tree clean; branch `auto/campaign-v3` = `campaign.yaml` `campaign.branch`;
+`PYTHONPATH=src $PY -m pytest tests/ -q` → **402 passed** in 172.53 s. No frozen file modified.
+
+### Hypothesis
+
+Best-of-R over R randomised refinement TAILS, sharing one greedy-FAS + Rocket + first-sift
+prefix, beats a single tail given the same total seconds — because sharing the prefix is what
+makes an R large enough to matter affordable.
+
+H56 died last cycle on meta-rule **M9**: best-of-R gains `sigma * a_R`, and `R` is not free, it is
+`floor(deadline / per_run_wall)`. H57 attacks the denominator rather than the framing. Its own
+`open_question_to_settle_first` is the honest one: *is the dispersion actually in the tail?*
+H56 measured only the WHOLE-pipeline relabelling sigma. Nothing had ever measured the split.
+
+### Gate 1 — novelty: **PASS**, on a revival condition that names this item verbatim
+
+H57 shares the axis `restarts / multi-start` with killed **H01** and killed **H56**. H56's
+revival condition (a) reads: *"the per-arm cost drops enough that `R_feasible * a_R` clears M9 —
+which is exactly queue item H57, prefix-shared tail multi-start."* H57 satisfies that condition's
+**cost** half by construction. Its **sigma** half was open, and is precisely what this prototype
+tests. Recorded as a conditional pass, not an unqualified one.
+
+### Gate 2 — prototype: **FAIL**, on three independent grounds
+
+**Pre-registration sealed and committed BEFORE launch** (`d3d10ca`,
+`experiments/outputs/proto_H57_prereg.json`): decision rule, arm count (8 random + 1 identity)
+and validity gate fixed before a single connectome arm existed. This is queue item **P11**
+complied with rather than deferred, and it is what makes the kill below non-negotiable after
+the fact.
+
+**Step 0 — the prefix/tail split, and the queue item had it backwards.** The only CUDA connectome
+run carrying per-stage timings (`results/20260810T214020Z-H42-connectome-s42-verify-f41d7e.json`)
+splits 1483.9 s into prefix 652.2 s + first sift 134.4 s + tail 697.3 s, i.e. prefix **53.0%**,
+tail 47.0%. H57's rationale had guessed prefix ~506 s / tail ~645 s off a CPU-only prototype.
+This cycle's own prefix run measured 531.7 s (greedy 16.3 + Rocket 395.8 + sift 119.6) against a
+598.9 s median tail on an idle machine, giving **R = 4** idle and **R = 3** at the P07 load
+factor — bars of **0.011658** and **0.014180 pp**.
+
+**Validity gate — PASSED, exactly.** The prefix reproduces the champion's stage-3 value
+`83.91351804242117` (pure Rocket `82.92969571752491`), and the identity tail reproduces the
+champion's connectome score `84.15409511053134` to the last digit. The shared prefix is genuinely
+H42's, so the other eight arms mean what they claim.
+
+**The measurement.** Nine arms, each the production refiner `alternate_scc_sift` at H42's exact
+stage-4 constants, from ONE prefix rank, under labellings r = 0..8 (`perm_seed_base` 909000, so
+r = 1..5 are the SAME labellings P09 measured whole-pipeline):
+
+| r | pct | | r | pct |
+|---|---|---|---|---|
+| 0 (identity) | **84.15409511** | | 5 | 84.14471597 |
+| 1 | 84.13798283 | | 6 | 84.14015404 |
+| 2 | 84.14382840 | | 7 | 84.13507675 |
+| 3 | 84.13500040 | | 8 | 84.14091993 |
+| 4 | 84.13681134 | | mean of the 8 | 84.13931121 |
+
+**Ground 1 — effect size.** Tail-only sigma is **0.003731 pp** against bars of 0.011658 (idle) and
+0.014180 (loaded): short by 3.1×–3.8×. M9's own caveat requires saying which bound the kill rests
+on, and here it does not matter: the **upper** end of sigma's chi-squared 95% interval,
+0.007594 pp, still fails the easier bar by 35%. H56's kill flipped at its CI upper end; this one
+does not flip anywhere in the interval.
+
+**Ground 2 — exact enumeration, not normal theory.** The canonical arm is the **maximum of all
+nine**. So the canonical-anchored best-of-R — the only monotone form, per M9 corollary (1) —
+gains **exactly 0.000000 pp at every R and for every subset**. Random-only best-of-4 is
+**−0.010532 pp**, a regression, for the same reason it was in H56.
+
+**Ground 3 — matched compute, the item's own kill condition.** The same seconds spent on ONE
+longer tail buy at least **+0.004707 pp** (`proto_H42.json`, 77 → 143 cycles: 84.15409511 →
+84.15880258, measured; 231 and 308 cycles are beyond the measured curve, and since it is monotone
+that figure is a lower bound, not an estimate). Against H57's exact zero, the control wins
+outright.
+
+### What this actually established — the variance split, which is the durable result
+
+The whole-pipeline relabelling sigma is 0.019124 pp (P09, n = 5); the tail-only sigma is
+0.003731 pp (n = 8). **The shared prefix creates ~96% of the variance and the tail ~4%.**
+So prefix-sharing multiplies R by about 2 while dividing sigma by about 5 — it cannot win, and
+this is a property of the pipeline rather than of H57's particular framing. Filed as new
+meta-rule **M10**.
+
+### A correction to the sealed pre-registration, stated rather than edited away
+
+The prereg's `known_before_launch` asserted that microns admits R = 1 and that H57 was therefore
+connectome-only at best. **That was wrong**, and on arithmetic rather than judgement: the measured
+microns split is prefix 3085.3 s + sift 87.0 s = 3172.3 s against an **86.0 s** tail
+(`results/20260815T195540Z-H42-microns-s42-verify-f91b66.json`), so the deadline pays for
+**R = 3** there. H56's kill ground (1) does not carry over to H57.
+
+The sealed file is deliberately left **byte-identical** — a pre-registration rewritten after the
+data are seen is not sealed — and the correction lives in `proto_H57_analysis.py` and here. It
+changes nothing about the verdict: the decision rule is a connectome statistic throughout, the
+connectome leg fails, and a screen needs a delta on *both* primaries. The microns tail sigma was
+never measured and this kill does not rest on it.
+
+### A free result for H58, and it points somewhere different from H58
+
+The canonical labelling ranked **1 of 9** here. The honest test is exchangeability, p = 1/9 =
+0.111 — *not* the z of +3.96, which assumes normality and is estimated from 8 points. Quote the
+rank. With P09's rank 2 of 5 (p = 0.4) this strengthens H58's premise without establishing it.
+
+But the study suggests a **different mechanism** from the one H58 proposes. H58's story is that
+the FlyWire on-disk order carries biological structure. Here the prefix is *always* canonical and
+only the tail's labelling moves, and canonical still wins outright — so what the identity arm has
+is not a special on-disk order, it is **tie-break consistency** between the prefix that produced
+the incoming order (greedy-FAS and the sift both break ties by index) and the tail that refines
+it. The paired rows say the same thing: at r = 3 the WHOLE-pipeline run, where prefix and tail
+share labelling 3, reached **84.15550043** — above the canonical champion — while canonical-prefix
++ labelling-3-tail reached only **84.13500040**. Consistency, not canonicality.
+
+That matters practically: the consistency reading predicts **no 1×-cost win is available at all**,
+because consistency is already what the champion has. H58 has been amended to test the two
+readings against each other *before* spending its 1.9 h GPU premise study, since they make
+opposite predictions and the cheap test comes first.
+
+### Gates not run
+
+`screen`, `confirm` and `critic` were **not run** and are omitted from `gates_run`. A
+prototype-rung kill is terminal, and here the arithmetic is exact: the anchored design gains
+0.000000 pp by enumeration over the measured arms, so there is no configuration of H57 for a
+screen to measure.
+
+### Decision: **KILL**
+
+Falsified as specified, by its own pre-registered rule, for **~2.1 h** of compute (531.7 s GPU
+prefix + 9 x ~599 s CPU tails). `sota.json` untouched; no score moved; `consecutive_kills` goes
+to 2; `cycles_since_score_move` goes to 3, which **forces divergent mode next cycle** — and under
+that rule an infrastructure item does not satisfy the requirement, so the next cycle must take a
+science item and attack a different level.
+
+`autoresearch/killed.json`: H57 entered with a revival condition; new meta-rule **M10**.
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY -m pytest tests/ -q                                      # 402 passed
+bash autoresearch/detach.sh dr_tmp/proto_H57.out bash dr_tmp/run_H57.sh     # ~2.1 h, detached
+PYTHONPATH=src $PY experiments/proto_H57_tail_sigma.py --arm prefix --dataset connectome
+PYTHONPATH=src $PY experiments/proto_H57_tail_sigma.py --arm tails --dataset connectome --r-max 8
+PYTHONPATH=src $PY experiments/proto_H57_analysis.py                        # CPU, seconds
+```
+
+Artifacts: `experiments/outputs/proto_H57_prereg.json` (sealed at `d3d10ca`),
+`experiments/outputs/proto_H57_connectome.json`, `experiments/outputs/proto_H57_decision.json`,
+`experiments/outputs/proto_H57_mouse.json` (machinery smoke test),
+`experiments/evidence/proto_H57_prefix_rank_connectome.npy` (the shared prefix, sha16
+`e5d171c68bafd9bd`). Sources re-analysed: `experiments/outputs/proto_P09_connectome.json`,
+`experiments/outputs/proto_H42.json`.

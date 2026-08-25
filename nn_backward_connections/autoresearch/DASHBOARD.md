@@ -1,8 +1,8 @@
 # Campaign dashboard
 
-*Generated 2026-08-25 21:09 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-25 23:06 by `autoresearch/dashboard.py` — do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 10 · **mode:** `incremental` · **consecutive kills:** 1
+**Phase:** `quality` · **cycle:** 11 · **mode:** `incremental` · **consecutive kills:** 2
 
 ## Progress — connectome (Phase 1 target)
 
@@ -21,7 +21,7 @@
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H52** | 93.1028 ± 0.0 | 20 | ~1s | experiments/log.md 2026-08-17 (H52) |
 
-## Queue — 10 proposed / 31 total
+## Queue — 9 proposed / 31 total
 
 | # | id | title | status |
 |---|---|---|---|
@@ -42,6 +42,7 @@
 
 | cycle | item | verdict | note |
 |---|---|---|---|
+| 11 | `H57` | **kill** | Prefix-shared tail multi-start, killed at the prototype rung for ~2.1 h by a pre |
 | 10 | `H56` | **kill** | Relabelling multi-start, killed at the prototype rung for 2.55 s of GPU. Runtime |
 | 9 | `P09` | **iterate** | Half the change shipped, half held for the operator. The relabelling-robustness  |
 | 8 | `H52` | **keep-partial** | New mouse champion 93.082880 -> 93.102826 (+0.01995 pp, 20/20, std 0) from a new |
@@ -56,7 +57,7 @@
 ## Evidence
 
 - `results/*.json`: **459** run records across **30** variants
-- killed mechanisms on record: **18** (+7 deferred, 9 meta-rules)
+- killed mechanisms on record: **19** (+7 deferred, 10 meta-rules)
 - literature notes: **6** (latest: `vahidi-2025.md`)
 
 ## Control
