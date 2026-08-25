@@ -296,7 +296,8 @@ def alternate_scc_sift(g: GraphData, init_rank: np.ndarray, *, n_cycles: int,
                        sift_sweeps: int = 8, k_full: int = 2, alpha: float = 0.7,
                        min_block: int = 32,
                        split_fracs: Sequence[float] = DEFAULT_SPLIT_FRACS,
-                       time_budget_s: Optional[float] = None
+                       time_budget_s: Optional[float] = None,
+                       g_struct=None
                        ) -> Tuple[np.ndarray, float, List[Dict]]:
     """Alternate the block refiner with the champion's single-node sift.
 
@@ -306,10 +307,18 @@ def alternate_scc_sift(g: GraphData, init_rank: np.ndarray, *, n_cycles: int,
     to its own component. Each therefore re-opens moves the other has exhausted,
     and the alternation reaches a joint fixed point neither reaches alone.
 
+    ``g_struct`` (H60) supplies the graph the BLOCK REFINER condenses, while the sift
+    and every score still read ``g``. It defaults to ``None``, meaning ``g`` itself --
+    so the champions H36/H42/H52 are bit-identical to before this parameter existed.
+    Passing :func:`mfas.refine.net_condense.net_structure_graph(g) <net_structure_graph>`
+    condenses the NET digraph instead, which strictly refines ``g``'s components and is
+    still exactly monotone (see that module's docstring for the proof).
+
     Returns ``(best_rank, best_score, log)``; ``log`` has one row per cycle. The
     returned order is the best the frozen oracle has scored, so it can never be
     worse than ``init_rank``.
     """
+    g_struct = g if g_struct is None else g_struct
     src_o, tgt_o = np.asarray(g.src), np.asarray(g.tgt)
     total = g.total_weight
     rank = np.asarray(init_rank, dtype=np.int64).copy()
@@ -322,7 +331,7 @@ def alternate_scc_sift(g: GraphData, init_rank: np.ndarray, *, n_cycles: int,
         if time_budget_s is not None and (time.time() - t0) > time_budget_s:
             break
         ta = time.time()
-        rank = scc_recursive_refine(g, rank, min_block=min_block,
+        rank = scc_recursive_refine(g_struct, rank, min_block=min_block,
                                     split_frac=split_fracs[c % len(split_fracs)])
         s_scc = score_from_order(rank, src_o, tgt_o, g.weight)
         t_scc = time.time() - ta
