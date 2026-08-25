@@ -1,0 +1,291 @@
+{
+  "item": "H56",
+  "gate": "prototype",
+  "date": "2026-08-25",
+  "machine": "Windows 10 / RTX 4060 Laptop GPU (CUDA); this arm is CPU-only re-analysis",
+  "_doc": "Decides H56 from logged measurement rather than new large-graph runs. Sources: proto_P09_connectome.json (labelling distribution of the champion), proto_P09_mouse.json + proto_H56_mouse.json (mouse), proto_H42.json (compute-matched control).",
+  "reproduce": [
+    "PYTHONPATH=src $PY experiments/proto_H56_multistart.py --arm mouse --relabels 40",
+    "PYTHONPATH=src $PY experiments/proto_H56_multistart.py --arm analysis"
+  ],
+  "config": {
+    "min_promotion_delta_pp": 0.012,
+    "min_promotion_delta_pp_microns": 0.002,
+    "max_wall_clock_s_per_run": 3600.0,
+    "champion_wall_s": {
+      "connectome_proto_p09": 1152.0090132713317,
+      "connectome_sota": 1238.0,
+      "microns_sota": 3418.0
+    },
+    "p07_load_factor": 1.2,
+    "r_max_search": 200,
+    "quad_lo": -12.0,
+    "quad_hi": 12.0,
+    "quad_n": 400001,
+    "mouse_champion": "H52",
+    "mouse_perm_seed_base": 717000,
+    "mouse_seed": 42
+  },
+  "connectome": {
+    "source": "experiments/outputs/proto_P09_connectome.json",
+    "champion": "H42",
+    "n_labellings": 5,
+    "canonical_pct": 84.15409511053134,
+    "labelling_mean_pct": 84.13441155392182,
+    "labelling_std_pp": 0.019124286772961963,
+    "canonical_minus_mean_pp": 0.019683556609521702,
+    "canonical_z": 1.0292439578635915,
+    "canonical_rank_from_top": 2,
+    "per_run_wall_s": 1152.0090132713317,
+    "guard_deadline_s": 3450.0,
+    "microns_guard_deadline_s": 3450.0,
+    "hard_cap_s": 3600.0,
+    "feasible_r": {
+      "connectome_at_proto_p09_wall": 2,
+      "connectome_at_sota_wall": 2,
+      "connectome_at_sota_wall_under_p07_load": 2,
+      "microns_at_sota_wall": 1
+    },
+    "exact_random_only": [
+      {
+        "r": 1,
+        "n_subsets": 4,
+        "mean_best_pct": 84.12949066476943,
+        "min_best_pct": 84.11418066187552,
+        "max_best_pct": 84.15550043124736,
+        "delta_vs_canonical_pp": -0.024604445761909233
+      },
+      {
+        "r": 2,
+        "n_subsets": 6,
+        "mean_best_pct": 84.14020255689952,
+        "min_best_pct": 84.1218490842546,
+        "max_best_pct": 84.15550043124736,
+        "delta_vs_canonical_pp": -0.013892553631819737
+      },
+      {
+        "r": 3,
+        "n_subsets": 4,
+        "mean_best_pct": 84.14823344386058,
+        "min_best_pct": 84.12643248170023,
+        "max_best_pct": 84.15550043124736,
+        "delta_vs_canonical_pp": -0.005861666670767818
+      },
+      {
+        "r": 4,
+        "n_subsets": 1,
+        "mean_best_pct": 84.15550043124736,
+        "min_best_pct": 84.15550043124736,
+        "max_best_pct": 84.15550043124736,
+        "delta_vs_canonical_pp": 0.0014053207160173997
+      }
+    ],
+    "exact_canonical_anchored": [
+      {
+        "r": 1,
+        "n_subsets": 1,
+        "mean_best_pct": 84.15409511053134,
+        "min_best_pct": 84.15409511053134,
+        "max_best_pct": 84.15409511053134,
+        "delta_vs_canonical_pp": 0.0
+      },
+      {
+        "r": 2,
+        "n_subsets": 4,
+        "mean_best_pct": 84.15444644071034,
+        "min_best_pct": 84.15409511053134,
+        "max_best_pct": 84.15550043124736,
+        "delta_vs_canonical_pp": 0.0003513301790007972
+      },
+      {
+        "r": 3,
+        "n_subsets": 6,
+        "mean_best_pct": 84.15479777088935,
+        "min_best_pct": 84.15409511053134,
+        "max_best_pct": 84.15550043124736,
+        "delta_vs_canonical_pp": 0.0007026603580015944
+      },
+      {
+        "r": 4,
+        "n_subsets": 4,
+        "mean_best_pct": 84.15514910106836,
+        "min_best_pct": 84.15409511053134,
+        "max_best_pct": 84.15550043124736,
+        "delta_vs_canonical_pp": 0.0010539905370166025
+      },
+      {
+        "r": 5,
+        "n_subsets": 1,
+        "mean_best_pct": 84.15550043124736,
+        "min_best_pct": 84.15550043124736,
+        "max_best_pct": 84.15550043124736,
+        "delta_vs_canonical_pp": 0.0014053207160173997
+      }
+    ],
+    "theory_best_of_r": [
+      {
+        "r": 1,
+        "random_only_pct": 84.13441155392182,
+        "random_only_delta_vs_canonical_pp": -0.019683556609521702,
+        "canonical_anchored_pct": 84.15409511053134,
+        "canonical_anchored_delta_vs_canonical_pp": 0.0,
+        "total_wall_s": 1152.0090132713317,
+        "fits_guard_deadline": true,
+        "fits_hard_cap": true
+      },
+      {
+        "r": 2,
+        "random_only_pct": 84.14520127731191,
+        "random_only_delta_vs_canonical_pp": -0.008893833219431713,
+        "canonical_anchored_pct": 84.15560168784502,
+        "canonical_anchored_delta_vs_canonical_pp": 0.0015065773136768712,
+        "total_wall_s": 2304.0180265426634,
+        "fits_guard_deadline": true,
+        "fits_hard_cap": true
+      },
+      {
+        "r": 3,
+        "random_only_pct": 84.15059613900695,
+        "random_only_delta_vs_canonical_pp": -0.0034989715243938235,
+        "canonical_anchored_pct": 84.15698336450357,
+        "canonical_anchored_delta_vs_canonical_pp": 0.002888253972230359,
+        "total_wall_s": 3456.027039813995,
+        "fits_guard_deadline": false,
+        "fits_hard_cap": true
+      },
+      {
+        "r": 4,
+        "random_only_pct": 84.15409762375218,
+        "random_only_delta_vs_canonical_pp": 2.5132208349987195e-06,
+        "canonical_anchored_pct": 84.1582532408648,
+        "canonical_anchored_delta_vs_canonical_pp": 0.004158130333451027,
+        "total_wall_s": 4608.036053085327,
+        "fits_guard_deadline": false,
+        "fits_hard_cap": false
+      },
+      {
+        "r": 5,
+        "random_only_pct": 84.1566524200225,
+        "random_only_delta_vs_canonical_pp": 0.002557309491152182,
+        "canonical_anchored_pct": 84.15942289656101,
+        "canonical_anchored_delta_vs_canonical_pp": 0.005327786029667436,
+        "total_wall_s": 5760.045066356659,
+        "fits_guard_deadline": false,
+        "fits_hard_cap": false
+      },
+      {
+        "r": 6,
+        "random_only_pct": 84.15864597176268,
+        "random_only_delta_vs_canonical_pp": 0.004550861231336967,
+        "canonical_anchored_pct": 84.16050257742381,
+        "canonical_anchored_delta_vs_canonical_pp": 0.00640746689246896,
+        "total_wall_s": 6912.05407962799,
+        "fits_guard_deadline": false,
+        "fits_hard_cap": false
+      },
+      {
+        "r": 7,
+        "random_only_pct": 84.16027100094513,
+        "random_only_delta_vs_canonical_pp": 0.006175890413786078,
+        "canonical_anchored_pct": 84.16150135856903,
+        "canonical_anchored_delta_vs_canonical_pp": 0.007406248037682417,
+        "total_wall_s": 8064.063092899321,
+        "fits_guard_deadline": false,
+        "fits_hard_cap": false
+      },
+      {
+        "r": 8,
+        "random_only_pct": 84.1616368944247,
+        "random_only_delta_vs_canonical_pp": 0.007541783893358911,
+        "canonical_anchored_pct": 84.16242728676175,
+        "canonical_anchored_delta_vs_canonical_pp": 0.008332176230410937,
+        "total_wall_s": 9216.072106170654,
+        "fits_guard_deadline": false,
+        "fits_hard_cap": false
+      }
+    ],
+    "promotion_bar_pp": 0.012,
+    "promotion_target_pct": 84.16609511053134,
+    "smallest_r_clearing_bar": {
+      "random_only": 13,
+      "random_only_pct": 84.16631067640219,
+      "canonical_anchored": 13,
+      "canonical_anchored_pct": 84.16618820794592,
+      "total_wall_s_at_r": 14976.117172527313,
+      "over_hard_cap_x": 4.160032547924254
+    },
+    "required_sigma": {
+      "measured_sigma_pp": 0.019124286772961963,
+      "r_feasible": 2,
+      "a_r": 0.5641895835477562,
+      "required_sigma_pp": 0.021269446210866197,
+      "shortfall_ratio": 0.8991436158404392,
+      "h01_revival_threshold_pp": 0.02,
+      "h01_revival_threshold_source": "autoresearch/killed.json H01.revival_if - 'std >> 0.02 pp on connectome'"
+    },
+    "sigma_uncertainty": {
+      "n_points": 5,
+      "sigma_pp": 0.019124286772961963,
+      "sigma_ci95_pp": [
+        0.01145799396798623,
+        0.05495470200417241
+      ],
+      "c_minus_mu_pp": 0.019683556609521702,
+      "bar_pp": 0.012,
+      "matched_compute_control_pp": 0.00627503138052532,
+      "scenarios": [
+        {
+          "which": "ci_lower",
+          "sigma_pp": 0.01145799396798623,
+          "anchored_best_of_2_gain_pp": 0.00020057763142111975,
+          "clears_bar": false,
+          "beats_matched_compute_control": false
+        },
+        {
+          "which": "point_estimate",
+          "sigma_pp": 0.019124286772961963,
+          "anchored_best_of_2_gain_pp": 0.0015065773145299787,
+          "clears_bar": false,
+          "beats_matched_compute_control": false
+        },
+        {
+          "which": "ci_upper",
+          "sigma_pp": 0.05495470200417241,
+          "anchored_best_of_2_gain_pp": 0.013473445890946224,
+          "clears_bar": true,
+          "beats_matched_compute_control": true
+        }
+      ],
+      "verdict_note": "The effect-size and matched-compute grounds FLIP at the upper end of sigma's own confidence interval. The runtime ground - microns admits R = 1, so a screen requiring a delta on both primaries is impossible - does not depend on sigma and does not flip."
+    }
+  },
+  "matched_compute_control": {
+    "source": "experiments/outputs/proto_H42.json (connectome, sift_sweeps=2)",
+    "wall_full_s": 1201.4945087432861,
+    "wall_half_s": 603.4145300388336,
+    "cycles_full": 142,
+    "cycles_half": 71,
+    "pct_at_half": 84.15252754565795,
+    "pct_at_full": 84.15880257703847,
+    "gain_from_doubling_pp": 0.00627503138052532
+  },
+  "mouse": {
+    "source": "experiments/outputs/proto_P09_mouse.json",
+    "n_points": 25,
+    "comparator": "H44",
+    "comparator_pct_std": 0.015352273617828871,
+    "champion": "H52",
+    "champion_pct_std": 0.0,
+    "replication": {
+      "source": "experiments/outputs/proto_H56_mouse.json",
+      "champion": "H52",
+      "perm_seed_base": 717000,
+      "pct_mean": 93.10282596057698,
+      "pct_std": 0.0,
+      "pct_min": 93.10282596057698,
+      "pct_max": 93.10282596057698,
+      "n_distinct": 1,
+      "span_pp": 0.0
+    }
+  }
+}

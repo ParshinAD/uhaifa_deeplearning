@@ -5308,3 +5308,200 @@ checkout can read it — the defect P08 found the last time a cycle cited its ow
 Both verdicts were accepted in full and are what this cycle did. The critic's held `sota.json`
 caveat text is preserved in that file so a ratification does not have to re-derive it.
 
+
+---
+
+## 2026-08-25 — Cycle 10 · H56: relabelling multi-start — **KILL at the prototype rung**
+
+**Mode: incremental.** `cycles_since_score_move` = 1 (< 3), `consecutive_kills` = 0,
+`cycles_since_literature_scan` = 1 (< 5), and the queue held five `proposed` SCIENCE items, so
+neither divergence nor ideation was due. H56 was the top-priority `proposed` item (priority 1).
+P09 sits at `awaiting-operator` and was **not** touched — cycle 9's critic reserved it for a human.
+
+**Preflight.** Tree clean; branch `auto/campaign-v3` = `campaign.yaml` `campaign.branch`;
+`PYTHONPATH=src $PY -m pytest tests/ -q` → **402 passed** in 211.90 s. No frozen file modified.
+
+### Hypothesis
+
+Running the champion pipeline on R randomly relabelled copies of the graph and keeping the
+best-scoring order by the oracle beats a single canonical-labelling run, because relabelling is
+the only source of score dispersion this deterministic pipeline has (P02: seeds are inert, so
+seeds 42/123/999 are one sample taken three times).
+
+The premise is **true and was measured last cycle**: `experiments/outputs/proto_P09_connectome.json`
+puts the connectome champion H42 over 84.11418066–84.15550043 across five labellings, σ = 0.019124 pp.
+
+### Gate 1 — novelty: PASSED, but marginally, and the margin is the whole story
+
+H56 shares its axis, `restarts / multi-start`, **verbatim** with killed **H01**. H01's written
+revival condition is:
+
+> "A variant demonstrably widens the seed score distribution (**std ≫ 0.02 pp on connectome**)
+> before best-of-K is applied."
+
+The measured relabelling σ is **0.019124 pp** — *below* 0.02, and nowhere near "≫". So the
+condition **as written was not met**; the queue item passed itself through by paraphrasing it as
+"find a source of dispersion that actually exists", which is M3's existential form, not H01's
+quantitative one. It was let through anyway on two grounds: H01's mechanism was **budget-split**
+restarts (K arms of total/K epochs, each far short of the plateau — measured −0.84 pp vs one long
+run), which is a materially different design from R **full-cost** runs; and the prototype rung
+costs minutes. Recorded as a marginal pass, not a clean one.
+
+**The prototype then vindicated the number H01 wrote down.** See "required σ" below: the σ this
+idea needed was 0.021269 pp. H01's "≫ 0.02 pp", set by intuition, was within 6% of the correct
+threshold. The lesson is written up as meta-rule **M9**.
+
+### Gate 2 — prototype: **FAIL**, decisively, on three independent grounds
+
+`experiments/proto_H56_multistart.py` → `experiments/outputs/proto_H56.json`,
+`experiments/outputs/proto_H56_mouse.json`. GPU cost of this rung: **2.55 s** summed over 41 mouse runs.
+Everything else is re-analysis of already-logged measurement, which is what made it cheap.
+
+Two designs were evaluated, because the idea deserves its strongest form:
+
+- `random_only` — best of R random labellings. H56 as written.
+- `canonical_anchored` — arm 0 is the canonical labelling, the other R−1 random. **Monotone by
+  construction**: it can never score below the champion. If this fails, the idea fails.
+
+#### (a) The clock allows R = 2 on connectome and R = 1 on microns
+
+| quantity | value |
+|---|---|
+| champion per-run wall (P09 study, connectome) | **1152.0 s** |
+| runtime guard deadline / hard cap | **3450 s** / **3600 s** |
+| feasible R, at the study wall | **2** |
+| feasible R, at the `sota.json` confirm wall (1238 s) | **2** |
+| feasible R, at that wall under the P07 load factor (×1.20) | **2** |
+| feasible R, **microns** (3418 s/run) | **1** |
+
+R = 3 on connectome needs 3456 s against a 3450 s deadline. The kill does **not** hinge on those
+6 s: at R = 3 the strongest design still gains only +0.002888 pp, four times short of the bar.
+
+#### (b) At the feasible R the gain is 8–34× below the promotion bar — measured, then modelled
+
+Exact enumeration over every subset of the five measured labellings (no resampling, no
+distributional assumption), against the canonical score `sota.json` records:
+
+| R | `random_only` Δ vs canonical | `canonical_anchored` Δ vs canonical |
+|---|---|---|
+| 1 | −0.024604 pp | +0.000000 pp |
+| **2** | **−0.013893 pp** | **+0.000351 pp** |
+| 3 | −0.005862 pp | +0.000703 pp |
+| 4 | +0.001405 pp | +0.001054 pp |
+
+`random_only` at the feasible R is a **regression**: the canonical labelling sits at
+z = **+1.029** (rank **2 of 5**), so a pair of random labellings is expected to score *below* it.
+The monotone design gains **+0.000351 pp** measured, **+0.001507 pp** under normal theory —
+against `min_promotion_delta_pp` = **0.012 pp**. Short by 34× and 8× respectively.
+
+Smallest R whose expected best-of-R clears the bar: **R = 13** (both designs), i.e.
+**14976 s** per run = **4.16× the 3600 s hard cap**.
+
+#### (c) The same seconds spent on refinement buy ~18× more — H56's own kill condition
+
+H56's stated kill condition: *"If best-of-R at matched total wall-clock does not beat a single run
+given the same seconds … this is extra compute rather than a mechanism and it dies."*
+
+The control is a lookup, not a new run: `experiments/outputs/proto_H42.json`'s connectome
+`sift_sweeps=2` arm logged `(cum_wall_s, best_pct)` at all 143 cycles it completed, so doubling the
+refinement budget at ONE labelling is measured directly —
+**84.15252755 at 603 s (71 cycles) → 84.15880258 at 1201 s (142 cycles) = +0.006275 pp.**
+
+So at a matched doubling: **+0.006275 pp** into more refinement versus **+0.000351 pp** into a
+second labelling. Neither clears 0.012 pp, but relabelling is the **~18× worse** way to spend the
+identical seconds. Kill condition met.
+
+#### (d) On mouse there is nothing to harvest at all
+
+P09 reported a mouse σ of 0.015352 pp — that is the **H44 comparator's**, not the champion's.
+H52's own std over the same 25 labellings was 0.0. Replicated here at an **independent**
+permutation-seed base (717000 vs P09's 909000), 41 labellings of the current mouse champion:
+
+**1 distinct value, 93.10282596057698, span 0.000000 pp, σ = 0.**
+
+Best-of-R on mouse gains identically zero, for any R.
+
+#### (e) The required-σ rule this generalises to
+
+With E[max of R] = μ + σ·a_R, best-of-R over random labellings gains σ·a_R over the labelling
+mean, so clearing a bar of Δ pp needs **σ ≥ Δ / a_R** — and R is not free, it is
+`floor(guard_deadline / per_run_wall)`.
+
+| | |
+|---|---|
+| feasible R (connectome) | 2 |
+| a_2 | 0.5641896 |
+| **required σ** = 0.012 / a_2 | **0.021269 pp** |
+| **measured σ** | **0.019124 pp** |
+| ratio measured/required | **0.899** |
+
+A 10% shortfall in σ, against a design that has no room to buy it back with R. This is the
+design-neutral **lower** bound: because the canonical labelling scores above the labelling mean
+here, the anchored design must clear more than this.
+
+### What would overturn this kill — and how secure each ground actually is
+
+The three grounds are not equally strong, and saying so is part of the verdict. σ is estimated
+from **n = 5**, and a sample std at n = 5 has a wide χ² interval: **95% CI [0.011458, 0.054955] pp**
+around the point estimate 0.019124 pp. Grounds (b) and (c) both scale with σ. Holding the measured
+`canonical − mean` gap fixed at 0.019684 pp and evaluating the anchored best-of-2 gain across that
+interval:
+
+| σ | anchored best-of-2 gain | clears the 0.012 pp bar? | beats the +0.006275 pp control? |
+|---|---|---|---|
+| CI lower, 0.011458 | +0.000201 pp | no | no |
+| point estimate, 0.019124 | +0.001507 pp | no | no |
+| **CI upper, 0.054955** | **+0.013473 pp** | **yes** | **yes** |
+
+So **grounds (b) and (c) flip at the upper end of σ's own confidence interval.** They are the
+point estimate's verdict, not a proof. Ground **(a) does not flip**: microns runs 3418 s against a
+3450 s deadline, R = 1 is arithmetic, and a screen requiring Δ > `screen_delta_pp` on *both*
+primaries cannot be passed by a variant that is bit-identical to the champion on one of them. That
+is what carries the kill on its own.
+
+The measurement that would reopen it is therefore stated in the revival condition and is the same
+one **H58** needs: re-estimate the connectome labelling σ at **n ≥ 11** (~1.9 h of GPU for six more
+points) and check whether its *lower* confidence bound clears 0.021269 pp. Until someone pays for
+that, the point estimate stands and the campaign's own rule applies — if it is unclear whether
+something is a win, it is not.
+
+### Gates not run
+
+`screen`, `confirm` and `critic` were **not run** and are omitted from `gates_run`. The prototype
+rung is terminal for a kill, per CAMPAIGN.md's gate ladder — and on this item the screen is not
+merely wasteful but **impossible**: the screen requires Δ > `screen_delta_pp` on *both* primaries,
+and microns has room for R = 1, i.e. the variant there is the champion and Δ = 0 by construction.
+
+### Decision: **KILL**
+
+Falsified as specified. Filed in `autoresearch/killed.json` with a revival condition, plus new
+meta-rule **M9** (the quantitative form of M3). `sota.json` untouched; no score moved.
+
+Two successor items were filed, both born from this measurement rather than from ideation:
+
+- **H57** — *prefix-shared tail multi-start.* The whole runtime objection comes from re-running
+  the expensive prefix R times. Share greedy-FAS + Rocket + the first sift once, randomise only
+  the stage-4/5 sweep order, and take best-of-R over the tail: cost becomes prefix + R·tail, so
+  R = 4 fits the deadline, and a_4 = 1.0294 drops the required σ to **0.011657 pp**. Whether the
+  *tail-only* σ reaches that is unmeasured and is the item's first question. It is a genuine
+  contest: the matched control at R = 4 is the +0.006275 pp figure above, extended.
+- **H58** — *deliberate labelling.* The canonical labelling scoring at z = +1.029 (rank 2 of 5)
+  hints that the on-disk index order carries structure the tie-breaks exploit, in which case the
+  win is to choose ONE good labelling at 1× cost rather than sample R. **n = 5 makes this a hint
+  and not a finding** (p ≈ 0.4 under the null). Leakage boundary stated in the item: choosing a
+  labelling by *oracle score* is best-of-R and is dead; choosing it by a *structural statistic*
+  computed without the oracle is not.
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY -m pytest tests/ -q                                    # 402 passed
+bash autoresearch/detach.sh dr_tmp/proto_H56_mouse.out env PYTHONPATH=src $PY \
+    experiments/proto_H56_multistart.py --arm mouse --relabels 40         # 2.55 s of GPU
+PYTHONPATH=src $PY experiments/proto_H56_multistart.py --arm analysis     # CPU, seconds
+```
+
+Artifacts: `experiments/outputs/proto_H56.json`, `experiments/outputs/proto_H56_mouse.json`.
+Sources re-analysed: `experiments/outputs/proto_P09_connectome.json`,
+`experiments/outputs/proto_P09_mouse.json`, `experiments/outputs/proto_H42.json`.

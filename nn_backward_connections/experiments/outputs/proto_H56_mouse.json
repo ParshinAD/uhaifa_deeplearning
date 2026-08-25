@@ -1,0 +1,347 @@
+{
+  "item": "H56",
+  "arm": "mouse",
+  "dataset": "mouse",
+  "champion": "H52",
+  "perm_seed_base": 717000,
+  "seed": 42,
+  "n_points": 41,
+  "rows": [
+    {
+      "r": 0,
+      "identity": true,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.725132942199707,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 1,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04601621627807617,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 2,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.045992374420166016,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 3,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04568076133728027,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 4,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04499673843383789,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 5,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.045995473861694336,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 6,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.047017812728881836,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 7,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04669547080993652,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 8,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04900383949279785,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 9,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.0449979305267334,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 10,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04494142532348633,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 11,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.045007944107055664,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 12,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.045387983322143555,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 13,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.045012474060058594,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 14,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.043991804122924805,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 15,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.045000314712524414,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 16,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04439043998718262,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 17,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04468107223510742,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 18,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04499173164367676,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 19,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.0450129508972168,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 20,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.045621395111083984,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 21,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.047391653060913086,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 22,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04500079154968262,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 23,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04499650001525879,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 24,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.045694589614868164,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 25,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04569411277770996,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 26,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04600262641906738,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 27,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04500007629394531,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 28,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04699254035949707,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 29,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04639458656311035,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 30,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.047695159912109375,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 31,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04499554634094238,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 32,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04600381851196289,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 33,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.045012712478637695,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 34,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.0456392765045166,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 35,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04599809646606445,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 36,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04599261283874512,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 37,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.0449986457824707,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 38,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04539084434509277,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 39,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.044994354248046875,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "r": 40,
+      "identity": false,
+      "pct": 93.10282596057698,
+      "score": 8.527321510860956,
+      "wall_clock_s": 0.04499530792236328,
+      "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    }
+  ],
+  "summary": {
+    "pct_mean": 93.10282596057698,
+    "pct_std": 0.0,
+    "pct_min": 93.10282596057698,
+    "pct_max": 93.10282596057698,
+    "n_distinct": 1,
+    "span_pp": 0.0
+  }
+}
