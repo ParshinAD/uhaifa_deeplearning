@@ -306,7 +306,7 @@
     {
       "id": "H44",
       "title": "Drop the gradient phase on mouse: _EPOCHS['mouse'] = 0 (greedy -> under-relaxed sift reaches a strictly better basin)",
-      "status": "proposed",
+      "status": "confirmed",
       "priority": 0,
       "axis": "compute allocation / starting basin",
       "hypothesis": "On mouse the gradient phase is not neutral, it is HARMFUL. Stage 3 run from the greedy-FAS order reaches the fixed point 93.08288021668459; run from Rocket's order, the same function with the same constants reaches 92.90180243040469. Setting _EPOCHS['mouse'] = 0 therefore scores ~+0.166 pp above the 92.91701410211007 champion, at ~1/1000 of its wall clock.",
