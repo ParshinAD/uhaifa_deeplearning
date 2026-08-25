@@ -59,3 +59,7 @@ autoresearch/.lock/
 # int32 ranks, compressed, re-scored on pin. See tools/pin_champion.py.
 !results/champions/
 !results/champions/*.npz
+
+# Watchdog scratch (runtime state, never committed)
+autoresearch/ALERT
+autoresearch/ALERTS.log
