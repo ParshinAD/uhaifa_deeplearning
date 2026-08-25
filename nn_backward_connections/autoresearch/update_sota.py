@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import date
@@ -67,12 +68,25 @@ def main() -> int:
                          "it for an unqualified three-dataset win.")
     ap.add_argument("--force", action="store_true",
                     help="promote even if the audit reports a FAIL or the delta does not clear "
-                         "the dataset's minimum effect size. THE escape hatch: it is logged into "
-                         "the entry as `forced` and must be justified in experiments/log.md.")
+                         "the dataset's minimum effect size. THE escape hatch, and it is "
+                         "HUMAN-ONLY: it takes effect only when the environment variable "
+                         "MFAS_HUMAN_OVERRIDE is set to a non-empty value, which the autonomous "
+                         "driver never sets. It is logged into the entry as `forced` and must be "
+                         "justified in experiments/log.md; verify_cycle FAILs on any `forced` "
+                         "entry lacking that justification.")
     ap.add_argument("--device-tag", default=None,
                     help="only count runs measured on this device (env.gpu). Defaults to "
                          "campaign.yaml environment.device_tag; pass '' to pool every device.")
     args = ap.parse_args()
+
+    # The escape hatch is human-only. An autonomous cycle runs under the driver, which never
+    # exports MFAS_HUMAN_OVERRIDE, so the agent physically cannot promote itself past a failing
+    # audit or a sub-threshold delta. A human forcing a promotion sets the variable knowingly.
+    if args.force and not os.environ.get("MFAS_HUMAN_OVERRIDE", "").strip():
+        print("REFUSED: --force is human-only. Set MFAS_HUMAN_OVERRIDE=<reason> to use it, and "
+              "record the justification in experiments/log.md. The autonomous driver never sets "
+              "this variable, by design.")
+        return 1
 
     campaign = {}
     cpath = _HERE / "campaign.yaml"

@@ -68,6 +68,13 @@ _REQUIRED_GATES = {
     "done":    ["novelty"],
 }
 
+# The `gates_run` field was mandated (research-cycle.md step 5) after the Phase-7 cycles
+# had already run. Cycles before this boundary genuinely cannot be re-instrumented -- what
+# they ran is unknowable now -- so their missing field is an unverifiable WARN, not a caught
+# skip. Every cycle at or after it MUST carry the field or it is a hard FAIL. Raising this
+# number to hide a real skip is itself a protocol violation.
+GATES_RUN_MANDATORY_FROM_CYCLE = 9
+
 
 class Report:
     def __init__(self) -> None:
@@ -238,10 +245,17 @@ def check_gates(rep: Report, entry: dict, cycle: int) -> None:
     outcome = str(entry.get("outcome", "")).lower().strip()
     gates = entry.get("gates_run")
     if gates is None:
-        rep.add(f"cycle{cycle}.gates_run", "FAIL",
-                "no `gates_run` field. A skipped rung is then detectable only if the cycle "
-                "volunteers it in prose - which is how cycle #5's skipped critic was nearly "
-                "lost. Record the gates actually executed.")
+        if cycle < GATES_RUN_MANDATORY_FROM_CYCLE:
+            rep.add(f"cycle{cycle}.gates_run", "WARN",
+                    f"no `gates_run` field, but this cycle predates the field "
+                    f"(mandatory from cycle {GATES_RUN_MANDATORY_FROM_CYCLE}). What it ran is "
+                    f"unverifiable now; its verdict rests on the log prose and the artifacts, "
+                    f"which the figures/deltas checks cover separately.")
+        else:
+            rep.add(f"cycle{cycle}.gates_run", "FAIL",
+                    "no `gates_run` field. A skipped rung is then detectable only if the cycle "
+                    "volunteers it in prose - which is how cycle #5's skipped critic was nearly "
+                    "lost. Record the gates actually executed.")
         return
     if not isinstance(gates, (list, dict)):
         rep.add(f"cycle{cycle}.gates_run", "FAIL", f"`gates_run` is {type(gates).__name__}, "
@@ -329,6 +343,26 @@ def check_sota_backed(rep: Report) -> None:
         else:
             rep.add(f"sota.{ds}.backed", "PASS",
                     f"champion {champ}: {len(pcts)} run(s) at role={role}")
+
+        # A --force promotion is the one path that bypasses the audit and the effect-size
+        # floor. It must not be silent: an entry carrying `forced` requires a matching
+        # justification in the research journal, or the escape hatch was used without a paper
+        # trail -- exactly the invisible-bypass the auditor flagged.
+        forced = entry.get("forced")
+        if forced:
+            log_text = ""
+            log_path = _ROOT / "experiments" / "log.md"
+            if log_path.exists():
+                log_text = log_path.read_text(encoding="utf-8", errors="ignore")
+            if champ and champ in log_text and "forc" in log_text.lower():
+                rep.add(f"sota.{ds}.forced", "WARN",
+                        f"champion {champ} was promoted with --force; a justification is present "
+                        f"in experiments/log.md. Forced promotions are never a clean pass.")
+            else:
+                rep.add(f"sota.{ds}.forced", "FAIL",
+                        f"champion {champ} carries a `forced` flag but experiments/log.md has no "
+                        f"justification mentioning it. A forced promotion without a paper trail is "
+                        f"an unaudited champion. Record why, or revert the promotion.")
 
 
 def check_dashboard_fresh(rep: Report) -> None:

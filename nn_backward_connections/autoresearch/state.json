@@ -37,6 +37,14 @@
       "note": "NEW CHAMPION on all three datasets - the first score move of the autonomous campaign. Mechanism: a structural BLOCK move class. Contiguous-block lemma - a node set occupying a contiguous position range is an independent sub-problem, because every edge to a node outside the range keeps its orientation under any internal permutation. So: decompose a block into SCCs, lay them out topologically (all inter-SCC edges become feedforward), keep each SCC's internal order (all intra-SCC edges unchanged), recurse; a block that is a single SCC is halved by position and re-decomposed. Monotone non-decreasing BY CONSTRUCTION, pinned by 31 unit tests. Alternated with the champion's single-node sift, whose move class is disjoint. Confirm (5/5/20 seeds, all bit-identical): connectome 84.097174 (+0.1837 pp vs H35), microns 83.233847 (+0.0276 pp vs H30), mouse 92.917014 (+0.0152 pp). audit exit 0, all 30 runs re-scored exactly. Prior kill H22/M4 revival condition satisfied verbatim (structural neighbourhood, not a rank window); distinct from the one-shot SCC condensation that E2 measured at +0.00013 pp. Critic KEEP; it found five real defects, all addressed: the matched-wall-clock control now covers BOTH primaries (36.0x / 13.0x) and is promoted to experiments/proto_h36_control.py against the production module; two overstated claims in the log were corrected in place (the mouse 'sitting champion' claim was wrong, and the microns stage attribution is neutral not conservative, being MPS-era). Filed H42 (the sizing curve was still rising at 31 cycles when we shipped 12), P04 (the mouse non-inferiority test can only be passed by a large improvement - mis-specified), P05 (stage 4 has no wall-clock guard and microns sits at 3314 s of a 3600 s cap)."
     },
     {
+      "cycle": 4,
+      "item": null,
+      "outcome": "lost",
+      "at": "2026-08-10",
+      "note": "RECONSTRUCTED 2026-08-25 to make the history contiguous, NOT a real cycle record. verify_cycle's own diagnostic states driver cycles #1 and #4 (2026-08-09/10) ran and wrote nothing, burning ~33 min of budget invisibly -- a driver-robustness failure that predates the post-cycle diff guard. No item, no gates, no artifact exist for it because none were ever written. This entry documents the gap honestly rather than hiding it; it carries no score and backs no champion.",
+      "reconstructed": true
+    },
+    {
       "cycle": 5,
       "item": "H42",
       "outcome": "keep",
