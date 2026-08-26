@@ -1,0 +1,112 @@
+{
+  "item": "H63",
+  "stage": {
+    "t_stage_s": 160.47492694854736,
+    "pct_before": 84.15409511053134,
+    "pct_after": 84.17175347830596,
+    "realised_delta_pp": 0.017658367774615158,
+    "w_accepted": 7401.0,
+    "lemma_holds": true,
+    "log": [
+      {
+        "round": 0,
+        "n_backward": 1178821,
+        "w_backward": 6641358.0,
+        "n_tested": 1178821,
+        "scan_truncated": false,
+        "n_reclaimable": 2508,
+        "w_reclaimable": 8191.0,
+        "n_unknown": 0,
+        "w_unknown": 0.0,
+        "n_onehop": 519895,
+        "n_proved": 60,
+        "n_searched": 658866,
+        "t_search_s": 26.7812340259552,
+        "n_accepted": 2231,
+        "w_accepted": 7401.0,
+        "n_conflicts": 277,
+        "n_budget_rejects": 0,
+        "n_cycle_residue": 82895,
+        "batch_acyclic": false,
+        "n_scc_nontrivial": 21,
+        "n_scc_max": 77706,
+        "n_arcs_in_scc": 2135,
+        "t_scan_s": 30.163800716400146,
+        "t_conflict_s": 127.8527159690857,
+        "wall_s": 160.4209258556366
+      }
+    ]
+  },
+  "dataset": "connectome",
+  "champion": "H42",
+  "champion_positions": "results\\20260810T064240Z-H42-connectome-s42-confirm-f41d7e_positions.npy",
+  "champion_pct": 84.15409511053134,
+  "n_nodes": 136648,
+  "n_edges": 5657719,
+  "total_weight": 41912141.0,
+  "budget": 1000000,
+  "conflict_budget": 200000,
+  "ran_reference": true,
+  "fast": {
+    "t_scan_s": 31.765580415725708,
+    "t_conflict_s": 133.32292199134827,
+    "t_stage_s": 165.08850240707397,
+    "scan": {
+      "n_backward": 1178821,
+      "w_backward": 6641358.0,
+      "n_tested": 1178821,
+      "scan_truncated": false,
+      "n_reclaimable": 2508,
+      "w_reclaimable": 8191.0,
+      "n_unknown": 0,
+      "w_unknown": 0.0,
+      "n_onehop": 519895,
+      "n_proved": 60,
+      "n_searched": 658866,
+      "t_search_s": 28.016186237335205
+    },
+    "conflict": {
+      "n_accepted": 2231,
+      "w_accepted": 7401.0,
+      "n_conflicts": 277,
+      "n_budget_rejects": 0,
+      "n_cycle_residue": 82895,
+      "batch_acyclic": false,
+      "n_scc_nontrivial": 21,
+      "n_scc_max": 77706,
+      "n_arcs_in_scc": 2135
+    }
+  },
+  "cycle14_final_pct": 84.1716914437752,
+  "reproduces_cycle14": false,
+  "reference": {
+    "t_scan_s": 70.97234463691711,
+    "t_conflict_s": 407.7678518295288,
+    "t_stage_s": 478.7401964664459,
+    "scan": {
+      "n_backward": 1178821,
+      "w_backward": 6641358.0,
+      "n_tested": 1178821,
+      "scan_truncated": false,
+      "n_reclaimable": 2508,
+      "w_reclaimable": 8191.0,
+      "n_unknown": 0,
+      "w_unknown": 0.0
+    },
+    "conflict": {
+      "n_accepted": 2231,
+      "w_accepted": 7401.0,
+      "n_conflicts": 277,
+      "n_budget_rejects": 0,
+      "n_cycle_residue": 122589,
+      "batch_acyclic": false
+    },
+    "same_reclaimable_list": true,
+    "same_reclaimable_set": true,
+    "same_accepted_list": true,
+    "same_accepted_set": true,
+    "speedup_scan": 2.234253040809602,
+    "speedup_conflict": 3.058497711713745,
+    "speedup_stage": 2.8999002927894515
+  }
+}

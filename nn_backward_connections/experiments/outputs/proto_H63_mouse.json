@@ -1,0 +1,112 @@
+{
+  "item": "H63",
+  "stage": {
+    "t_stage_s": 0.0019989013671875,
+    "pct_before": 93.10282596057698,
+    "pct_after": 93.17538325903583,
+    "realised_delta_pp": 0.07255729845884673,
+    "w_accepted": 0.00664554921437035,
+    "lemma_holds": true,
+    "log": [
+      {
+        "round": 0,
+        "n_backward": 129,
+        "w_backward": 0.6317146654112061,
+        "n_tested": 129,
+        "scan_truncated": false,
+        "n_reclaimable": 5,
+        "w_reclaimable": 0.00664554921437035,
+        "n_unknown": 0,
+        "w_unknown": 0.0,
+        "n_onehop": 83,
+        "n_proved": 0,
+        "n_searched": 46,
+        "t_search_s": 0.0,
+        "n_accepted": 5,
+        "w_accepted": 0.00664554921437035,
+        "n_conflicts": 0,
+        "n_budget_rejects": 0,
+        "n_cycle_residue": 0,
+        "batch_acyclic": true,
+        "n_scc_nontrivial": 0,
+        "n_scc_max": 1,
+        "n_arcs_in_scc": 0,
+        "t_scan_s": 0.0,
+        "t_conflict_s": 0.0,
+        "wall_s": 0.001001119613647461
+      }
+    ]
+  },
+  "dataset": "mouse",
+  "champion": "H52",
+  "champion_positions": "results\\20260816T211632Z-H52-mouse-s42-confirm-b458f1_positions.npy",
+  "champion_pct": 93.10282596057698,
+  "n_nodes": 148,
+  "n_edges": 583,
+  "total_weight": 9.159036176272162,
+  "budget": 1000000,
+  "conflict_budget": 200000,
+  "ran_reference": true,
+  "fast": {
+    "t_scan_s": 0.002002716064453125,
+    "t_conflict_s": 0.0,
+    "t_stage_s": 0.002002716064453125,
+    "scan": {
+      "n_backward": 129,
+      "w_backward": 0.6317146654112061,
+      "n_tested": 129,
+      "scan_truncated": false,
+      "n_reclaimable": 5,
+      "w_reclaimable": 0.00664554921437035,
+      "n_unknown": 0,
+      "w_unknown": 0.0,
+      "n_onehop": 83,
+      "n_proved": 0,
+      "n_searched": 46,
+      "t_search_s": 0.002002716064453125
+    },
+    "conflict": {
+      "n_accepted": 5,
+      "w_accepted": 0.00664554921437035,
+      "n_conflicts": 0,
+      "n_budget_rejects": 0,
+      "n_cycle_residue": 0,
+      "batch_acyclic": true,
+      "n_scc_nontrivial": 0,
+      "n_scc_max": 1,
+      "n_arcs_in_scc": 0
+    }
+  },
+  "cycle14_final_pct": 93.17538325903583,
+  "reproduces_cycle14": true,
+  "reference": {
+    "t_scan_s": 0.00101470947265625,
+    "t_conflict_s": 0.0,
+    "t_stage_s": 0.00101470947265625,
+    "scan": {
+      "n_backward": 129,
+      "w_backward": 0.6317146654112061,
+      "n_tested": 129,
+      "scan_truncated": false,
+      "n_reclaimable": 5,
+      "w_reclaimable": 0.00664554921437035,
+      "n_unknown": 0,
+      "w_unknown": 0.0
+    },
+    "conflict": {
+      "n_accepted": 5,
+      "w_accepted": 0.00664554921437035,
+      "n_conflicts": 0,
+      "n_budget_rejects": 0,
+      "n_cycle_residue": 0,
+      "batch_acyclic": true
+    },
+    "same_reclaimable_list": true,
+    "same_reclaimable_set": true,
+    "same_accepted_list": true,
+    "same_accepted_set": true,
+    "speedup_scan": 0.5066666666666667,
+    "speedup_conflict": 0.0,
+    "speedup_stage": 0.5066666666666667
+  }
+}
