@@ -1,6 +1,6 @@
 # Campaign dashboard
 
-*Generated 2026-08-26 15:13 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-26 19:42 by `autoresearch/dashboard.py` — do not hand-edit.*
 
 **Phase:** `quality` · **cycle:** 14 · **mode:** `divergent` · **consecutive kills:** 5
 
@@ -21,7 +21,7 @@
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H52** | 93.1028 ± 0.0 | 20 | ~1s | experiments/log.md 2026-08-17 (H52) |
 
-## Queue — 12 proposed / 38 total
+## Queue — 17 proposed / 43 total
 
 | # | id | title | status |
 |---|---|---|---|
@@ -34,9 +34,9 @@
 | 0 | `H48` | Ratio greedy init ((out_w+1)/(in_w+1)) instead of greedy-FAS - a +6.3 pp bette | killed |
 | 0 | `P09` | The campaign's two significance criteria disagree for the first time - decide  | awaiting-operator |
 | 0 | `P13` | Make arc reclamation cheap enough to run on microns (it is worth +0.018759 pp  | proposed |
+| 0 | `H64` | Compose the ASYMMETRIC surrogate with the CHAMPION stack on CUDA — H38 was nev | proposed |
 | 1 | `P02` | The screen seeds are inert for deterministic variants РІР‚вЂќ is 3x the comput | done |
 | 1 | `H36` | SCC-decomposed recursive bounded-span insertion (the Vahidi route) | confirmed |
-| 1 | `H42` | Size up the stage-4 alternation budget - the curve was still rising when we cu | confirmed |
 
 ## Recent cycles
 
@@ -57,7 +57,7 @@
 
 ## Evidence
 
-- `results/*.json`: **469** run records across **33** variants
+- `results/*.json`: **499** run records across **33** variants
 - killed mechanisms on record: **21** (+7 deferred, 12 meta-rules)
 - literature notes: **8** (latest: `vahidi-2025.md`)
 
