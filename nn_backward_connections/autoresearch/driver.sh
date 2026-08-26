@@ -59,6 +59,13 @@ logv() { printf '%s  %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" | tee -a "$DRIVER
 
 hms() { awk -v s="${1:-0}" 'BEGIN{printf "%dh%02dm", int(s/3600), int((s%3600)/60)}'; }
 
+# "12h43m/0h" is what the post-cycle lines printed once the cap was disabled: 0 is the
+# OFF sentinel, not a limit. Render the denominator, never interpolate MAX_DAILY_H raw.
+window_of() {
+  if [ "$MAX_DAILY_S" -gt 0 ]; then printf '%s/%sh' "$(hms "${1:-0}")" "$MAX_DAILY_H"
+  else printf '%s in the last 24 h (cap off)' "$(hms "${1:-0}")"; fi
+}
+
 # ── campaign.yaml knobs ───────────────────────────────────────────────────────
 # campaign.yaml says it is "the ONLY place campaign-level knobs live", but until 2026-08-15 the
 # driver read none of it: the cycle timeout, the daily cap and the free-disk floor were hardcoded
@@ -631,10 +638,10 @@ while true; do
 
   if [ $rc -eq 0 ]; then
     log "--- driver cycle #$cycle / campaign cycle $camp_cycle_after finished rc=0 in ${dur}s"
-    log "      window now $(hms "$window_s")/${MAX_DAILY_H}h"
+    log "      window now $(window_of "$window_s")"
   else
     log "--- driver cycle #$cycle / campaign cycle $camp_cycle_after EXITED rc=$rc after ${dur}s"
-    log "      window now $(hms "$window_s")/${MAX_DAILY_H}h — see $cycle_log"
+    log "      window now $(window_of "$window_s") — see $cycle_log"
     tail -20 "$cycle_log" | sed 's/^/      | /' | tee -a "$DRIVER_LOG" >/dev/null
   fi
 
