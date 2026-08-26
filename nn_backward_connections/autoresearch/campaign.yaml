@@ -382,7 +382,31 @@ promotion_gate:
 # ─────────────────────────────────────────────────────────────────────────────
 budget:
   max_cycles: 200                     # hard backstop on total research cycles
-  max_wall_clock_h_per_day: 12
+  # 0 = DISABLED (operator decision, 2026-08-26). Set to a positive number to cap again.
+  #
+  # This was 12 from the first Phase-7 commit (d2d49e8, 2026-08-09) and is the only constant in
+  # this block that never carried a justification: its neighbours all state a measurement, this
+  # one stated nothing and was never revisited. What it cost, measured on 2026-08-25/26: the
+  # campaign ran 11h15m and then parked 13h05m, a duty cycle of ~47%, which rations the cycles
+  # that actually move the score (a confirming cycle is ~6.4 h deterministic / ~8.5 h stochastic)
+  # to roughly one a day.
+  #
+  # It was also the wrong instrument for what it looked like it was for. A quantity cap limits
+  # HOW MUCH but not WHEN, so the campaign could and did take its 12 h across the operator's own
+  # working hours - and that interference is measured, not hypothetical: P07 records this box
+  # running ~20% slower under ordinary desktop load (connectome 1483.9 s vs 1226.5-1238.3 s),
+  # which is why stage 5 is disabled on microns and why H59 cannot be promoted there. If the goal
+  # is "do not fight me for the machine", a time-of-day window is the fix, not a smaller number.
+  #
+  # WHAT STILL STOPS THIS CAMPAIGN, since removing a budget deserves the list spelled out:
+  #   `touch autoresearch/STOP`  - honoured between cycles AND inside every wait (driver.sh:384)
+  #   budget.max_cycles          - 200 cycles, hard
+  #   budget.max_cycle_wall_clock_h - 10 h, a single runaway cycle is killed
+  #   min_free_disk_gb / results_dir_max_gb - disk floors, refuses to start below them
+  #   3 consecutive no-op cycles - driver halts itself and sets state.json mode=blocked
+  # The ledger keeps accruing while the cap is off, so the logs stay honest and re-enabling it
+  # needs no reset.
+  max_wall_clock_h_per_day: 0
   # Raised 6 -> 10 at the P01 re-baseline (2026-08-09), together with driver.sh CYCLE_TIMEOUT_S.
   # Measured here: a 3-seed screen is ~3.2 h and a confirm (5 seeds x 3 datasets) ~5.3 h, so a
   # cycle that reaches confirm needs ~8.5 h. At the old 6 h cap the driver would have killed every

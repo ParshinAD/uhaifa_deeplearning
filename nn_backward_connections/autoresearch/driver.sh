@@ -285,7 +285,13 @@ log "  root         : $ROOT"
 log "  python       : $PY"
 log "  claude config: ${CLAUDE_CONFIG_DIR:-<CLI default>}"
 log "  cycle prompt : $CYCLE_PROMPT"
-log "  cycle timeout: ${CYCLE_TIMEOUT_S}s     budget: ${MAX_DAILY_H}h per rolling 24 h"
+if [ "$MAX_DAILY_S" -gt 0 ]; then
+  log "  cycle timeout: ${CYCLE_TIMEOUT_S}s     budget: ${MAX_DAILY_H}h per rolling 24 h"
+else
+  log "  cycle timeout: ${CYCLE_TIMEOUT_S}s     budget: DAILY CAP DISABLED (runs continuously)"
+  log "     stop with: touch autoresearch/STOP   (honoured between cycles and inside any wait)"
+  log "     remaining backstops: max_cycles=${MAX_CYCLES}, ${CYCLE_H}h per cycle, disk floors"
+fi
 log "  backstops    : max_cycles=${MAX_CYCLES}  results/<=${RESULTS_MAX_GB}GB  free>=${MIN_FREE_GB}GB"
 log "=============================================================="
 
@@ -559,16 +565,19 @@ while true; do
   fi
 
   # ── rolling 24 h budget gate ────────────────────────────────────────────────
+  # MAX_DAILY_S == 0 means the cap is DISABLED (campaign.yaml max_wall_clock_h_per_day: 0),
+  # same 0-means-off idiom budget.max_cycles already uses. The ledger keeps accruing either
+  # way, so `spend_s` stays honest in the logs and turning the cap back on needs no reset.
   now_s=$(date +%s)
   spend_s="$(budget_window_s "$now_s")"
   proj_s="$(budget_projected_s)"
-  if [ "$proj_s" -gt "$MAX_DAILY_S" ]; then
+  if [ "$MAX_DAILY_S" -gt 0 ] && [ "$proj_s" -gt "$MAX_DAILY_S" ]; then
     log "NOTE: projected cycle cost $(hms "$proj_s") exceeds the whole ${MAX_DAILY_H}h window;"
     log "  clamping the projection to the cap — the timeout below cuts the cycle short instead of"
     log "  deadlocking the driver forever."
     proj_s="$MAX_DAILY_S"
   fi
-  if [ $((spend_s + proj_s)) -gt "$MAX_DAILY_S" ]; then
+  if [ "$MAX_DAILY_S" -gt 0 ] && [ $((spend_s + proj_s)) -gt "$MAX_DAILY_S" ]; then
     deficit=$((spend_s + proj_s - MAX_DAILY_S))
     wait_s="$(budget_wait_s "$now_s" "$deficit")"
     [ "$wait_s" -lt 60 ] && wait_s=60
@@ -580,10 +589,12 @@ while true; do
   fi
   # Cap the launched cycle at what the window can actually afford, so a cycle can never blow the
   # budget it was admitted under.
-  remain_s=$((MAX_DAILY_S - spend_s))
   eff_timeout_s="$CYCLE_TIMEOUT_S"
-  if [ "$remain_s" -lt "$eff_timeout_s" ]; then
-    eff_timeout_s="$remain_s"
+  if [ "$MAX_DAILY_S" -gt 0 ]; then
+    remain_s=$((MAX_DAILY_S - spend_s))
+    if [ "$remain_s" -lt "$eff_timeout_s" ]; then
+      eff_timeout_s="$remain_s"
+    fi
   fi
 
   cycle=$((cycle + 1))
@@ -591,7 +602,11 @@ while true; do
   cycle_log="$LOGDIR/cycle-${stamp}.log"
   head_before="$(git rev-parse HEAD 2>/dev/null || printf 'unknown')"
   log "--- driver cycle #$cycle (campaign cycle $camp_cycle, history=$hist_before) starting"
-  log "      budget $(hms "$spend_s")/${MAX_DAILY_H}h in window, timeout ${eff_timeout_s}s -> $cycle_log"
+  if [ "$MAX_DAILY_S" -gt 0 ]; then
+    log "      budget $(hms "$spend_s")/${MAX_DAILY_H}h in window, timeout ${eff_timeout_s}s -> $cycle_log"
+  else
+    log "      spent $(hms "$spend_s") in the last 24 h (cap off), timeout ${eff_timeout_s}s -> $cycle_log"
+  fi
   [ "$hist_before" = "-1" ] && log "      NOTE: state.json history unreadable — the no-op test below is weakened"
 
   start_s=$(date +%s)
