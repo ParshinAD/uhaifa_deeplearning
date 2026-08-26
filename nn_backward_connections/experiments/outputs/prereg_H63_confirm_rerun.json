@@ -1,0 +1,43 @@
+{
+  "id": "prereg_H63_confirm_rerun",
+  "sealed_at": "2026-08-27",
+  "cycle": 15,
+  "item": "H59",
+  "variant": "H63",
+  "why": "The cycle-15 confirm stage completed 28 of 30 runs before an operator pause. microns seed 31415 never started; microns seed 7 finished but is flagged runtime_guard.degraded=true. This document fixes what will be done about the degraded run BEFORE its replacement is run, so the exclusion cannot be, and cannot be mistaken for, a decision taken after seeing a score.",
+
+  "the_degraded_run": {
+    "file": "results/20260826T201937Z-H63-microns-s7-confirm-c3d229.json",
+    "wall_clock_s": 3547.4724686145782,
+    "deadline_s": 3450.0,
+    "deadline_reached": true,
+    "stages_truncated": {"stage3_sift": {"done": 1, "requested": 12},
+                         "stage4_alternation": {"done": 1, "requested": 5}},
+    "pct": 83.20094526,
+    "note": "Below the champion. That is expected of a truncated run and is NOT the reason it is excluded."
+  },
+
+  "rule": {
+    "statement": "A run whose harness-recorded runtime_guard.degraded is true did not execute the computation the variant specifies. eval/runtime_guard.py aborted it at stage boundaries and recorded requested-vs-done, so its score is a sample of a DIFFERENT, smaller algorithm. It is therefore not a sample of this variant's score distribution and may not be pooled with clean runs. audit.py:860 already FAILs any pool containing one; this rule says what to do instead of arguing with the audit.",
+    "score_independence": "The exclusion criterion is runtime_guard.degraded, a boolean the harness sets from wall clock before any score is read. No score, of the excluded run or of its replacement, enters the decision. Applied blind, the same rule would have excluded a truncated run that scored ABOVE the champion.",
+    "disposition": "Move the file to results/quarantine/ (audit.load_runs globs results/*.json non-recursively, so a subdirectory is out of pool while the artifact is retained in full and stays under version control). Never delete it.",
+    "replacement": "Re-run the SAME seed at the same role. Seeds are not re-drawn, not added, not dropped."
+  },
+
+  "committed_in_advance": {
+    "if_rerun_is_clean": "Its score stands as microns seed 7, whatever it is. Pool = seeds 42/123/999/7/31415, n=5, and the ladder proceeds to critic + audit.py --gate promotion.",
+    "if_rerun_is_ALSO_degraded": "The verdict for this cycle is ITERATE, not keep. Two truncations out of two attempts at the same seed makes the truncation a property of the variant on this hardware, not of the box's load, and a variant that cannot finish microns inside the guard is runtime-blocked there (queue item P07). No quarantine in that case: BOTH degraded runs stay in results/ and the failure is reported as the result.",
+    "if_seed_31415_is_degraded": "Same rule, same consequence: ITERATE. It has no prior attempt, so there is nothing to quarantine and its truncation is reported as-is.",
+    "no_third_attempt": "One re-run per seed. A best-of-N over re-runs would be exactly the cherry-picking this document exists to prevent."
+  },
+
+  "prior_evidence_that_the_cause_is_the_BOX_and_not_the_variant": {
+    "claim": "Stated as a prior, not as a finding. It is falsifiable by the re-run and the falsification rule is written above.",
+    "monotone_drift_across_the_four_microns_seeds_s": [3079.8, 3100.8, 3397.7, 3547.5],
+    "pure_best_pct_identical_in_all_four": 83.12442205824114,
+    "variant_is_FASTER_than_the_champion_here": "H63 clean microns runs are 2974-3100 s; the H42 champion is 3398-3418 s against the same 3450 s deadline. If the deadline were binding on the algorithm it would bind on the champion first.",
+    "P07": "This box measures ~20% slower under ordinary desktop load (connectome 1483.9 s vs 1226.5-1238.3 s). The daily budget cap was disabled 2026-08-26, so the campaign now overlaps that load more than it used to."
+  },
+
+  "load_control_for_the_rerun": "The pytest suite and every other job are finished before launch; nothing else the campaign controls runs concurrently. The campaign cannot control the operator's desktop."
+}
