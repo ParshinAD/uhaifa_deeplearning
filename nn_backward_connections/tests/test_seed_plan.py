@@ -24,6 +24,20 @@ sys.path.insert(0, str(_ROOT / "autoresearch"))
 
 import seed_plan  # noqa: E402
 
+
+def _screened() -> tuple:
+    """Datasets the SCREEN runs, per campaign.yaml `in_screen` (2026-08-26: microns is
+    confirm-only). The screen-role tests below are about the SEED policy -- how many seeds a
+    screened dataset gets -- so they must iterate this, not a hardcoded triple, or they fail
+    for the wrong reason whenever the dataset set changes. Confirm-role tests keep all three
+    on purpose: confirm never skips."""
+    import yaml
+    cfg = yaml.safe_load((_ROOT / "autoresearch" / "campaign.yaml").read_text(encoding="utf-8"))
+    return tuple(ds for ds, v in cfg["datasets"].items() if v.get("in_screen", True) is not False)
+
+
+SCREENED = _screened()
+
 pytest.importorskip("yaml", reason="seed_plan reads campaign.yaml")
 
 PRIMARIES = ("connectome", "microns")
@@ -44,7 +58,7 @@ def test_deterministic_variant_screens_at_the_declared_seed_counts(campaign):
     policy = campaign["seed_policy"]["screen_seeds_by_class"]["deterministic"]
     p = seed_plan.plan("H35", "implement")
     assert p["classification"] == "deterministic"
-    for ds in ("connectome", "microns", "mouse"):
+    for ds in SCREENED:
         assert p["seeds"][ds] == list(policy[ds]), f"{ds}: got {p['seeds'][ds]}"
 
 
@@ -73,7 +87,7 @@ def test_deterministic_screen_carries_the_tripwire():
 def test_rng_variant_keeps_three_seeds_everywhere():
     p = seed_plan.plan("H31", "implement")          # RandomState(seed + 7919) in the LNS destroy
     assert p["classification"] == "rng"
-    for ds in ("connectome", "microns", "mouse"):
+    for ds in SCREENED:
         assert len(p["seeds"][ds]) == 3, f"{ds}: {p['seeds'][ds]}"
 
 
@@ -90,14 +104,14 @@ def test_confirm_role_is_never_touched_by_the_policy(campaign):
 def test_non_screen_roles_fall_back_to_screen_seeds(campaign):
     for role in ("verify", "prototype"):
         p = seed_plan.plan("H35", role)
-        for ds in ("connectome", "microns", "mouse"):
+        for ds in SCREENED:
             assert p["seeds"][ds] == list(campaign["datasets"][ds]["screen_seeds"])
 
 
 def test_unknown_variant_fails_safe_to_three_seeds():
     p = seed_plan.plan("H_does_not_exist", "implement")
     assert p["classification"] == "rng"
-    for ds in ("connectome", "microns", "mouse"):
+    for ds in SCREENED:
         assert len(p["seeds"][ds]) == 3
 
 
@@ -113,13 +127,16 @@ def test_disabled_policy_falls_back_to_screen_seeds(monkeypatch, campaign):
     disabled["seed_policy"]["enabled"] = False
     monkeypatch.setattr(seed_plan, "_campaign", lambda: disabled)
     p = seed_plan.plan("H35", "implement")
-    for ds in ("connectome", "microns", "mouse"):
+    for ds in SCREENED:
         assert p["seeds"][ds] == list(campaign["datasets"][ds]["screen_seeds"])
 
 
 def test_missing_policy_entry_falls_back_to_screen_seeds(monkeypatch, campaign):
     import copy
     partial = copy.deepcopy(campaign)
+    # This test is about the POLICY fallback, not about in_screen, so put microns back on the
+    # screen for the duration -- otherwise it would pass vacuously on an empty seed list.
+    partial["datasets"]["microns"]["in_screen"] = True
     del partial["seed_policy"]["screen_seeds_by_class"]["deterministic"]["microns"]
     monkeypatch.setattr(seed_plan, "_campaign", lambda: partial)
     p = seed_plan.plan("H35", "implement")
@@ -143,3 +160,52 @@ def test_campaign_yaml_declares_device_determinism_for_every_one_seed_dataset(ca
         if len(seeds) < len(campaign["datasets"][ds]["screen_seeds"]):
             assert verified.get(ds) is True, (
                 f"{ds} screens at {len(seeds)} seed(s) but device determinism is not verified")
+
+
+# ── in_screen: the screen may skip a dataset, confirm may not (2026-08-26) ────────────────
+# Operator decision: microns moves off the screen to cut hypothesis-iteration cost ~3x
+# (~3.65 h -> ~1.17 h for a 3-seed screen). The danger this guards is the obvious one: that
+# "confirm-only" quietly becomes "never run", and a champion gets promoted on one primary.
+
+def _cfg():
+    import yaml
+    return yaml.safe_load((_ROOT / "autoresearch" / "campaign.yaml").read_text(encoding="utf-8"))
+
+
+def test_microns_is_marked_confirm_only():
+    assert _cfg()["datasets"]["microns"].get("in_screen") is False
+
+
+def test_screen_skips_a_dataset_marked_in_screen_false():
+    p = seed_plan.plan("H42", "implement")
+    assert p["seeds"]["microns"] == []
+    assert "confirm-only" in p["reason"]["microns"]
+
+
+def test_confirm_still_runs_every_dataset():
+    """The whole point: deferred, not dropped."""
+    p = seed_plan.plan("H42", "confirm")
+    cfg = _cfg()["datasets"]
+    for ds in ("connectome", "microns", "mouse"):
+        assert p["seeds"][ds] == list(cfg[ds]["confirm_seeds"]), ds
+
+
+def test_promotion_still_requires_both_primaries():
+    """in_screen must not have loosened the promotion gate."""
+    cfg = _cfg()
+    prim = [ds for ds, v in cfg["datasets"].items() if v["role"] == "primary"]
+    assert set(prim) == {"connectome", "microns"}
+    assert cfg["promotion_gate"]["primary"]["require_delta_gt_min_effect"] is True
+
+
+def test_skipped_dataset_emits_no_plan_line(capsys, monkeypatch):
+    """sweep.sh reads this file line by line; a dataset with no seeds must not appear."""
+    monkeypatch.setattr(sys, "argv", ["seed_plan.py", "--variant", "H42", "--role", "implement"])
+    seed_plan.main()
+    lines = [l for l in capsys.readouterr().out.splitlines() if l.strip()]
+    assert [l.split()[0] for l in lines] == ["connectome", "mouse"]
+
+
+def test_default_is_screened_so_a_new_dataset_is_not_silently_dropped():
+    assert _cfg()["datasets"]["connectome"].get("in_screen", True) is not False
+    assert _cfg()["datasets"]["mouse"].get("in_screen", True) is not False

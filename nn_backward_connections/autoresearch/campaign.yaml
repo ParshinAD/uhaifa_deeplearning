@@ -123,6 +123,22 @@ datasets:
   microns:
     role: primary
     n_nodes: 67534
+    # OPERATOR DECISION 2026-08-26: microns runs at CONFIRM but NOT at the screen.
+    #
+    # Cost, from this session's own runs: connectome ~1400 s, microns 2974-3040 s, mouse 1 s.
+    # A 3-seed screen is ~3.65 h with microns and ~1.17 h without, so dropping it makes
+    # hypothesis iteration ~3x faster on the rung where most hypotheses die (H56, H57 and H47
+    # all died at the prototype rung; H60 died at the screen).
+    #
+    # WHY IT IS NOT DELETED FROM THE PROTOCOL. microns is the generalisation check and it has
+    # caught a real graph-dependent effect exactly once, which is once more than never: H38's
+    # asymmetric surrogate is +0.3668 pp on connectome and -0.6689 pp on microns
+    # (experiments/log.md 2026-08-17). Removing it entirely would let that class of result
+    # reach a champion unchallenged. Keeping it at confirm means no promotion can happen
+    # without it, while variants that die at the screen never pay for it.
+    #
+    # promotion_gate.primary is UNCHANGED: both primaries are still required to promote.
+    in_screen: false
     baseline_sigma_pp: 0.0006
     # Same re-justification as connectome: champion sigma is 0.0000 here, so this is a minimum
     # effect size, not 2 x sigma. Note microns is the expensive dataset on this hardware
@@ -230,10 +246,13 @@ gates:
       the proxy is known to under-represent. Budget: minutes, CPU.
   - id: screen
     what: >
-      Real harness, role=implement, 3 datasets, vs champion. Seed count per dataset comes from
-      seed_policy below, NOT from a fixed 3: run `python autoresearch/seed_class.py --variant
-      <id>` first and record the verdict in the log entry.
-      Pass iff delta > screen_delta_pp on BOTH primaries and mouse non-inferior.
+      Real harness, role=implement, vs champion, on the datasets whose `in_screen` is not
+      false (2026-08-26: connectome and mouse; microns is confirm-only, see its entry and note
+      that promotion still requires BOTH primaries). Do not pass --datasets by hand; let
+      seed_plan.py/`sweep.sh --auto-seeds` resolve it, so the policy is executed and not
+      remembered. Seed count per dataset comes from seed_policy below, NOT from a fixed 3:
+      run `python autoresearch/seed_class.py --variant <id>` first and record the verdict.
+      Pass iff delta > screen_delta_pp on every SCREENED primary and mouse non-inferior.
   - id: confirm
     what: >
       Independent re-run by the verifier: confirm_seeds per dataset, role=confirm.

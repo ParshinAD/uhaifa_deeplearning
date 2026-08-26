@@ -72,6 +72,14 @@ def plan(variant: str, role: str, datasets=DATASETS) -> dict:
     reason: Dict[str, str] = {}
 
     for ds in datasets:
+        # The screen may skip a dataset (campaign.yaml datasets.<ds>.in_screen: false).
+        # CONFIRM never skips: promotion_gate.primary still requires BOTH primaries, so a
+        # confirm-only dataset is deferred, not dropped. Executed here rather than left to the
+        # agent's memory, because "remember not to run microns" is not a policy.
+        if role != "confirm" and ds_cfg[ds].get("in_screen", True) is False:
+            seeds[ds] = []
+            reason[ds] = f"in_screen=false: {ds} is confirm-only, not screened"
+            continue
         if role == "confirm":
             seeds[ds] = list(ds_cfg[ds]["confirm_seeds"])
             reason[ds] = "confirm: full confirm_seeds, policy does not apply"
@@ -91,7 +99,8 @@ def plan(variant: str, role: str, datasets=DATASETS) -> dict:
                       else f"class={verdict}: 1-seed screen (P02)")
 
     n_runs = sum(len(v) for v in seeds.values())
-    baseline_runs = sum(len(ds_cfg[ds]["screen_seeds"]) for ds in datasets)
+    baseline_runs = sum(len(ds_cfg[ds]["screen_seeds"]) for ds in datasets
+                        if role == "confirm" or ds_cfg[ds].get("in_screen", True) is not False)
     return {
         "variant": variant,
         "role": role,
@@ -123,6 +132,8 @@ def main() -> int:
         return 0
     # Shell-consumable: "<dataset> <seed> <seed> ...", one line per dataset.
     for ds, seeds in p["seeds"].items():
+        if not seeds:                # skipped dataset (in_screen: false) — emit no plan line
+            continue
         print(f"{ds} {' '.join(str(s) for s in seeds)}")
     print(f"# {p['variant']} role={p['role']} class={p['classification']} "
           f"runs={p['n_runs']} (vs {p['n_runs_at_3_seeds']} at a flat 3 seeds)", file=sys.stderr)
