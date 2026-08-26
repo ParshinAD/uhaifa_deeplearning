@@ -648,7 +648,7 @@
     {
       "id": "H59",
       "title": "Minimal-FAS arc reclamation - re-add backward edges whose endpoints are not forward-reachable",
-      "status": "proposed",
+      "status": "in_progress",
       "priority": 1,
       "axis": "problem formulation / arc-set instead of position-space",
       "hypothesis": "The champion's order is a topological order of its forward-edge DAG F. If some backward edge (u,v) has no F-path from v to u, then F union {(u,v)} is acyclic and ANY topological order of it scores at least current + w_uv, exactly and monotonically. No move class in the campaign can find this, because reclaiming the arc may require re-sorting thousands of nodes none of which profits alone, and because the SCC refiner condenses the FULL graph G (where u and v are almost always in one SCC) rather than F union {e}. The claim: the total weight of such reclaimable backward edges on the champion's connectome order exceeds 0.012 pp.",
@@ -664,7 +664,8 @@
       "expected_pp": "connectome 0 to +0.05, midpoint +0.01; ~50% chance of exactly 0. Queued for the certificate as much as for the score.",
       "kind": "science",
       "source": "autoresearch/lit/scan-cycle12.md (cycle 12 divergent-mode scan)",
-      "note_2026_08_26": "RE-SPECIFY THE GATE BEFORE RUNNING THIS. The stated kill_condition is a sum of reclaimable backward-edge weight, which is exactly the CAPACITY statistic M11 forbids as evidence. The secondary kill condition (greedy heaviest-first re-add with an acyclicity check, plus one topological re-sort, measured against the frozen scorer) is the realised number and must become the PRIMARY gate. M12 additionally applies: measure it inside the pipeline, or state the control arms remaining headroom next to any from-champion number."
+      "note_2026_08_26": "RE-SPECIFY THE GATE BEFORE RUNNING THIS. The stated kill_condition is a sum of reclaimable backward-edge weight, which is exactly the CAPACITY statistic M11 forbids as evidence. The secondary kill condition (greedy heaviest-first re-add with an acyclicity check, plus one topological re-sort, measured against the frozen scorer) is the realised number and must become the PRIMARY gate. M12 additionally applies: measure it inside the pipeline, or state the control arms remaining headroom next to any from-champion number.",
+      "note_2026_08_26_cycle14": "GATE RE-SPECIFIED AND RUN. The stated kill_condition (a reclaimable-WEIGHT sum) was demoted to context under M11 and the secondary condition - the REALISED oracle score after greedy heaviest-first re-add plus one rank-stable topological re-sort - became the primary gate. Sealed prereg experiments/prereg/H59_arc_reclamation.md, committed fd7ac84 BEFORE launch. PROTOTYPE PASSED ON ALL THREE DATASETS and the mechanism is confirmed real: the champion's feedback arc set is NOT minimal. connectome +0.017596 pp (2,508 reclaimable arcs, 2,221 accepted after 287 conflicts, bar 0.012); microns +0.018759 pp (4,249 reclaimable, 2,807 accepted, bar 0.002); mouse +0.072557 pp (5 arcs, bar 0.010). Every reachability query resolved exactly (n_unknown 0/1/0), and a SECOND round found exactly 0 reclaimable arcs on all three, so the stage reaches a fixed point and certifies the resulting arc set minimal. IMPLEMENTED: src/mfas/refine/reclaim.py (+60 tests) and src/mfas/experiments/H59.py, committed 70df34c before the screen. NOT YET PROMOTABLE: microns is blocked on P07 - the stage costs ~1075 s there and the champion already runs 3398-3418 s against a 3450 s guard deadline, so _RECLAIM_ROUNDS['microns']=0 ships and the microns delta is exactly 0 by construction. A screen cannot pass both primaries until that is fixed. NEXT: P13 (make the stage cheap) or H62 (buy the seconds from the microns Rocket budget)."
     },
     {
       "id": "H60",
@@ -720,6 +721,55 @@
       "est_cost": "low - reading and writing, zero compute",
       "expected_pp": "0.0 - this buys gate integrity, not score",
       "source": "cycle 13 novelty rung (experiments/log.md 2026-08-26)"
+    },
+    {
+      "id": "P13",
+      "title": "Make arc reclamation cheap enough to run on microns (it is worth +0.018759 pp there)",
+      "status": "proposed",
+      "priority": 0,
+      "kind": "infrastructure",
+      "axis": "runtime / implementation efficiency",
+      "hypothesis": "The H59 stage is pure-Python and memory-bound in the wrong way: the reachability scan is 222 s on microns and conflict resolution is 843 s. Both are embarrassingly vectorisable or compilable. Getting the stage under ~50 s makes the measured +0.018759 pp microns gain affordable inside the existing 3450 s guard deadline, with no change to the algorithm and therefore no change to the result.",
+      "rationale": "Cycle 14 measured the gain and the cost separately. The gain is real and above bar on both primaries; the ONLY thing stopping a promotion is that microns has no seconds to spare. Two concrete targets: (a) the 1-hop reciprocal test is currently a per-edge searchsorted in Python and can be done for all 2.08M backward edges in one vectorised pass; (b) conflict resolution runs a per-arc DFS over a 65,948-node residue - the standard fix is an incrementally maintained topological order (Pearce-Kelly), which keeps every reachability query rank-confined and turns 843 s into seconds.",
+      "kill_condition": "If the stage cannot be brought under ~100 s on microns without changing which arcs it accepts (bit-identical acceptance set, verified against the cycle-14 prototype output), the cheapening route is dead and H59 must instead buy its seconds from the microns budget (H62).",
+      "est_cost": "CPU only, no GPU. One module rewrite plus a bit-identity test against experiments/outputs/proto_H59_microns.json.",
+      "source": "experiments/log.md 2026-08-26 (Cycle 14)"
+    },
+    {
+      "id": "H62",
+      "title": "Buy the microns seconds for arc reclamation from the Rocket epoch budget",
+      "status": "proposed",
+      "priority": 2,
+      "kind": "science",
+      "axis": "compute allocation",
+      "hypothesis": "microns spends 80,000 Rocket epochs and has no room for the +0.018759 pp arc-reclamation stage. Cutting Rocket epochs frees the seconds; the question is whether the loss from a shorter gradient phase is smaller than +0.018759 pp.",
+      "rationale": "H43 already measured the closest thing to this and it is NOT a duplicate: H43 spent the freed 2,338 s on MORE STAGE-4 CYCLES, which are saturating, and landed at -0.00243 pp. Arc reclamation is a different, non-saturating, provably monotone move class that stage 4 cannot reach at all, so the same freed budget buys something stage 4 could not. The arithmetic to beat: H43's 20,000-epoch arm reached 83.23842 against the champion's 83.24085; adding +0.018759 pp of reclamation would land at ~83.25718, i.e. +0.01633 pp over the champion and 8x the 0.002 bar.",
+      "kill_condition": "If the realised composed score (reduced Rocket epochs + reclamation, measured by the frozen oracle in a real run) is under champion + 0.002 pp on microns, the reallocation route is dead and H59's microns leg depends entirely on P13.",
+      "prior_evidence": [
+        "experiments/outputs/proto_H43_microns.json",
+        "experiments/outputs/proto_H59_microns.json"
+      ],
+      "est_cost": "one microns prototype re-using the H43 arm, then a screen.",
+      "expected_pp": "microns +0.010 to +0.018",
+      "source": "experiments/log.md 2026-08-26 (Cycle 14)"
+    },
+    {
+      "id": "P14",
+      "title": "Variants are built on ONE pipeline but sota.json has a different champion per dataset",
+      "status": "proposed",
+      "priority": 1,
+      "kind": "infrastructure",
+      "axis": "comparator hygiene",
+      "hypothesis": "sota.json holds H42 (connectome), H42 (microns) and H52 (mouse). Every variant module is written on top of a single pipeline - in practice H42 - so on mouse it does not contain the champion, and its mouse number is measured against a base 0.186 pp below H52. The screen cannot see this because the cycle applies the comparator by hand.",
+      "rationale": "Surfaced in cycle 14 by H59, whose mouse leg scored 92.94798739 against the H52 champion 93.10282596 = -0.154839 pp, purely because H59 is built on H42 and so lacks H44's _EPOCHS['mouse']=0 and H52's stage 5. Chasing it turned up the SAME fault one cycle earlier: H60's mouse runs scored 92.91701410 and the cycle-13 record compares that to the H42 value, calling it 'exactly the H42 value ... the mechanism gained nothing', when the mouse champion is H52. No verdict has turned on it yet - H60 died on connectome and H59 is iterating - but it is the moving-comparator error CAMPAIGN.md warns about, and it will silently corrupt the first variant whose verdict depends on mouse.",
+      "kill_condition": "Not a hypothesis - it is either fixed or it is not. Two parts: (a) variant modules compose with the PER-DATASET champion, or state in the module why they do not; (b) something mechanical checks the screen's comparator against sota.json per dataset, so a hand-applied comparator cannot be wrong twice in a row unnoticed.",
+      "prior_evidence": [
+        "results/*-H59-mouse-*-implement-*.json",
+        "results/*-H60-mouse-*-implement-*.json",
+        "autoresearch/sota.json"
+      ],
+      "est_cost": "no compute; a check in the screening path plus a convention for variant modules.",
+      "source": "experiments/log.md 2026-08-26 (Cycle 14)"
     }
   ]
 }

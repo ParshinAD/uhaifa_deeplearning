@@ -1,8 +1,8 @@
 # Campaign dashboard
 
-*Generated 2026-08-26 01:49 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-26 03:02 by `autoresearch/dashboard.py` — do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 13 · **mode:** `divergent` · **consecutive kills:** 4
+**Phase:** `quality` · **cycle:** 14 · **mode:** `divergent` · **consecutive kills:** 5
 
 ## Progress — connectome (Phase 1 target)
 
@@ -21,7 +21,7 @@
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H52** | 93.1028 ± 0.0 | 20 | ~1s | experiments/log.md 2026-08-17 (H52) |
 
-## Queue — 10 proposed / 35 total
+## Queue — 12 proposed / 38 total
 
 | # | id | title | status |
 |---|---|---|---|
@@ -33,15 +33,16 @@
 | 0 | `H50` | The reference ROUTE run standalone: ratio-greedy init + iterated exact-gain pa | killed |
 | 0 | `H48` | Ratio greedy init ((out_w+1)/(in_w+1)) instead of greedy-FAS - a +6.3 pp bette | killed |
 | 0 | `P09` | The campaign's two significance criteria disagree for the first time - decide  | awaiting-operator |
+| 0 | `P13` | Make arc reclamation cheap enough to run on microns (it is worth +0.018759 pp  | proposed |
 | 1 | `P02` | The screen seeds are inert for deterministic variants РІР‚вЂќ is 3x the comput | done |
 | 1 | `H36` | SCC-decomposed recursive bounded-span insertion (the Vahidi route) | confirmed |
 | 1 | `H42` | Size up the stage-4 alternation budget - the curve was still rising when we cu | confirmed |
-| 1 | `H41` | Segment / block moves instead of single-node re-insertion | killed |
 
 ## Recent cycles
 
 | cycle | item | verdict | note |
 |---|---|---|---|
+| 14 | `H59` | **iterate** | Minimal-FAS arc reclamation. Prototype PASSED all three with exact certificates  |
 | 13 | `H60` | **kill** | Net-digraph condensation inside the SCC refiner, killed at the SCREEN. The proto |
 | 12 | `H47` | **kill** | Exact subset-DP at the SCC recursion's leaves, killed at the prototype rung for  |
 | 11 | `H57` | **kill** | Prefix-shared tail multi-start, killed at the prototype rung for ~2.1 h by a pre |
@@ -53,11 +54,10 @@
 | 5 | `H42` | **keep** | NEW CHAMPION x3, second score move of the campaign, from two constants. Resumed  |
 | 4 | `None` | **lost** | RECONSTRUCTED 2026-08-25 to make the history contiguous, NOT a real cycle record |
 | 3 | `H36` | **keep** | NEW CHAMPION on all three datasets - the first score move of the autonomous camp |
-| 2 | `P02` | **keep** | Protocol amendment, no algorithm change. Established BOTH legs: (A) a static cal |
 
 ## Evidence
 
-- `results/*.json`: **464** run records across **31** variants
+- `results/*.json`: **468** run records across **32** variants
 - killed mechanisms on record: **21** (+7 deferred, 12 meta-rules)
 - literature notes: **8** (latest: `vahidi-2025.md`)
 

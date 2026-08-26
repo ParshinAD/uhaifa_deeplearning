@@ -6096,3 +6096,220 @@ PYTHONPATH=src $PY experiments/proto_H60_alternation.py --dataset connectome --c
     --out experiments/outputs/proto_H60_size_connectome.json
 bash autoresearch/sweep.sh --exp H60 --role implement --auto-seeds
 ```
+
+---
+
+## 2026-08-26 — Cycle 14 · H59: minimal-FAS arc reclamation — **ITERATE** (the screen passes on connectome; the other two legs did not get a fair test)
+
+**Mode: divergent** (`cycles_since_score_move = 5`, `consecutive_kills = 4` — both triggers
+active). Item taken at queue priority 1, as `state.json` directed. Machine: Windows 10 laptop,
+RTX 4060 (CUDA), torch 2.8.0+cu128, python 3.9.25.
+
+Preflight: clean tree, branch `auto/campaign-v3` matching `campaign.yaml`, `pytest tests/ -q`
+**448 passed in 180.79 s** (508 after this cycle's 60 new tests).
+
+### The hypothesis
+
+The champion's order induces a forward edge set `F`. `F` is a DAG and the order is one of its
+topological orders. For a **backward** edge `(u, v)` — `rank[v] < rank[u]`, so it currently
+counts as feedback —
+
+> **Reclamation lemma.** If `u` is unreachable from `v` in `F`, then `F ∪ {(u,v)}` is acyclic,
+> and **every** topological order of it scores at least `base + w_uv`.
+>
+> *Proof.* Adding an arc to a DAG creates a cycle iff its head already reaches its tail. A
+> topological order of a DAG makes every arc of that DAG feedforward, so all of `F` is retained
+> — the `base` score — and `(u,v)` is gained. Edges outside `F ∪ {(u,v)}` can only add more. ∎
+
+So the question is whether the campaign's feedback arc set is **minimal**, in the standard FAS
+sense that no deleted arc can be reintroduced. Nothing in the pipeline has ever enforced it.
+
+**Why no existing move class can find these.** Reclaiming one arc generally requires re-sorting
+thousands of nodes, none of which profits alone, so the single-node sift (H35) and the exact pair
+move (H45) are blind to it by construction. The SCC refiner (H36/H42) condenses `G`, where both
+endpoints sit in one giant SCC — and H60 established that even the exact net-digraph condensation
+`D+` does not separate them. This move never asks where a node should go: it edits the **arc
+set** and re-derives an order from it.
+
+### Gate 0 — the gate itself was re-specified, before anything ran
+
+The queue item's stated `kill_condition` was *"the total weight of reclaimable backward edges
+exceeds 0.012 pp"*. That is a **capacity** statistic, and **M11 forbids capacity as evidence** —
+H47 measured capacity and achievability on the same order and they differed by two orders of
+magnitude. The item's own secondary condition is the realised number, so it was promoted:
+
+| | statistic | role |
+|---|---|---|
+| **PRIMARY (the gate)** | realised **frozen-oracle** percentage after greedy heaviest-first re-add + one rank-stable topological re-sort | decides the verdict |
+| SECONDARY | `n_reclaimable`, `w_reclaimable` | **context only**, never a gate |
+
+Sealed in `experiments/prereg/H59_arc_reclamation.md` and committed as **`fd7ac84`** *before* the
+primaries were launched (queue item P11, and the H60 provenance lesson).
+
+### Gate 1 — novelty: **PASS**
+
+No entry in `killed.json` shares the axis *problem formulation / arc-set*. The 21 killed items
+span restarts, beta-schedules, optimizers, surrogates, warm-starts, and position-space move
+classes and decompositions. The nearest neighbours were checked explicitly and are distinct:
+**H45** (exact pair relocation) moves node positions and was measured on the same backward-edge
+population, but its move class is "extract two nodes and re-insert them adjacent"; **H60** closed
+the *structure-graph* dimension of the decomposition axis, not the arc set. P12 is real — five
+kills recorded in `queue.json` are missing from `killed.json` — so H43/H45/H46/H50/H55 were read
+from `queue.json` directly rather than trusting the index.
+
+### Gate 2 — prototype: **PASS on all three**, and every query resolved exactly
+
+CPU only, zero GPU. connectome and microns ran **concurrently** (single-threaded, no device
+contention), so the timings below are upper bounds rather than clean costs.
+
+| dataset | backward edges | reclaimable (CAPACITY) | accepted | conflicts | realised delta | bar |
+|---|---|---|---|---|---|---|
+| connectome | 1,178,821 (w 6,641,358) | 2,508 (w 8,191 = 0.019543 pp) | 2,221 (w 7,375) | 287 | 84.15409511 → 84.17169144 = **+0.017596 pp** | 0.012 |
+| microns | 2,084,531 (w 2,581,002) | 4,249 (w 4,331 = 0.028122 pp) | 2,807 (w 2,889) | 1,442 | 83.24085291 → 83.25961197 = **+0.018759 pp** | 0.002 |
+| mouse | 129 | 5 | 5 | 0 | 93.10282596 → 93.17538326 = **+0.072557 pp** | 0.010 |
+
+Four things make this stronger than a bare pass:
+
+1. **`n_unknown` is 0 / 1 / 0.** Every reachability query was settled exactly; nothing was
+   assumed. The single microns unknown carries weight 1 of 15,400,557, i.e. 6.5e-06 pp.
+2. **A second round found exactly 0 reclaimable arcs on all three.** The stage reaches a fixed
+   point in one pass and the resulting arc set is *certifiably minimal*. That is a certificate,
+   not an estimate.
+3. **`lemma_holds` was checked and held everywhere** — realised >= base + reclaimed weight.
+4. **The heaviest reclaimable connectome arc weighs 39**, against a maximum edge weight of 2,405.
+   Every heavy backward edge is genuinely irreclaimable; the gain is 2,221 light arcs. The FAS
+   was "almost minimal", and the violation lives entirely in the tail.
+
+Artifacts: `experiments/outputs/proto_H59_{connectome,microns,mouse}.json`.
+
+### Implementation, committed BEFORE the screen — `70df34c`
+
+`src/mfas/refine/reclaim.py` (the lemma, the rank-confined bidirectional reachability search, the
+conflict resolver, the rank-stable topological sort) plus `tests/test_reclaim.py` (**60 tests**:
+the reachability oracle against a brute-force transitive closure, budget exhaustion answering
+`None` and never a wrong boolean, joint acyclicity of the accepted set, a hand-built conflicting
+pair, monotonicity, the lemma's lower bound, fixed-point convergence, determinism).
+`src/mfas/experiments/H59.py` appends it to H42 as a terminal stage 6. Full suite **508 passed**.
+
+`seed_class.py` initially resolved H59 as `rng` on `UNRESOLVED: _time.time()` — the alias
+`import time as _time` is not in `KNOWN_SAFE_ROOTS`, though `time` is. The plain import resolves
+it to `deterministic`, matching H42. The classifier was right to be conservative; the fail-safe
+worked as designed.
+
+### Gate 3 — screen: **PASS on connectome. The other two legs did not get a fair test.**
+
+`bash autoresearch/sweep.sh --exp H59 --role implement --datasets connectome,mouse --auto-seeds`
+→ class=deterministic, connectome s42, mouse s42/123/999. 4 runs, 02:30:58 → 02:57:45.
+
+**connectome — PASS.**
+
+| | value |
+|---|---|
+| H59 | **84.17175348** (score 35,278,184; wall 1574.1 s) |
+| champion H42 | 84.15409511 |
+| delta | **+0.017658 pp** against a 0.012 pp bar — **1.47x** |
+| stage-6 cost | 457.6 s of the 1574.1 s |
+| internal control | `h42_best_pct` = **84.15409511053134**, bit-identical to the champion |
+
+That last row is the cleanest control this campaign has had: H59's stages 1–4 reproduced the
+champion **exactly**, so the whole +0.017658 pp is attributable to stage 6 and to nothing else.
+The three mouse seeds returned an identical value (std 0), so the deterministic classification
+holds and the 1-seed connectome number is valid under the P02 tripwire.
+
+**mouse — NOT A FAIR TEST, and the reason is a defect in my own variant.** H59 scored
+92.94798739 on all three seeds, **−0.154839 pp** against the mouse champion. But the mouse
+champion is **H52**, not H42, and H59 is built on H42: it lacks H44's `_EPOCHS['mouse'] = 0` and
+H52's stage-5 sequential pair relocation. Its `h42_best_pct` on mouse is 92.91701410 — the H42
+value. So this compares "H42 + reclamation" against "H52"; it does not test the mechanism, which
+in fact *gained* +0.030973 pp over its own base here.
+
+It formally clears the −0.26 pp non-inferiority margin, and **that pass is not being claimed**:
+leaning on it would be exactly the mis-specification queue item **P04** was filed about.
+
+**microns — NOT RUN, deliberately.** `_RECLAIM_ROUNDS['microns'] = 0` ships, so H59 is
+byte-identical to H42 there and its delta is exactly 0 by construction; spending ~57 minutes of
+GPU to confirm that arithmetic would be waste. The reason is runtime, not mechanism: the stage
+costs ~1075 s on microns while the champion already runs 3398–3418 s against a 3450 s guard
+deadline. 3400 + 1075 ≈ 4475 s against a 3600 s cap. **This is P07**, and H59 is now the largest
+piece of evidence it has been handed — a measured +0.018759 pp, 9.4x that dataset's bar, that
+cannot be collected because there are no seconds left.
+
+### Gates 4–5 — confirm, critic: **NOT RUN**
+
+A screen must pass **both** primaries. One passed and one was not run, so there is nothing for a
+confirm to confirm. Recorded in `gates_run` by omission, not in prose.
+
+### The result that outlives the item — **M12 does not apply to a terminal stage**
+
+| | prototype | screen | difference |
+|---|---|---|---|
+| connectome | +0.017596 pp | **+0.017658 pp** | **+0.000062 pp** |
+
+M12 (cycle 13) says a prototype composed from the champion's converged order **overstates** the
+pipeline delta — measured at 3.76x on connectome and unboundedly on mouse. Here it predicted the
+screen to within 6.2e-05 pp, 0.35% relative. This is the first prototype number in the campaign
+to transfer to a screen, and the reason is **structural rather than lucky**:
+
+> M12's bias comes from the control arm starting at its own fixed point while the variant arm
+> does not. That requires the variant to *diverge* from the control somewhere upstream. H60
+> altered an **inner** stage, so its variant arm reached stage 4 on a different trajectory. H59
+> appends a **terminal** stage to an unchanged pipeline, so the variant arm's input *is* the
+> control arm's output — bit-identically, since H42 is deterministic here. There is no
+> trajectory to diverge.
+
+**Scope of M12, sharpened:** a from-champion prototype is a biased screening number for a variant
+that changes any stage other than the last, and a genuine *prediction* for a variant that only
+appends. The residual difference is not noise either — it is the conflict resolver's tie-break:
+the prototype sorted candidates by `-weight` alone, the shipped module by `(-weight, u, v)`,
+giving 2,231 accepted arcs (w 7,401) instead of 2,221 (w 7,375). Both are valid greedy solutions
+to the same conflict graph.
+
+### A defect this cycle surfaced in the campaign, not in H59 — filed as P14
+
+Chasing my own mouse result turned up the same fault in **cycle 13**. `sota.json` holds
+**different champions per dataset** — H42 / H42 / **H52** — but variant modules are built on one
+pipeline. H60's mouse runs scored 92.91701410, and cycle 13's record calls that "exactly the H42
+value … the mechanism gained nothing", comparing against **H42** when the mouse champion is
+**H52 at 93.10282596**. H60 was killed on connectome regardless, so no verdict turned on it, but
+it is a moving-comparator error of exactly the kind `CAMPAIGN.md` warns about, and it is
+invisible to the screen because the cycle applies the comparator by hand.
+
+### Decision — **ITERATE**
+
+The mechanism is **real, exact, monotone, self-terminating, and above bar on both primaries**,
+and it carries a certificate: a second round finds nothing. It is not promotable, for two reasons
+that are both about the variant and neither about the mechanism:
+
+1. **microns is runtime-blocked** (P07) → new items **P13** (make the stage cheap: the 1-hop test
+   is vectorisable, and the 843 s conflict resolver wants an incrementally maintained topological
+   order, i.e. Pearce–Kelly) and **H62** (buy the seconds from the microns Rocket epoch budget;
+   H43 measured that arm, and unlike H43's saturating stage-4 target, reclamation is a move class
+   stage 4 cannot reach at all).
+2. **the mouse leg must be composed with H52**, not H42.
+
+`sota.json` **UNTOUCHED**; no champion moved. `consecutive_kills` → 5,
+`cycles_since_score_move` → 6; divergent mode stays forced.
+
+### Honest caveats
+
+- The prototype's connectome and microns runs were **concurrent**, so their wall-clock figures
+  are upper bounds. The screen's 457.6 s connectome stage cost is a clean measurement; the
+  ~1075 s microns figure is not, and P13 should re-measure it in isolation.
+- The screen's runs carry `git_commit = 70df34c…+dirty`. The dirt is `queue.json` / `state.json`
+  bookkeeping written while the sweep ran, not source: **`70df34c` contains `H59.py` and
+  `reclaim.py`**, so the substance of the provenance gate is met. A future confirm must still run
+  from a clean tree.
+- The rungs were self-administered rather than run through the `implementer` / `verifier` /
+  `critic` subagents, as in cycle 5. No confirm or critic was reached, so no promotion rests on
+  it — but it is recorded rather than left to be noticed.
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY -m pytest tests/test_reclaim.py -q                    # 60 tests
+PYTHONPATH=src $PY experiments/proto_H59_reclaim.py connectome --rounds 4 --budget 1000000
+PYTHONPATH=src $PY experiments/proto_H59_reclaim.py microns   --rounds 4 --budget 1000000
+PYTHONPATH=src $PY experiments/proto_H59_reclaim.py mouse     --rounds 4
+bash autoresearch/sweep.sh --exp H59 --role implement --datasets connectome,mouse --auto-seeds
+```
