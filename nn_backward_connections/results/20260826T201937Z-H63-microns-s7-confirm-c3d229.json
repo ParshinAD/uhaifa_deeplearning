@@ -1,0 +1,138 @@
+{
+  "exp_id": "20260826T201937Z-H63-microns-s7-confirm-c3d229",
+  "algo": "H63",
+  "dataset": "microns",
+  "seed": 7,
+  "score": 12813409.0,
+  "pct": 83.20094526451219,
+  "wall_clock_s": 3547.4724686145782,
+  "git_commit": "89a6896352be24734b8d2c2c8b74dbfb0445922f+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "c3d229e477bc",
+  "timestamp": "2026-08-26T21:18:46Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 52287,
+  "best_positions_path": "results\\20260826T201937Z-H63-microns-s7-confirm-c3d229_positions.npy",
+  "experiment_id": "H63",
+  "role": "confirm",
+  "hypothesis": "The champion's feedback arc set is not minimal: some backward edges have no forward path between their endpoints, so they can be re-added and the graph re-sorted with no loss. Composed on the champion of EACH dataset and made cheap enough to run on microns, reclaiming them beats the champion by more than the minimum effect size on both primaries.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 52287,
+  "variant_attrs": {
+    "pure_best_score": 12801624.0,
+    "pure_best_pct": 83.12442205824114,
+    "epochs_requested": 70000,
+    "sift_best_score": 12805936.0,
+    "sift_best_pct": 83.1524210455505,
+    "n_sift_sweeps": 1,
+    "sift_sweeps_requested": 12,
+    "sift_converged": false,
+    "sift_time_s": 8.949682235717773,
+    "sift_alpha": 0.7,
+    "sift_k_full": 6,
+    "alt_best_score": 12811330.0,
+    "alt_best_pct": 83.18744575277374,
+    "alt_increment_pp": 0.03502470722324347,
+    "n_alt_cycles": 1,
+    "alt_cycles_requested": 5,
+    "alt_time_s": 12.236226320266724,
+    "alt_min_block": 32,
+    "alt_sift_sweeps": 2,
+    "alt_log": [
+      {
+        "cycle": 0,
+        "split_frac": 0.5,
+        "after_scc_pct": 83.16901135458932,
+        "after_sift_pct": 83.18744575277374,
+        "best_pct": 83.18744575277374,
+        "t_scc_s": 3.851918935775757,
+        "t_sift_s": 8.382320165634155,
+        "cum_wall_s": 12.236226320266724
+      }
+    ],
+    "sift_log": [
+      {
+        "sweep": 0,
+        "alpha": 1.0,
+        "candidate_pct": 83.1524210455505,
+        "accepted": true,
+        "n_movers": 3610,
+        "wall": 8.949682235717773
+      }
+    ],
+    "pair_max_pops": 0,
+    "pair_best_score": 12811330.0,
+    "pair_best_pct": 83.18744575277374,
+    "pair_time_s": 0.0,
+    "pair_log": [],
+    "base_best_score": 12811330.0,
+    "base_best_pct": 83.18744575277374,
+    "reclaim_rounds_requested": 1,
+    "reclaim_best_score": 12813409.0,
+    "reclaim_best_pct": 83.20094526451219,
+    "reclaim_increment_pp": 0.01349951173844488,
+    "reclaim_weight_accepted": 1981.0,
+    "reclaim_lemma_holds": true,
+    "reclaim_time_s": 37.21833300590515,
+    "reclaim_log": [
+      {
+        "round": 0,
+        "n_backward": 2090998,
+        "w_backward": 2589227.0,
+        "n_tested": 2090998,
+        "scan_truncated": true,
+        "n_reclaimable": 1785,
+        "w_reclaimable": 2100.0,
+        "n_unknown": 0,
+        "w_unknown": 0.0,
+        "n_onehop": 425139,
+        "n_proved": 1785,
+        "n_searched": 256,
+        "t_search_s": 0.029103755950927734,
+        "n_accepted": 1673,
+        "w_accepted": 1981.0,
+        "n_conflicts": 112,
+        "n_budget_rejects": 0,
+        "n_cycle_residue": 27994,
+        "batch_acyclic": false,
+        "n_scc_nontrivial": 31,
+        "n_scc_max": 23720,
+        "n_arcs_in_scc": 992,
+        "t_scan_s": 11.00144338607788,
+        "t_conflict_s": 20.528947353363037,
+        "wall_s": 36.89735507965088
+      }
+    ],
+    "refined_best_score": 12813409.0,
+    "refined_best_pct": 83.20094526451219
+  },
+  "runtime_guard": {
+    "armed": true,
+    "source": "campaign",
+    "time_limit_s": 3450.0,
+    "reserve_s": 150.0,
+    "cap_s": 3600.0,
+    "warn_s": 3400.0,
+    "wall_clock_s": 3547.4724686145782,
+    "variant_wall_s": 3508.4376969337463,
+    "deadline_reached": true,
+    "stages_truncated": {
+      "stage4_alternation": {
+        "done": 1,
+        "requested": 5
+      },
+      "stage3_sift": {
+        "done": 1,
+        "requested": 12
+      }
+    },
+    "degraded": true,
+    "over_warn": true,
+    "over_cap": false
+  }
+}
