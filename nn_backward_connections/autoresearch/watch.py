@@ -161,6 +161,11 @@ def assess(now: float, stale_s: float) -> Health:
 
 
 def _desktop_notify(title: str, msg: str) -> None:
+    # Opt-out: MFAS_NO_POPUP=1 silences ONLY this channel. ALERTS.log, the ALERT file and
+    # the webhook are untouched, and the exit code -- the signal a supervisor actually reads
+    # -- is unaffected, so silencing popups never silences the watchdog itself.
+    if os.environ.get("MFAS_NO_POPUP", "").strip() not in ("", "0", "false", "False"):
+        return
     try:
         sysname = platform.system()
         if sysname == "Darwin":

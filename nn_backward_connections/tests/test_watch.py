@@ -177,3 +177,55 @@ def test_any_line_after_the_wait_announcement_ends_the_wait(ar):
           trailing="2026-08-26 16:10:27  --- driver cycle #7 starting\n")
     h = w.assess(time.time(), stale_s=360 * 60)
     assert h.status == "STALE" and h.code == 3
+
+
+# ── the popup channel is opt-out, the watchdog is not (2026-08-26) ───────────────────────
+# The operator asked for no desktop popups. Silencing a channel must never silence the
+# watchdog: ALERTS.log, the ALERT file, the webhook and above all the exit code are what a
+# supervisor reads, and none of them may depend on whether a toast was drawn.
+
+class _StubSubprocess:
+    def __init__(self):
+        self.calls = []
+
+    def run(self, *a, **kw):
+        self.calls.append(a)
+
+
+def test_popup_optout_silences_only_the_popup(ar, monkeypatch):
+    w = _load_watch(ar)
+    stub = _StubSubprocess()
+    monkeypatch.setattr(w, "subprocess", stub)
+    monkeypatch.setenv("MFAS_NO_POPUP", "1")
+
+    h = w.Health("STALE", "pretend hang", 7, 9999.0)
+    receipt = w.raise_alert(h)
+
+    assert stub.calls == [], "MFAS_NO_POPUP must suppress the desktop notification"
+    assert receipt["logged"] is True, "the durable channels must still fire"
+    assert (ar / "ALERTS.log").exists() and (ar / "ALERT").exists()
+    assert h.code == 3, "the supervisor signal is the exit code and it is unaffected"
+
+
+def test_popup_fires_when_the_optout_is_absent(ar, monkeypatch):
+    """Guards the guard: if this ever stops firing, the opt-out test above proves nothing."""
+    w = _load_watch(ar)
+    stub = _StubSubprocess()
+    monkeypatch.setattr(w, "subprocess", stub)
+    monkeypatch.delenv("MFAS_NO_POPUP", raising=False)
+    monkeypatch.setattr(w.platform, "system", lambda: "Windows")
+
+    w.raise_alert(w.Health("STALE", "pretend hang", 7, 9999.0))
+    assert stub.calls, "with no opt-out the desktop channel must still be attempted"
+
+
+def test_popup_optout_treats_zero_and_empty_as_off(ar, monkeypatch):
+    w = _load_watch(ar)
+    stub = _StubSubprocess()
+    monkeypatch.setattr(w, "subprocess", stub)
+    monkeypatch.setattr(w.platform, "system", lambda: "Windows")
+    for value in ("", "0", "false"):
+        stub.calls.clear()
+        monkeypatch.setenv("MFAS_NO_POPUP", value)
+        w.raise_alert(w.Health("STALE", "pretend hang", 7, 9999.0))
+        assert stub.calls, f"MFAS_NO_POPUP={value!r} must NOT count as opting out"

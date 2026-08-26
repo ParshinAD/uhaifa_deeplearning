@@ -1,6 +1,6 @@
 # Campaign dashboard
 
-*Generated 2026-08-26 03:02 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-26 15:13 by `autoresearch/dashboard.py` — do not hand-edit.*
 
 **Phase:** `quality` · **cycle:** 14 · **mode:** `divergent` · **consecutive kills:** 5
 
@@ -57,7 +57,7 @@
 
 ## Evidence
 
-- `results/*.json`: **468** run records across **32** variants
+- `results/*.json`: **469** run records across **33** variants
 - killed mechanisms on record: **21** (+7 deferred, 12 meta-rules)
 - literature notes: **8** (latest: `vahidi-2025.md`)
 
