@@ -1,0 +1,257 @@
+{
+  "exp_id": "20260826T135715Z-H63-microns-s123-implement-c3d229",
+  "algo": "H63",
+  "dataset": "microns",
+  "seed": 123,
+  "score": 12822451.0,
+  "pct": 83.25965742667618,
+  "wall_clock_s": 3026.9147338867188,
+  "git_commit": "77c18de03286b36768e0a566035378fbc02c6769+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "c3d229e477bc",
+  "timestamp": "2026-08-26T14:47:42Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 70000,
+  "best_positions_path": "results\\20260826T135715Z-H63-microns-s123-implement-c3d229_positions.npy",
+  "experiment_id": "H63",
+  "role": "implement",
+  "hypothesis": "The champion's feedback arc set is not minimal: some backward edges have no forward path between their endpoints, so they can be re-added and the graph re-sorted with no loss. Composed on the champion of EACH dataset and made cheap enough to run on microns, reclaiming them beats the champion by more than the minimum effect size on both primaries.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 70000,
+  "variant_attrs": {
+    "pure_best_score": 12801624.0,
+    "pure_best_pct": 83.12442205824114,
+    "epochs_requested": 70000,
+    "sift_best_score": 12813937.0,
+    "sift_best_pct": 83.20437371193782,
+    "n_sift_sweeps": 12,
+    "sift_sweeps_requested": 12,
+    "sift_converged": false,
+    "sift_time_s": 84.58073449134827,
+    "sift_alpha": 0.7,
+    "sift_k_full": 6,
+    "alt_best_score": 12819662.0,
+    "alt_best_pct": 83.24154769207374,
+    "alt_increment_pp": 0.03717398013591833,
+    "n_alt_cycles": 5,
+    "alt_cycles_requested": 5,
+    "alt_time_s": 86.1043586730957,
+    "alt_min_block": 32,
+    "alt_sift_sweeps": 2,
+    "alt_log": [
+      {
+        "cycle": 0,
+        "split_frac": 0.5,
+        "after_scc_pct": 83.21090594320712,
+        "after_sift_pct": 83.22070429011107,
+        "best_pct": 83.22070429011107,
+        "t_scc_s": 3.242105484008789,
+        "t_sift_s": 13.666692733764648,
+        "cum_wall_s": 16.909799337387085
+      },
+      {
+        "cycle": 1,
+        "split_frac": 0.382,
+        "after_scc_pct": 83.22464570599622,
+        "after_sift_pct": 83.22930138176172,
+        "best_pct": 83.22930138176172,
+        "t_scc_s": 3.0304620265960693,
+        "t_sift_s": 13.683747053146362,
+        "cum_wall_s": 33.62415814399719
+      },
+      {
+        "cycle": 2,
+        "split_frac": 0.618,
+        "after_scc_pct": 83.23136624214305,
+        "after_sift_pct": 83.2335609679572,
+        "best_pct": 83.2335609679572,
+        "t_scc_s": 3.5632548332214355,
+        "t_sift_s": 13.589601278305054,
+        "cum_wall_s": 50.77701425552368
+      },
+      {
+        "cycle": 3,
+        "split_frac": 0.25,
+        "after_scc_pct": 83.2354699898192,
+        "after_sift_pct": 83.237904966684,
+        "best_pct": 83.237904966684,
+        "t_scc_s": 3.0999794006347656,
+        "t_sift_s": 13.587382793426514,
+        "cum_wall_s": 67.46543383598328
+      },
+      {
+        "cycle": 4,
+        "split_frac": 0.75,
+        "after_scc_pct": 83.23937893934615,
+        "after_sift_pct": 83.24154769207374,
+        "best_pct": 83.24154769207374,
+        "t_scc_s": 5.003859996795654,
+        "t_sift_s": 13.635064840316772,
+        "cum_wall_s": 86.1043586730957
+      }
+    ],
+    "sift_log": [
+      {
+        "sweep": 0,
+        "alpha": 1.0,
+        "candidate_pct": 83.1524210455505,
+        "accepted": true,
+        "n_movers": 3610,
+        "wall": 7.687201738357544
+      },
+      {
+        "sweep": 1,
+        "alpha": 1.0,
+        "candidate_pct": 83.17740715481914,
+        "accepted": true,
+        "n_movers": 4606,
+        "wall": 7.409881114959717
+      },
+      {
+        "sweep": 2,
+        "alpha": 1.0,
+        "candidate_pct": 83.1794395488423,
+        "accepted": true,
+        "n_movers": 3142,
+        "wall": 7.13301420211792
+      },
+      {
+        "sweep": 3,
+        "alpha": 1.0,
+        "candidate_pct": 83.19327671070599,
+        "accepted": true,
+        "n_movers": 2367,
+        "wall": 7.072112321853638
+      },
+      {
+        "sweep": 4,
+        "alpha": 1.0,
+        "candidate_pct": 83.1896599584028,
+        "accepted": false,
+        "n_movers": 1763,
+        "wall": 6.940831661224365
+      },
+      {
+        "sweep": 5,
+        "alpha": 1.0,
+        "candidate_pct": 83.19993880740807,
+        "accepted": true,
+        "n_movers": 1371,
+        "wall": 6.892541885375977
+      },
+      {
+        "sweep": 6,
+        "alpha": 0.7,
+        "candidate_pct": 83.1951207998516,
+        "accepted": false,
+        "n_movers": 1102,
+        "wall": 6.98227596282959
+      },
+      {
+        "sweep": 7,
+        "alpha": 0.7,
+        "candidate_pct": 83.19673762448981,
+        "accepted": false,
+        "n_movers": 855,
+        "wall": 6.8640429973602295
+      },
+      {
+        "sweep": 8,
+        "alpha": 0.7,
+        "candidate_pct": 83.19841288857279,
+        "accepted": false,
+        "n_movers": 889,
+        "wall": 6.730695962905884
+      },
+      {
+        "sweep": 9,
+        "alpha": 0.7,
+        "candidate_pct": 83.20089331833907,
+        "accepted": true,
+        "n_movers": 855,
+        "wall": 6.837476968765259
+      },
+      {
+        "sweep": 10,
+        "alpha": 0.7,
+        "candidate_pct": 83.20265299495337,
+        "accepted": true,
+        "n_movers": 815,
+        "wall": 7.291553020477295
+      },
+      {
+        "sweep": 11,
+        "alpha": 0.7,
+        "candidate_pct": 83.20437371193782,
+        "accepted": true,
+        "n_movers": 714,
+        "wall": 6.73910665512085
+      }
+    ],
+    "pair_max_pops": 0,
+    "pair_best_score": 12819662.0,
+    "pair_best_pct": 83.24154769207374,
+    "pair_time_s": 0.0,
+    "pair_log": [],
+    "base_best_score": 12819662.0,
+    "base_best_pct": 83.24154769207374,
+    "reclaim_rounds_requested": 1,
+    "reclaim_best_score": 12822451.0,
+    "reclaim_best_pct": 83.25965742667618,
+    "reclaim_increment_pp": 0.018109734602447247,
+    "reclaim_weight_accepted": 2789.0,
+    "reclaim_lemma_holds": true,
+    "reclaim_time_s": 146.59680652618408,
+    "reclaim_log": [
+      {
+        "round": 0,
+        "n_backward": 2084224,
+        "w_backward": 2580895.0,
+        "n_tested": 2084224,
+        "scan_truncated": false,
+        "n_reclaimable": 4033,
+        "w_reclaimable": 4107.0,
+        "n_unknown": 0,
+        "w_unknown": 0.0,
+        "n_onehop": 425139,
+        "n_proved": 66,
+        "n_searched": 1659019,
+        "t_search_s": 60.073444843292236,
+        "n_accepted": 2717,
+        "w_accepted": 2789.0,
+        "n_conflicts": 1316,
+        "n_budget_rejects": 0,
+        "n_cycle_residue": 54445,
+        "batch_acyclic": false,
+        "n_scc_nontrivial": 20,
+        "n_scc_max": 36043,
+        "n_arcs_in_scc": 3891,
+        "t_scan_s": 69.93262457847595,
+        "t_conflict_s": 71.82193279266357,
+        "wall_s": 146.29435181617737
+      }
+    ],
+    "refined_best_score": 12822451.0,
+    "refined_best_pct": 83.25965742667618
+  },
+  "runtime_guard": {
+    "armed": true,
+    "source": "campaign",
+    "time_limit_s": 3450.0,
+    "reserve_s": 150.0,
+    "cap_s": 3600.0,
+    "warn_s": 3400.0,
+    "wall_clock_s": 3026.9147338867188,
+    "variant_wall_s": 2996.0214552879333,
+    "deadline_reached": false,
+    "stages_truncated": {},
+    "degraded": false,
+    "over_warn": false,
+    "over_cap": false
+  }
+}
