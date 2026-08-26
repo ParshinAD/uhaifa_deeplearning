@@ -37,6 +37,7 @@ import argparse
 import json
 import os
 import platform
+import re
 import subprocess
 import sys
 import time
@@ -54,7 +55,8 @@ ALERTS_LOG = AR / "ALERTS.log"
 ALERT_LATEST = AR / "ALERT"
 
 # exit codes double as severities; 0 is the only healthy one
-CODES = {"RUNNING_OK": 0, "STALE": 3, "BLOCKED": 4, "NO_DRIVER": 5, "NO_PROGRESS": 6}
+CODES = {"RUNNING_OK": 0, "WAITING_BUDGET": 0,
+         "STALE": 3, "BLOCKED": 4, "NO_DRIVER": 5, "NO_PROGRESS": 6}
 
 
 @dataclass
@@ -70,7 +72,10 @@ class Health:
 
     @property
     def ok(self) -> bool:
-        return self.status == "RUNNING_OK"
+        """Healthy == exit code 0. Never compare against one status name: WAITING_BUDGET is
+        also healthy, and treating it as an alert is what produced ~85 false STALE pages on
+        2026-08-26."""
+        return self.code == 0
 
 
 def _mtime(p: Path) -> float:
@@ -88,6 +93,37 @@ def _newest_activity(now: float) -> float:
         candidates.append(_mtime(LOCK))
     newest = max(candidates) if candidates else 0.0
     return now - newest if newest else float("inf")
+
+
+_WAIT_RE = re.compile(r"Waiting\s+\S+\s+for the window to free up \(until ([0-9]{4}-[0-9]{2}-[0-9]{2} "
+                      r"[0-9]{2}:[0-9]{2}:[0-9]{2})\)")
+
+
+def _budget_wait_until(now: float) -> Optional[float]:
+    """Epoch seconds the driver said it would resume, or None if it is not budget-waiting.
+
+    The driver parks on its rolling 24 h cap with `sleep_interruptible` (driver.sh:578) and
+    writes NOTHING for as long as it sleeps -- up to 13 h. To _newest_activity that is
+    indistinguishable from a hang, so the watchdog paged STALE every 5 min for the whole nap.
+    It is distinguishable on disk: the driver announces the resume time before sleeping. Only
+    the LAST driver.log line counts, so any later activity ends the wait, and the deadline is
+    respected -- once it passes, staleness resumes counting and a driver that overslept is
+    still caught.
+    """
+    try:
+        tail = DRIVER_LOG.read_text(errors="replace").rstrip().splitlines()[-1:]
+    except (OSError, IndexError):
+        return None
+    if not tail:
+        return None
+    m = _WAIT_RE.search(tail[0])
+    if not m:
+        return None
+    try:
+        until = time.mktime(time.strptime(m.group(1), "%Y-%m-%d %H:%M:%S"))
+    except ValueError:
+        return None
+    return until if until > now else None
 
 
 def assess(now: float, stale_s: float) -> Health:
@@ -111,6 +147,12 @@ def assess(now: float, stale_s: float) -> Health:
                                     "(never started, or died without releasing the lock).",
                       cycle, None)
     age = _newest_activity(now)
+    until = _budget_wait_until(now)
+    if until is not None:
+        return Health("WAITING_BUDGET",
+                      f"driver is parked on its own 24 h budget cap until "
+                      f"{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(until))} "
+                      f"({(until - now) / 60:.0f} min): deliberate, not a hang.", cycle, age)
     if age > stale_s:
         return Health("STALE", f"no activity for {age / 60:.0f} min (threshold "
                                f"{stale_s / 60:.0f} min): alive but not progressing.", cycle, age)

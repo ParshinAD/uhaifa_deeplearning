@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -123,3 +124,56 @@ def test_exit_codes_are_distinct_per_status(ar):
     w = _load_watch(ar)
     assert set(w.CODES.values()) == {0, 3, 4, 5, 6}
     assert w.CODES["RUNNING_OK"] == 0
+
+
+# ── the driver's own budget nap is not a hang (2026-08-26) ───────────────────────────────
+# driver.sh:578 parks on the rolling 24 h cap with sleep_interruptible and writes nothing for
+# as long as it sleeps -- 13 h in the observed case. _newest_activity cannot tell that from a
+# hang, so the watchdog paged STALE every 5 min for the whole nap (~85 alerts). The driver
+# does announce its resume time before sleeping; these pin that the watchdog reads it.
+
+def _park(ar: Path, resume_epoch: float, *, trailing: str = "") -> None:
+    """Write a driver.log whose last line is the budget-wait announcement, aged out of STALE."""
+    stamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(resume_epoch))
+    text = (
+        "2026-08-26 03:04:40  budget window full: 11h15m spent in the last 24 h\n"
+        "2026-08-26 03:04:40    > cap 12h. Waiting 13h05m for the window to free up "
+        "(until " + stamp + ").\n"
+    )
+    log = ar / "logs" / "driver.log"
+    log.write_text(text + trailing)
+    old = time.time() - 8 * 3600
+    for f in (log, ar / "state.json", ar / ".lock"):
+        if f.exists():
+            os.utime(f, (old, old))
+
+
+def test_budget_wait_is_healthy_not_stale(ar):
+    w = _load_watch(ar)
+    _write_state(ar)
+    (ar / ".lock").mkdir()
+    _park(ar, time.time() + 3600)
+    h = w.assess(time.time(), stale_s=360 * 60)
+    assert h.status == "WAITING_BUDGET" and h.code == 0 and h.ok
+    assert "budget" in h.detail
+
+
+def test_budget_wait_expires_back_into_stale(ar):
+    """The deadline is respected: a driver that oversleeps its own resume time is still caught."""
+    w = _load_watch(ar)
+    _write_state(ar)
+    (ar / ".lock").mkdir()
+    _park(ar, time.time() - 60)
+    h = w.assess(time.time(), stale_s=360 * 60)
+    assert h.status == "STALE" and h.code == 3
+
+
+def test_any_line_after_the_wait_announcement_ends_the_wait(ar):
+    """Only the LAST driver.log line counts, so real activity cancels the exemption."""
+    w = _load_watch(ar)
+    _write_state(ar)
+    (ar / ".lock").mkdir()
+    _park(ar, time.time() + 3600,
+          trailing="2026-08-26 16:10:27  --- driver cycle #7 starting\n")
+    h = w.assess(time.time(), stale_s=360 * 60)
+    assert h.status == "STALE" and h.code == 3
