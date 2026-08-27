@@ -6516,3 +6516,333 @@ $PY autoresearch/audit.py --variant H63 --comparator champion --role confirm \
     --comparator-role confirm --datasets mouse --gate promotion \
     --out autoresearch/audit_H63_mouse.json                                        # exit 0
 ```
+
+---
+
+## 2026-08-27 — Cycle 16 · H64: the ASYMMETRIC surrogate, composed with the champion stack — **ITERATE** (the largest connectome move of the campaign, blocked from promotion by two gates it cannot buy today)
+
+**Item.** `queue.json` H64, priority 0, science, `source: "ideator + critic, cycle 15 (operator
+directive: challenge the gradient-axis kills)"`.
+**Mode.** incremental (`cycles_since_score_move` = 0, `consecutive_kills` = 0, nine `proposed`
+science items in the queue, so no ideation and no divergence trigger).
+**Machine.** Windows 10 laptop, NVIDIA RTX 4060 Laptop GPU (CUDA), torch 2.8.0+cu128, Git Bash.
+**Preflight.** clean tree; branch `auto/campaign-v3` = `campaign.yaml`'s `campaign.branch`;
+`pytest tests/ -q` gives **573 passed** in 155.90 s.
+
+**Hypothesis.** Replacing `torch.sigmoid` with H38's one-sided `_asym_surrogate` in stage 2 of the
+champion pipeline — everything else byte-identical to the champion of each dataset — changes the
+final connectome score by more than +0.012 pp.
+
+**Result in one line.** It does, by **+0.104084 pp**, 8.67x the minimum effect size, on 5/5
+bit-identical confirm seeds, at a **lower** wall clock than the champion. And it is **not
+promoted**, because `audit.py --gate promotion` exits 1 on two gates this cycle had no budget to
+buy. The gap to the 84.6147 mission target closes from 0.4606 pp to **0.3565 pp**.
+
+---
+
+### Gates run
+
+`novelty`, `prototype`, `screen`, `confirm`, `critic`. All five.
+
+**Independence caveat, stated plainly.** The `implementer`, `verifier` and `critic` rungs were
+executed **inline by the cycle**, not by separate subagents, under a standing operator instruction
+in this session not to invoke the Agent tool. The mechanical enforcement is unaffected —
+`autoresearch/audit.py --gate promotion` is what actually decides, it was run, and it FAILED — but
+the *adversarial independence* the verifier and critic rungs are designed to provide was reduced
+to self-review. That is a real weakening of the evidence and it is recorded here rather than
+glossed. It is also the reason this entry leans on the mechanical audit's verdict rather than on
+the cycle's own judgement at every contested point.
+
+---
+
+### Rung 1 — NOVELTY: **PASS**, and the revival condition is named
+
+H64 shares the `surrogate shape` axis with killed **H11** (margin / smooth-hinge, −0.0387 pp on
+connectome). H11's `revival_if` reads: *Must satisfy M1's burden of proof.* Meta-rule **M1**, as
+amended 2026-08-26, states that burden for an asymmetric shape in three parts — (a) pass
+`surrogate_gate.py`, (b) show no crossover in `beta*std`, (c) be measured **composed** with the
+champion stack — and then names this very item: *"Whether a shape gain survives composition with
+the refinement stack is OPEN and is what H64 measures."*
+
+H34's `revival_if` reads *"Never for continuous-only. This closed the family."* H64 is not
+continuous-only; it is a composition measurement, so H34 does not bind.
+
+(a) and (b) were discharged mechanically at the prototype rung below; (c) is the whole cycle.
+
+### Rung 2 — PROTOTYPE, pre-registered at `c687441` BEFORE any of it ran
+
+Pre-registration: `experiments/prereg/H64_prototype.md`.
+
+**Rung 0 — M1's burden, zero GPU** (`experiments/outputs/proto_H64_rung01.json`):
+
+* `cheap_gate(_asym_surrogate)` returns **WARN**, sole reason the documented derivative kink at
+  `z = M`. It is not the sigmoid at another beta, and `g(0) < sup g`, so collapse is not the
+  global optimum. **(a) satisfied.**
+* **No crossover** in `beta*std` over `[1e-2, 1e6]` on the hard synthetic: the alignment ratio
+  runs `+0.003457, +0.032334, +0.653908, +1.379731, +0.996743, +0.998268, +0.999999, +1.0, +1.0,
+  +1.0` and never changes sign. **(b) satisfied.**
+* Honest counter-observation from the same sweep: on this graph the **sigmoid also never crosses**
+  (`+0.001662 ... +1.267433`), and at the operating point (`beta*std` about 148) the sigmoid's
+  alignment is *higher* (1.195124) than ASYM's (0.998268). Q05's "sigmoid = −0.591" was measured
+  on a different graph. Alignment did not predict this cycle's outcome in either direction, which
+  is the third time this campaign has found that (A-MBAND, Q04, and now here).
+
+**Rung 1 — the REACH diagnostic, zero GPU.** On the H42 champion order, ASYM's live gradient
+support covers **13.10%** of the backward weight against the sigmoid's **15.66%**; its reach is
+about 1,799 ranks against the sigmoid's about 2,132, while 88.4% of the backward weight sits
+beyond 1,000 ranks and 48.4% beyond 20,000. **The reach premise behind H65 is false, and false in
+the unhelpful direction.** Whatever ASYM does, it does not do it by reaching further. Recorded
+because H65 and H66 are both downstream of exactly this number.
+
+**Rung 2 — the proxy prototype** (`experiments/outputs/proto_H64_rung2.json`), 6 arms x 2 proxies:
+
+| proxy | A1−A0 (random init, pure) | B1−B0 (warm start, pure) | C1−C0 (composed final) | transfer |
+|---|---|---|---|---|
+| mouse (at H42's 5,000 epochs) | +0.015894 | **−0.403042** | **+0.097940** | −0.243001 |
+| hard_synthetic | +0.647038 | +0.207764 | +0.213701 | +1.028571 |
+
+The pre-registered kill rule — kill iff on BOTH proxies `(B1−B0) <= 0` AND `(C1−C0) <= 0` — did
+**not** fire. Proceed.
+
+The mouse row is the interesting one, and it was read wrong at the time: a pure order **0.40 pp
+worse** refines to a final **0.098 pp better**. That is a negative transfer coefficient, i.e. the
+proxy predicted the composed gain would come from the pure order being *worse*. On connectome the
+opposite happened (see below). **The proxies got the sign of the final right and the mechanism
+wrong.** Noted so the next cycle does not over-trust them.
+
+### Rung 3 — SCREEN: **PASS**
+
+Variant module `src/mfas/experiments/H64.py` and `tests/test_experiment_H64.py` (14 tests, green)
+were **committed at `f954ad6` BEFORE the sweep launched** — the provenance gate that still FAILs
+for H36 and H42. `audit.py` confirms: `provenance.connectome PASS`, `provenance.microns PASS`,
+`provenance.mouse PASS`.
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+$PY autoresearch/seed_plan.py --variant H64 --role implement    # class=rng, runs=6
+bash autoresearch/sweep.sh --exp H64 --role implement --auto-seeds
+```
+
+| dataset | n | pct (all seeds identical) | champion | delta pp | bar | wall s |
+|---|---|---|---|---|---|---|
+| connectome | 3 (42/123/999) | 84.25817950936937 | H42 84.15409511053134 | **+0.104084** | 0.012 | 1185.1 / 1186.0 / 1185.6 |
+| mouse | 3 (42/123/999) | 93.17538325903584 | H63 93.17538325903584 | 0.000000 | non-inf | 0.8 / 0.7 / 0.7 |
+
+microns does not run at the screen (`campaign.yaml datasets.microns.in_screen: false`, operator
+decision 2026-08-26).
+
+`class=rng`, seeds 42/123/999 — and all three returned **bit-identical** results, so the
+classifier was fail-safe rather than correct: `run()` always supplies `init_positions`, so
+`make_init_positions` is unreachable and H64 never draws from `seed`. The cycle did **not**
+hand-pick seeds; `--auto-seeds` decided, and its conservatism bought a better pool than the policy
+required.
+
+The seed-42 positions vector was re-scored independently against the frozen oracle:
+**35,314,407 / 41,912,141 = 84.25817950936937**, matching the run record exactly.
+
+### Rung 4 — CONFIRM: connectome and mouse CLEAN, microns TRUNCATED 3/5
+
+Pre-registered at `45d7637` **before launch**, including the degraded-run rule
+(`experiments/prereg/H64_confirm.md`).
+
+```bash
+bash autoresearch/sweep.sh --exp H64 --role confirm
+```
+
+| dataset | n | pct | std | comparator | delta pp |
+|---|---|---|---|---|---|
+| connectome | 5 (42/123/999/7/31415) | 84.25817950936937 | 0 | H42 84.15409511053134 (n=5, std 0) | **+0.104084** |
+| microns (clean subset) | 2 (42/123) | 83.24619687456759 | 0 | H42 83.24085291200831 (n=5, std 0) | +0.005344 |
+| mouse | 20 | 93.17538325903584 | 0 | H63 93.17538325903584 (n=20) | 0.000000 |
+
+Connectome walls **1182.4 / 1183.6 / 1184.0 / 1185.0 / 1185.4 s** against the champion's
+**1226.5 – 1238.3 s**: H64 is about 47 s **cheaper per run** at an identical gradient budget
+(`compute.connectome PASS: equal gradient budget ([20000])`), identical 40 sift sweeps and
+identical 77 alternation cycles. No accounting attributes this gain to compute.
+
+**The microns truncation.** 3 of 5 runs hit the wall-clock guard:
+
+| seed | pct | wall s | epochs done | degraded |
+|---|---|---|---|---|
+| 42 | 83.24619687456759 | 3419.6 | 80,000 | no |
+| 123 | 83.24619687456759 | 3442.4 | 80,000 | no |
+| 999 | 83.06280740365429 | 3501.1 | — | **yes** |
+| 7 | 82.72980646089619 | 3509.0 | — | **yes** |
+| 31415 | 82.56431893989289 | 3509.6 | 72,654 | **yes** |
+
+The walls are **monotone increasing in start time** over a 6.5 h continuous GPU session, while the
+five connectome runs that ran FIRST were flat within 3.0 s. The measured per-epoch cost says the
+same thing: sigmoid microns 37.75–43.70 ms/epoch (10 H63 runs), sigmoid connectome 21.11–24.09
+ms/epoch (8 H63 runs), **ASYM connectome 21.66 ms/epoch** — i.e. **the asymmetric surrogate costs
+essentially nothing extra per epoch on CUDA.** The queue item's "about 236 s of 1.6x
+gradient-phase overhead" is an MPS-era figure and is **wrong on this hardware**; it is corrected
+here because it was an input to H64's cost estimate.
+
+So this is queue item **P07** — the champion's own microns configuration does not fit 3600 s on a
+working machine — arriving exactly where P07 said it would.
+
+### Rung 5 — CRITIC + mechanical audit: **FAIL**
+
+```bash
+$PY autoresearch/audit.py --variant H64 --comparator champion \
+    --role confirm --comparator-role confirm --gate promotion \
+    --out autoresearch/audit_H64.json      # exit 1
+```
+
+`autoresearch/audit_H64.json`. **VERDICT: FAIL, 13 warnings.** What passed and what did not:
+
+* connectome — `effect_size PASS` (+0.1041 vs +0.0120), `protocol_ci PASS` (**CI_lo +0.0807** > 0,
+  SE 0.0120 at the 0.0189 sigma floor), `provenance PASS`, `runtime PASS`, `runtime_guard PASS`
+  (5/5 untruncated), `compute PASS`. **`relabel.connectome` FAIL** — both pools degenerate
+  (std = 0) and no relabelling study registered for (H64, H42, connectome).
+* microns — `effect_size FAIL` (−0.2710), `protocol_ci FAIL` (−0.2717),
+  **`runtime_guard FAIL` (3/5 truncated)**. All three are downstream of the truncation: the clean
+  subset is +0.005344 pp, which would clear microns' 0.002 bar 2.67x.
+* mouse — `non_inferiority PASS` at delta exactly 0.
+* `rescore PASS`: **30 runs re-scored with the frozen oracle, all exact.**
+* `frozen.manifest PASS`, `frozen.git PASS`, `leakage PASS` over 17 algorithm files.
+
+Warnings worth carrying forward: `provenance.*.dirty` (runs produced from a modified working
+tree — `state.json` is written during a sweep, so the tree is never clean while runs are in
+flight; the module IS present at those commits, so the runs are reproducible in principle) and
+`leakage.dataset_keying` (legitimate: H64 keys on dataset name for the per-dataset **champion
+configuration**, per P14 — epochs, sweeps, alternation cycles, and whether stages 5 and 6 exist).
+
+**Self-red-team — the five things that would make this wrong, from the sealed list:**
+
+1. *Moving comparator* — no. Comparator restricted to `role=confirm`, 5 H42 runs, all
+   bit-identical. `comparator_homogeneity` warns H42 spans 3 commits, but all 5 return the same
+   value, so the warning has no numeric consequence here.
+2. *Extra compute* — no, and it is the reverse: equal gradient budget, about 47 s **cheaper**.
+3. *Oracle leakage* — no. `leakage PASS`; the surrogate reads positions and beta only.
+4. *A stage-3/4 change smuggled in* — no. Pinned by `tests/test_experiment_H64.py`, which asserts
+   every constant equals the per-dataset champion's.
+5. *The mechanism being something else* — **this is the one that needs reporting**, see below.
+
+---
+
+### THE MECHANISM, measured — and M1's open clause is now CLOSED
+
+Stage attribution on connectome, all from `results/*.json` `variant_attrs`. The sigmoid column is
+H63's connectome confirm runs, whose stages 1-4 are byte-identical to H42's, so these are the
+champion's own stage values from a logged run rather than a quoted figure:
+
+| stage | sigmoid (champion) | ASYM (H64) | delta pp |
+|---|---|---|---|
+| 2 — pure Rocket | 82.92969571752491 | 83.23791666953974 | **+0.308221** |
+| 3 — under-relaxed sift | 83.91351804242117 | 84.11761164861514 | +0.204094 |
+| 4 — SCC / sift alternation | 84.15409511053134 | 84.25817950936937 | **+0.104084** |
+
+Three things follow, and the first is the point of the cycle.
+
+**1. The pure gain survives the warm start.** H38's +0.36675 pp was measured from a RANDOM init on
+MPS. Defect (b) — that the whole gain lived in the random-init basin — predicted it would vanish
+when stage 2 starts from greedy-FAS. It does not: **+0.308221 pp**, 84% of the MPS random-init
+figure, on CUDA, warm-started, against the champion's own stage 2.
+
+**2. Pure quality DOES compose — at a measured transfer of 33.8%.**
+`+0.104084 / +0.308221 = 0.3377`. That is *above* `proto_S01_connectome.json`'s 10.3%–28.0% band
+and nowhere near its negative top-of-curve value. **M1's clause "whether a shape gain survives
+composition is OPEN" is now answered: it survives, at about a third.** The kill_condition H64
+wrote for itself — *"then the one continuous win in the project does not survive the refinement
+stack, and M1's conclusion is right even though its stated reason is false"* — is **not** met, and
+the amendment it drafted ("pure-Rocket quality does not compose") must NOT be written. The
+opposite was measured.
+
+**3. Each refinement stage claws back about half the advantage, and never all of it.** The refiner
+is partially substitutable for a better start (+0.308, then +0.204, then +0.104 — roughly halving
+each stage) but it does not close the gap. That is a quantitative statement of what the discrete
+stack can and cannot recover, and it is new.
+
+**The honest limit on generality: the mechanism is GRAPH-DEPENDENT, and the proxies disagree with
+the primary.** On connectome ASYM's pure order is *better* (+0.308) and its final is better. On
+microns, ASYM's pure is 82.44967373582656 at 80,000 epochs — far *worse* than the sigmoid at a
+comparable budget — and the final is better by only +0.005344. On mouse at H42's configuration the
+pure was 0.40 pp *worse* and the final 0.098 pp better. So the composed gain has the same sign on
+all three, and the route to it is not the same on any two of them. H38's own docstring disclosed
+that its `(M, T)` optimum is graph-dependent; this is that disclosure showing up in the composed
+result. **Do not extrapolate the +0.308 pure gain off connectome.**
+
+---
+
+### DECISION: **ITERATE**
+
+Not `keep`: `audit.py --gate promotion` exits **1**, and CAMPAIGN.md rule 3 plus the cycle-5
+lesson are explicit that the audit decides, not the cycle. Not `kill`: the mechanism produced the
+largest connectome improvement of the autonomous campaign and cleared every numeric gate on the
+mission-critical dataset.
+
+**What blocks promotion, and what each blocker costs:**
+
+| blocker | dataset | cost to close |
+|---|---|---|
+| `relabel` FAIL (P09 degenerate-pool gate) | connectome | about 3.3 h (5 labellings x 2 arms x 1185 s) |
+| `runtime_guard` FAIL (3/5 truncated) | microns | re-runs, and P07 must be resolved first |
+| `relabel` FAIL (implied, once microns is clean) | microns | about 9.4 h (cycle-15 estimate) |
+
+Against `budget.max_cycle_wall_clock_h` = 10 h, with this cycle starting about 04:31Z, **none of
+them fit**. The cycle did not attempt a partial one to manufacture a pass.
+
+**What was explicitly NOT done, and why:**
+
+* **The microns epoch budget was not cut.** That is H62's move, it is a different variant, and it
+  needs its own ladder. Changing a constant to rescue a promotion is what `campaign.yaml` exists
+  to prevent. Sealed in the confirm pre-registration before the numbers were seen.
+* **`sota.json` was not touched.** `campaign.yaml promotion_gate.primary` requires **both**
+  primaries. Whether a connectome-only championship is available while microns is unmeasurable is
+  the same open operator question as **P15** (filed in cycle 15 with the legs reversed); it is
+  re-scoped, not decided here.
+* **`require_protocol_ci_lower_gt` was not relaxed.** It did not need to be — unlike H52
+  (+0.020927), H59 and H63 (+0.017658), H64's connectome delta **clears it**, at CI_lo +0.0807.
+  This is the first connectome result in the campaign where the two significance criteria AGREE.
+
+**Deviation from the sealed rule, recorded.** The sealed clause 3 permits one re-run of a degraded
+seed. With 3/5 degraded and a monotone drift, that test was largely exhausted, and re-running H64
+on a box warm from 6.5 h of GPU would have been confounded by the very thermal state it was meant
+to control for. The cycle instead ran the **champion, H42, on microns, at `--role verify`** (so it
+can never enter the comparator pool), on the same warm box, as the attribution control P07's own
+method step 1 asks for. This was sealed in an addendum at `3b8b74c` **before** the run. **The H64
+s999 re-run remains owed** and is queued.
+
+### THE ATTRIBUTION CONTROL — the champion truncates too. The microns failure is the MACHINE, not H64.
+
+Sealed at `3b8b74c` before launch; run at `--role verify` so it can never enter a comparator pool.
+
+```bash
+bash autoresearch/sweep.sh --exp H42 --role verify --datasets microns --seeds 42
+```
+
+`results/20260827T092101Z-H42-microns-s42-verify-f91b66.json` — **H42, the unmodified champion**,
+on the same warm box, immediately after H64's confirm:
+
+| | pct | wall s | degraded | stage 3 sweeps | stage 4 cycles |
+|---|---|---|---|---|---|
+| H42 confirm, 2026-08-10 (overnight, n=5) | 83.24085291200831 | 3397.8 – 3418.0 | no | 12/12 | 5/5 |
+| H42 verify, 2026-08-15 | 83.24085291200831 | 3258.2 | no | 12/12 | 5/5 |
+| **H42 verify, 2026-08-27 (this control)** | **83.20304259125173** | **3495.3** | **YES** | **4/12** | **1/5** |
+| H64 confirm, 2026-08-27, clean seeds 42/123 | 83.24619687456759 | 3419.6 / 3442.4 | no | 12/12 | 5/5 |
+
+**The champion, unmodified, blew the guard on the same box on which H64's runs blew it.** Its
+`runtime_guard` block records `deadline_reached: true`, `stages_truncated: {stage3_sift: 4 of 12,
+stage4_alternation: 1 of 5}`, and its gradient phase alone consumed
+`3495.3 − 32.3 (sift) − 11.8 (alt) ≈ 3451 s` — more than the entire 3450 s deadline, before any
+refinement ran at all.
+
+Two things follow, and the second is the one that matters for H64.
+
+1. **P07 is confirmed on the champion itself**, not inferred from a variant. The shipped microns
+   configuration (80,000 Rocket epochs) does not fit the campaign's own runtime invariant during a
+   sustained session on this machine. Refiled with this evidence as **P19**.
+2. **The asymmetric surrogate is not the cost.** In this very comparison H64's stage 2 took
+   `3419.6 − 82.2 − 84.5 ≈ 3253 s` and the champion's took `≈ 3451 s`, i.e. **ASYM's gradient
+   phase was FASTER than the sigmoid's** on the same dataset on the same day. Combined with the
+   connectome per-epoch figures (ASYM 21.66 ms/epoch, sigmoid 21.11–24.09 ms/epoch), the
+   attribution is settled: H64's 3 truncated microns runs are a property of the box, and the
+   `runtime_guard.microns FAIL` in the audit is **not evidence against the mechanism**.
+
+It remains evidence against **promoting** it. The audit does not care why a run truncated, and it
+should not: a pool with three truncated runs cannot support a champion change whatever the cause.
+The verdict stays **ITERATE**, and the next cycle's first job is P19, not another variant.
+
+**Still owed:** the sealed clause-3 re-run of H64 microns s999. This control answers a different
+question (variant or machine) and does not discharge it.

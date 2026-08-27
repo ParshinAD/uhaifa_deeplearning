@@ -1,0 +1,118 @@
+{
+  "exp_id": "20260827T092101Z-H42-microns-s42-verify-f91b66",
+  "algo": "H42",
+  "dataset": "microns",
+  "seed": 42,
+  "score": 12813732.0,
+  "pct": 83.20304259125173,
+  "wall_clock_s": 3495.3173649311066,
+  "git_commit": "3b8b74cd1a50d447fb7ecc6b3eed7fff345db0fb+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "f91b665b878d",
+  "timestamp": "2026-08-27T10:19:16Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 80000,
+  "best_positions_path": "results\\20260827T092101Z-H42-microns-s42-verify-f91b66_positions.npy",
+  "experiment_id": "H42",
+  "role": "verify",
+  "hypothesis": "H36's stage-4 inner sift was never sized: it costs ~88% of a cycle, so the shipped split buys few expensive cycles where it could buy many cheap ones. Cutting the inner sift to 2 sweeps and spending the freed seconds on more alternations beats the champion on both primaries at the SAME OR LOWER wall-clock and 0 extra gradient steps.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 80000,
+  "variant_attrs": {
+    "pure_best_score": 12802184.0,
+    "pure_best_pct": 83.12805829035923,
+    "sift_best_score": 12811389.0,
+    "sift_best_pct": 83.18782885580048,
+    "n_sift_sweeps": 4,
+    "sift_sweeps_requested": 12,
+    "sift_converged": false,
+    "sift_time_s": 32.32404565811157,
+    "sift_alpha": 0.7,
+    "sift_k_full": 6,
+    "alt_best_score": 12813732.0,
+    "alt_best_pct": 83.20304259125173,
+    "alt_increment_pp": 0.015213735451254706,
+    "n_alt_cycles": 1,
+    "alt_cycles_requested": 5,
+    "alt_time_s": 11.818369388580322,
+    "alt_min_block": 32,
+    "alt_sift_sweeps": 2,
+    "alt_log": [
+      {
+        "cycle": 0,
+        "split_frac": 0.5,
+        "after_scc_pct": 83.19829600968329,
+        "after_sift_pct": 83.20304259125173,
+        "best_pct": 83.20304259125173,
+        "t_scc_s": 3.57096266746521,
+        "t_sift_s": 8.247406721115112,
+        "cum_wall_s": 11.818369388580322
+      }
+    ],
+    "refined_best_score": 12813732.0,
+    "refined_best_pct": 83.20304259125173,
+    "sift_log": [
+      {
+        "sweep": 0,
+        "alpha": 1.0,
+        "candidate_pct": 83.1616025316487,
+        "accepted": true,
+        "n_movers": 3539,
+        "wall": 8.242855787277222
+      },
+      {
+        "sweep": 1,
+        "alpha": 1.0,
+        "candidate_pct": 83.17985511822722,
+        "accepted": true,
+        "n_movers": 4584,
+        "wall": 8.032500743865967
+      },
+      {
+        "sweep": 2,
+        "alpha": 1.0,
+        "candidate_pct": 83.18782885580048,
+        "accepted": true,
+        "n_movers": 3067,
+        "wall": 8.061930894851685
+      },
+      {
+        "sweep": 3,
+        "alpha": 1.0,
+        "candidate_pct": 83.18610164554438,
+        "accepted": false,
+        "n_movers": 2260,
+        "wall": 7.986758232116699
+      }
+    ]
+  },
+  "runtime_guard": {
+    "armed": true,
+    "source": "campaign",
+    "time_limit_s": 3450.0,
+    "reserve_s": 150.0,
+    "cap_s": 3600.0,
+    "warn_s": 3400.0,
+    "wall_clock_s": 3495.3173649311066,
+    "variant_wall_s": 3462.663741350174,
+    "deadline_reached": true,
+    "stages_truncated": {
+      "stage4_alternation": {
+        "done": 1,
+        "requested": 5
+      },
+      "stage3_sift": {
+        "done": 4,
+        "requested": 12
+      }
+    },
+    "degraded": true,
+    "over_warn": true,
+    "over_cap": false
+  }
+}

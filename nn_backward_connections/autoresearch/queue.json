@@ -156,7 +156,7 @@
     {
       "id": "P07",
       "title": "BLOCKING: the champion's microns configuration does not fit 3600 s on a loaded machine",
-      "status": "in_progress",
+      "status": "superseded-by-P19",
       "priority": 0,
       "kind": "infrastructure",
       "axis": "runtime safety",
@@ -172,7 +172,7 @@
       ],
       "est_cost": "cheap to measure (2-4 microns runs, ~1 h each); the fix is S01-shaped and is a normal variant",
       "expected_pp": "n/a - restores the runtime invariant, and unblocks promotion on microns",
-      "outcome": "IN PROGRESS 2026-08-15 night. Grid running via experiments/proto_P07_sizing.py on an IDLE machine (operator asleep), which also supplies the idle-machine counter-measurement P07's own method step 1 asks for. Two arms already on disk from the aborted 2026-08-11 cycle: epochs=0 -> 83.11152%, epochs=2500 -> 83.12094%, against a champion of 83.2409% at 80,000 epochs. So the gradient phase buys ~0.13 pp for roughly its entire ~3200 s. Arms 5000/10000/20000 decide whether microns' runtime invariant can be met by SIZING rather than by weakening the cap.",
+      "outcome": "IN PROGRESS 2026-08-15 night. Grid running via experiments/proto_P07_sizing.py on an IDLE machine (operator asleep), which also supplies the idle-machine counter-measurement P07's own method step 1 asks for. Two arms already on disk from the aborted 2026-08-11 cycle: epochs=0 -> 83.11152%, epochs=2500 -> 83.12094%, against a champion of 83.2409% at 80,000 epochs. So the gradient phase buys ~0.13 pp for roughly its entire ~3200 s. Arms 5000/10000/20000 decide whether microns' runtime invariant can be met by SIZING rather than by weakening the cap. ---- SUPERSEDED 2026-08-27 by P19, which carries the evidence P07's own method step 1 asked for: the champion H42 itself truncates on microns on this machine (3495.3 s, degraded, stage 3 cut to 4/12 sweeps and stage 4 to 1/5 cycles). P07's kill_condition said it would close if repeat measurement showed microns staying within a few percent of 3400 s under realistic load. It does not: 3258.2 s (2026-08-15) to 3495.3 s (2026-08-27) on identical code is +7.3%, and it crosses the guard. The observation stands and is now BLOCKING.",
       "note_2026_08_25": "Unmeasured on microns and now visible as a gap: relabelling moves the CONNECTOME score by sigma = 0.019124 pp, and nothing establishes the microns figure. Measuring it costs ~9.4 h (10 runs at ~3400 s) and does not fit a cycle at the current microns configuration - another cost P07 is carrying."
     },
     {
@@ -779,7 +779,7 @@
     {
       "id": "H64",
       "title": "Compose the ASYMMETRIC surrogate with the CHAMPION stack on CUDA — H38 was never measured against anything but pure Rocket, on MPS, from a random init",
-      "status": "proposed",
+      "status": "iterate",
       "priority": 0,
       "kind": "science",
       "axis": "objective / surrogate shape x interface to the discrete refiner",
@@ -801,7 +801,8 @@
       "expected_pp": "connectome -0.10 to +0.12, midpoint +0.03.",
       "microns_cost_disclosed": "H38 is -0.6689 pp on pure microns (3/3 negative), and at the champion's 80,000 epochs a 1.6x gradient phase is ~4800 s against a 3450 s guard deadline -- so ASYM CANNOT RUN on microns at the champion's epoch count at any score. This is a connectome-only candidate as filed; a full promotion needs H68 and probably H62's epoch re-allocation. Under the 2026-08-26 screen policy that is a disclosed cost, not an automatic kill.",
       "blockers_separated": "Mechanism: none (audit leakage PASS on all 4 modules; (M,T) selected on mouse + hard synthetic with connectome excluded). Provenance: FAIL -- H38.py does not exist at commit 0ed2b0da that its runs are stamped with, so no H38 number is reproducible by checkout (the P08 failure mode). Device: all runs MPS, invisible to audit.py at the campaign device_tag. Comparator: pure Rocket, 0.89 pp BELOW the champion. Mouse: non-inferiority actually FAILS the current pooled-SD CI test (CI_lo -0.2824 vs -0.2600) while log.md:4863 records it as passing by comparing the point estimate -- ~1 minute of compute to clear at 20 seeds. Also worth filing: audit.py reports the microns regression as -0.6223 because it pools six microns baselines spanning TWO gradient budgets (20k and 80k) -- a moving comparator config_hash cannot see; the log's -0.6689 is the honest number.",
-      "source": "ideator + critic, cycle 15 (operator directive: challenge the gradient-axis kills)"
+      "source": "ideator + critic, cycle 15 (operator directive: challenge the gradient-axis kills)",
+      "outcome": "ITERATE, cycle 16 (2026-08-27). The mechanism WORKS and is the largest connectome move of the autonomous campaign: connectome 84.25817950936937 vs the H42 champion 84.15409511053134 = +0.104084 pp, 8.67x the 0.012 bar, 5/5 bit-identical confirm seeds, std 0, PROTOCOL CI lower bound +0.0807, and CHEAPER than the champion (1182.4-1185.4 s vs 1226.5-1238.3 s) at an identical gradient budget. mouse non-inferior at delta exactly 0 (structural no-op: the mouse champion H63 runs 0 epochs, so the surrogate is never called - the mouse tripwire is VACUOUS for this variant). NOT PROMOTED: audit.py --gate promotion exits 1. Two blockers, neither affordable inside budget.max_cycle_wall_clock_h = 10 h: (1) relabel.connectome FAIL (P09 degenerate-pool gate, no study registered, ~3.3 h to close); (2) runtime_guard.microns FAIL, 3/5 confirm runs truncated by the wall-clock guard (3501.1 / 3509.0 / 3509.6 s against a 3450 s deadline). MECHANISM MEASURED: pure 82.92969571752491 -> 83.23791666953974 (+0.308221), sift 83.91351804242117 -> 84.11761164861514 (+0.204094), alternation 84.15409511053134 -> 84.25817950936937 (+0.104084). So the pure gain SURVIVES the greedy-FAS warm start (84% of H38's MPS random-init figure) and the pure->final transfer coefficient is 33.8%, ABOVE proto_S01's 10.3-28.0% band. M1's open clause is answered AFFIRMATIVELY: pure quality DOES compose. The kill_condition this item wrote for itself was NOT met and the M1 amendment it drafted ('pure-Rocket quality does not compose') must NOT be written. GRAPH-DEPENDENT: on connectome ASYM's pure order is BETTER, on microns and mouse it is WORSE while the final is still better - same sign, different route, on all three. OWED: one re-run of microns s999 (the sealed clause-3 re-run, deliberately deferred - see the addendum in experiments/prereg/H64_confirm.md)."
     },
     {
       "id": "H66",
@@ -822,7 +823,7 @@
       "id": "H65",
       "title": "ASYMMETRIC surrogate with an ALGEBRAIC violated-side tail — the unmeasured cell of the (symmetry x tail) 2x2",
       "status": "proposed",
-      "priority": 2,
+      "priority": 6,
       "kind": "science",
       "axis": "objective / surrogate shape",
       "hypothesis": "g(z) = 1 for z >= M, g(z) = (1 + (M-z)/T)^(-q) for z < M with q ~ 2-4 keeps H38's asymmetry (zero force on satisfied edges, no telescoping, no crossover) while extending the gradient support from ~1,400 ranks to more than 20,000 ranks at Rocket's operating scale, and beats H38's own pure-Rocket connectome score by more than 0.05 pp on CUDA.",
@@ -831,7 +832,8 @@
       "kill_condition": "THREE RUNGS, the first two costing zero GPU. (1) src/mfas/analysis/surrogate_gate.py cheap_gate: reject if the sigmoid-reparametrisation residual says it is the sigmoid at another beta, or if collapse_check finds g(0) == sup g. (2) On the stored champion positions, measure the realised gradient support: if the fraction of backward WEIGHT receiving >= 1% of the max per-edge gradient beyond 5,000 ranks is not at least 10x H38's, the reach premise is false and it dies for free. (3) Prototype on mouse + hard synthetic ONLY (never on a primary, per H38's own selection discipline), then one CUDA pure-Rocket connectome run against H64's arm B. Kill if it does not beat H38 by 0.05 pp pure.",
       "est_cost": "rungs 1-2 minutes of CPU, zero GPU. Rung 3 ~30 min GPU on proxies + ~500 s for one connectome pure run.",
       "expected_pp": "pure connectome -0.5 to +0.6 (this family has produced both signs at that magnitude); composed -0.10 to +0.15, midpoint +0.02. STRICTLY DOWNSTREAM OF H64: if H64 measures ASYM's pure->final transfer at ~0, this item's composed value is ~0 whatever its pure score, and it should be re-ranked to diagnostic-only.",
-      "source": "ideator, cycle 15"
+      "source": "ideator, cycle 15",
+      "note_2026_08_27": "PREMISE FALSIFIED at cycle 16's zero-GPU reach rung, before any of H65's own rungs ran. H65's case is that ASYM is a SHORT-RANGE repair operator whose reach (~1,400 ranks) misses the actual disagreement (median 22,580 ranks), and that an algebraic tail extending the reach beyond 20,000 ranks would therefore do better. Measured on the H42 champion order (experiments/outputs/proto_H64_rung01.json): ASYM's live gradient support covers 13.10% of the backward weight against the SIGMOID's 15.66%, and its reach is ~1,799 ranks against the sigmoid's ~2,132 - so ASYM already has LESS reach than the incumbent it beats by +0.104084 pp composed. Reach is therefore not what makes ASYM work, and H65's own rung 2 ('if the fraction of backward WEIGHT receiving >= 1% of max gradient beyond 5,000 ranks is not at least 10x H38's, the reach premise is false and it dies for free') is the rung that just fired. Kept as a proposed item only because extending the tail is still a testable change; its RATIONALE must be rewritten before it runs, because the one it has is now known to be wrong."
     },
     {
       "id": "H67",
@@ -872,7 +874,8 @@
       "axis": "promotion policy",
       "hypothesis": "sota.json is per-dataset by construction and already holds three different champions (H42/H42/H52), so a per-dataset promotion is the norm. But campaign.yaml's microns entry says 'promotion_gate.primary is UNCHANGED: both primaries are still required to promote', which reads against promoting microns alone. Cycle 15 hit this for the first time with real stakes: H63's microns leg clears BOTH numeric gates (+0.018805 pp, protocol CI lower bound +0.0181, effect-size bar 0.002) and fails only the P09 relabel gate, while its connectome leg is refused outright. The cycle HELD microns under the standing rule 'if you are unsure whether something counts as a win, it does not'.",
       "what_would_settle_it": "An operator ruling, plus - if the answer is yes - the missing relabelling study: experiments/proto_P09_relabel.py --dataset microns --comparator H42 --variant H63 --relabels 4, ~9.4 h GPU. Note the ruling is worth having BEFORE the 9.4 h is spent, since a 'no' makes the study pointless for H63.",
-      "note": "Filed by cycle 15. The campaign must not resolve this itself: it is a question about how much the campaign is allowed to claim."
+      "note": "Filed by cycle 15. The campaign must not resolve this itself: it is a question about how much the campaign is allowed to claim.",
+      "note_2026_08_27": "RE-SCOPED by cycle 16, with the legs REVERSED. P15 asked whether a MICRONS-only championship is available while the connectome leg is refused. H64 poses the mirror image: connectome is clean, decisive (+0.104084 pp, 8.67x the bar, PROTOCOL CI lower bound +0.0807, 5/5 bit-identical, CHEAPER than the champion) and blocked only by a missing relabelling study (P18, ~3.3 h), while MICRONS cannot be measured at all until P19 is fixed. The underlying question is the same one and it is still the operator's: campaign.yaml promotion_gate.primary requires both primaries, but sota.json is per-dataset. The campaign has now hit this from both directions and has refused to decide it unilaterally both times."
     },
     {
       "id": "P16",
@@ -895,6 +898,86 @@
       "hypothesis": "killed.json's M8 carries a marginal-rate clause (pp per second) that no code and no cycle has ever evaluated. The critic computed it for H63 stage 6 in cycle 15: 1.13e-4 pp/s on connectome against a 3.45e-4 bar, and 1.20e-4 against 4.33e-4 on microns - it FAILS on both primaries, and clears on mouse by ~5 orders of magnitude. That is an independent argument against the primary legs which cycle 15 did not make and could not have made mechanically.",
       "what_would_settle_it": "Add the marginal-rate computation to audit.py so the clause is enforced rather than remembered, and apply it to P13 BEFORE spending engineering time making stage 6 cheaper on microns - if the stage cannot clear the rate bar even when fast, P13 is not worth doing.",
       "note": "Raised by the critic in cycle 15 (autoresearch/critic_H63.md, FINDING 1). Related: P13."
+    },
+    {
+      "id": "P18",
+      "title": "Buy the connectome relabelling study for H64 - the ONLY gate left on the largest connectome result of the campaign",
+      "status": "proposed",
+      "priority": 0,
+      "kind": "infrastructure",
+      "axis": "promotion evidence",
+      "hypothesis": "audit.py --gate promotion FAILs relabel.connectome for (H64, H42, connectome) purely because no relabelling study is registered in experiments/outputs/relabel_index.json. Every other connectome gate PASSES: effect_size (+0.1041 vs +0.0120), protocol_ci (CI_lo +0.0807), provenance, runtime, runtime_guard (5/5 clean), compute (equal gradient budget). Running the study is therefore the single cheapest action that can turn a measured +0.104084 pp into a promotable one.",
+      "rationale": "The P09 gate exists because a degenerate pool (std = 0 in both arms) carries no robustness evidence, and it has already refused two results (H63 microns, and it is the reason H52/H59 never promoted on connectome). H64 is the FIRST result where the delta is large enough that the study is plausibly a formality rather than a coin flip: at +0.104084 pp the relabelling spread would have to be an order of magnitude larger than anything measured to overturn it. That is a prediction, and the study is how it gets tested rather than assumed.",
+      "method": "PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset connectome --comparator H42 --variant H64 --relabels 4. Paired design: both arms run on the same relabelled graph, r=0 is the identity and MUST reproduce 84.15409511053134 and 84.25817950936937 exactly - that is the harness-bypass validity check. Launch DETACHED via sweep.sh/detach.sh and poll; ~3.3 h (5 labellings x 2 arms x ~1185 s).",
+      "kill_condition": "Not a hypothesis - it either registers or it does not. But it IS falsifiable about H64: if the paired delta_r spread across relabellings is large enough that the study's own criterion rejects, then H64's connectome gain is a tie-break artefact and the whole result must be re-read. State the pass/fail criterion from the script's own output, not from the cycle's preference.",
+      "prior_evidence": [
+        "autoresearch/audit_H64.json (relabel.connectome FAIL, with the exact command)",
+        "experiments/proto_P09_relabel.py (the paired design and its r=0 validity check)",
+        "experiments/log.md 2026-08-27 (Cycle 16)"
+      ],
+      "est_cost": "~3.3 h GPU, connectome only. Does NOT need microns.",
+      "expected_pp": "n/a - converts an existing +0.104084 pp into a promotable result",
+      "source": "cycle 16"
+    },
+    {
+      "id": "P19",
+      "title": "P07 CONFIRMED on the champion itself: microns truncates 3/5 under sustained load, and no variant can be promoted on microns until it is fixed",
+      "status": "proposed",
+      "priority": 0,
+      "kind": "infrastructure",
+      "axis": "runtime safety",
+      "hypothesis": "The microns configuration shipped in the champion (H42, 80,000 Rocket epochs) does not fit the campaign's own 3600 s runtime invariant during a sustained GPU session. Measured in cycle 16: H64's five microns confirm runs, at the CHAMPION's epoch count and with a surrogate that costs the same per epoch as the sigmoid, walled at 3419.6, 3442.4, 3501.1, 3509.0 and 3509.6 s - monotone increasing in start time - and 3 of 5 were truncated by the guard. The five connectome runs that ran FIRST in the same sweep were flat within 3.0 s.",
+      "rationale": "This is P07 restated with the evidence P07 asked for, and it is now BLOCKING in the literal sense: promotion needs both primaries (campaign.yaml promotion_gate.primary), and microns cannot produce a clean 5-run pool late in a session. Note the attribution is NOT the variant: the per-epoch cost of the asymmetric surrogate on CUDA is 21.66 ms/epoch on connectome against the sigmoid's 21.11-24.09 ms/epoch, i.e. within the sigmoid's own spread. Cycle 16 ran the champion H42 on microns at --role verify on the same warm box as the attribution control; read its result before acting.",
+      "method": "1) Read the cycle-16 H42/microns/verify control run. 2) If the champion ALSO truncates, the finding is the machine and the options are: schedule microns runs first in a session, raise reserve_s, or re-size microns as a NORMAL VARIANT through the full ladder (H62's move) - never by hand-editing a constant to rescue a promotion. 3) If the champion runs clean, the surrogate does cost more on microns than on connectome and that must be measured per-epoch on microns directly.",
+      "kill_condition": "Closes when five consecutive microns runs complete untruncated under representative conditions, with the spread recorded.",
+      "prior_evidence": [
+        "results/*-H64-microns-*-confirm-*.json (3/5 degraded, walls 3419.6-3509.6 s)",
+        "results/*-H42-microns-*-confirm-*.json (3397.8-3418.0 s, measured overnight 2026-08-10)",
+        "autoresearch/audit_H64.json (runtime_guard.microns FAIL)",
+        "autoresearch/queue.json P07"
+      ],
+      "est_cost": "the control run is already spent; the fix is a decision plus possibly one variant",
+      "expected_pp": "n/a - unblocks promotion on microns",
+      "source": "cycle 16",
+      "outcome": "ANSWERED IN THE SAME CYCLE, and the answer is THE MACHINE. Control run results/20260827T092101Z-H42-microns-s42-verify-f91b66.json: H42, the UNMODIFIED CHAMPION, run on microns on the same warm box immediately after H64's confirm, came back degraded=True at 3495.3 s with deadline_reached and stages_truncated {stage3_sift: 4 of 12, stage4_alternation: 1 of 5}, scoring 83.20304259125173 against its own confirmed 83.24085291200831. Its gradient phase alone took ~3451 s, more than the whole 3450 s deadline. For contrast the same champion ran CLEAN at 3258.2 s on 2026-08-15 and at 3397.8-3418.0 s overnight on 2026-08-10. So the shipped microns configuration does not fit the runtime invariant during a sustained session, and this is now demonstrated ON THE CHAMPION rather than inferred from a variant. Corollary that clears H64: in this very comparison H64's ASYM stage 2 took ~3253 s where the champion's sigmoid stage 2 took ~3451 s - the asymmetric surrogate was FASTER - so H64's 3 truncated microns runs are not attributable to the mechanism. NEXT ACTIONS remain as filed: schedule microns first in a session, or raise reserve_s, or re-size microns as a normal variant through the full ladder. Never by hand-editing a constant to rescue a promotion."
+    },
+    {
+      "id": "H69",
+      "title": "The ASYM (M,T) optimum is graph-dependent and was never selected for connectome - measure the sensitivity WITHOUT selecting on the evaluated graph",
+      "status": "proposed",
+      "priority": 2,
+      "kind": "science",
+      "axis": "objective / surrogate shape - hyperparameter sensitivity",
+      "hypothesis": "(M,T) = (0.75, 1.5) was chosen on mouse + hard synthetic as the only grid point positive on BOTH proxies, explicitly NOT using connectome. It nonetheless delivers +0.308221 pp pure and +0.104084 pp composed on connectome. A neighbouring (M,T) may be materially better there - or the ridge may be flat, in which case the result is robust and that is worth knowing too.",
+      "rationale": "H38's own docstring discloses that the optimum is graph-dependent, and cycle 16 measured the disclosure biting: the mouse-optimal (0.25, 0.75) is +0.627 pp on mouse and -6.30 pp on the synthetic, and the composed ROUTE differs on all three datasets (connectome pure BETTER, microns and mouse pure WORSE, final better everywhere). H38B (0.25, 0.75) is a second logged positive asymmetric point on connectome (+0.14416 pp pure), so the ridge has at least two members.",
+      "method": "LEAKAGE CONSTRAINT FIRST, because this is the item most likely to violate it: selecting (M,T) by connectome score is selecting on the evaluated graph and is NOT permitted (CAMPAIGN.md rule 4 in spirit; H38 deliberately avoided it). Two admissible designs: (a) SENSITIVITY, not selection - run a small (M,T) grid on connectome and report the SPREAD as a robustness statement about the shipped point, promoting nothing; (b) SELECTION on a held-out proxy that is not mouse or the synthetic - e.g. an SCC subgraph of microns - then a single confirmatory connectome run at the proxy-selected point. Design (a) is cheap and safe; do it first.",
+      "kill_condition": "If design (a) shows the composed connectome score varies by less than the 0.012 pp bar across a reasonable (M,T) neighbourhood, the shipped point is robust, this item closes as ANSWERED, and no tuning is warranted.",
+      "prior_evidence": [
+        "src/mfas/experiments/H38.py (the (M,T) provenance and the graph-dependence disclosure)",
+        "experiments/outputs/proto_h38_sweep.json (the 6x3 proxy grid)",
+        "experiments/log.md 2026-08-27 (Cycle 16, the three-dataset route comparison)"
+      ],
+      "est_cost": "design (a): ~6 connectome runs, ~2 h",
+      "expected_pp": "unknown; the honest expectation is a robustness statement, not a gain",
+      "source": "cycle 16"
+    },
+    {
+      "id": "P20",
+      "title": "state.json free-text has grown to 20,384 chars - trim it before it stops being readable",
+      "status": "proposed",
+      "priority": 4,
+      "kind": "infrastructure",
+      "axis": "record hygiene",
+      "hypothesis": "verify_cycle.py has started WARNing on state.prose_size. last_cycle_outcome and the history notes are each a full paragraph now, and cycle 16 added the longest one yet. state.json is the file a fresh session with no context reads FIRST, so its value depends on being readable in one pass.",
+      "rationale": "The prose is there for a real reason - a resuming cycle must be able to reconstruct the campaign from this file alone - so the fix is NOT to delete it. It is to move the narrative to experiments/log.md, which already carries it in full, and leave state.json with a short outcome plus the log section reference. The risk of doing nothing is that the field becomes unreadable and a future cycle skims it, which is exactly the failure the field exists to prevent.",
+      "method": "Cap last_cycle_outcome and each history note at a stated length (say 600 and 400 chars), require a pointer to the log.md section, and have verify_cycle.py check the pointer resolves rather than only checking the size. Trim the existing entries by moving text into their log sections, never by discarding it.",
+      "kill_condition": "Not a hypothesis. Closes when verify_cycle.py stops WARNing and every trimmed entry still resolves to a log.md section carrying the full text.",
+      "prior_evidence": [
+        "autoresearch/verify_cycle.py state.prose_size WARN, 2026-08-27 (20,384 chars)"
+      ],
+      "est_cost": "no compute",
+      "expected_pp": "n/a - record hygiene",
+      "source": "cycle 16 (verify_cycle.py WARN)"
     }
   ]
 }

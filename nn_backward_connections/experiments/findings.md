@@ -699,3 +699,128 @@ $PY autoresearch/audit.py --variant H63 --comparator champion --role confirm \
 ```
 
 Full cycle record: `experiments/log.md`, 2026-08-27 (cycle 15). Critic: `autoresearch/critic_H63.md`.
+
+## #11 — The objective's SHAPE moves the composed metric, and the gain survives the refinement stack at a 33.8% transfer (Phase 7, H64)
+
+> **STATUS: MEASURED, NOT PROMOTED.** `sota.json` is unchanged. `audit.py --gate promotion` exits
+> **1** on two gates that have nothing to do with the mechanism — a missing relabelling study on
+> connectome, and a microns runtime failure that affects the champion's own configuration. Read
+> "Why this is not a champion" before quoting the number as a championship.
+
+### The claim
+
+Replacing `torch.sigmoid` with H38's one-sided asymmetric surrogate
+
+```
+g(z) = 1                        for z >= M
+g(z) = 1 + tanh((z - M) / T)    for z <  M        z = beta * Delta,  (M, T) = (0.75, 1.5)
+```
+
+in **stage 2 only** of the champion pipeline — every other constant byte-identical to the champion
+of each dataset — raises the exact feedforward percentage on the fly connectome by
+**+0.104084 pp**, from 84.15409511053134 to **84.25817950936937**, at a **lower** wall clock and an
+identical gradient budget. This is the largest connectome improvement of the autonomous campaign
+and it closes the gap to the 84.6147 reference from 0.4606 pp to **0.3565 pp**.
+
+### What was measured
+
+Confirm stage, `role=confirm`, comparator restricted to the same role.
+
+| dataset | H64 (n, std) | champion (n, std) | delta pp | bar | audit |
+|---|---|---|---|---|---|
+| connectome | 84.25817950936937 (5, 0) | H42 84.15409511053134 (5, 0) | **+0.104084** | 0.012 | effect_size PASS, protocol_ci PASS (CI_lo **+0.0807**) |
+| microns (clean 2 of 5) | 83.24619687456759 (2, 0) | H42 83.24085291200831 (5, 0) | +0.005344 | 0.002 | **runtime_guard FAIL** (3/5 truncated) |
+| mouse | 93.17538325903584 (20, 0) | H63 93.17538325903584 (20, 0) | 0.000000 | non-inf | non_inferiority PASS |
+
+All 30 confirm runs were re-scored with the frozen oracle and matched exactly (`rescore PASS`).
+Connectome walls **1182.4–1185.4 s** against the champion's **1226.5–1238.3 s**, at
+`compute.connectome PASS: equal gradient budget ([20000])` — so the gain cannot be attributed to
+extra compute under any accounting; it costs about 47 s **less** per run.
+
+### The mechanism, stage by stage
+
+Sigmoid values are from H63's connectome confirm runs, whose stages 1-4 are byte-identical to
+H42's, so both columns come from logged `results/*.json` `variant_attrs`.
+
+| stage | sigmoid (champion) | ASYM (H64) | delta pp |
+|---|---|---|---|
+| 2 — pure Rocket | 82.92969571752491 | 83.23791666953974 | **+0.308221** |
+| 3 — under-relaxed sift | 83.91351804242117 | 84.11761164861514 | +0.204094 |
+| 4 — SCC / sift alternation | 84.15409511053134 | 84.25817950936937 | **+0.104084** |
+
+**Three conclusions, in order of importance.**
+
+1. **Pure quality composes.** `+0.104084 / +0.308221 = 0.3377`. The pure-to-final transfer
+   coefficient for a SHAPE change is **33.8%**, above the 10.3–28.0% band `proto_S01` measured for
+   an EPOCH change and far from its negative top-of-curve value. `killed.json` meta-rule M1 posed
+   exactly this question and left it open; it is now closed, affirmatively.
+2. **The gain is not an artefact of the random-init basin.** H38's +0.36675 pp was measured from a
+   random init on MPS, and the standing objection was that the whole effect lived in that basin.
+   Warm-started from greedy-FAS on CUDA, **84% of it survives** (+0.308221 pp).
+3. **The refiner recovers about half the advantage at each stage, and never all of it.**
+   +0.308 → +0.204 → +0.104. Discrete refinement is partially substitutable for a better start but
+   does not close the gap — a quantitative bound on what the discrete stack can recover.
+
+### The honest limits
+
+* **The mechanism is GRAPH-DEPENDENT and the route differs on every dataset.** On connectome
+  ASYM's pure order is *better* (+0.308) and its final is better. On microns its pure is
+  82.44967373582656 at 80,000 epochs, far *worse* than the sigmoid at comparable budget, and the
+  final is better by only +0.005344. On mouse at H42's 5,000-epoch configuration the pure was
+  **0.40 pp worse** and the final 0.098 pp better. Same sign on the final everywhere; no two
+  datasets share the route. H38's docstring disclosed that its `(M, T)` optimum is graph-dependent;
+  this is that disclosure showing up in the composed result. **Do not extrapolate the +0.308 pure
+  gain off connectome.**
+* **The mouse leg is vacuous.** The mouse champion H63 runs `_EPOCHS["mouse"] = 0`, so the
+  surrogate is never called and H64's mouse run is bit-identical to H63's. The non-inferiority
+  PASS at delta exactly 0 exercises none of the changed code, and mouse is therefore **not** a
+  working tripwire for this variant. Pinned by
+  `tests/test_experiment_H64.py::test_mouse_leg_is_bit_identical_to_the_mouse_champion`.
+* **Alignment did not predict this.** On the hard synthetic the sigmoid's alignment ratio at the
+  operating point (1.195124) is *higher* than ASYM's (0.998268), and neither crosses zero anywhere
+  in `beta*std` over `[1e-2, 1e6]`. This is the third time an alignment argument has failed to
+  predict a score in this project (A-MBAND, Q04, here). Alignment remains diagnostic only.
+* **Reach is not the mechanism.** ASYM's live gradient support covers **13.10%** of the backward
+  weight on the champion order against the sigmoid's **15.66%**, with a shorter reach (about 1,799
+  ranks vs 2,132). Whatever the one-sided shape buys, it is not range.
+* **The evidence is self-reviewed.** The verifier and critic rungs were run inline by the cycle
+  rather than by independent subagents. The mechanical audit is unaffected and it FAILED; the
+  adversarial review was weakened.
+
+### Why this is not a champion
+
+`autoresearch/audit_H64.json`, `--gate promotion`, exit **1**:
+
+* `relabel.connectome` **FAIL** — both pools are degenerate (std = 0 in each arm), so the seed pool
+  carries no robustness evidence, and no relabelling study is registered for (H64, H42,
+  connectome). Cost to close: about 3.3 h. Filed as **P18**.
+* `runtime_guard.microns` **FAIL** — 3 of 5 microns confirm runs were truncated by the wall-clock
+  guard (3501.1 / 3509.0 / 3509.6 s against a 3450 s deadline), which drags the microns pool mean
+  to −0.2710 pp and fails `effect_size` and `protocol_ci` as a consequence. The walls rise
+  monotonically with start time across a 6.5 h session while the connectome runs that ran first
+  were flat within 3.0 s, and the asymmetric surrogate's measured per-epoch cost on CUDA (21.66
+  ms/epoch on connectome) sits *inside* the sigmoid's own spread (21.11–24.09). This is queue item
+  **P07**, refiled with evidence as **P19**.
+
+`campaign.yaml promotion_gate.primary` requires **both** primaries, so connectome alone cannot
+promote even once P18 is closed. Whether a connectome-only championship is available while microns
+is unmeasurable is the open operator question **P15**, re-scoped.
+
+### Reproduce
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+git checkout f954ad6                                  # the commit that introduces H64.py
+PYTHONPATH=src $PY -m pytest tests/test_experiment_H64.py -q      # 14 passed
+bash autoresearch/sweep.sh --exp H64 --role confirm               # detached; poll with waitfor.sh
+$PY autoresearch/audit.py --variant H64 --comparator champion \
+    --role confirm --comparator-role confirm --gate promotion \
+    --out autoresearch/audit_H64.json                             # exit 1, for the reasons above
+```
+
+Evidence: `results/*-H64-connectome-*-confirm-a7490c.json` (5),
+`results/*-H64-microns-*-confirm-6868b4.json` (5, 3 degraded),
+`results/*-H64-mouse-*-confirm-269d61.json` (20),
+`experiments/outputs/proto_H64_rung01.json`, `experiments/outputs/proto_H64_rung2.json`,
+`experiments/prereg/H64_prototype.md`, `experiments/prereg/H64_confirm.md`,
+`autoresearch/audit_H64.json`. Cycle entry: `experiments/log.md` 2026-08-27 (Cycle 16).

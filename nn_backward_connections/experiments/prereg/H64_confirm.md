@@ -108,7 +108,7 @@ microns configuration does not fit the runtime invariant on this machine. In tha
 | 123 | 83.24619687456759 | 3442.4 | no |
 | 999 | 83.06280740365429 | 3501.1 | **yes** |
 | 7 | 82.72980646089619 | 3509.0 | **yes** |
-| 31415 | 82.56430000000000 (see audit) | >3450 | **yes** |
+| 31415 | 82.56431893989289 | 3509.6 | **yes** |
 
 3 of 5 truncated. The walls are **monotone increasing in start time** across a 6.5 h continuous
 GPU session, while the five connectome runs that ran FIRST (05:47-07:27) were flat at
