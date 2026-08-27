@@ -1,0 +1,519 @@
+{
+  "variant": "H64",
+  "comparator": "champion",
+  "gate": "promotion",
+  "per_dataset": {
+    "connectome": {
+      "variant": "H64",
+      "comparator": "H42",
+      "variant_stats": {
+        "n": 5,
+        "mean": 84.25817950936937,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260827T024801Z-H64-connectome-s42-confirm-a7490c.json",
+          "20260827T030757Z-H64-connectome-s123-confirm-a7490c.json",
+          "20260827T032753Z-H64-connectome-s999-confirm-a7490c.json",
+          "20260827T034749Z-H64-connectome-s7-confirm-a7490c.json",
+          "20260827T040747Z-H64-connectome-s31415-confirm-a7490c.json"
+        ],
+        "max_wall_s": 1185.4420051574707,
+        "grad_steps": [
+          20000
+        ],
+        "commits": [
+          "45d7637d",
+          "45d7637d+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "comparator_stats": {
+        "n": 5,
+        "mean": 84.15409511053134,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260810T064240Z-H42-connectome-s42-confirm-f41d7e.json",
+          "20260810T070327Z-H42-connectome-s123-confirm-f41d7e.json",
+          "20260810T072409Z-H42-connectome-s999-confirm-f41d7e.json",
+          "20260810T103830Z-H42-connectome-s7-confirm-f41d7e.json",
+          "20260810T105922Z-H42-connectome-s31415-confirm-f41d7e.json"
+        ],
+        "max_wall_s": 1238.253127336502,
+        "grad_steps": [
+          20000
+        ],
+        "commits": [
+          "1865372b+dirty",
+          "3791350d",
+          "3791350d+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "dataset_role": "primary",
+      "delta_pp": 0.104084398838026,
+      "welch_se": 0.0,
+      "welch_ci_lower": 0.104084398838026,
+      "protocol_se": 0.011953409555436475,
+      "protocol_ci_lower": 0.08065571610937051,
+      "noninferiority_se": 1.517893276880822e-06,
+      "noninferiority_ci_lower": 0.10408142376720332
+    },
+    "microns": {
+      "variant": "H64",
+      "comparator": "H42",
+      "variant_stats": {
+        "n": 5,
+        "mean": 82.9698653107157,
+        "std": 0.30961775194006935,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260827T042745Z-H64-microns-s42-confirm-6868b4.json",
+          "20260827T052447Z-H64-microns-s123-confirm-6868b4.json",
+          "20260827T062211Z-H64-microns-s999-confirm-6868b4.json",
+          "20260827T072035Z-H64-microns-s7-confirm-6868b4.json",
+          "20260827T081907Z-H64-microns-s31415-confirm-6868b4.json"
+        ],
+        "max_wall_s": 3509.6160163879395,
+        "grad_steps": [
+          72654,
+          77182,
+          80000
+        ],
+        "commits": [
+          "45d7637d+dirty",
+          "84f17fa4+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "comparator_stats": {
+        "n": 5,
+        "mean": 83.24085291200831,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260810T074449Z-H42-microns-s42-confirm-f91b66.json",
+          "20260810T084129Z-H42-microns-s123-confirm-f91b66.json",
+          "20260810T093826Z-H42-microns-s999-confirm-f91b66.json",
+          "20260810T112007Z-H42-microns-s7-confirm-f91b66.json",
+          "20260810T121650Z-H42-microns-s31415-confirm-f91b66.json"
+        ],
+        "max_wall_s": 3418.017822742462,
+        "grad_steps": [
+          80000
+        ],
+        "commits": [
+          "1865372b+dirty",
+          "3791350d+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "dataset_role": "primary",
+      "delta_pp": -0.27098760129260313,
+      "welch_se": 0.1384652680757325,
+      "welch_ci_lower": -0.5423795267210388,
+      "protocol_se": 0.0003794733192202055,
+      "protocol_ci_lower": -0.2717313689982747,
+      "noninferiority_se": 0.1384652680757325,
+      "noninferiority_ci_lower": -0.5423795267210388
+    },
+    "mouse": {
+      "variant": "H64",
+      "comparator": "H63",
+      "variant_stats": {
+        "n": 20,
+        "mean": 93.17538325903584,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          1111,
+          1234,
+          1414,
+          1618,
+          1732,
+          2222,
+          2236,
+          2718,
+          3333,
+          4444,
+          5555,
+          6666,
+          7777,
+          8888,
+          9999,
+          31415
+        ],
+        "files": [
+          "20260827T091740Z-H64-mouse-s42-confirm-269d61.json",
+          "20260827T091743Z-H64-mouse-s123-confirm-269d61.json",
+          "20260827T091745Z-H64-mouse-s999-confirm-269d61.json",
+          "20260827T091748Z-H64-mouse-s7-confirm-269d61.json",
+          "20260827T091751Z-H64-mouse-s31415-confirm-269d61.json",
+          "20260827T091754Z-H64-mouse-s2718-confirm-269d61.json",
+          "20260827T091756Z-H64-mouse-s1618-confirm-269d61.json",
+          "20260827T091759Z-H64-mouse-s1414-confirm-269d61.json",
+          "20260827T091802Z-H64-mouse-s1732-confirm-269d61.json",
+          "20260827T091805Z-H64-mouse-s2236-confirm-269d61.json",
+          "20260827T091807Z-H64-mouse-s9999-confirm-269d61.json",
+          "20260827T091810Z-H64-mouse-s8888-confirm-269d61.json",
+          "20260827T091813Z-H64-mouse-s7777-confirm-269d61.json",
+          "20260827T091816Z-H64-mouse-s6666-confirm-269d61.json",
+          "20260827T091818Z-H64-mouse-s5555-confirm-269d61.json",
+          "20260827T091821Z-H64-mouse-s4444-confirm-269d61.json",
+          "20260827T091824Z-H64-mouse-s3333-confirm-269d61.json",
+          "20260827T091827Z-H64-mouse-s2222-confirm-269d61.json",
+          "20260827T091829Z-H64-mouse-s1111-confirm-269d61.json",
+          "20260827T091832Z-H64-mouse-s1234-confirm-269d61.json"
+        ],
+        "max_wall_s": 0.8444912433624268,
+        "grad_steps": [
+          0
+        ],
+        "commits": [
+          "84f17fa4+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "comparator_stats": {
+        "n": 20,
+        "mean": 93.17538325903584,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          1111,
+          1234,
+          1414,
+          1618,
+          1732,
+          2222,
+          2236,
+          2718,
+          3333,
+          4444,
+          5555,
+          6666,
+          7777,
+          8888,
+          9999,
+          31415
+        ],
+        "files": [
+          "20260826T153929Z-H63-mouse-s42-confirm-9a9819.json",
+          "20260826T153932Z-H63-mouse-s123-confirm-9a9819.json",
+          "20260826T153934Z-H63-mouse-s999-confirm-9a9819.json",
+          "20260826T153937Z-H63-mouse-s7-confirm-9a9819.json",
+          "20260826T153940Z-H63-mouse-s31415-confirm-9a9819.json",
+          "20260826T153942Z-H63-mouse-s2718-confirm-9a9819.json",
+          "20260826T153945Z-H63-mouse-s1618-confirm-9a9819.json",
+          "20260826T153947Z-H63-mouse-s1414-confirm-9a9819.json",
+          "20260826T153950Z-H63-mouse-s1732-confirm-9a9819.json",
+          "20260826T153952Z-H63-mouse-s2236-confirm-9a9819.json",
+          "20260826T153955Z-H63-mouse-s9999-confirm-9a9819.json",
+          "20260826T153957Z-H63-mouse-s8888-confirm-9a9819.json",
+          "20260826T154000Z-H63-mouse-s7777-confirm-9a9819.json",
+          "20260826T154003Z-H63-mouse-s6666-confirm-9a9819.json",
+          "20260826T154005Z-H63-mouse-s5555-confirm-9a9819.json",
+          "20260826T154008Z-H63-mouse-s4444-confirm-9a9819.json",
+          "20260826T154010Z-H63-mouse-s3333-confirm-9a9819.json",
+          "20260826T154013Z-H63-mouse-s2222-confirm-9a9819.json",
+          "20260826T154015Z-H63-mouse-s1111-confirm-9a9819.json",
+          "20260826T154018Z-H63-mouse-s1234-confirm-9a9819.json"
+        ],
+        "max_wall_s": 0.7875118255615234,
+        "grad_steps": [
+          0
+        ],
+        "commits": [
+          "77c18de0+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "dataset_role": "supporting",
+      "delta_pp": 0.0,
+      "welch_se": 0.0,
+      "welch_ci_lower": 0.0,
+      "protocol_se": 0.08297816580281828,
+      "protocol_ci_lower": -0.16263720497352382,
+      "noninferiority_se": 3.162277660168379e-13,
+      "noninferiority_ci_lower": -6.198064213930023e-13
+    }
+  },
+  "checks": [
+    {
+      "check": "frozen.manifest",
+      "status": "PASS",
+      "detail": "SHA-256 manifest matches all frozen files"
+    },
+    {
+      "check": "frozen.git",
+      "status": "PASS",
+      "detail": "no frozen path modified in the working tree"
+    },
+    {
+      "check": "leakage",
+      "status": "PASS",
+      "detail": "no oracle value or reference solution in 17 algorithm file(s)"
+    },
+    {
+      "check": "leakage.dataset_keying",
+      "status": "WARN",
+      "detail": "dataset-name keying present (legitimate for compute budgets, but the cycle must state WHAT it keys):\n    src\\mfas\\experiments\\H64.py:226: cfg = RocketConfig(epochs=_EPOCHS.get(g.name, RocketConfig.epochs))\n    src\\mfas\\experiments\\H64.py:244: max_sweeps=_MAX_SWEEPS.get(g.name, 40), time_budget_s=sift_budget)\n    src\\mfas\\experiments\\H64.py:252: n_cycles=_ALT_CYCLES.get(g.name, 32),\n    src\\mfas\\experiments\\H64.py:253: sift_sweeps=_ALT_SIFT_SWEEPS.get(g.name, 2),\n    src\\mfas\\experiments\\H64.py:259: max_pops = _PAIR_MAX_POPS.get(g.name, 0)\n    src\\mfas\\experiments\\H64.py:281: rounds = _RECLAIM_ROUNDS.get(g.name, 0)\n    src\\mfas\\experiments\\H64.py:315: hist.attrs[\"epochs_requested\"] = _EPOCHS.get(g.name, RocketConfig.epochs)\n    src\\mfas\\experiments\\H64.py:319: hist.attrs[\"sift_sweeps_requested\"] = _MAX_SWEEPS.get(g.name, 40)\n    src\\mfas\\experiments\\H64.py:328: hist.attrs[\"alt_cycles_requested\"] = _ALT_CYCLES.get(g.name, 32)\n    src\\mfas\\experiments\\H64.py:331: hist.attrs[\"alt_sift_sweeps\"] = _ALT_SIFT_SWEEPS.get(g.name, 2)\n    src\\mfas\\io.py:300: node_ids=g.node_ids, name=np.array(g.name))"
+    },
+    {
+      "check": "promotion_gate.config",
+      "status": "INFO",
+      "detail": "strict promotion gate armed from campaign.yaml (z=1.96, zero_std_tol=1e-12)"
+    },
+    {
+      "check": "device",
+      "status": "INFO",
+      "detail": "counting only runs measured on 'NVIDIA GeForce RTX 4060 Laptop GPU' (sota.json is machine-specific; see CAMPAIGN.md \u00a7 Hardware)"
+    },
+    {
+      "check": "significance.connectome.degenerate",
+      "status": "WARN",
+      "detail": "zero variance in a pool (variant std=0, comparator std=0): the pipeline is deterministic on this device, so the Welch CI is degenerate (SE=0 makes any positive delta 'significant'). Use the PROTOCOL CI, floored at baseline_sigma_pp=0.0189, and the min_promotion_delta_pp minimum effect size. See experiments/log.md P01."
+    },
+    {
+      "check": "significance.connectome",
+      "status": "INFO",
+      "detail": "H64 84.2582+/-0.0000 (n=5, seeds=[7, 42, 123, 999, 31415]) vs H42 84.1541+/-0.0000 (n=5) | delta=+0.1041 pp, Welch CI_lo=+0.1041, PROTOCOL CI_lo=+0.0807"
+    },
+    {
+      "check": "inventory.connectome",
+      "status": "INFO",
+      "detail": "5 run(s) for H64: 20260827T024801Z-H64-connectome-s42-confirm-a7490c.json, 20260827T030757Z-H64-connectome-s123-confirm-a7490c.json, 20260827T032753Z-H64-connectome-s999-confirm-a7490c.json, 20260827T034749Z-H64-connectome-s7-confirm-a7490c.json, 20260827T040747Z-H64-connectome-s31415-confirm-a7490c.json"
+    },
+    {
+      "check": "effect_size.connectome",
+      "status": "PASS",
+      "detail": "delta +0.1041 pp clears the minimum effect size +0.0120 pp"
+    },
+    {
+      "check": "relabel.connectome",
+      "status": "FAIL",
+      "detail": "both pools are degenerate (variant std=0, comparator std=0), so the seed pool carries no robustness evidence, and no relabelling study is registered for (H64, H42, connectome) in experiments/outputs/relabel_index.json \u2014 run `experiments/proto_P09_relabel.py --dataset connectome --comparator H42 --variant H64 --relabels 4`"
+    },
+    {
+      "check": "protocol_ci.connectome",
+      "status": "PASS",
+      "detail": "PROTOCOL CI lower bound +0.0807 > +0.0000 (SE=0.0120, sigma floor 0.0189)"
+    },
+    {
+      "check": "provenance.connectome",
+      "status": "PASS",
+      "detail": "src/mfas/experiments/H64.py exists at every commit backing these runs"
+    },
+    {
+      "check": "provenance.connectome.dirty",
+      "status": "WARN",
+      "detail": "produced from a MODIFIED working tree at 45d7637d+dirty: n=4 \u2014 src/mfas/experiments/H64.py is present at those commits, so the run is reproducible in principle but the exact tree is unverifiable"
+    },
+    {
+      "check": "comparator_homogeneity.connectome.variant",
+      "status": "WARN",
+      "detail": "H64 runs span 2 commits \u2014 the same id may denote different configurations. Restrict by role/commit before quoting a delta. Breakdown: 45d7637d: n=1, mean=84.2582; 45d7637d+dirty: n=4, mean=84.2582"
+    },
+    {
+      "check": "comparator_homogeneity.connectome.comparator",
+      "status": "WARN",
+      "detail": "H42 runs span 3 commits \u2014 the same id may denote different configurations. Restrict by role/commit before quoting a delta. Breakdown: 1865372b+dirty: n=3, mean=84.1541; 3791350d: n=1, mean=84.1541; 3791350d+dirty: n=1, mean=84.1541"
+    },
+    {
+      "check": "runtime.connectome",
+      "status": "PASS",
+      "detail": "max wall 1185s within budget"
+    },
+    {
+      "check": "runtime_guard.connectome",
+      "status": "PASS",
+      "detail": "all 5 runs ran under an armed deadline, none truncated"
+    },
+    {
+      "check": "compute.connectome",
+      "status": "PASS",
+      "detail": "equal gradient budget ([20000]) vs H42"
+    },
+    {
+      "check": "significance.microns.degenerate",
+      "status": "WARN",
+      "detail": "zero variance in a pool (variant std=0.3096, comparator std=0): the pipeline is deterministic on this device, so the Welch CI is degenerate (SE=0 makes any positive delta 'significant'). Use the PROTOCOL CI, floored at baseline_sigma_pp=0.0006, and the min_promotion_delta_pp minimum effect size. See experiments/log.md P01."
+    },
+    {
+      "check": "significance.microns",
+      "status": "INFO",
+      "detail": "H64 82.9699+/-0.3096 (n=5, seeds=[7, 42, 123, 999, 31415]) vs H42 83.2409+/-0.0000 (n=5) | delta=-0.2710 pp, Welch CI_lo=-0.5424, PROTOCOL CI_lo=-0.2717"
+    },
+    {
+      "check": "inventory.microns",
+      "status": "INFO",
+      "detail": "5 run(s) for H64: 20260827T042745Z-H64-microns-s42-confirm-6868b4.json, 20260827T052447Z-H64-microns-s123-confirm-6868b4.json, 20260827T062211Z-H64-microns-s999-confirm-6868b4.json, 20260827T072035Z-H64-microns-s7-confirm-6868b4.json, 20260827T081907Z-H64-microns-s31415-confirm-6868b4.json"
+    },
+    {
+      "check": "effect_size.microns",
+      "status": "FAIL",
+      "detail": "delta -0.2710 pp does not clear the minimum effect size +0.0020 pp for microns \u2014 a difference this small is not worth a champion change whatever its CI says"
+    },
+    {
+      "check": "protocol_ci.microns",
+      "status": "FAIL",
+      "detail": "PROTOCOL CI lower bound -0.2717 does not clear +0.0000 (sigma floored at baseline_sigma_pp=0.0006, SE=0.0004) \u2014 the gain is inside the protocol noise floor"
+    },
+    {
+      "check": "provenance.microns",
+      "status": "PASS",
+      "detail": "src/mfas/experiments/H64.py exists at every commit backing these runs"
+    },
+    {
+      "check": "provenance.microns.dirty",
+      "status": "WARN",
+      "detail": "produced from a MODIFIED working tree at 45d7637d+dirty: n=3; 84f17fa4+dirty: n=2 \u2014 src/mfas/experiments/H64.py is present at those commits, so the run is reproducible in principle but the exact tree is unverifiable"
+    },
+    {
+      "check": "comparator_homogeneity.microns.variant",
+      "status": "WARN",
+      "detail": "H64 runs span 2 commits \u2014 the same id may denote different configurations. Restrict by role/commit before quoting a delta. Breakdown: 45d7637d+dirty: n=3, mean=83.1851; 84f17fa4+dirty: n=2, mean=82.6471"
+    },
+    {
+      "check": "comparator_homogeneity.microns.comparator",
+      "status": "WARN",
+      "detail": "H42 runs span 2 commits \u2014 the same id may denote different configurations. Restrict by role/commit before quoting a delta. Breakdown: 1865372b+dirty: n=3, mean=83.2409; 3791350d+dirty: n=2, mean=83.2409"
+    },
+    {
+      "check": "runtime.microns",
+      "status": "WARN",
+      "detail": "max wall 3510s over the soft band 3400s (budget 3600s)"
+    },
+    {
+      "check": "runtime_guard.microns",
+      "status": "FAIL",
+      "detail": "3/5 runs were TRUNCATED by the wall-clock guard and are not comparable to clean runs: ['20260827T062211Z-H64-microns-s999-confirm-6868b4.json', '20260827T072035Z-H64-microns-s7-confirm-6868b4.json', '20260827T081907Z-H64-microns-s31415-confirm-6868b4.json']"
+    },
+    {
+      "check": "compute.microns",
+      "status": "WARN",
+      "detail": "variant runs used differing total_grad_steps: [72654, 77182, 80000]"
+    },
+    {
+      "check": "significance.mouse.degenerate",
+      "status": "WARN",
+      "detail": "zero variance in a pool (variant std=0, comparator std=0): the pipeline is deterministic on this device, so the Welch CI is degenerate (SE=0 makes any positive delta 'significant'). Use the PROTOCOL CI, floored at baseline_sigma_pp=0.2624, and the min_promotion_delta_pp minimum effect size. See experiments/log.md P01."
+    },
+    {
+      "check": "significance.mouse",
+      "status": "INFO",
+      "detail": "H64 93.1754+/-0.0000 (n=20, seeds=[7, 42, 123, 999, 1111, 1234, 1414, 1618, 1732, 2222, 2236, 2718, 3333, 4444, 5555, 6666, 7777, 8888, 9999, 31415]) vs H63 93.1754+/-0.0000 (n=20) | delta=+0.0000 pp, Welch CI_lo=+0.0000, PROTOCOL CI_lo=-0.1626"
+    },
+    {
+      "check": "inventory.mouse",
+      "status": "INFO",
+      "detail": "20 run(s) for H64: 20260827T091740Z-H64-mouse-s42-confirm-269d61.json, 20260827T091743Z-H64-mouse-s123-confirm-269d61.json, 20260827T091745Z-H64-mouse-s999-confirm-269d61.json, 20260827T091748Z-H64-mouse-s7-confirm-269d61.json, 20260827T091751Z-H64-mouse-s31415-confirm-269d61.json, 20260827T091754Z-H64-mouse-s2718-confirm-269d61.json, 20260827T091756Z-H64-mouse-s1618-confirm-269d61.json, 20260827T091759Z-H64-mouse-s1414-confirm-269d61.json, 20260827T091802Z-H64-mouse-s1732-confirm-269d61.json, 20260827T091805Z-H64-mouse-s2236-confirm-269d61.json, 20260827T091807Z-H64-mouse-s9999-confirm-269d61.json, 20260827T091810Z-H64-mouse-s8888-confirm-269d61.json, 20260827T091813Z-H64-mouse-s7777-confirm-269d61.json, 20260827T091816Z-H64-mouse-s6666-confirm-269d61.json, 20260827T091818Z-H64-mouse-s5555-confirm-269d61.json, 20260827T091821Z-H64-mouse-s4444-confirm-269d61.json, 20260827T091824Z-H64-mouse-s3333-confirm-269d61.json, 20260827T091827Z-H64-mouse-s2222-confirm-269d61.json, 20260827T091829Z-H64-mouse-s1111-confirm-269d61.json, 20260827T091832Z-H64-mouse-s1234-confirm-269d61.json"
+    },
+    {
+      "check": "non_inferiority.mouse",
+      "status": "PASS",
+      "detail": "non-inferior: CI lower bound -0.0000 > -0.2600 pp (delta +0.0000, pooled SE 3.16e-13 over n_v=20+n_c=20)"
+    },
+    {
+      "check": "non_inferiority.mouse.detail",
+      "status": "INFO",
+      "detail": "delta=+0.000000 pp, pooled SE=3.16e-13, CI_lo=-0.000000 vs margin -0.2600 pp"
+    },
+    {
+      "check": "provenance.mouse",
+      "status": "PASS",
+      "detail": "src/mfas/experiments/H64.py exists at every commit backing these runs"
+    },
+    {
+      "check": "provenance.mouse.dirty",
+      "status": "WARN",
+      "detail": "produced from a MODIFIED working tree at 84f17fa4+dirty: n=20 \u2014 src/mfas/experiments/H64.py is present at those commits, so the run is reproducible in principle but the exact tree is unverifiable"
+    },
+    {
+      "check": "runtime.mouse",
+      "status": "PASS",
+      "detail": "max wall 1s within budget"
+    },
+    {
+      "check": "runtime_guard.mouse",
+      "status": "PASS",
+      "detail": "all 20 runs ran under an armed deadline, none truncated"
+    },
+    {
+      "check": "compute.mouse",
+      "status": "PASS",
+      "detail": "equal gradient budget ([0]) vs H63"
+    },
+    {
+      "check": "rescore",
+      "status": "PASS",
+      "detail": "30 run(s) re-scored with the frozen oracle, all exact"
+    },
+    {
+      "check": "evidence.per_dataset",
+      "status": "PASS",
+      "detail": "significance analysed on 3 dataset(s): connectome, microns, mouse"
+    }
+  ]
+}

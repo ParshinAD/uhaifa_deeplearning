@@ -95,3 +95,59 @@ microns configuration does not fit the runtime invariant on this machine. In tha
    that needs explaining is that ASYM's PURE order is much WORSE (83.2379 vs the champion's
    stage-3 input) and its post-sift order much BETTER (84.1176 vs 83.9135). If that reverses at
    confirm, the mechanism story is wrong even if the number holds.
+
+---
+
+# ADDENDUM, sealed 2026-08-27 12:25Z — BEFORE the control run, AFTER the confirm
+
+## What actually happened on microns
+
+| seed | pct | wall s | degraded |
+|---|---|---|---|
+| 42 | 83.24619687456759 | 3419.6 | no |
+| 123 | 83.24619687456759 | 3442.4 | no |
+| 999 | 83.06280740365429 | 3501.1 | **yes** |
+| 7 | 82.72980646089619 | 3509.0 | **yes** |
+| 31415 | 82.56430000000000 (see audit) | >3450 | **yes** |
+
+3 of 5 truncated. The walls are **monotone increasing in start time** across a 6.5 h continuous
+GPU session, while the five connectome runs that ran FIRST (05:47-07:27) were flat at
+1182.4-1185.4 s. That pattern is the signature of a machine that slows under sustained load, not
+of a variant that is slow.
+
+## Why the sealed re-run is NOT the test being run, and what is instead
+
+The sealed rule (clause 3) permits ONE re-run of the same seed. Its purpose is to ask *"was this
+run unlucky?"* With **3 of 5** degraded and a monotone drift, the unlucky-single-run hypothesis is
+already largely excluded, so that test has little left to resolve — and re-running H64 now, on a
+box warm from 6.5 h of continuous GPU, is confounded by exactly the accumulated thermal state it
+would be trying to control for. A degraded result would therefore be uninformative.
+
+The question that IS open, and that P07 asks in its own method step 1, is **attribution**: is
+this the variant or the machine? The decisive control for that is to run the **CHAMPION, H42, on
+microns, right now, on the same warm box**:
+
+* if **H42 also exceeds the guard** → the degradation is the MACHINE. H64's microns leg is
+  unmeasurable today for the same reason the champion's would be, and this is P07, confirmed on
+  the champion itself rather than inferred from a variant;
+* if **H42 runs clean at ~3400 s while H64 degrades** → the asymmetric surrogate genuinely costs
+  more on microns, and that is a fact about H64 that must be reported against it.
+
+This is a **deviation from the sealed clause 3**, taken deliberately and recorded before the run:
+a strictly more informative test at the same cost, chosen because the hypothesis clause 3 tests is
+already nearly excluded by 3/5. **The H64 s999 re-run remains owed** and is queued for the next
+cycle; this addendum does not discharge it.
+
+Run at `--role verify`, NOT `--role confirm`, so it can never be pooled into the champion's
+comparator evidence.
+
+## The verdict is already constrained, whatever this control returns
+
+A full promotion is NOT reachable this cycle and that is stated before the control runs:
+`campaign.yaml` requires **both** primaries, and microns additionally needs a relabelling study
+(~9.4 h) that no budget here can buy. Even connectome alone fails `relabel.connectome`, whose
+study costs ~3.3 h (5 labellings x 2 arms x 1185 s) against ~2 h of remaining cycle budget
+(`budget.max_cycle_wall_clock_h` = 10 h; this cycle began ~04:31Z).
+
+So this cycle ends in **iterate**, and the control run only determines *what the next cycle should
+do* — buy the connectome relabelling study, or escalate the microns runtime to the operator.

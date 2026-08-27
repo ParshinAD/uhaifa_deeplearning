@@ -1,0 +1,114 @@
+{
+  "exp_id": "20260827T072035Z-H64-microns-s7-confirm-6868b4",
+  "algo": "H64",
+  "dataset": "microns",
+  "seed": 7,
+  "score": 12740851.0,
+  "pct": 82.72980646089619,
+  "wall_clock_s": 3509.0096237659454,
+  "git_commit": "84f17fa4e8faafbb02ef9f80981889486e272185+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "6868b4bf64a3",
+  "timestamp": "2026-08-27T08:19:05Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 77182,
+  "best_positions_path": "results\\20260827T072035Z-H64-microns-s7-confirm-6868b4_positions.npy",
+  "experiment_id": "H64",
+  "role": "confirm",
+  "hypothesis": "Replacing torch.sigmoid with H38's one-sided _asym_surrogate in stage 2 of the champion pipeline -- stages 1, 3, 4 (and 5, 6 where the dataset's champion has them) byte-identical -- changes the FINAL connectome score by more than +0.012 pp. H38's +0.36675 pp was PURE Rocket, from a RANDOM init, on MPS, against baseline_passthrough; this measures the same shape composed with the refinement stack, warm-started from greedy-FAS, on CUDA, against the champion. M1 names this measurement as the open clause it cannot close.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 77182,
+  "variant_attrs": {
+    "surrogate": "asym_one_sided",
+    "surrogate_M": 0.75,
+    "surrogate_T": 1.5,
+    "surrogate_exercised": true,
+    "pure_best_score": 12697226.0,
+    "pure_best_pct": 82.4465374856247,
+    "epochs_requested": 80000,
+    "sift_best_score": 12713521.0,
+    "sift_best_pct": 82.55234534698972,
+    "n_sift_sweeps": 1,
+    "sift_sweeps_requested": 12,
+    "sift_converged": false,
+    "sift_time_s": 8.552801609039307,
+    "sift_alpha": 0.7,
+    "sift_k_full": 6,
+    "alt_best_score": 12740851.0,
+    "alt_best_pct": 82.72980646089619,
+    "alt_increment_pp": 0.17746111390646035,
+    "n_alt_cycles": 1,
+    "alt_cycles_requested": 5,
+    "alt_time_s": 12.233985185623169,
+    "alt_min_block": 32,
+    "alt_sift_sweeps": 2,
+    "alt_log": [
+      {
+        "cycle": 0,
+        "split_frac": 0.5,
+        "after_scc_pct": 82.70248277383733,
+        "after_sift_pct": 82.72980646089619,
+        "best_pct": 82.72980646089619,
+        "t_scc_s": 3.813784599304199,
+        "t_sift_s": 8.42020058631897,
+        "cum_wall_s": 12.233985185623169
+      }
+    ],
+    "sift_log": [
+      {
+        "sweep": 0,
+        "alpha": 1.0,
+        "candidate_pct": 82.55234534698972,
+        "accepted": true,
+        "n_movers": 35359,
+        "wall": 8.552801609039307
+      }
+    ],
+    "pair_max_pops": 0,
+    "pair_best_score": 12740851.0,
+    "pair_best_pct": 82.72980646089619,
+    "pair_time_s": 0.0,
+    "pair_log": [],
+    "base_best_score": 12740851.0,
+    "base_best_pct": 82.72980646089619,
+    "reclaim_rounds_requested": 0,
+    "reclaim_best_score": 12740851.0,
+    "reclaim_best_pct": 82.72980646089619,
+    "reclaim_increment_pp": 0.0,
+    "reclaim_weight_accepted": 0.0,
+    "reclaim_lemma_holds": true,
+    "reclaim_time_s": 0.0,
+    "reclaim_log": [],
+    "refined_best_score": 12740851.0,
+    "refined_best_pct": 82.72980646089619
+  },
+  "runtime_guard": {
+    "armed": true,
+    "source": "campaign",
+    "time_limit_s": 3450.0,
+    "reserve_s": 150.0,
+    "cap_s": 3600.0,
+    "warn_s": 3400.0,
+    "wall_clock_s": 3509.0096237659454,
+    "variant_wall_s": 3470.8141419887543,
+    "deadline_reached": true,
+    "stages_truncated": {
+      "stage4_alternation": {
+        "done": 1,
+        "requested": 5
+      },
+      "stage3_sift": {
+        "done": 1,
+        "requested": 12
+      }
+    },
+    "degraded": true,
+    "over_warn": true,
+    "over_cap": false
+  }
+}
