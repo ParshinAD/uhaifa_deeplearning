@@ -1,0 +1,23 @@
+{
+  "item": "P19",
+  "what": "The rule that selects H70's microns operating point (E, C) from the measured curve.",
+  "sealed_at": "2026-08-27 22:52 local, BEFORE the E=50000 arm finished and before any Pareto front was computed",
+  "why_sealed": "Arms 30000 and 40000 were complete and their ordering had already been seen to FLIP with budget (E=30000 wins below ~2150 s, E=40000 above ~2300 s), and the partial E=50000 curve was already the strongest at ~2355 s. With a crossing family, any rule chosen after seeing the whole surface is fitted to it. So the rule is fixed here, in a tracked artifact, and applied mechanically afterwards.",
+  "rule": {
+    "constraint_1_margin": {
+      "test": "run_wall_s * 1.205 <= 3450",
+      "threshold_s": 2863.1,
+      "why": "P19's failure mode is a ~1% runtime margin. The largest slowdown ever measured on this box is +20.5% (P05/P07, 2026-08-11: an identical connectome computation took 1483.9 s against a 1226.5-1238.3 s spread). A configuration earns the word 'margin' only if it still fits the 3450 s guard deadline under that slowdown."
+    },
+    "constraint_2_score": {
+      "test": "delta_vs_champion_pp >= +0.002",
+      "why": "campaign.yaml datasets.microns.min_promotion_delta_pp. Mere non-inferiority is not enough: if the configuration is being changed anyway, it should not ship a regression."
+    },
+    "objective": {
+      "test": "among points satisfying both constraints, MINIMISE run_wall_s subject to best_pct >= (max best_pct on the measured Pareto front) - 0.002",
+      "why": "The operator made speed a goal in its own right ('ideally it should be faster', queue.json P19, commit a95e2f6). Paying wall clock for a score difference smaller than the campaign's own minimum effect size on this dataset contradicts that goal, because such a difference is one the campaign has decided it cannot call a gain."
+    }
+  },
+  "note_on_M8": "An M8-style marginal-rate equalisation (spend seconds on whichever stage has the higher marginal rate) was computed first and gave cycle 39 on both completed arms: E=30000 -> +0.008467 pp @ 1920 s, E=40000 -> +0.009597 pp @ 2299 s. It is NOT used as the selector because it degenerates at higher E: the E=50000 arm reaches the champion's score at its 5th cycle, so the 50,000->80,000 rocket tail buys approximately ZERO (-0.000006 pp for ~1131 s) and 'beat the tail rate' stops discriminating. The rates are still reported in the log as the M8 evidence that the trade is real.",
+  "applies_to": "experiments/outputs/proto_P19_microns.json"
+}
