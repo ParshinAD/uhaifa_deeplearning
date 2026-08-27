@@ -6846,3 +6846,38 @@ The verdict stays **ITERATE**, and the next cycle's first job is P19, not anothe
 
 **Still owed:** the sealed clause-3 re-run of H64 microns s999. This control answers a different
 question (variant or machine) and does not discharge it.
+
+### Footnote — the operator committed to this branch mid-cycle, and it is benign (verified, not assumed)
+
+Two commits landed on `auto/campaign-v3` from the operator while this cycle's sweeps were in
+flight, which is why several runs carry `provenance.*.dirty` and why `comparator_homogeneity`
+reports H64 spanning two commits:
+
+| commit | time | what |
+|---|---|---|
+| `84f17fa` | 10:20:43 | `seed_class.py`, `seed_plan.py`, `tests/test_seed_class.py` — per-dataset seed verdicts |
+| `8d7e0b1` | 13:26:18 | `watch.py`, `tests/test_watch.py` — the watchdog stops paging STALE on a working sweep |
+
+H64's microns confirm runs cite `84f17fa4+dirty`, so the question "did the source change under
+the measurement?" is a real one and was checked mechanically rather than reasoned about:
+
+```bash
+git diff --stat f954ad6 HEAD -- src/mfas/                              # empty
+git diff --stat f954ad6 HEAD -- src/mfas/metrics.py eval/ tests/test_metrics.py   # empty
+```
+
+**`src/mfas/` is byte-identical between `f954ad6` — the commit that introduced `H64.py` and the
+one every screen run cites — and HEAD, and no frozen file was touched.** Both operator commits are
+confined to campaign *tooling* (`autoresearch/`) and its tests. So no run in this cycle was
+produced by different algorithm code from any other, and the `comparator_homogeneity` warning has
+no numeric consequence here — which the numbers independently corroborate, since all five
+connectome confirm runs are bit-identical across both commits.
+
+One live consequence worth carrying: `seed_class` changed at 10:20, *after* H64's screen had
+already been planned at `class=rng` (3 seeds on connectome). That did not affect anything —
+`--auto-seeds` only governs the screen, `confirm_seeds` is never touched by it, and the extra
+seeds only made the pool larger — but a future cycle whose screen straddles a `seed_class` change
+could silently get a different plan mid-sweep. Worth a guard if it recurs.
+
+The full test suite is green at HEAD: **598 passed** (573 at preflight, +14 from
+`tests/test_experiment_H64.py`, +11 from the operator's two commits).
