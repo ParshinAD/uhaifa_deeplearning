@@ -73,6 +73,11 @@ RNG_ATTRS = {
 # purposes: the object's whole point is to be consumed.
 RNG_CTORS = {"RandomState", "default_rng", "Generator", "Random", "SeedSequence"}
 
+# Reading the clock and branching on it is non-determinism that is not RNG: a stage with a
+# time budget does fewer passes on a loaded machine and returns a different order. Never
+# treat these as safe, however they are imported.
+_CLOCK_ROOTS = {"time", "timeit", "datetime"}
+
 _BUILTINS = frozenset(dir(builtins))
 
 # Third-party / stdlib roots we do not descend into but consider RNG-free unless the call
@@ -295,6 +300,125 @@ def _prune_dead_init_branches(fn: ast.AST, passed_not_none: Set[str]) -> Set[int
     return dead
 
 
+def _dataset_constants(tree: ast.Module, dataset: str) -> Dict[str, object]:
+    """Module-level ``NAME = {"<dataset>": <constant>, ...}`` tables, resolved for ``dataset``.
+
+    Deliberately literal-only: every key must be a string constant and every value a
+    constant. A table built at runtime resolves to nothing and therefore prunes nothing,
+    which is the fail-safe direction.
+    """
+    out: Dict[str, object] = {}
+    for stmt in tree.body:
+        if not isinstance(stmt, ast.Assign) or len(stmt.targets) != 1:
+            continue
+        tgt = stmt.targets[0]
+        if not (isinstance(tgt, ast.Name) and isinstance(stmt.value, ast.Dict)):
+            continue
+        table = {}
+        ok = True
+        for k, v in zip(stmt.value.keys, stmt.value.values):
+            if not (isinstance(k, ast.Constant) and isinstance(k.value, str)
+                    and isinstance(v, ast.Constant)):
+                ok = False
+                break
+            table[k.value] = v.value
+        if ok and dataset in table:
+            out[tgt.id] = table[dataset]
+    return out
+
+
+def _prune_dataset_gated_branches(fn: ast.AST, consts: Dict[str, object]) -> Set[int]:
+    """Line numbers unreachable because a per-dataset constant switches the stage OFF.
+
+    The concrete case this exists for, and the only shape it recognises::
+
+        max_pops = _PAIR_MAX_POPS.get(g.name, 0)     # {"connectome": 0, "microns": 0, ...}
+        if max_pops:
+            pair_relocate(...)                        # reads _time.time() -> UNRESOLVED -> rng
+
+    On connectome and microns that body is dead, so the variant is genuinely deterministic
+    there, yet the classifier called it ``rng`` and the screen paid for three bit-identical
+    seeds. H64's three connectome screen runs agreed to every digit, which is the symptom.
+
+    Narrow and syntactic on purpose, exactly like _prune_dead_init_branches: the local must
+    be assigned from ``TABLE.get(g.name, <const>)`` or ``TABLE[g.name]`` with TABLE resolved
+    literally, and the test must be a bare truthiness check on that local. Anything else
+    prunes nothing. Pruning too little costs wall-clock; pruning too much would discard real
+    variance, so every ambiguity resolves to no-prune.
+    """
+    dead: Set[int] = set()
+    if not consts:
+        return dead
+
+    bound: Dict[str, object] = {}
+    for node in ast.walk(fn):
+        if not (isinstance(node, ast.Assign) and len(node.targets) == 1
+                and isinstance(node.targets[0], ast.Name)):
+            continue
+        val = node.value
+        table = None
+        if (isinstance(val, ast.Call) and isinstance(val.func, ast.Attribute)
+                and val.func.attr == "get" and isinstance(val.func.value, ast.Name)):
+            table = val.func.value.id
+        elif isinstance(val, ast.Subscript) and isinstance(val.value, ast.Name):
+            table = val.value.id
+        if table in consts:
+            bound[node.targets[0].id] = consts[table]
+
+    for node in ast.walk(fn):
+        if not isinstance(node, ast.If):
+            continue
+        test = node.test
+        if isinstance(test, ast.Name) and test.id in bound:
+            doomed = node.body if not bound[test.id] else node.orelse
+        elif (isinstance(test, ast.UnaryOp) and isinstance(test.op, ast.Not)
+              and isinstance(test.operand, ast.Name) and test.operand.id in bound):
+            doomed = node.body if bound[test.operand.id] else node.orelse
+        else:
+            continue
+        for stmt in doomed:
+            for sub in ast.walk(stmt):
+                if hasattr(sub, "lineno"):
+                    dead.add(sub.lineno)
+    return dead
+
+
+def _local_thirdparty_imports(fn: ast.AST) -> Set[str]:
+    """Names bound by a FUNCTION-LOCAL import of a third-party module.
+
+    ``mfas/refine/reclaim2.py`` does ``from scipy.sparse.csgraph import connected_components``
+    INSIDE resolve_conflicts_scc. _index_imports only records MODULE-level imports, so that
+    name resolved to nothing, was reported UNRESOLVED, and forced ``rng`` on what is a pure
+    graph algorithm -- which is why H63 and H64 screened at 3 bit-identical seeds.
+
+    Only imports rooted in KNOWN_SAFE_ROOTS count, and the RNG_CTORS / RNG_ATTRS checks still
+    run BEFORE this one, so ``from numpy.random import default_rng`` is still caught as RNG
+    rather than waved through here. Pruning too little costs wall-clock; pruning too much
+    would discard real variance, so anything unrecognised stays unresolved.
+
+    CLOCK MODULES ARE EXCLUDED, and that exclusion is the point rather than an oversight.
+    ``mfas/refine/pair_relocate.py:178`` does ``import time as _time`` inside the function and
+    then breaks its own loop on ``_time.time() - t0 > time_budget_s``, so the result depends
+    on how loaded the box is -- non-determinism that is not RNG. Today the classifier catches
+    it only by accident, because the local alias fails to resolve; whitelisting ``time`` here
+    would have silenced that accident and called a clock-truncated stage deterministic. The
+    microns run truncated on 2026-08-26 is what that costs.
+    """
+    names: Set[str] = set()
+    for node in ast.walk(fn):
+        if isinstance(node, ast.ImportFrom) and node.module:
+            root = node.module.split(".")[0]
+            if root in KNOWN_SAFE_ROOTS and root not in _CLOCK_ROOTS:
+                for a in node.names:
+                    names.add(a.asname or a.name)
+        elif isinstance(node, ast.Import):
+            for a in node.names:
+                root = a.name.split(".")[0]
+                if root in KNOWN_SAFE_ROOTS and root not in _CLOCK_ROOTS:
+                    names.add(a.asname or a.name.split(".")[0])
+    return names
+
+
 def _definitely_not_none(fn: ast.AST) -> Set[str]:
     """Local names in ``fn`` that provably hold a non-None value where they are used.
 
@@ -331,7 +455,8 @@ def _definitely_not_none(fn: ast.AST) -> Set[str]:
     return ok - none_params
 
 
-def analyze(idx: ModuleIndex, variant: str, strict: bool = True) -> dict:
+def analyze(idx: ModuleIndex, variant: str, strict: bool = True,
+            dataset: Optional[str] = None) -> dict:
     """Classify one variant by walking every function reachable from its ``run()``.
 
     Walk state is (module, function, params-known-non-None-at-this-call-site). The third
@@ -358,6 +483,11 @@ def analyze(idx: ModuleIndex, variant: str, strict: bool = True) -> dict:
             continue
 
         dead = _prune_dead_init_branches(node, set(bound))
+        if dataset is not None:
+            dead |= _prune_dataset_gated_branches(
+                node, _dataset_constants(idx.trees.get(mod, ast.Module(body=[],
+                                                                      type_ignores=[])),
+                                         dataset))
         # Closure scope: a nested function sees its enclosing functions' locals
         # (``remove()`` inside ``greedy_fas_order`` calls ``sinks.append``, and ``sinks``
         # belongs to the parent). Walk the qualname chain outward.
@@ -369,6 +499,9 @@ def analyze(idx: ModuleIndex, variant: str, strict: bool = True) -> dict:
                 locals_ |= _local_names(outer)
             parts.pop()
         notnone = _definitely_not_none(node)
+        # A third-party name imported inside this function is bound here, not at module
+        # level, so fold it into the local scope before the unresolved check.
+        locals_ |= _local_thirdparty_imports(node)
 
         for sub in ast.walk(node):
             if not isinstance(sub, ast.Call) or sub.lineno in dead:

@@ -46,10 +46,17 @@ def _campaign() -> dict:
     return yaml.safe_load((_HERE / "campaign.yaml").read_text())
 
 
-def classify(variant: str) -> dict:
-    """Static classification for ``variant``. Never raises: any failure answers 'rng'."""
+def classify(variant: str, dataset: str = None) -> dict:
+    """Static classification for ``variant``. Never raises: any failure answers 'rng'.
+
+    ``dataset`` makes the verdict PER-DATASET, which is what the pipelines actually are: H63
+    and H64 gate stage 5 on ``_PAIR_MAX_POPS[g.name]``, so it is dead on both primaries and
+    live on mouse. Without this the whole variant inherits mouse's verdict and the primaries
+    pay for three bit-identical screen runs.
+    """
     try:
-        result = seed_class.analyze(seed_class.ModuleIndex(), variant, strict=True)
+        result = seed_class.analyze(seed_class.ModuleIndex(), variant, strict=True,
+                                    dataset=dataset)
     except Exception as exc:                      # pragma: no cover - defensive
         return {"variant": variant, "verdict": "rng",
                 "reason": f"classifier raised {type(exc).__name__}: {exc} -> fail-safe rng"}
@@ -65,11 +72,12 @@ def plan(variant: str, role: str, datasets=DATASETS) -> dict:
     ds_cfg = campaign["datasets"]
     policy = campaign.get("seed_policy") or {}
 
-    cls = classify(variant)
+    cls = classify(variant)                   # variant-wide, for the reported summary
     verdict = cls.get("verdict", "rng")
 
     seeds: Dict[str, List[int]] = {}
     reason: Dict[str, str] = {}
+    per_ds_verdict: Dict[str, str] = {}
 
     for ds in datasets:
         # The screen may skip a dataset (campaign.yaml datasets.<ds>.in_screen: false).
@@ -89,14 +97,17 @@ def plan(variant: str, role: str, datasets=DATASETS) -> dict:
             reason[ds] = (f"role={role} is not the screen"
                           if role != "implement" else "seed_policy disabled")
             continue
-        by_class = (policy.get("screen_seeds_by_class") or {}).get(verdict)
+        # Per-dataset verdict: a stage switched off on this dataset cannot make it stochastic.
+        ds_verdict = classify(variant, ds).get("verdict", "rng")
+        per_ds_verdict[ds] = ds_verdict
+        by_class = (policy.get("screen_seeds_by_class") or {}).get(ds_verdict)
         if not by_class or ds not in by_class:
             seeds[ds] = list(ds_cfg[ds]["screen_seeds"])
-            reason[ds] = f"no seed_policy entry for class={verdict} -> fall back to screen_seeds"
+            reason[ds] = f"no seed_policy entry for class={ds_verdict} -> fall back to screen_seeds"
             continue
         seeds[ds] = list(by_class[ds])
-        reason[ds] = (f"class={verdict}" if len(seeds[ds]) > 1
-                      else f"class={verdict}: 1-seed screen (P02)")
+        reason[ds] = (f"class={ds_verdict}" if len(seeds[ds]) > 1
+                      else f"class={ds_verdict}: 1-seed screen (P02)")
 
     n_runs = sum(len(v) for v in seeds.values())
     baseline_runs = sum(len(ds_cfg[ds]["screen_seeds"]) for ds in datasets
@@ -105,6 +116,7 @@ def plan(variant: str, role: str, datasets=DATASETS) -> dict:
         "variant": variant,
         "role": role,
         "classification": verdict,
+        "classification_per_dataset": per_ds_verdict,
         "rng_evidence": cls.get("rng_evidence", [])[:3],
         "unresolved_calls": cls.get("unresolved_calls", [])[:3],
         "seeds": seeds,

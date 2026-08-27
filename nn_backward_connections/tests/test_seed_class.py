@@ -18,6 +18,7 @@ Covers:
 """
 from __future__ import annotations
 
+import ast
 import json
 import sys
 from pathlib import Path
@@ -135,3 +136,90 @@ def test_agrees_with_the_mouse_probe_where_the_probe_is_valid():
         if EXPECTED[vid] == "deterministic" and not obs["seed_inert_positions"]:
             false_det.append(vid)
     assert not false_det, f"classified deterministic but seed-sensitive on mouse: {false_det}"
+
+
+# ── per-dataset verdicts and the two resolution gaps behind them (2026-08-27) ─────────────
+# H63/H64 gate stage 5 on _PAIR_MAX_POPS[g.name] = {"connectome": 0, "microns": 0,
+# "mouse": 100_000}, so the stage is DEAD on both primaries. The classifier could not see
+# that and called the whole variant rng, so every screen paid for three bit-identical
+# connectome runs. Two separate gaps were involved and both are pinned here.
+#
+# The safety asymmetry is unchanged and these tests exist mostly to defend it: a false "rng"
+# costs wall-clock, a false "deterministic" silently discards real variance.
+
+def _idx():
+    return seed_class.ModuleIndex()
+
+
+def test_stage_gated_off_by_a_dataset_constant_is_not_stochastic():
+    idx = _idx()
+    for ds in ("connectome", "microns"):
+        assert seed_class.analyze(idx, "H64", dataset=ds)["verdict"] == "deterministic", ds
+
+
+def test_the_same_stage_is_stochastic_where_it_is_switched_ON():
+    """The other half: on mouse _PAIR_MAX_POPS is 100_000, the stage runs, and it breaks its
+    loop on a wall-clock budget. That is non-determinism and must survive the change."""
+    assert seed_class.analyze(_idx(), "H64", dataset="mouse")["verdict"] == "rng"
+
+
+def test_clock_modules_are_never_whitelisted():
+    """THE DANGEROUS DIRECTION. pair_relocate.py:178 does `import time as _time` INSIDE the
+    function and then breaks on `_time.time() - t0 > time_budget_s`. Folding function-local
+    third-party imports into scope must NOT make that safe, or a clock-truncated stage reads
+    as deterministic."""
+    assert "time" in seed_class._CLOCK_ROOTS
+    fn = ast.parse("def f():\n    import time as _time\n    return _time.time()\n").body[0]
+    assert seed_class._local_thirdparty_imports(fn) == set()
+
+
+def test_a_non_clock_local_import_is_resolved():
+    """The gap that made reclaim2 unresolved: scipy imported inside the function."""
+    fn = ast.parse(
+        "def f():\n"
+        "    from scipy.sparse.csgraph import connected_components\n"
+        "    return connected_components(m)\n").body[0]
+    assert "connected_components" in seed_class._local_thirdparty_imports(fn)
+
+
+def test_a_real_rng_variant_is_still_rng_on_every_dataset():
+    """H31 draws RandomState(seed + 7919) in the LNS destroy operator. No amount of
+    dataset-gating may reach it."""
+    idx = _idx()
+    for ds in ("connectome", "microns", "mouse"):
+        assert seed_class.analyze(idx, "H31", dataset=ds)["verdict"] == "rng", ds
+
+
+def test_omitting_the_dataset_never_prunes():
+    """Without a dataset the gate cannot be evaluated, so the verdict must be the old,
+    conservative one."""
+    assert seed_class.analyze(_idx(), "H64")["verdict"] == "rng"
+
+
+def test_a_non_literal_table_prunes_nothing():
+    tree = ast.parse("_T = {'connectome': compute()}\n")
+    assert seed_class._dataset_constants(tree, "connectome") == {}
+
+
+def test_a_truthy_constant_kills_the_else_arm_not_the_body():
+    tree = ast.parse("_T = {'mouse': 100000}\n")
+    consts = seed_class._dataset_constants(tree, "mouse")
+    fn = ast.parse(
+        "def f():\n"
+        "    n = _T.get(g.name, 0)\n"
+        "    if n:\n"
+        "        live()\n"
+        "    else:\n"
+        "        dead()\n").body[0]
+    dead = seed_class._prune_dataset_gated_branches(fn, consts)
+    lines = {n.lineno for n in ast.walk(fn)
+             if isinstance(n, ast.Call) and getattr(n.func, "id", "") == "live"}
+    assert not (lines & dead), "the live arm must not be pruned"
+
+
+def test_champion_variants_are_unaffected():
+    """H42/H35/H30 never reach the gated stage; their verdicts must not move."""
+    idx = _idx()
+    for v in ("H42", "H35", "H30"):
+        for ds in ("connectome", "microns", "mouse"):
+            assert seed_class.analyze(idx, v, dataset=ds)["verdict"] == "deterministic", (v, ds)
