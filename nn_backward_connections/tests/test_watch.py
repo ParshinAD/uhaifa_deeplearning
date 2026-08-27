@@ -32,6 +32,11 @@ def _load_watch(ar_dir: Path):
     mod.STOP = ar_dir / "STOP"
     mod.ALERTS_LOG = ar_dir / "ALERTS.log"
     mod.ALERT_LATEST = ar_dir / "ALERT"
+    # Redirect the runner-output signals too, or every test sees the LIVE repo's results/
+    # directory as fresh activity and no STALE case can ever fire.
+    mod.ROOT = ar_dir
+    mod.WORK_DIRS = (ar_dir / "results", ar_dir / "outputs")
+    mod.SWEEP_LOG = ar_dir / ".sweep" / "log"
     return mod
 
 
@@ -229,3 +234,38 @@ def test_popup_optout_treats_zero_and_empty_as_off(ar, monkeypatch):
         monkeypatch.setenv("MFAS_NO_POPUP", value)
         w.raise_alert(w.Health("STALE", "pretend hang", 7, 9999.0))
         assert stub.calls, f"MFAS_NO_POPUP={value!r} must NOT count as opting out"
+
+
+def test_runner_output_counts_as_activity(ar):
+    """The 2026-08-27 false positive: a confirm sweep writes results/*.json for hours and
+    touches nothing the watchdog used to read, so it paged STALE at 451 min on a healthy run."""
+    w = _load_watch(ar)
+    _write_state(ar)
+    (ar / ".lock").mkdir()
+    old = time.time() - 8 * 3600
+    for f in (ar / "state.json", ar / "logs" / "driver.log"):
+        if not f.exists():
+            f.write_text("x")
+        os.utime(f, (old, old))
+    os.utime(ar / ".lock", (old, old))
+    assert w.assess(time.time(), stale_s=360 * 60).status == "STALE"
+
+    (ar / "results").mkdir()                     # the runner writes a record -> dir mtime moves
+    (ar / "results" / "run.json").write_text("{}")
+    assert w.assess(time.time(), stale_s=360 * 60).status == "RUNNING_OK"
+
+
+def test_a_truly_dead_run_is_still_caught(ar):
+    """The widened signal must not make STALE unreachable: age out the work dirs too."""
+    w = _load_watch(ar)
+    _write_state(ar)
+    (ar / ".lock").mkdir()
+    (ar / "results").mkdir()
+    (ar / "results" / "run.json").write_text("{}")
+    old = time.time() - 8 * 3600
+    for f in (ar / "state.json", ar / "logs" / "driver.log", ar / ".lock",
+              ar / "results", ar / "results" / "run.json"):
+        if not f.exists():
+            f.write_text("x")
+        os.utime(f, (old, old))
+    assert w.assess(time.time(), stale_s=360 * 60).status == "STALE"

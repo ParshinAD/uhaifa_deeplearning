@@ -47,6 +47,12 @@ from pathlib import Path
 from typing import Optional
 
 AR = Path(__file__).resolve().parent
+ROOT = AR.parent
+# A working cycle writes here constantly and touches nothing the watchdog used to read.
+# Directory mtimes are used, not a glob: results/ holds thousands of files and this runs
+# every few minutes, while creating a file is exactly what bumps its parent's mtime.
+WORK_DIRS = (ROOT / "results", ROOT / "experiments" / "outputs")
+SWEEP_LOG = AR / ".sweep" / "log"
 STATE = AR / "state.json"
 DRIVER_LOG = AR / "logs" / "driver.log"
 LOCK = AR / ".lock"
@@ -86,8 +92,19 @@ def _mtime(p: Path) -> float:
 
 
 def _newest_activity(now: float) -> float:
-    """Most recent sign of life, in seconds of age. Independent of cycle completion."""
-    candidates = [_mtime(STATE), _mtime(DRIVER_LOG)]
+    """Most recent sign of life, in seconds of age. Independent of cycle completion.
+
+    state.json, driver.log and the lock markers only move at CYCLE boundaries, and a cycle is
+    hours. A confirm sweep of 30 runs touches none of them for its whole duration, so the
+    watchdog paged STALE at 451 min against a cycle that was healthily running its comparator
+    arm (2026-08-27). Raising --stale-min only moves that horizon; it does not stop the
+    watchdog from being wrong about what "activity" is. The runner writes results/*.json and
+    appends .sweep/log throughout, so those are the honest signals and they are read here.
+    This can only make STALE HARDER to trigger, never easier, and STALE is the alert whose
+    false positives were the problem.
+    """
+    candidates = [_mtime(STATE), _mtime(DRIVER_LOG), _mtime(SWEEP_LOG)]
+    candidates += [_mtime(d) for d in WORK_DIRS]
     if LOCK.is_dir():
         candidates += [_mtime(p) for p in LOCK.glob("*.started")]
         candidates.append(_mtime(LOCK))
