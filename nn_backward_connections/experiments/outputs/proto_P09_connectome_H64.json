@@ -1,0 +1,139 @@
+{
+  "item": "P09",
+  "dataset": "connectome",
+  "comparator": "H42",
+  "variant": "H64",
+  "seed": 42,
+  "n_nodes": 136648,
+  "total_weight": 41912141.0,
+  "perm_seed_base": 909000,
+  "rows": [
+    {
+      "r": 0,
+      "identity": true,
+      "comparator": {
+        "exp": "H42",
+        "score": 35270783.0,
+        "pct": 84.15409511053134,
+        "wall_clock_s": 1192.902164697647,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 20000,
+        "positions_path": "connectome_H42_comparator_r0_positions.npy"
+      },
+      "variant": {
+        "exp": "H64",
+        "score": 35314407.0,
+        "pct": 84.25817950936937,
+        "wall_clock_s": 1273.967520236969,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 20000,
+        "positions_path": "connectome_H64_variant_r0_positions.npy"
+      },
+      "delta_pp": 0.104084398838026
+    },
+    {
+      "r": 1,
+      "identity": false,
+      "comparator": {
+        "exp": "H42",
+        "score": 35259189.0,
+        "pct": 84.12643248170023,
+        "wall_clock_s": 1603.5110199451447,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 20000,
+        "positions_path": "connectome_H42_comparator_r1_positions.npy"
+      },
+      "variant": {
+        "exp": "H64",
+        "score": 35320684.0,
+        "pct": 84.27315607666046,
+        "wall_clock_s": 1228.341183423996,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 20000,
+        "positions_path": "connectome_H64_variant_r1_positions.npy"
+      },
+      "delta_pp": 0.14672359496022125
+    },
+    {
+      "r": 2,
+      "identity": false,
+      "comparator": {
+        "exp": "H42",
+        "score": 35257268.0,
+        "pct": 84.1218490842546,
+        "wall_clock_s": 1193.2557892799377,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 20000,
+        "positions_path": "connectome_H42_comparator_r2_positions.npy"
+      },
+      "variant": {
+        "exp": "H64",
+        "score": 35315736.0,
+        "pct": 84.2613504282685,
+        "wall_clock_s": 1223.819795370102,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 20000,
+        "positions_path": "connectome_H64_variant_r2_positions.npy"
+      },
+      "delta_pp": 0.1395013440138939
+    },
+    {
+      "r": 3,
+      "identity": false,
+      "comparator": {
+        "exp": "H42",
+        "score": 35271372.0,
+        "pct": 84.15550043124736,
+        "wall_clock_s": 1216.4913218021393,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 20000,
+        "positions_path": "connectome_H42_comparator_r3_positions.npy"
+      },
+      "variant": {
+        "exp": "H64",
+        "score": 35316083.0,
+        "pct": 84.26217835065978,
+        "wall_clock_s": 1496.5411803722382,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 20000,
+        "positions_path": "connectome_H64_variant_r3_positions.npy"
+      },
+      "delta_pp": 0.10667791941241944
+    },
+    {
+      "r": 4,
+      "identity": false,
+      "comparator": {
+        "exp": "H42",
+        "score": 35254054.0,
+        "pct": 84.11418066187552,
+        "wall_clock_s": 1264.8842418193817,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 20000,
+        "positions_path": "connectome_H42_comparator_r4_positions.npy"
+      },
+      "variant": {
+        "exp": "H64",
+        "score": 35314819.0,
+        "pct": 84.25916251808754,
+        "wall_clock_s": 1388.0725758075714,
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "n_epochs_done": 20000,
+        "positions_path": "connectome_H64_variant_r4_positions.npy"
+      },
+      "delta_pp": 0.14498185621201287
+    }
+  ],
+  "summary": {
+    "n_points": 5,
+    "comparator_pct_mean": 84.13441155392182,
+    "comparator_pct_std": 0.019124286772961963,
+    "variant_pct_mean": 84.26280537660912,
+    "variant_pct_std": 0.006006581675458545,
+    "delta_mean_pp": 0.1283938226873147,
+    "delta_std_pp": 0.02119580725487065,
+    "delta_min_pp": 0.104084398838026,
+    "delta_max_pp": 0.14672359496022125,
+    "n_positive": 5
+  }
+}
