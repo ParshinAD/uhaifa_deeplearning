@@ -137,7 +137,15 @@ datasets:
     # reach a champion unchallenged. Keeping it at confirm means no promotion can happen
     # without it, while variants that die at the screen never pay for it.
     #
-    # promotion_gate.primary is UNCHANGED: both primaries are still required to promote.
+    # promotion_gate.primary is UNCHANGED by the screen policy: deferring microns to
+    # confirm relaxes no threshold. CORRECTION 2026-08-27: an earlier revision of this
+    # comment said 'both primaries are still required to promote'. That overstated the
+    # gate and created the ambiguity filed as P15. audit.py evaluates --datasets
+    # INDEPENDENTLY and sota.json is per-dataset by construction (it has held three
+    # different champions since 2026-08-17), so a dataset that fails its gates does not
+    # hold back one that passes them. The operator resolved P15 the same way on
+    # 2026-08-27: the connectome gain is what matters. Each dataset still faces the full
+    # gate on its own evidence -- this is per-dataset promotion, not a weaker bar.
     in_screen: false
     baseline_sigma_pp: 0.0006
     # Same re-justification as connectome: champion sigma is 0.0000 here, so this is a minimum
