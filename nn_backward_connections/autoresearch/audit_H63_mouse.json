@@ -1,0 +1,241 @@
+{
+  "variant": "H63",
+  "comparator": "champion",
+  "gate": "promotion",
+  "per_dataset": {
+    "mouse": {
+      "variant": "H63",
+      "comparator": "H52",
+      "variant_stats": {
+        "n": 20,
+        "mean": 93.17538325903584,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          1111,
+          1234,
+          1414,
+          1618,
+          1732,
+          2222,
+          2236,
+          2718,
+          3333,
+          4444,
+          5555,
+          6666,
+          7777,
+          8888,
+          9999,
+          31415
+        ],
+        "files": [
+          "20260826T153929Z-H63-mouse-s42-confirm-9a9819.json",
+          "20260826T153932Z-H63-mouse-s123-confirm-9a9819.json",
+          "20260826T153934Z-H63-mouse-s999-confirm-9a9819.json",
+          "20260826T153937Z-H63-mouse-s7-confirm-9a9819.json",
+          "20260826T153940Z-H63-mouse-s31415-confirm-9a9819.json",
+          "20260826T153942Z-H63-mouse-s2718-confirm-9a9819.json",
+          "20260826T153945Z-H63-mouse-s1618-confirm-9a9819.json",
+          "20260826T153947Z-H63-mouse-s1414-confirm-9a9819.json",
+          "20260826T153950Z-H63-mouse-s1732-confirm-9a9819.json",
+          "20260826T153952Z-H63-mouse-s2236-confirm-9a9819.json",
+          "20260826T153955Z-H63-mouse-s9999-confirm-9a9819.json",
+          "20260826T153957Z-H63-mouse-s8888-confirm-9a9819.json",
+          "20260826T154000Z-H63-mouse-s7777-confirm-9a9819.json",
+          "20260826T154003Z-H63-mouse-s6666-confirm-9a9819.json",
+          "20260826T154005Z-H63-mouse-s5555-confirm-9a9819.json",
+          "20260826T154008Z-H63-mouse-s4444-confirm-9a9819.json",
+          "20260826T154010Z-H63-mouse-s3333-confirm-9a9819.json",
+          "20260826T154013Z-H63-mouse-s2222-confirm-9a9819.json",
+          "20260826T154015Z-H63-mouse-s1111-confirm-9a9819.json",
+          "20260826T154018Z-H63-mouse-s1234-confirm-9a9819.json"
+        ],
+        "max_wall_s": 0.7875118255615234,
+        "grad_steps": [
+          0
+        ],
+        "commits": [
+          "77c18de0+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "comparator_stats": {
+        "n": 20,
+        "mean": 93.10282596057695,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          1111,
+          1234,
+          1414,
+          1618,
+          1732,
+          2222,
+          2236,
+          2718,
+          3333,
+          4444,
+          5555,
+          6666,
+          7777,
+          8888,
+          9999,
+          31415
+        ],
+        "files": [
+          "20260816T211632Z-H52-mouse-s42-confirm-b458f1.json",
+          "20260816T211635Z-H52-mouse-s123-confirm-b458f1.json",
+          "20260816T211638Z-H52-mouse-s999-confirm-b458f1.json",
+          "20260816T211640Z-H52-mouse-s7-confirm-b458f1.json",
+          "20260816T211643Z-H52-mouse-s31415-confirm-b458f1.json",
+          "20260816T211645Z-H52-mouse-s2718-confirm-b458f1.json",
+          "20260816T211648Z-H52-mouse-s1618-confirm-b458f1.json",
+          "20260816T211651Z-H52-mouse-s1414-confirm-b458f1.json",
+          "20260816T211653Z-H52-mouse-s1732-confirm-b458f1.json",
+          "20260816T211656Z-H52-mouse-s2236-confirm-b458f1.json",
+          "20260816T211659Z-H52-mouse-s9999-confirm-b458f1.json",
+          "20260816T211701Z-H52-mouse-s8888-confirm-b458f1.json",
+          "20260816T211704Z-H52-mouse-s7777-confirm-b458f1.json",
+          "20260816T211706Z-H52-mouse-s6666-confirm-b458f1.json",
+          "20260816T211709Z-H52-mouse-s5555-confirm-b458f1.json",
+          "20260816T211712Z-H52-mouse-s4444-confirm-b458f1.json",
+          "20260816T211714Z-H52-mouse-s3333-confirm-b458f1.json",
+          "20260816T211717Z-H52-mouse-s2222-confirm-b458f1.json",
+          "20260816T211719Z-H52-mouse-s1111-confirm-b458f1.json",
+          "20260816T211722Z-H52-mouse-s1234-confirm-b458f1.json"
+        ],
+        "max_wall_s": 0.779672384262085,
+        "grad_steps": [
+          0
+        ],
+        "commits": [
+          "5734d23d",
+          "5734d23d+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "dataset_role": "supporting",
+      "delta_pp": 0.07255729845888936,
+      "welch_se": 0.0,
+      "welch_ci_lower": 0.07255729845888936,
+      "protocol_se": 0.08297816580281828,
+      "protocol_ci_lower": -0.09007990651463446,
+      "noninferiority_se": 3.162277660168379e-13,
+      "noninferiority_ci_lower": 0.07255729845826955
+    }
+  },
+  "checks": [
+    {
+      "check": "frozen.manifest",
+      "status": "PASS",
+      "detail": "SHA-256 manifest matches all frozen files"
+    },
+    {
+      "check": "frozen.git",
+      "status": "PASS",
+      "detail": "no frozen path modified in the working tree"
+    },
+    {
+      "check": "leakage",
+      "status": "PASS",
+      "detail": "no oracle value or reference solution in 16 algorithm file(s)"
+    },
+    {
+      "check": "leakage.dataset_keying",
+      "status": "WARN",
+      "detail": "dataset-name keying present (legitimate for compute budgets, but the cycle must state WHAT it keys):\n    src\\mfas\\experiments\\H63.py:159: cfg = RocketConfig(epochs=_EPOCHS.get(g.name, RocketConfig.epochs))\n    src\\mfas\\experiments\\H63.py:177: max_sweeps=_MAX_SWEEPS.get(g.name, 40), time_budget_s=sift_budget)\n    src\\mfas\\experiments\\H63.py:185: n_cycles=_ALT_CYCLES.get(g.name, 32),\n    src\\mfas\\experiments\\H63.py:186: sift_sweeps=_ALT_SIFT_SWEEPS.get(g.name, 2),\n    src\\mfas\\experiments\\H63.py:192: max_pops = _PAIR_MAX_POPS.get(g.name, 0)\n    src\\mfas\\experiments\\H63.py:214: rounds = _RECLAIM_ROUNDS.get(g.name, 1)\n    src\\mfas\\experiments\\H63.py:246: hist.attrs[\"epochs_requested\"] = _EPOCHS.get(g.name, RocketConfig.epochs)\n    src\\mfas\\experiments\\H63.py:250: hist.attrs[\"sift_sweeps_requested\"] = _MAX_SWEEPS.get(g.name, 40)\n    src\\mfas\\experiments\\H63.py:259: hist.attrs[\"alt_cycles_requested\"] = _ALT_CYCLES.get(g.name, 32)\n    src\\mfas\\experiments\\H63.py:262: hist.attrs[\"alt_sift_sweeps\"] = _ALT_SIFT_SWEEPS.get(g.name, 2)\n    src\\mfas\\io.py:300: node_ids=g.node_ids, name=np.array(g.name))"
+    },
+    {
+      "check": "promotion_gate.config",
+      "status": "INFO",
+      "detail": "strict promotion gate armed from campaign.yaml (z=1.96, zero_std_tol=1e-12)"
+    },
+    {
+      "check": "device",
+      "status": "INFO",
+      "detail": "counting only runs measured on 'NVIDIA GeForce RTX 4060 Laptop GPU' (sota.json is machine-specific; see CAMPAIGN.md \u00a7 Hardware)"
+    },
+    {
+      "check": "significance.mouse.degenerate",
+      "status": "WARN",
+      "detail": "zero variance in a pool (variant std=0, comparator std=0): the pipeline is deterministic on this device, so the Welch CI is degenerate (SE=0 makes any positive delta 'significant'). Use the PROTOCOL CI, floored at baseline_sigma_pp=0.2624, and the min_promotion_delta_pp minimum effect size. See experiments/log.md P01."
+    },
+    {
+      "check": "significance.mouse",
+      "status": "INFO",
+      "detail": "H63 93.1754+/-0.0000 (n=20, seeds=[7, 42, 123, 999, 1111, 1234, 1414, 1618, 1732, 2222, 2236, 2718, 3333, 4444, 5555, 6666, 7777, 8888, 9999, 31415]) vs H52 93.1028+/-0.0000 (n=20) | delta=+0.0726 pp, Welch CI_lo=+0.0726, PROTOCOL CI_lo=-0.0901"
+    },
+    {
+      "check": "inventory.mouse",
+      "status": "INFO",
+      "detail": "20 run(s) for H63: 20260826T153929Z-H63-mouse-s42-confirm-9a9819.json, 20260826T153932Z-H63-mouse-s123-confirm-9a9819.json, 20260826T153934Z-H63-mouse-s999-confirm-9a9819.json, 20260826T153937Z-H63-mouse-s7-confirm-9a9819.json, 20260826T153940Z-H63-mouse-s31415-confirm-9a9819.json, 20260826T153942Z-H63-mouse-s2718-confirm-9a9819.json, 20260826T153945Z-H63-mouse-s1618-confirm-9a9819.json, 20260826T153947Z-H63-mouse-s1414-confirm-9a9819.json, 20260826T153950Z-H63-mouse-s1732-confirm-9a9819.json, 20260826T153952Z-H63-mouse-s2236-confirm-9a9819.json, 20260826T153955Z-H63-mouse-s9999-confirm-9a9819.json, 20260826T153957Z-H63-mouse-s8888-confirm-9a9819.json, 20260826T154000Z-H63-mouse-s7777-confirm-9a9819.json, 20260826T154003Z-H63-mouse-s6666-confirm-9a9819.json, 20260826T154005Z-H63-mouse-s5555-confirm-9a9819.json, 20260826T154008Z-H63-mouse-s4444-confirm-9a9819.json, 20260826T154010Z-H63-mouse-s3333-confirm-9a9819.json, 20260826T154013Z-H63-mouse-s2222-confirm-9a9819.json, 20260826T154015Z-H63-mouse-s1111-confirm-9a9819.json, 20260826T154018Z-H63-mouse-s1234-confirm-9a9819.json"
+    },
+    {
+      "check": "non_inferiority.mouse",
+      "status": "PASS",
+      "detail": "non-inferior: CI lower bound +0.0726 > -0.2600 pp (delta +0.0726, pooled SE 3.16e-13 over n_v=20+n_c=20)"
+    },
+    {
+      "check": "non_inferiority.mouse.detail",
+      "status": "INFO",
+      "detail": "delta=+0.072557 pp, pooled SE=3.16e-13, CI_lo=+0.072557 vs margin -0.2600 pp"
+    },
+    {
+      "check": "provenance.mouse",
+      "status": "PASS",
+      "detail": "src/mfas/experiments/H63.py exists at every commit backing these runs"
+    },
+    {
+      "check": "provenance.mouse.dirty",
+      "status": "WARN",
+      "detail": "produced from a MODIFIED working tree at 77c18de0+dirty: n=20 \u2014 src/mfas/experiments/H63.py is present at those commits, so the run is reproducible in principle but the exact tree is unverifiable"
+    },
+    {
+      "check": "comparator_homogeneity.mouse.comparator",
+      "status": "WARN",
+      "detail": "H52 runs span 2 commits \u2014 the same id may denote different configurations. Restrict by role/commit before quoting a delta. Breakdown: 5734d23d: n=1, mean=93.1028; 5734d23d+dirty: n=19, mean=93.1028"
+    },
+    {
+      "check": "runtime.mouse",
+      "status": "PASS",
+      "detail": "max wall 1s within budget"
+    },
+    {
+      "check": "runtime_guard.mouse",
+      "status": "PASS",
+      "detail": "all 20 runs ran under an armed deadline, none truncated"
+    },
+    {
+      "check": "compute.mouse",
+      "status": "PASS",
+      "detail": "equal gradient budget ([0]) vs H52"
+    },
+    {
+      "check": "rescore",
+      "status": "PASS",
+      "detail": "20 run(s) re-scored with the frozen oracle, all exact"
+    },
+    {
+      "check": "evidence.per_dataset",
+      "status": "PASS",
+      "detail": "significance analysed on 1 dataset(s): mouse"
+    }
+  ]
+}
