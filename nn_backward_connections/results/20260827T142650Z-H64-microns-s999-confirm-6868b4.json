@@ -1,0 +1,162 @@
+{
+  "exp_id": "20260827T142650Z-H64-microns-s999-confirm-6868b4",
+  "algo": "H64",
+  "dataset": "microns",
+  "seed": 999,
+  "score": 12773353.0,
+  "pct": 82.94085077572194,
+  "wall_clock_s": 3502.6074192523956,
+  "git_commit": "967513fa6ad96f44502bc6134ff17b9e92f01e8f+dirty",
+  "env": {
+    "python": "3.9.25",
+    "jax_or_torch": "torch-2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config_hash": "6868b4bf64a3",
+  "timestamp": "2026-08-27T15:25:13Z",
+  "total_weight": 15400557.0,
+  "n_epochs_done": 80000,
+  "best_positions_path": "results\\20260827T142650Z-H64-microns-s999-confirm-6868b4_positions.npy",
+  "experiment_id": "H64",
+  "role": "confirm",
+  "hypothesis": "Replacing torch.sigmoid with H38's one-sided _asym_surrogate in stage 2 of the champion pipeline -- stages 1, 3, 4 (and 5, 6 where the dataset's champion has them) byte-identical -- changes the FINAL connectome score by more than +0.012 pp. H38's +0.36675 pp was PURE Rocket, from a RANDOM init, on MPS, against baseline_passthrough; this measures the same shape composed with the refinement stack, warm-started from greedy-FAS, on CUDA, against the champion. M1 names this measurement as the open clause it cannot close.",
+  "budget_basis": "total_grad_steps",
+  "total_grad_steps": 80000,
+  "variant_attrs": {
+    "surrogate": "asym_one_sided",
+    "surrogate_M": 0.75,
+    "surrogate_T": 1.5,
+    "surrogate_exercised": true,
+    "pure_best_score": 12697709.0,
+    "pure_best_pct": 82.44967373582656,
+    "epochs_requested": 80000,
+    "sift_best_score": 12747917.0,
+    "sift_best_pct": 82.77568791830062,
+    "n_sift_sweeps": 7,
+    "sift_sweeps_requested": 12,
+    "sift_converged": false,
+    "sift_time_s": 55.03372812271118,
+    "sift_alpha": 0.7,
+    "sift_k_full": 6,
+    "alt_best_score": 12773353.0,
+    "alt_best_pct": 82.94085077572194,
+    "alt_increment_pp": 0.16516285742132197,
+    "n_alt_cycles": 1,
+    "alt_cycles_requested": 5,
+    "alt_time_s": 11.225321531295776,
+    "alt_min_block": 32,
+    "alt_sift_sweeps": 2,
+    "alt_log": [
+      {
+        "cycle": 0,
+        "split_frac": 0.5,
+        "after_scc_pct": 82.88936562489266,
+        "after_sift_pct": 82.94085077572194,
+        "best_pct": 82.94085077572194,
+        "t_scc_s": 3.4580845832824707,
+        "t_sift_s": 7.767236948013306,
+        "cum_wall_s": 11.225321531295776
+      }
+    ],
+    "sift_log": [
+      {
+        "sweep": 0,
+        "alpha": 1.0,
+        "candidate_pct": 82.55311155304318,
+        "accepted": true,
+        "n_movers": 35176,
+        "wall": 8.511947631835938
+      },
+      {
+        "sweep": 1,
+        "alpha": 1.0,
+        "candidate_pct": 82.62073248389652,
+        "accepted": true,
+        "n_movers": 34874,
+        "wall": 8.642445087432861
+      },
+      {
+        "sweep": 2,
+        "alpha": 1.0,
+        "candidate_pct": 82.6521404388166,
+        "accepted": true,
+        "n_movers": 32882,
+        "wall": 7.6912453174591064
+      },
+      {
+        "sweep": 3,
+        "alpha": 1.0,
+        "candidate_pct": 82.6841457747275,
+        "accepted": true,
+        "n_movers": 31519,
+        "wall": 7.671955585479736
+      },
+      {
+        "sweep": 4,
+        "alpha": 1.0,
+        "candidate_pct": 82.69641805812608,
+        "accepted": true,
+        "n_movers": 30575,
+        "wall": 7.571208238601685
+      },
+      {
+        "sweep": 5,
+        "alpha": 1.0,
+        "candidate_pct": 82.71696926286498,
+        "accepted": true,
+        "n_movers": 29860,
+        "wall": 7.453186511993408
+      },
+      {
+        "sweep": 6,
+        "alpha": 0.7,
+        "candidate_pct": 82.77568791830062,
+        "accepted": true,
+        "n_movers": 29196,
+        "wall": 7.491739749908447
+      }
+    ],
+    "pair_max_pops": 0,
+    "pair_best_score": 12773353.0,
+    "pair_best_pct": 82.94085077572194,
+    "pair_time_s": 0.0,
+    "pair_log": [],
+    "base_best_score": 12773353.0,
+    "base_best_pct": 82.94085077572194,
+    "reclaim_rounds_requested": 0,
+    "reclaim_best_score": 12773353.0,
+    "reclaim_best_pct": 82.94085077572194,
+    "reclaim_increment_pp": 0.0,
+    "reclaim_weight_accepted": 0.0,
+    "reclaim_lemma_holds": true,
+    "reclaim_time_s": 0.0,
+    "reclaim_log": [],
+    "refined_best_score": 12773353.0,
+    "refined_best_pct": 82.94085077572194
+  },
+  "runtime_guard": {
+    "armed": true,
+    "source": "campaign",
+    "time_limit_s": 3450.0,
+    "reserve_s": 150.0,
+    "cap_s": 3600.0,
+    "warn_s": 3400.0,
+    "wall_clock_s": 3502.6074192523956,
+    "variant_wall_s": 3467.503202676773,
+    "deadline_reached": true,
+    "stages_truncated": {
+      "stage4_alternation": {
+        "done": 1,
+        "requested": 5
+      },
+      "stage3_sift": {
+        "done": 7,
+        "requested": 12
+      }
+    },
+    "degraded": true,
+    "over_warn": true,
+    "over_cap": false
+  }
+}

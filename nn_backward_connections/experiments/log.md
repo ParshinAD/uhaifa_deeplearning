@@ -6881,3 +6881,435 @@ could silently get a different plan mid-sweep. Worth a guard if it recurs.
 
 The full test suite is green at HEAD: **598 passed** (573 at preflight, +14 from
 `tests/test_experiment_H64.py`, +11 from the operator's two commits).
+
+---
+
+## 2026-08-27 — Cycle 17 · P18: the connectome relabelling study — **ITERATE** (H64's last connectome gate falls, `audit --gate promotion` on connectome goes 1 → 0 — and the campaign still cannot promote, because the OTHER primary turns out to be unmeasurable)
+
+**Item.** `queue.json` **P18**, priority 0, `kind: infrastructure`, `axis: promotion evidence`,
+`source: "cycle 16"`.
+**Mode.** incremental — `cycles_since_score_move` = 1 (< 3), `consecutive_kills` = 0,
+`cycles_since_literature_scan` = 4 (< 5), and ten `proposed` science items in the queue. No
+divergence trigger, no ideation trigger, no literature trigger.
+**Machine.** Windows 10 laptop, NVIDIA RTX 4060 Laptop GPU (CUDA), torch 2.8.0+cu128, Git Bash.
+**Preflight.** clean tree; branch `auto/campaign-v3` = `campaign.yaml`'s `campaign.branch`;
+`PYTHONPATH=src $PY -m pytest tests/ -q` gives **598 passed** in 197.28 s.
+
+**Why this item and not a new hypothesis.** Cycle 16 measured the largest connectome move of the
+autonomous campaign — H64 at **84.25817950936937**, `+0.104084 pp` over the champion — and did not
+promote it, because `audit.py --gate promotion` exited 1. On **connectome** exactly ONE check
+failed, and it was not about the mechanism: `relabel.connectome`, for want of a registered
+relabelling study. Buying that study was therefore the single cheapest action available to the
+campaign that could convert an already-confirmed, already-audited result into a promotable one.
+Taking a P-item here is not the "we have stopped making progress → let us improve our tooling"
+failure mode the constitution warns about: P18 is not tooling debt, it is the last evidentiary
+gate standing on a science result, and incremental mode (not divergent mode) is what was active.
+
+---
+
+### Gates run
+
+`novelty`, `prototype`, `critic`. **Not** `screen` and **not** `confirm`, and the omission is
+deliberate rather than skipped: **P18 produces no variant.** There is nothing to screen, and
+H64's connectome confirm pool already exists and was not re-run. The `prototype` rung *is* the
+study, which is the entire deliverable; the `critic` rung is `audit.py --gate promotion`.
+
+This is the same shape cycle 9 recorded for P09 (`gates_run: ["novelty", "prototype", "critic"]`,
+outcome `iterate`), and for the same reason. **No champion changed, so this is not a `keep` or a
+`keep-partial`** — those verdicts require the full five-rung ladder in `verify_cycle.py`'s
+`_REQUIRED_GATES`, and claiming one here would be claiming evidence that was never gathered.
+
+One thing this cycle DID run that P18 did not require: three `--role confirm` microns runs on
+H64 (§ Rung 3b). Those are **not** a confirm rung for P18 — they are a re-measurement for P19 —
+and they are excluded from `gates_run` on purpose.
+
+**Independence caveat, stated plainly and for the second cycle running.** The critic rung was
+executed **inline by the cycle**, not by a `critic` subagent, under a standing operator
+instruction in this session not to invoke the Agent tool. As in cycle 16, the mechanical
+enforcement is unaffected — `autoresearch/audit.py --gate promotion` is what actually decides and
+it was run — but the adversarial independence the critic rung exists to supply was again reduced
+to self-review. Recorded, not glossed.
+
+---
+
+### Rung 1 — NOVELTY: **PASS**
+
+P18's axis is *promotion evidence*. Two killed items mention relabelling — **H56**
+(relabelling multi-start) and **H57** (prefix-shared tail multi-start) — and neither shares this
+axis: both used relabelling as an **algorithm** (best-of-R over labellings, killed by M9's effect
+size and by exact enumeration), whereas P18 uses relabelling as a **measurement** of nuisance
+dispersion. That is the P09 protocol, which is already in force, already has a registered study
+(`H52|H42|connectome`), and is invoked by `audit.py` itself. Nothing in `killed.json` bears on it.
+
+### Rung 2 — the study, pre-registered at `040330f` **BEFORE** it was launched
+
+Pre-registration: `experiments/outputs/proto_P18_prereg.json`. The ordering, verified rather than
+asserted, because a pre-registration is worth exactly its timing claim:
+
+| event | time (+0300) | authority |
+|---|---|---|
+| prereg file written | 13:38:15 | filesystem mtime |
+| prereg **committed** as `040330f` | **13:38:21** | `git log --date=iso` |
+| study **launched** (pid 51626) | **13:38:28** | `detach.sh` line in `dr_tmp/proto_P18.out` |
+
+The seal precedes the launch by **7 seconds**, and P11's requirement — a pre-registration whose
+precedence rests on an mtime is not a pre-registration — is met by the *commit*, not by a
+timestamp.
+
+**A defect in the sealed artifact, corrected in the open.** The prereg's own `sealed_at` field
+reads `"2026-08-27T13:40:00Z"` and is wrong twice: it was hand-written, this box is `+0300` so the
+`Z` suffix is a mislabel, and the true seal was 13:38, not 13:40. The original field has been
+**left unaltered** and a `_sealed_at_correction` note appended beside it, rather than the value
+being quietly edited — rewriting the audit trail of a pre-registration to make it look tidier is
+the opposite of the point. Nothing about precedence changes: the claim never rested on that field,
+which is precisely why P11 requires a commit.
+
+What was fixed in advance, and why each mattered:
+
+* **R = 4**, taken from `campaign.yaml`
+  `promotion_gate.primary.degenerate_pool_rule.min_relabellings` — a campaign constant, not a
+  number chosen for this study, and the same R the registered H52 study used.
+* **A stopping rule**: R would **not** be extended in either direction after seeing the data.
+  `relabel_gate.py`'s own docstring flags the min-rule as stopping-rule sensitive (P(some single
+  labelling falls below the bar) rises from ~1.5% at R=4 to ~25% at R=99), so a campaign free to
+  choose R after the fact has an incentive to stop at the minimum. Forsworn in writing beforehand.
+* **The criterion was delegated to code**, not stated as prose: `relabel_gate.evaluate()`, written
+  in cycle 9 before the data it adjudicates. The prereg says in as many words that if its own text
+  and the code disagree, *the code is the criterion*.
+* **The `--out` path**, which is load-bearing: the script's default output for `--dataset
+  connectome` is `experiments/outputs/proto_P09_connectome.json`, which **is the registered
+  `H52|H42|connectome` study**. Running without `--out` would have silently overwritten existing
+  promotion evidence for a different pair.
+* **A prediction, with its reasoning and its own weakness**: PASS on both tests, but flagged as a
+  genuine test rather than a formality — see below.
+
+**Why this was a real test and not a formality.** `relabel_gate.py`'s D4 note warns that for a
+**nested** variant — the comparator's pipeline plus a monotone appended stage, which is what H52
+is — `delta_r >= 0` holds with probability 1, so positivity is *not* evidence. H64 is **not**
+nested: it swaps the stage-2 surrogate (`torch.sigmoid` → `H38._asym_surrogate`) *inside* the
+pipeline, so the two arms diverge from the first gradient step and `delta_r` could have come back
+negative. Meta-rule **M10** sharpens the concern: this pipeline's relabelling nuisance is created
+almost entirely in the **shared prefix** (greedy-FAS tie-breaks → Rocket), and stage 2 is *in* that
+prefix. The prereg therefore predicted a materially larger paired dispersion than H52's
+0.002011 pp, plausibly up to `sqrt(2) * 0.019124 = 0.02704 pp` if the two arms' prefix nuisance
+were uncorrelated. **That prediction was correct, and it is the interesting result of the cycle.**
+
+**Command** (~3.8 h GPU, connectome only; microns not needed and not run):
+
+```bash
+PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset connectome \
+    --comparator H42 --variant H64 --relabels 4 \
+    --out experiments/outputs/proto_P09_connectome_H64.json
+```
+
+Launched **detached** via `autoresearch/detach.sh` (pid 51626, 13:38:28 → 17:24:04) and polled
+throughout; the cycle never ended its turn while it ran.
+
+### The study — `experiments/outputs/proto_P09_connectome_H64.json`
+
+| r | labelling | H42 (comparator) | H64 (variant) | Δ (pp) |
+|---|---|---|---|---|
+| 0 | identity | 84.15409511 (1192.9 s) | 84.25817951 (1274.0 s) | **+0.104084** |
+| 1 | perm 909001 | 84.12643248 (1603.5 s) | 84.27315608 (1228.3 s) | +0.146724 |
+| 2 | perm 909002 | 84.12184908 (1193.3 s) | 84.26135043 (1223.8 s) | +0.139501 |
+| 3 | perm 909003 | 84.15550043 (1216.5 s) | 84.26217835 (1496.5 s) | +0.106678 |
+| 4 | perm 909004 | 84.11418066 (1264.9 s) | 84.25916252 (1388.1 s) | +0.144982 |
+
+**Validity check — the identity anchor reproduces the recorded confirm pools EXACTLY.**
+`variant_abs_diff_pp = 0.0` and `comparator_abs_diff_pp = 0.0` against a 1e-9 pp tolerance:
+H42 → 84.15409511053134, H64 → 84.25817950936937, both bit-for-bit the numbers in the confirm
+JSONs. The pre-registered VOIDING condition (a failure here voids the study rather than failing
+it, because it would mean the script's harness bypass does not reproduce the harness) is cleared.
+
+**No run was truncated.** Max wall over all ten arms **1603.5 s** against the connectome guard's
+`time_limit_s = 3450`, and every arm completed all 20,000 epochs. The second pre-registered
+voiding condition is cleared too.
+
+### Verdict — `relabel_gate.evaluate()`, not this cycle's arithmetic
+
+```
+passed:                  True
+n_points: 5              n_relabellings: 4        has_identity: True
+identity_reproduces:     True   (abs diff 0.0 pp on both arms, tol 1e-9)
+min_rule_passed:         True   (0 failures; every Δ > +0.012)
+delta_min_pp:            +0.104084398838026
+delta_max_pp:            +0.14672359496022125
+delta_mean_pp:           +0.1283938226873147
+delta_sd_pp:              0.02119580725487065
+paired_lower_bound_pp:   +0.10818593161979974   > +0.012   → paired_bound_passed: True
+reasons:                 []
+```
+
+Both required tests pass with room: the **min-rule** by a factor of 8.7 at its worst labelling,
+and the **paired one-sided 95% lower bound** at +0.108186 pp against the 0.012 pp bar.
+
+### Rung 3 — CRITIC + the mechanical audit: **PASS, exit 0**
+
+```bash
+PYTHONPATH=src $PY autoresearch/audit.py --variant H64 --comparator champion \
+    --role confirm --comparator-role confirm --gate promotion \
+    --datasets connectome --out autoresearch/audit_H64_connectome.json
+```
+
+→ **`VERDICT: PASS (5 warnings)`, exit 0.** Every connectome gate now passes:
+
+| check | cycle 16 | cycle 17 |
+|---|---|---|
+| `effect_size.connectome` | PASS (+0.1041 vs +0.0120) | PASS |
+| `protocol_ci.connectome` | PASS (CI_lo +0.0807) | PASS |
+| `provenance.connectome` | PASS | PASS |
+| `runtime.connectome` | PASS (1185 s) | PASS |
+| `runtime_guard.connectome` | PASS (5/5 clean) | PASS |
+| `compute.connectome` | PASS (equal 20,000 steps) | PASS |
+| **`relabel.connectome`** | **FAIL** | **PASS** |
+
+The `relabel.connectome` detail now reads: *"robust to relabelling: 4 non-identity relabelling(s)
+plus an identity row that reproduces the confirm pools; every delta in [+0.10408, +0.14672] pp and
+the paired one-sided 95% lower bound +0.10819 pp all clear the minimum effect size +0.01200 pp."*
+
+The 5 remaining WARNs are the standing ones and none is new: `leakage.dataset_keying` (H64 keys
+compute budgets by dataset name — `_EPOCHS`, `_MAX_SWEEPS`, `_ALT_CYCLES`, `_PAIR_MAX_POPS`,
+`_RECLAIM_ROUNDS`; it keys **budgets**, not the objective, and the oracle is never consulted
+inside the algorithm), `significance.connectome.degenerate` (which is the very condition that
+*arms* the relabel gate — the WARN and the new PASS are two halves of one story),
+`provenance.connectome.dirty`, and the two `comparator_homogeneity` WARNs.
+
+**On `comparator_homogeneity`, checked rather than waved through.** The audit warns that H64's
+runs span 2 commits and H42's span 3. `src/mfas/experiments/H64.py` is **byte-identical**
+(sha256 `94cca0573a2843bb`, 18,222 bytes) at `45d7637d`, `84f17fa4`, `4dfe2c1` and `HEAD`, so for
+H64 the warning is cosmetic: the same id denotes the same configuration at every commit backing
+these runs. The H42 pool's three commits all report the identical mean 84.1541 in the audit's own
+breakdown.
+
+---
+
+### Two findings that outlive the verdict
+
+**1. M10's dispersion constant replicates exactly, on a different variant pair.** The H42 arm's
+relabelling std over the five labellings is **0.019124286772961963 pp**. Cycle 9 measured the
+whole-pipeline connectome nuisance sigma at **0.019124 pp** — from a different study
+(`H52|H42|connectome`), a different variant, and a different set of runs. This is an independent
+replication of the constant M10 rests on, and it was not sought: it fell out of the comparator arm
+of a study aimed at something else.
+
+**2. The asymmetric surrogate is markedly MORE label-robust than the sigmoid it replaces.**
+
+| arm | std over 5 labellings |
+|---|---|
+| H42 (sigmoid, stage 2) | **0.019124 pp** |
+| H64 (ASYM, stage 2) | **0.006007 pp** |
+
+H64's spread is **3.2× smaller**. This is a property nobody asked for and it was not visible in
+any prior measurement, because the confirm pools are degenerate (std = 0 across seeds) — the
+seeds cannot see it and only relabelling can. It says the asymmetric surrogate does not merely
+find a better order on the canonical labelling; it depends **less** on the labelling at all.
+
+**Corollary that refines M10 — the pairing does NOT cancel for a non-nested pair.** The paired
+delta sd is **0.021196 pp**, which is *larger* than the comparator arm's own 0.019124 pp. If the
+two arms' prefix nuisance were independent the paired sd would be
+`sqrt(0.019124² + 0.006007²) = 0.020045 pp`; the observed 0.021196 sits right there. So for a
+variant that changes the shared prefix, the two arms' tie-break nuisance is **essentially
+uncorrelated** and the paired design buys nothing. M10 said the dispersion lives in the prefix;
+this adds that *sharing* a prefix stage is not enough for it to cancel — the arms must traverse it
+identically, as a nested variant does and a surrogate swap does not.
+
+**Consequence for the protocol, filed as P21.** For non-nested variants, the paired design's
+variance reduction should not be assumed. It cost nothing here, because the effect is 6× the
+paired sd — but a future +0.02 pp non-nested result would be judged by a bound roughly
+`sqrt(2)` wider than a nested one of the same size, and that asymmetry is currently undocumented.
+
+**A third observation, minor but worth recording: the canonical labelling is the WORST of the
+five for H64.** The identity Δ (+0.104084) is the minimum of the five; the mean over labellings is
++0.128394. The number the campaign has been quoting for H64 is therefore *conservative* — the
+expected gain over a random labelling is ~23% larger than the one on disk. This cuts against the
+obvious worry about a deterministic pipeline (that it got lucky on the canonical index order) in
+the direction that favours the result, which is exactly why it is stated here rather than left for
+someone else to notice.
+
+**Also measured, incidentally:** relabelled runs are **~34% slower** than the identity run
+(1603.5 s vs 1192.9 s on the H42 arm) because a random permutation destroys the gather/scatter
+locality of the memory-bound edge loop. Harmless at connectome's 1200 s against a 3450 s deadline,
+but it is why the study took 3.8 h rather than the 3.3 h P18 estimated, and it would matter to
+anyone who tried to run this study on microns, where the margin is ~1%.
+
+---
+
+### Rung 3b — the OTHER primary, measured rather than assumed
+
+The prereg said in advance that a P18 pass "does not authorise a promotion by itself", because
+H64's microns leg was unusable: 3 of 5 cycle-16 confirm runs truncated. With `relabel.connectome`
+closed, microns became the whole remaining question, and this cycle had ~6 h of its 10 h driver
+window left — enough for 3 runs at ~3450 s. **Measuring it beat guessing at it**, so the three
+missing seeds were launched at 17:26:48:
+
+```bash
+bash autoresearch/sweep.sh --exp H64 --role confirm --datasets microns --seeds "999 7 31415"
+```
+
+**First, a correction to how cycle 16's microns number was read.** `audit_H64.json` reports
+`delta_pp = -0.27098760` on microns and cycle 16's `state.json` note carried that figure forward.
+That number pools three TRUNCATED runs with two clean ones, which the audit's own
+`runtime_guard.microns` FAIL says are "not comparable to clean runs". Separating them:
+
+| seed | pct | wall (s) | truncated? |
+|---|---|---|---|
+| 42 | **83.24619687** | 3419.6 | no |
+| 123 | **83.24619687** | 3442.4 | no |
+| 999 | 83.06280740 | 3501.1 | yes — sift 9/12, alternation 1/5 |
+| 7 | 82.72980646 | 3509.0 | yes — sift 1/12, alternation 1/5 |
+| 31415 | 82.56431894 | 3509.6 | yes — sift 1/12, alternation 1/5 |
+
+The two runs that actually completed the pipeline are **bit-identical at 83.24619687**, against the
+champion's 83.24085291 — a delta of **+0.00534396 pp**, which is *positive* and *above* microns'
+`min_promotion_delta_pp` of 0.002. So H64 on microns is **unmeasured, not negative**, and the
+`-0.271 pp` figure is an artifact of pooling. That is a materially different statement from the
+one this campaign has been carrying since cycle 16, and it is the correction that matters most
+here: it removes the "gain that lives on one dataset" objection, which was the strongest
+substantive argument against H64.
+
+It does **not** make the microns leg promotable. n = 2 clean runs is not the 5-seed confirm pool
+`campaign.yaml` requires, and both are bit-identical, so they are one distinct value.
+
+**Then the re-measurement, and it reproduces the failure.** Seed 999, re-run on a *fresh* sweep:
+
+| seed | pct | wall (s) | grad steps | truncated? |
+|---|---|---|---|---|
+| 999 (re-run) | 82.94085078 | **3502.6** | 80,000 | **yes** — sift 7/12, alternation 1/5 |
+
+All three re-runs completed all 80,000 gradient steps — better than cycle 16, where two of them
+did not — but **all three were still truncated in the refinement stages**:
+
+| seed | pct | wall (s) | truncated |
+|---|---|---|---|
+| 999 | 82.94085078 | 3502.6 | sift 7/12, alternation 1/5 |
+| 7 | 83.22104843 | 3493.7 | alternation 3/5 |
+| 31415 | 83.22104843 | 3487.1 | alternation 3/5 |
+
+Seeds 7 and 31415 returned **bit-identical** scores under identical truncation, which is the
+determinism the campaign expects; it is the *deadline*, not the algorithm, that is varying.
+
+**The tally, across two independent sessions:**
+
+* **6 of 8** H64 microns confirm runs truncated;
+* **1 of 1** unmodified-champion H42 microns control runs truncated (3495.3 s, cycle 16);
+* only **2** clean H64 runs exist, and they are the two that ran first, in the small hours.
+
+**The diagnosis is now sharper than cycle 16's, and cycle 16's was partly wrong.** Cycle 16 read
+the monotone within-sweep wall sequence (3419.6 → 3509.6 s) as the box degrading under sustained
+load. This cycle's P18 study falsifies that: **ten connectome arms over 3.8 h showed walls of
+1192.9–1603.5 s with no monotone trend at all**, and the microns re-runs above were the *only*
+thing on the GPU and still truncated — with walls (3502.6, 3493.7, 3487.1 s) that *decrease*.
+
+The real cause is a **~1% runtime margin**. H42's own clean microns runs (2026-08-10) took
+3397.8–3418.0 s against a `time_limit_s` of 3450 s — a margin of 32–52 s on a ~3400 s run. Any
+1–3% slowdown from ordinary machine noise tips a run over the deadline, which is why truncation
+presents as stochastic rather than load-dependent. The microns configuration has been running
+against its own guard the whole time; cycle 16 caught it, and this cycle establishes that it is
+structural rather than circumstantial.
+
+Note what this rules out. **Raising `reserve_s` makes it worse**, not better — `time_limit_s =
+cap - reserve`, so a larger reserve lowers the deadline. **Scheduling microns first does not help**
+either: these runs *were* scheduled alone.
+
+---
+
+### DECISION: **ITERATE** — the evidence item succeeded, no champion changed, and H64 stays held
+
+**P18 itself: delivered and passed.** The study is registered, `relabel.connectome` is closed
+permanently for this pair, and `audit.py --gate promotion --datasets connectome` exits **0**.
+Every connectome gate H64 must clear, it now clears.
+
+**H64: NOT promoted, and the rule that decides it is the campaign's own, not this cycle's
+judgement.** `autoresearch/campaign.yaml` line 140:
+
+> `# promotion_gate.primary is UNCHANGED: both primaries are still required to promote.`
+
+Both primaries are required. Connectome passes; microns cannot be measured. That settles it
+mechanically, and it is worth saying plainly that the cycle went looking for a reason to promote
+and found a written rule against it, rather than the other way round.
+
+Under `PROTOCOL.md`'s decision table the classification is:
+
+| microns CI>0? | connectome CI>0? | mouse non-inf? | verdict |
+|---|---|---|---|
+| ✗ | ✓ | ✓ | **GRAPH-DEPENDENT** (fly+mouse, not microns) → log + scope |
+
+with the honest caveat that the table's `✗` means *measured and failed to clear*, whereas H64's
+microns is **unmeasured**. Taking `✗` here is the fail-safe reading, and it is the one that gets
+taken.
+
+**The scope, stated as the table requires:** H64 gains **+0.104084 pp** on the fly connectome
+(84.15409511053134 → 84.25817950936937), 8.7× the minimum effect size, on 5/5 bit-identical
+confirm seeds, robust across 5 relabellings (paired one-sided lower bound +0.108186 pp), at a
+*lower* wall clock than the champion on an identical 20,000-epoch gradient budget. It is exactly
+neutral on mouse **by construction** (`_EPOCHS["mouse"] = 0`, so the surrogate is never called and
+the run is bit-identical to H63 — pinned by a test, and vacuous as a tripwire). On microns it is
+**unmeasured**: the only two runs that completed the pipeline are **+0.005344 pp** over the
+champion, above microns' 0.002 bar, but n=2 is not a 5-seed confirm pool.
+
+**`sota.json` was NOT touched.** Champions remain connectome H42 84.1541, microns H42 83.2409,
+mouse H63 93.1754.
+
+**Why `iterate` and not `kill`.** Nothing about H64 failed. The connectome case got *stronger*
+this cycle and the microns case got *better understood* — the `-0.271 pp` that made H64 look like
+a one-dataset artifact was an artifact of pooling truncated runs, and the clean evidence is
+positive. `consecutive_kills` stays at 0. `cycles_since_score_move` goes 1 → **2**; at 3 the
+campaign is forced into divergent mode, which is worth flagging to the next cycle now.
+
+### What the campaign should do next, in order
+
+1. **P19 is THE blocking item, and it now blocks everything, not just H64.** No variant can be
+   promoted on *any* primary while microns cannot produce a clean 5-run pool. The fix is to
+   re-size microns as a **normal variant through the full ladder** (H62's move: cut Rocket epochs
+   to buy margin) — *never* by hand-editing a constant to rescue a promotion. This should be the
+   next cycle's item.
+2. **P15 goes to the operator with higher stakes.** It asked whether a per-dataset primary
+   championship is available. The held result is now +0.104084 pp rather than +0.018805 pp, and
+   P19 suggests the co-primary may be structurally unmeasurable rather than merely unmeasured. If
+   P19 is fixed the question dissolves; if it cannot be, the operator must choose between a
+   per-dataset rule and a campaign that cannot promote anything.
+3. **P21** (filed): document that the paired design does not reduce variance for non-nested pairs.
+4. **P22** (filed): test whether ASYM's 3.2× label-robustness *is* the mechanism — and the first
+   step costs zero GPU, because the P18 study already persisted all ten order vectors.
+
+### Honest caveats
+
+* The critic rung was **inline, not an independent subagent** (second cycle running). The
+  mechanical audit is unaffected; the adversarial independence is not.
+* The two clean microns runs are **bit-identical**, so `+0.005344 pp` rests on **one distinct
+  value**, not two. It is quoted here to correct a mis-reading, not as promotion evidence, and it
+  would still have to clear `relabel.microns` — for which no study exists — even at n=5.
+* The three degraded re-runs all score **below** the champion (83.221, 83.221, 82.941 vs 83.241).
+  They are not comparable to clean runs, but no reading of this data confirms H64 on microns, and
+  that is stated rather than left to inference.
+* `R = 4` is the campaign's floor. The study passed with a wide margin, so R was not the binding
+  constraint here — but a smaller effect would have deserved a larger R, and P21 covers it.
+* The P18 study's `--out` collision (§ Rung 2) was *avoided*, not *prevented*. The script still
+  defaults to a path that would overwrite a registered study, and nothing but a cycle's attention
+  stops the next one from doing it. Worth a guard.
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+
+# preflight
+PYTHONPATH=src $PY -m pytest tests/ -q                       # 598 passed
+
+# the study (3.8 h GPU, connectome only) - NOTE --out, it is load-bearing
+bash autoresearch/detach.sh dr_tmp/proto_P18.out $PY \
+    experiments/proto_P09_relabel.py --dataset connectome \
+    --comparator H42 --variant H64 --relabels 4 \
+    --out experiments/outputs/proto_P09_connectome_H64.json
+
+# the gate, and the audit it feeds
+PYTHONPATH=src $PY autoresearch/audit.py --variant H64 --comparator champion \
+    --role confirm --comparator-role confirm --gate promotion \
+    --datasets connectome --out autoresearch/audit_H64_connectome.json   # exit 0
+
+# the microns re-measurement (2.9 h GPU) - all three came back truncated
+bash autoresearch/sweep.sh --exp H64 --role confirm --datasets microns --seeds "999 7 31415"
+bash autoresearch/waitfor.sh                                  # poll; rc 0 = done, 10 = running
+```
+
+---

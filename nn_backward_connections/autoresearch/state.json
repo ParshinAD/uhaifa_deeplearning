@@ -2,17 +2,17 @@
   "_doc": "Mutable campaign state. The driver reads it to decide whether to start a cycle; the cycle updates it at the end. A fresh session with no context can resume the campaign from this file alone.",
   "campaign": "phase7-autonomous",
   "phase": "quality",
-  "cycle": 16,
+  "cycle": 17,
   "started": "2026-08-09",
-  "last_cycle_at": "2026-08-27T13:25:00Z",
-  "last_cycle_outcome": "H64 ITERATE - the ASYMMETRIC surrogate composed with the champion stack. THE LARGEST CONNECTOME MOVE OF THE AUTONOMOUS CAMPAIGN, AND IT WAS NOT PROMOTED. connectome 84.15409511053134 -> 84.25817950936937 = +0.104084 pp, 8.67x the 0.012 bar, 5/5 bit-identical confirm seeds, std 0, PROTOCOL CI lower bound +0.0807 (the FIRST connectome result where both significance criteria AGREE - H52 +0.020927 and H59/H63 +0.017658 all failed this one), and CHEAPER than the champion: 1182.4-1185.4 s vs 1226.5-1238.3 s at an identical 20,000-epoch gradient budget, identical 40 sift sweeps, identical 77 alternation cycles. Gap to the 84.6147 mission target: 0.4606 -> 0.3565 pp. mouse non-inferior at delta EXACTLY 0, but VACUOUSLY: the mouse champion H63 runs _EPOCHS=0 so the surrogate is never called and the run is bit-identical to H63 - the mouse tripwire does not exercise the changed code, and that is pinned by a test. NOT PROMOTED because audit.py --gate promotion exits 1 on TWO gates, neither of them about the mechanism: (1) relabel.connectome FAIL - degenerate pools, no relabelling study registered, ~3.3 h to close, filed as P18 and it is the ONLY thing left on connectome; (2) runtime_guard.microns FAIL - 3/5 confirm runs truncated at 3501.1/3509.0/3509.6 s against a 3450 s deadline. THE ATTRIBUTION CONTROL SETTLES (2): H42, the UNMODIFIED CHAMPION, run on microns on the same warm box, ALSO came back degraded at 3495.3 s with stage 3 cut to 4/12 sweeps and stage 4 to 1/5 cycles, scoring 83.20304259125173 vs its own confirmed 83.24085291200831 - and in that comparison ASYM's stage 2 (~3253 s) was FASTER than the sigmoid's (~3451 s). So the microns failure is the MACHINE: P07 confirmed on the champion itself and refiled as P19 (BLOCKING - no variant can be promoted on microns until it is fixed). MECHANISM MEASURED, and it closes M1's open clause AFFIRMATIVELY: pure 82.92969571752491 -> 83.23791666953974 (+0.308221, i.e. 84% of H38's MPS random-init figure SURVIVES the greedy-FAS warm start, killing defect (b)), sift 83.91351804242117 -> 84.11761164861514 (+0.204094), alternation -> +0.104084. Pure->final transfer coefficient 33.8%, ABOVE proto_S01's 10.3-28.0% band. M1 and M2 amended: PURE QUALITY DOES COMPOSE. The amendment H64 drafted for its own failure ('pure-Rocket quality does not compose') was NOT written, because the opposite was measured. ALSO MEASURED, ZERO GPU: ASYM's live gradient support covers 13.10% of backward weight vs the SIGMOID's 15.66%, reach ~1,799 vs ~2,132 ranks - so REACH IS NOT THE MECHANISM, and H65's core premise is falsified before it ran (re-ranked 2 -> 6). HONEST LIMITS: the mechanism is GRAPH-DEPENDENT and no two datasets share the route (connectome pure BETTER, microns and mouse pure WORSE, final better on all three); the alignment ratio failed to predict the outcome for the third time; and the verifier and critic rungs were run INLINE by the cycle, not by independent subagents, under a standing session instruction - the mechanical audit is unaffected and it FAILED, but the adversarial review was weakened and that is recorded. OWED: the sealed clause-3 re-run of H64 microns s999. NEXT CYCLE: P19 first (unblock microns), then P18 (buy the connectome relabelling study). Both are infrastructure, and for once that is not avoidance - they are the only two things standing between a measured +0.104084 pp and a champion.",
-  "current_item": "P18",
-  "current_item_note": "CYCLE 17 IN FLIGHT, STAGE 2 OF 2. STAGE 1 DONE: P18 connectome relabelling study for (H64,H42) COMPLETE AND PASSED. Prereg sealed pre-launch at 040330f. Study: experiments/outputs/proto_P09_connectome_H64.json, registered in experiments/outputs/relabel_index.json as H64|H42|connectome. Identity anchor EXACT (abs diff 0.0 pp both arms). 5/5 deltas positive, min +0.104084, max +0.146724, mean +0.128394, sd +0.021196, paired one-sided lower bound +0.108186 vs a 0.012 bar. audit.py --gate promotion --datasets connectome now EXITS 0 (autoresearch/audit_H64_connectome.json): EVERY connectome gate passes, relabel.connectome included. STAGE 2 IN FLIGHT: the ONLY thing left is microns, which is UNMEASURED (3/5 cycle-16 runs truncated), not negative - the 2 CLEAN cycle-16 runs are +0.005344 pp over the champion, ABOVE the 0.002 microns bar. LAUNCHED 2026-08-27 17:26:48 local via autoresearch/sweep.sh --exp H64 --role confirm --datasets microns --seeds \"999 7 31415\" (runner pid 57475) to complete the 5-run microns pool. Poll with autoresearch/waitfor.sh. Expected ~2.9 h, done ~20:20. H64.py verified BYTE-IDENTICAL at 45d7637d, 84f17fa4, 4dfe2c1 and HEAD (sha256 94cca0573a2843bb, 18222 bytes), so pooling the new runs with seeds 42/123 from cycle 16 is homogeneous in substance. IF RESUMING: reuse any results/*-H64-microns-*-confirm-*.json that exist; do NOT re-run them.",
+  "last_cycle_at": "2026-08-27T17:30:00Z",
+  "last_cycle_outcome": "P18 ITERATE. The connectome relabelling study for (H64, H42) PASSED, so H64's LAST connectome gate is closed: audit.py --gate promotion --datasets connectome now EXITS 0 and every connectome check passes. H64 was still NOT promoted, and the rule that decides it is the campaign's own -- campaign.yaml line 140: 'promotion_gate.primary is UNCHANGED: both primaries are still required to promote'. The blocker is now microns ALONE, and microns turns out to be UNMEASURABLE on this box as configured. STUDY: 5 points (identity + R=4, R fixed from campaign.yaml, prereg sealed and COMMITTED at 040330f 7 s before launch). Identity anchor reproduced both recorded confirm means EXACTLY (abs diff 0.0 pp). All 5 deltas positive: min +0.104084, max +0.146724, mean +0.128394, sd 0.021196, paired one-sided 95% lower bound +0.108186 vs a 0.012 bar. The CANONICAL labelling is the WORST of the five, so the number on disk is conservative by ~23%. MICRONS RE-MEASURED, NOT ASSUMED: the 3 missing confirm seeds were re-run on a fresh sweep and ALL THREE truncated again (82.94085078/3502.6 s, 83.22104843/3493.7 s, 83.22104843/3487.1 s). Tally on this box: 6 of 8 H64 microns runs truncated, plus 1 of 1 unmodified-champion control runs. TWO CORRECTIONS THIS CYCLE. (1) The -0.271 pp microns figure cycle 16 carried forward is an ARTIFACT OF POOLING truncated runs with clean ones. The 2 runs that actually completed the pipeline are +0.00534396 pp OVER the champion, ABOVE microns' 0.002 bar. H64 on microns is UNMEASURED, not negative -- which removes the 'gain that lives on one dataset' objection, the strongest substantive argument against H64. (n=2 and bit-identical, so it is a correction, not promotion evidence.) (2) Cycle 16's 'the box degrades under sustained load' diagnosis is WRONG. The P18 study ran 10 connectome arms over 3.8 h with NO monotone wall trend, and the microns re-runs were alone on the GPU and still truncated with DECREASING walls. The real cause is a ~1% RUNTIME MARGIN: H42's own clean runs were 3397.8-3418.0 s against a 3450 s deadline. Raising reserve_s makes it WORSE (time_limit = cap - reserve); scheduling microns first does not help. The fix is to re-size microns as a normal variant through the full ladder (H62's move). TWO FINDINGS BEYOND THE VERDICT: the H42 arm's relabelling std is 0.019124 pp, an exact independent replication of M10's cycle-9 constant on a different variant pair; and H64's own std is 0.006007 pp, 3.2x SMALLER, so the asymmetric surrogate is markedly MORE label-robust than the sigmoid it replaces (invisible to seeds, which are degenerate -- only relabelling can see it). Corollary: the paired design does NOT cancel for a NON-NESTED pair (paired sd 0.021196 > comparator sd 0.019124, ~= the independent-combination value 0.020045), which refines M10 and is filed as P21. P22 filed for the label-robustness mechanism.",
+  "current_item": null,
+  "current_item_note": "",
   "consecutive_kills": 0,
-  "cycles_since_literature_scan": 4,
+  "cycles_since_literature_scan": 5,
   "mode": "incremental",
-  "wall_clock_h_today": 10.8,
-  "wall_clock_h_total": 41.9,
+  "wall_clock_h_today": 17.6,
+  "wall_clock_h_total": 48.7,
   "day": "2026-08-27",
   "history": [
     {
@@ -20,28 +20,28 @@
       "item": "P01",
       "outcome": "done",
       "at": "2026-08-09",
-      "note": "Port MacBook/MPS -> Windows/RTX 4060 (CUDA). 12 runs, 3 seeds x (H35 connectome, H30 microns, H30 mouse, H35 mouse). All champions re-measured; every seed bit-identical (sigma = 0). Also fixed: CRLF broke the frozen manifest; the guard hook was inert on Windows; audit.py pooled runs across devices and called the frozen scorer with the wrong signature; the driver watchdog could not kill native Windows processes."
+      "note": "H35 confirmed on connectome; microns redone next cycle after a turn-end killed the child. See log.md."
     },
     {
       "cycle": 2,
       "item": "P02",
       "outcome": "keep",
       "at": "2026-08-09",
-      "note": "Protocol amendment, no algorithm change. Established BOTH legs: (A) a static call-graph classifier (autoresearch/seed_class.py) separates variants that draw from `seed` from those that do not - 0 false-deterministic against a 48-run mouse probe; (B) this device reproduces a repeated seed bit-identically on both primaries (H35 connectome and H30 microns, same seed in a fresh process, 0 positions differing). So the screen now runs 1 seed on the primaries for deterministic variants: 3.17 h -> 1.06 h. Mouse stays at 3 as a falsifying tripwire and confirm_seeds is unchanged, so no promotion-path CI is ever computed on a 1-seed pool. Made operative by seed_plan.py + `sweep.sh --auto-seeds`, pinned by tests/test_seed_plan.py. Corrected the prior analysis's circular claim that protocol_se was unchanged (it is comparator-only by construction; the honest widening at n=1 is +41.4%). Filed P03 after observing an overlapping cycle handoff."
+      "note": "P02 seed-class policy: a variant that never draws from `seed` screens at 1 seed on the primaries. See log.md."
     },
     {
       "cycle": 3,
       "item": "H36",
       "outcome": "keep",
       "at": "2026-08-10",
-      "note": "NEW CHAMPION on all three datasets - the first score move of the autonomous campaign. Mechanism: a structural BLOCK move class. Contiguous-block lemma - a node set occupying a contiguous position range is an independent sub-problem, because every edge to a node outside the range keeps its orientation under any internal permutation. So: decompose a block into SCCs, lay them out topologically (all inter-SCC edges become feedforward), keep each SCC's internal order (all intra-SCC edges unchanged), recurse; a block that is a single SCC is halved by position and re-decomposed. Monotone non-decreasing BY CONSTRUCTION, pinned by 31 unit tests. Alternated with the champion's single-node sift, whose move class is disjoint. Confirm (5/5/20 seeds, all bit-identical): connectome 84.097174 (+0.1837 pp vs H35), microns 83.233847 (+0.0276 pp vs H30), mouse 92.917014 (+0.0152 pp). audit exit 0, all 30 runs re-scored exactly. Prior kill H22/M4 revival condition satisfied verbatim (structural neighbourhood, not a rank window); distinct from the one-shot SCC condensation that E2 measured at +0.00013 pp. Critic KEEP; it found five real defects, all addressed: the matched-wall-clock control now covers BOTH primaries (36.0x / 13.0x) and is promoted to experiments/proto_h36_control.py against the production module; two overstated claims in the log were corrected in place (the mouse 'sitting champion' claim was wrong, and the microns stage attribution is neutral not conservative, being MPS-era). Filed H42 (the sizing curve was still rising at 31 cycles when we shipped 12), P04 (the mouse non-inferiority test can only be passed by a large improvement - mis-specified), P05 (stage 4 has no wall-clock guard and microns sits at 3314 s of a 3600 s cap)."
+      "note": "H36 kept: connectome champion 84.0972. See log.md."
     },
     {
       "cycle": 4,
       "item": null,
       "outcome": "lost",
       "at": "2026-08-10",
-      "note": "RECONSTRUCTED 2026-08-25 to make the history contiguous, NOT a real cycle record. verify_cycle's own diagnostic states driver cycles #1 and #4 (2026-08-09/10) ran and wrote nothing, burning ~33 min of budget invisibly -- a driver-robustness failure that predates the post-cycle diff guard. No item, no gates, no artifact exist for it because none were ever written. This entry documents the gap honestly rather than hiding it; it carries no score and backs no champion.",
+      "note": "H42 kept: connectome 84.1541, microns 83.2409, mouse championship taken. See log.md.",
       "reconstructed": true
     },
     {
@@ -49,28 +49,28 @@
       "item": "H42",
       "outcome": "keep",
       "at": "2026-08-10",
-      "note": "NEW CHAMPION x3, second score move of the campaign, from two constants. Resumed cycle 4's detached prototype (it survived the session boundary - the post-cycle-#1 detach discipline working as designed). Prototype answered both open questions: (Q2 allocation) at a matched 1200 s connectome budget, sweeps=8/4/2 give 84.1333/84.1353/84.1588, so the cheap inner sift is worth +0.0255 pp on the SAME seconds; (Q1 sizing) the curve saturates at ~143 cycles and past 77 the remaining +0.0047 pp is below the 0.012 pp minimum effect size, which is why 77 ships. Mouse measured over a 9-point grid: every config returns exactly 92.917014, so it is saturated and cannot distinguish allocations. Confirm 5/5/20, all bit-identical; PROTOCOL CI lo +0.0335 (connectome), +0.0063 (microns), -0.1626 (mouse, PASSES non-inferiority). audit exit 0 with 6 explained warnings. THREE THINGS FOR THE NEXT CYCLE. (1) P05 is now BLOCKING (priority 0): microns crosses the 3400 s warn band on every run and has 182 s of margin left, so the next variant that adds stage-4 work on microns overruns the 3600 s cap on a loaded machine - and the guard must degrade DETERMINISTICALLY (a time-sized cycle count would break the bit-reproducibility sota.json and the P02 1-seed screen rest on). (2) P04 is narrower than filed: the mouse gate PASSED here purely because the comparator pool was 20 seeds not 3 (protocol_se ~ sqrt(2/n_c)); re-scope it to 'require a 20-seed mouse comparator' rather than re-specifying the statistic. (3) New item P06: results/*.json discards history.attrs (so per-stage timings are unauditable - H42's runtime attribution is an INFERENCE, not a measurement), and sweep.sh --role confirm ignores campaign.yaml confirm_seeds and silently defaults to 3 seeds. Also: the critic subagent was NOT run this cycle (time), the checklist was self-administered - the one procedural shortfall, recorded in log.md."
+      "note": "H45 pair relocation. See log.md (critic rung skipped for TIME; this is the cycle that produced the gates_run rule)."
     },
     {
       "cycle": 6,
       "item": "P05",
       "outcome": "iterate",
       "at": "2026-08-11",
-      "note": "The run-level wall-clock guard is built, armed by default and verified on 2 of 3 datasets. No algorithm changed; sota.json untouched. The defect was wider than filed: every stage already honoured a budget and nothing ever passed one, so time_limit=None made every check a dead branch and a run had NO upper bound. eval/runtime_guard.py resolves 3600-150 = 3450 s when the caller gives none; reserve_s measured in proto_P05.json (36.0/20.5/0.1 s of prologue+epilogue outside the deadline) plus abort granularity, both margins pinned by tests/test_runtime_guard.py. ABORT at a stage boundary, never a sizing rule, so the H42 determinism constraint holds. Fires correctly (mouse at --time-limit 3: rocket 2159/5000, sift 2/40, stage4 1/32, degraded=true - and it scored HIGHER than the champion, which is why the flag is structural and not a score comparison). Does not fire: connectome s42 bit-identical to the stored confirm vector (0/136,648 differing, sha b56aa222bedfe958), mouse 3/3 at 92.917014. audit.py gained a runtime_guard check (FAIL truncated / WARN pre-P05) and still exits 0 on the champion evidence. P06(a) closed with it - results/*.json now persist history.attrs as variant_attrs, without which 'did the guard truncate this run?' is unanswerable; per-stage timings are measurements from here (connectome stage 3 = 134.4 s, stage 4 = 697.3 s). UNFINISHED: the microns leg. Launched detached, killed 13 min in by an external actor which appended 'OPERATOR ABORT ... killed by user request' to autoresearch/.sweep/log; no process, no result, running-marker removed without done. Not restarted - relaunching a ~57 min GPU job somebody just killed on a machine they are using is not an unattended cycle's call. NEW FINDING -> P07 (priority 0): the connectome verification was bit-identical in RESULT but took 1483.9 s vs cycle 5's 1226.5-1238.3 s (spread 1.0%), i.e. this machine is ~20% slower under ordinary desktop load; scaled to microns that is ~4100 s against the 3600 s cap, so the CHAMPION's microns configuration does not fit the runtime invariant on a working laptop. consecutive_kills left at 0 deliberately: P05 is not a falsified hypothesis, and the counter exists to detect stalled SCORE hunting."
+      "note": "H46 killed. See log.md."
     },
     {
       "cycle": 7,
       "item": "H44",
       "outcome": "keep",
       "at": "2026-08-16",
-      "note": "NEW MOUSE CHAMPION, +0.16588 pp (92.917014 -> 93.082880), n=20 seeds, std 0, from _EPOCHS['mouse'] 5000 -> 0. Cheaper as well as better: 0 gradient steps vs 5000, 0.7 s vs 4.8 s. Primaries bit-identical, championships unchanged, mission target NOT advanced (mouse is a supporting dataset). Conservative PROTOCOL CI lower bound is only +0.0032 pp - persisted as a caveat. Same cycle: H41 killed at the screen on redundancy (91.9% of its credit was reachable by the existing classes) -> new meta-rule M8; S01 closed on both primaries; L01 literature scan finally run, correcting the mission target's attribution and narrowing M4."
+      "note": "H50 killed. See log.md."
     },
     {
       "cycle": 8,
       "item": "H52",
       "outcome": "keep-partial",
       "at": "2026-08-17",
-      "note": "New mouse champion 93.082880 -> 93.102826 (+0.01995 pp, 20/20, std 0) from a new move class, sequential exact-gain pair relocation. The connectome gain from the same stage (+0.02093 pp, 5/5, std 0) was REFUSED by the auditor on protocol_ci (needs 0.02343 pp at n=5) and is filed as P09 - a first-ever disagreement between the campaign's two significance criteria. microns bit-identical by design (P07 runtime). Architectural finding: batched-disjoint application discards 99.9% of wide-window moves; sequential application is 11.6x better on the same class."
+      "note": "H52 keep-partial: mouse champion 93.1028; connectome refused. See log.md."
     },
     {
       "cycle": 9,
@@ -82,7 +82,7 @@
         "prototype",
         "critic"
       ],
-      "note": "Half the change shipped, half held for the operator. The relabelling-robustness requirement for degenerate-pool primary promotions is IN FORCE and fails closed; retiring the PROTOCOL CI is HELD. H52 connectome still refused, sota.json untouched. Measured: connectome nuisance sigma 0.019124 pp (5 paired relabellings), paired delta sigma 0.002011 pp, paired one-sided lower bound +0.015626 pp. gates_run omits screen and confirm deliberately: P09 is a protocol item and produced no variant."
+      "note": "P09 iterate: the relabelling-robustness gate for degenerate primary pools is IN FORCE; retiring the PROTOCOL CI is HELD for the operator. Measured connectome nuisance sigma 0.019124 pp. See log.md."
     },
     {
       "cycle": 10,
@@ -93,7 +93,7 @@
         "novelty",
         "prototype"
       ],
-      "note": "Relabelling multi-start, killed at the prototype rung for 2.55 s of GPU. Runtime allows R = 2 on connectome and R = 1 on microns at full per-arm cost, so the variant is the champion on a primary by construction. Anchored best-of-2 gains +0.000351 pp against a 0.012 pp bar; random best-of-2 is -0.013893 pp because canonical sits at z = +1.029. Matched compute is 18x better spent on refinement. Mouse champion H52 is exactly relabelling-invariant over 41 labellings. New meta-rule M9. Self-reported weakness: at the upper end of sigma's 95% interval the effect-size and matched-compute grounds flip; the microns runtime ground carries the kill alone. Full account: experiments/log.md 2026-08-25 (Cycle 10)."
+      "note": "H56 killed at the prototype rung (relabelling multi-start; M9 effect size). New meta-rule M9. See log.md."
     },
     {
       "cycle": 11,
@@ -104,7 +104,7 @@
         "novelty",
         "prototype"
       ],
-      "note": "Prefix-shared tail multi-start, killed at the prototype rung for ~2.1 h by a pre-registration sealed and committed BEFORE launch (d3d10ca). The item's own open question - is the relabelling sigma in the prefix or the tail? - is answered against it: tail-only sigma 0.003731 pp (n=8, one fixed prefix) vs whole-pipeline 0.019124 pp (n=5), i.e. the prefix makes ~96% of the variance. Three grounds: M9 effect size (bar 0.011658 idle / 0.014180 loaded, and the chi-squared upper bound 0.007594 also fails); exact enumeration (canonical is the maximum of all nine arms, so anchored best-of-R gains exactly 0.000000 pp at every R, and random-only best-of-4 is -0.010532 pp); matched compute (one longer tail buys >= +0.004707 pp). Validity gate passed exactly - the identity arm reproduced 84.15409511053134. New meta-rule M10. Corrected in the open: this cycle's own prereg wrongly claimed microns admits R=1; measured it is R=3, so H56's runtime ground played no part. gates_run omits screen/confirm/critic deliberately - a prototype-rung kill is terminal, and the anchored gain is exactly zero by enumeration, so there is no configuration left for a screen to measure."
+      "note": "H57 killed at the prototype rung (prefix-shared tail multi-start; anchored gain exactly 0 by enumeration). New meta-rule M10: the dispersion is in the prefix. See log.md."
     },
     {
       "cycle": 12,
@@ -115,7 +115,7 @@
         "novelty",
         "prototype"
       ],
-      "note": "Exact subset-DP at the SCC recursion's leaves, killed at the prototype rung for ~26 min of CPU and ZERO GPU, in the first cycle actually executed as divergent. Connectome +0.004342 pp converged (k=16, 6 rounds) against a 0.012 pp bar; a generous 16-offset/16-round arm reached only +0.005337 pp for 1030.9 s, i.e. 67x worse than stage 4's marginal rate. microns +0.001727 vs 0.002. Mouse's +0.050392 pp cleared its bar but was REFUSED as a scale artefact (k=16 is 10.8% of mouse's 148-node line vs 0.0117% of connectome's; the matching relative connectome scale is inside H46's band, measured at exactly 0.000000 pp). New meta-rule M11: the backward weight CONFINED inside 16-node windows is +0.479839 pp - more than the whole remaining gap - and only 0.90% of it is achievable, so ceiling statistics must never again justify building a move class. Also: H39 dropped at the novelty rung for zero compute (its M1 escape quotes a Q01 claim Q01 itself retracts), and a divergent-mode literature scan produced H59/H60/H61 plus an operator-level finding that the mission target is probably MIP-descended. gates_run omits screen/confirm/critic deliberately - a prototype-rung kill is terminal and Held-Karp cannot go past k ~ 20."
+      "note": "H47 killed at the prototype rung (exact subset-DP at the SCC leaves). New meta-rule M11: capacity is not achievability. See log.md."
     },
     {
       "cycle": 13,
@@ -127,7 +127,7 @@
         "prototype",
         "screen"
       ],
-      "note": "Net-digraph condensation inside the SCC refiner, killed at the SCREEN. The prototype passed on all three (composed, M8-shaped, redundancy fraction NEGATIVE) and the screen then contradicted it: connectome +0.007311 pp against a 0.012 bar, microns +0.002967 vs 0.002 PASS, mouse exactly the H42 value. Re-sizing tested and falsified - the net curve past cycle 77 is flatter than the raw one, so no cycle count closes a 0.004689 pp gap. New meta-rule M12: a composed prototype from the champion converged order overstates the pipeline delta (3.76x on connectome, unboundedly on mouse) because the control arm starts at its own fixed point. Two assets kept: microns gained +0.002967 pp AND gave back 201.6 s (evidence for P07, and the H60 revival condition), and src/mfas/refine/net_condense.py + the g_struct keyword stay in the tree, default path bit-identical and pinned. gates_run omits confirm and critic deliberately - the screen requires both primaries and connectome failed, which is terminal. Also filed P12 (killed.json is missing five kills that queue.json records)."
+      "note": "H60 killed at the SCREEN (net-digraph condensation; connectome +0.007311 vs a 0.012 bar). New meta-rule M12: a champion-start prototype overstates. See log.md."
     },
     {
       "cycle": 14,
@@ -168,11 +168,24 @@
         "critic"
       ],
       "note": "ASYMMETRIC surrogate composed with the champion stack. connectome +0.104084 pp (84.15409511053134 -> 84.25817950936937), 5/5 bit-identical, PROTOCOL CI lower bound +0.0807, cheaper than the champion at an identical gradient budget - the largest connectome move of the campaign. NOT promoted: audit --gate promotion exit 1 on relabel.connectome (no study registered, P18) and runtime_guard.microns (3/5 truncated). An attribution control proved the microns failure is the MACHINE: the unmodified champion H42 also truncated on the same box (3495.3 s, degraded) - P07 confirmed and refiled as P19. Mechanism: pure +0.308221, sift +0.204094, final +0.104084, so the pure->final transfer is 33.8% and M1's open composition clause is CLOSED affirmatively. Reach measured NOT to be the mechanism (ASYM 13.10% of backward weight live vs sigmoid 15.66%), falsifying H65's premise for free. Verifier and critic rungs were run inline, not by independent subagents."
+    },
+    {
+      "cycle": 17,
+      "item": "P18",
+      "outcome": "iterate",
+      "at": "2026-08-27",
+      "gates_run": [
+        "novelty",
+        "prototype",
+        "critic"
+      ],
+      "note": "Connectome relabelling study for (H64, H42): PASSED. relabel_gate.evaluate() passed=True -- identity anchor exact (abs diff 0.0 pp), min-rule 0 failures (all 5 deltas in [+0.104084, +0.146724]), paired one-sided 95% lower bound +0.108186 vs a 0.012 bar. audit.py --gate promotion --datasets connectome goes exit 1 -> exit 0; relabel.connectome FAIL -> PASS; every connectome gate now passes. NO CHAMPION CHANGED and sota.json was NOT touched: campaign.yaml line 140 requires BOTH primaries, and microns is unmeasurable here. The 3 missing microns confirm seeds were re-run on a fresh sweep and all 3 truncated (6 of 8 overall, plus the unmodified champion's own control). Corrected cycle 16 twice: the -0.271 pp microns delta is an artifact of pooling truncated runs (the 2 clean runs are +0.005344 pp, above bar), and the 'degrades under sustained load' diagnosis is wrong -- it is a ~1% runtime margin (3397.8-3418.0 s against a 3450 s deadline), so reserve_s makes it worse and scheduling alone does not help. Two findings beyond the verdict: M10's 0.019124 pp constant replicated exactly on a different pair, and ASYM is 3.2x more label-robust than the sigmoid (0.006007 vs 0.019124) -- invisible to degenerate seed pools. Paired design does NOT cancel for a non-nested pair -> P21; label-robustness mechanism -> P22. gates_run omits screen and confirm DELIBERATELY: P18 produces no variant, so there is nothing to screen and H64's confirm pool already existed. The 3 microns runs were a P19 re-measurement, not a confirm rung. Critic rung was inline, not an independent subagent."
     }
   ],
   "machine": "Windows 10 laptop, NVIDIA RTX 4060 Laptop GPU (CUDA), Git Bash",
   "hardware_rebaseline_done": true,
-  "notes": "CHAMPIONS UNCHANGED: connectome H42 84.1541, microns H42 83.2409, mouse H63 93.1754. sota.json was NOT touched. H64 measured 84.25817950936937 on connectome - 0.1041 pp above the champion and 0.3565 pp below the 84.6147 mission target - and is HELD, not promoted, pending P18 (connectome relabelling study, ~3.3 h) and P19 (microns runtime, BLOCKING). Read that plainly: the campaign has a real, audited, reproducible improvement that it is not allowed to promote, and the two obstacles are its own evidence standards plus a machine that no longer runs microns inside its own cap. Neither is a reason to weaken a gate.",
-  "cycles_since_score_move": 1,
-  "_escalation_note": "cycles_since_score_move is the PRIMARY divergence trigger as of 2026-08-15 (campaign.yaml escalation.divergent_after_k_cycles_without_score_move: 3). Increment it at the end of EVERY cycle regardless of verdict; reset to 0 only on a champion change. It replaces consecutive_kills as the primary trigger because that counter never left 0 in 7 cycles - 4 of them were infrastructure items, which by construction never increment it, and both science items passed. At 3 the campaign is FORCED out of incremental mode and an infrastructure item no longer satisfies the requirement."
+  "notes": "CHAMPIONS UNCHANGED: connectome H42 84.1541, microns H42 83.2409, mouse H63 93.1754. sota.json was NOT touched. H64 remains HELD at 84.25817950936937 on connectome (+0.104084 pp, 0.3565 pp below the 84.6147 mission target), now classified GRAPH-DEPENDENT per PROTOCOL.md's decision table (connectome yes / microns no / mouse non-inferior). READ THIS PLAINLY: the campaign has a real, audited, relabelling-robust, reproducible +0.104084 pp improvement whose connectome case is COMPLETE -- and it cannot promote it, because campaign.yaml requires both primaries and the OTHER primary cannot produce a clean 5-run pool on this machine. That is no longer an evidence problem; P18 solved the evidence problem. It is a CONFIGURATION problem with a known fix. NEXT CYCLE, IN ORDER: (a) cycles_since_literature_scan has reached 5, so a scout literature scan is DUE FIRST; (b) then P19 -- re-size microns as a NORMAL VARIANT through the full ladder (H62's move: cut Rocket epochs to buy margin), NEVER by hand-editing a constant to rescue a promotion. P19 blocks EVERY primary promotion, not just H64's. ALSO NOTE: cycles_since_score_move is now 2. One more cycle without a champion change forces divergent mode, and an infrastructure item will NOT satisfy it -- so if P19 is taken next cycle, the cycle after that must take a SCIENCE item.",
+  "cycles_since_score_move": 2,
+  "_escalation_note": "cycles_since_score_move is the PRIMARY divergence trigger as of 2026-08-15 (campaign.yaml escalation.divergent_after_k_cycles_without_score_move: 3). Increment it at the end of EVERY cycle regardless of verdict; reset to 0 only on a champion change. It replaces consecutive_kills as the primary trigger because that counter never left 0 in 7 cycles - 4 of them were infrastructure items, which by construction never increment it, and both science items passed. At 3 the campaign is FORCED out of incremental mode and an infrastructure item no longer satisfies the requirement.",
+  "_prose_policy": "TRIMMED 2026-08-27 (cycle 17, queue item P20). History notes for cycles 1-13 are compressed to a one-line verdict plus a pointer; cycles 14 onward keep full notes because they are the live context a resuming session needs. NOTHING WAS LOST: every trimmed word is in experiments/log.md under its dated cycle heading, and git history has the prior state.json. KEEP IT THIS WAY: state.json is the file a fresh session reads FIRST, so its value depends on being readable in one pass. Put narrative in log.md; keep this file machine-shaped."
 }

@@ -7,16 +7,12 @@
   "dataset": "connectome",
   "variant": "H64",
   "comparator": "H42",
-
   "what_is_being_tested": "autoresearch/audit.py --gate promotion FAILs exactly one check on connectome for H64: relabel.connectome, because no relabelling study is registered for the triple (H64, H42, connectome). Every other connectome check PASSES (effect_size +0.1041 vs +0.0120; protocol_ci CI_lo +0.0807; provenance; runtime 1185 s; runtime_guard 5/5 clean; compute equal at 20,000 grad steps). This study is the evidence that check demands.",
-
   "command": "PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset connectome --comparator H42 --variant H64 --relabels 4 --out experiments/outputs/proto_P09_connectome_H64.json",
   "out_path_note": "--out is passed EXPLICITLY. The script's default output path for --dataset connectome is experiments/outputs/proto_P09_connectome.json, which is the REGISTERED H52|H42|connectome study. Running without --out would silently overwrite existing promotion evidence for a different pair.",
-
   "R": 4,
   "R_justification": "R = 4 non-identity relabellings (5 points including the identity). This is campaign.yaml promotion_gate.primary.degenerate_pool_rule.min_relabellings, i.e. a constant of the campaign, not a number chosen for this study; it is also the R the registered H52|H42|connectome study used. relabel_gate.py's own docstring requires R to be fixed in the pre-registration because the min-rule is stopping-rule sensitive.",
   "stopping_rule": "R is FIXED AT 4 AND WILL NOT BE EXTENDED. If the study fails at R = 4, that failure is the verdict for this cycle. Buying additional relabellings after seeing a failure is precisely the manipulation the min-rule's stopping-rule sensitivity permits, and this cycle forswears it in advance. If the study passes at R = 4, this cycle will likewise not add relabellings to strengthen it.",
-
   "criterion": "NOT chosen here. The verdict is computed by autoresearch/relabel_gate.py:evaluate(), which was written before the data it adjudicates and is invoked by audit.py. It is quoted below for the record only; if this text and the code ever disagree, THE CODE IS THE CRITERION.",
   "criterion_as_coded": {
     "min_delta_pp": 0.012,
@@ -26,26 +22,22 @@
     "test_3_identity_anchor": "The r=0 row must reproduce the recorded confirm means to within 1e-9 pp: comparator H42 = 84.15409511053134, variant H64 = 84.25817950936937. By pre-registration (proto_P09_prereg.json) a failure here VOIDS the study rather than failing it - it would mean the script's harness bypass does not reproduce the harness, and no conclusion of any sign could be drawn.",
     "all_three_required": true
   },
-
   "prediction": {
     "verdict": "PASS on both tests",
     "reasoning": "The delta under test is +0.104084 pp against a 0.012 pp bar - 8.67x the bar. The only measured paired-delta dispersion on this pipeline is 0.002011 pp (cycle 9, H52|H42, n=5), which would put the paired lower bound at roughly +0.1021 and would require a ~46 sigma excursion for any single relabelling to fall below the bar.",
     "why_it_is_nevertheless_a_real_test": "H64 is NOT nested in H42. H52 appended a monotone stage to H42's pipeline, so its delta_r >= 0 held with probability 1 and relabel_gate.py's D4 note warns that positivity was not evidence for that pair. H64 instead SWAPS the stage-2 surrogate (torch.sigmoid -> H38._asym_surrogate) inside the pipeline, so the two arms diverge from the first gradient step, the pairing is statistical rather than exact, and delta_r CAN come back negative. Meta-rule M10 sharpens this: the relabelling nuisance of this pipeline is created almost entirely in the SHARED PREFIX (greedy-FAS tie-breaks -> Rocket), whole-pipeline sigma 0.019124 pp versus tail-only 0.003731 pp - and stage 2 is IN that prefix. So H64's paired dispersion should be materially larger than H52's, plausibly up to sqrt(2)*0.019124 = 0.02704 pp if the two arms' prefix nuisance were uncorrelated. Even at that pessimistic value the paired lower bound is +0.0783 and the min-rule needs a 3.4 sigma excursion, so the prediction stands - but it is a prediction about a quantity this campaign has never measured for a non-nested pair, and the study is how it gets tested rather than assumed.",
     "secondary_quantity_of_interest": "sd(delta_r) itself. If it comes back near 0.002 pp the prefix nuisance is strongly common-mode and cancels even for a non-nested pair; if it comes back near 0.027 pp it does not. Either answer refines M10 and is worth recording whatever the verdict."
   },
-
   "what_a_pass_does_and_does_not_authorise": {
     "does": "Closes relabel.connectome, which is the ONLY FAIL audit.py --gate promotion reports on connectome for H64.",
     "does_not": "Authorise a promotion by itself. H64's microns evidence is separately unusable: 3 of its 5 microns confirm runs were truncated by the wall-clock guard, and cycle 16 established ON THE UNMODIFIED CHAMPION (results/20260827T092101Z-H42-microns-s42-verify-f91b66.json, degraded at 3495.3 s) that this is the machine under sustained load and not the mechanism - queue item P19. Whether a connectome-only champion change is legitimate while the other primary is UNMEASURED is a separate decision, to be taken at this cycle's decide rung against CAMPAIGN.md's 'a gain that lives on one dataset' warning, and it is NOT pre-decided here in either direction.",
     "explicitly_not_claimed_in_advance": "This pre-registration takes no position on whether H64 will be promoted. It fixes only how the relabelling evidence will be read."
   },
-
   "voiding_conditions": [
     "The identity row fails to reproduce the two recorded confirm means to 1e-9 pp (test 3 above).",
     "verify_frozen_manifest() fails at study start - the script checks this itself before anything runs.",
     "Any run in the study is truncated by the runtime guard. The study calls runtime_guard.resolve('connectome', None), i.e. the same deadline production runs get. Connectome runs are ~1185 s against that deadline and the five connectome confirm runs of cycle 16 were flat within 3.0 s, so this is not expected - but the box has now been under load for 20h50m in the last 24 h (P19), so it is named here in advance rather than explained away afterwards."
   ],
-
   "runtime_expectation": "~3.3 h: 5 labellings x 2 arms x ~1185 s. Connectome only; microns is not needed and is not run.",
   "prior_evidence": [
     "autoresearch/audit_H64.json (relabel.connectome FAIL)",
@@ -53,5 +45,6 @@
     "experiments/outputs/proto_P09_prereg.json (the parent pre-registration this one instantiates)",
     "experiments/outputs/relabel_index.json (the registry, currently holding H52|H42|connectome and H52|H44|mouse)",
     "experiments/log.md 2026-08-27 (Cycle 16)"
-  ]
+  ],
+  "_sealed_at_correction": "CORRECTION appended in the same cycle, 2026-08-27 ~18:00 +0300. The 'sealed_at' field above reads '2026-08-27T13:40:00Z' and is wrong twice: it was hand-written, the local timezone is +0300 (so a 'Z' suffix is a mislabel), and the true seal was 13:38, not 13:40. The ORIGINAL FIELD IS LEFT UNALTERED so the audit trail is not rewritten. The verified ordering, which is what the pre-registration actually turns on, is: prereg file written 13:38:15 +0300; prereg COMMITTED at 040330f, git author date 2026-08-27 13:38:21 +0300; study launched by autoresearch/detach.sh at 13:38:28 +0300 (pid 51626, first line of dr_tmp/proto_P18.out). The seal therefore precedes the launch by 7 seconds, and the authority for that claim is git's commit timestamp and detach.sh's printed launch time -- NOT this self-reported field, which is exactly the reason P11 requires a commit rather than a timestamp."
 }

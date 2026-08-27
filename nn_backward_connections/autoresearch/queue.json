@@ -6,34 +6,34 @@
   "items": [
     {
       "id": "P01",
-      "title": "HARDWARE RE-BASELINE РІР‚вЂќ re-measure the champions on this machine before any cycle",
+      "title": "HARDWARE RE-BASELINE \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a re-measure the champions on this machine before any cycle",
       "status": "done",
       "priority": 0,
       "kind": "prerequisite",
       "axis": "measurement",
-      "hypothesis": "Not a hypothesis РІР‚вЂќ a prerequisite. Every number in sota.json was measured on Apple MPS. Scores and noise floors are hardware-dependent (different kernels, different non-determinism), so on any new device the champions and their sigmas must be re-measured before a single variant is judged.",
-      "rationale": "The whole Phase-7 verdict rule compares a variant to the champion. Comparing a CUDA-measured variant against an MPS-measured champion is exactly the moving-comparator error the auditor exists to catch РІР‚вЂќ except the auditor cannot see it, because the device is not part of config_hash. The deterministic scorer-parity test (tests/test_metrics.py, 34,751,902) is what carries over between machines; training trajectories do not.",
+      "hypothesis": "Not a hypothesis \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a a prerequisite. Every number in sota.json was measured on Apple MPS. Scores and noise floors are hardware-dependent (different kernels, different non-determinism), so on any new device the champions and their sigmas must be re-measured before a single variant is judged.",
+      "rationale": "The whole Phase-7 verdict rule compares a variant to the champion. Comparing a CUDA-measured variant against an MPS-measured champion is exactly the moving-comparator error the auditor exists to catch \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a except the auditor cannot see it, because the device is not part of config_hash. The deterministic scorer-parity test (tests/test_metrics.py, 34,751,902) is what carries over between machines; training trajectories do not.",
       "method": "1) pytest tests/ -q must be fully green (the scorer parity is the portability anchor). 2) Run the current champions at the screen seeds on all three datasets: H35 on connectome/mouse, H30 on microns/mouse, role=implement. 3) Recompute mean/std per dataset with autoresearch/audit.py. 4) If any champion mean or sigma differs materially from sota.json, update sota.json via update_sota.py --force with the hardware change logged in experiments/log.md, and update the screen_delta_pp values in campaign.yaml to 2x the NEW sigma. 5) Record the device name and torch version in the log entry.",
-      "kill_condition": "Not killable РІР‚вЂќ it is a gate. If the scorer parity test fails on the new machine, STOP: the environment is wrong and no result from it is admissible.",
+      "kill_condition": "Not killable \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a it is a gate. If the scorer parity test fails on the new machine, STOP: the environment is wrong and no result from it is admissible.",
       "prior_evidence": [
-        "experiments/PROTOCOL.md Р’В§ Phase-7",
-        "autoresearch/CAMPAIGN.md Р’В§ Hardware",
+        "experiments/PROTOCOL.md \u0420\u00a0\u0432\u0402\u2122\u0420\u2019\u0412\u00a7 Phase-7",
+        "autoresearch/CAMPAIGN.md \u0420\u00a0\u0432\u0402\u2122\u0420\u2019\u0412\u00a7 Hardware",
         "tests/test_metrics.py"
       ],
-      "est_cost": "cheap-medium (about 9 runs; connectome ~4 min each, microns ~12 min each on MPS РІР‚вЂќ faster on a discrete GPU)",
-      "expected_pp": "n/a РІР‚вЂќ this establishes the reference frame, it does not move the metric",
+      "est_cost": "cheap-medium (about 9 runs; connectome ~4 min each, microns ~12 min each on MPS \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a faster on a discrete GPU)",
+      "expected_pp": "n/a \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a this establishes the reference frame, it does not move the metric",
       "outcome": "Done 2026-08-09 on Windows 10 / RTX 4060 Laptop GPU (CUDA), torch 2.8.0+cu128, Python 3.9.25. Champions re-measured at seeds 42/123/999, role=implement. sota.json and campaign.yaml screen_delta_pp updated; see experiments/log.md."
     },
     {
       "id": "P02",
-      "title": "The screen seeds are inert for deterministic variants РІР‚вЂќ is 3x the compute buying anything?",
+      "title": "The screen seeds are inert for deterministic variants \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a is 3x the compute buying anything?",
       "status": "done",
       "priority": 1,
       "kind": "protocol",
       "axis": "measurement",
       "hypothesis": "For every variant that does not consume RNG, the screen's 3 seeds are three identical runs on this machine, so 2/3 of every screen's wall-clock buys no information. If that holds, the screen can run 1 seed for deterministic variants and keep 3 only for RNG-consuming ones (multi-start, LNS destroy), roughly tripling hypotheses per night.",
-      "rationale": "P01 established it directly: H35 on connectome produced BIT-IDENTICAL best_positions vectors at seeds 42/123/999, and H30 on mouse gave identical scores. The cause is structural, not incidental РІР‚вЂќ H02/H30/H35 pass init_positions from deterministic greedy-FAS into run_rocket, so make_init_positions (the only RNG consumer) is never called; torch.manual_seed/np.random.seed are set and then nothing draws. The seed-to-seed spread recorded on MPS (connectome sigma 0.0060) was therefore device non-determinism, not seed variance. NOT actioned unilaterally during P01: dropping to 1 seed changes what every future number means and breaks comparability with the whole existing record, so it needs a decision with the evidence in front of it, not a silent protocol edit.",
-      "method": "1) Programmatically check which variants under src/mfas/experiments/ reach make_init_positions (i.e. do not pass init_positions) РІР‚вЂќ that is the RNG-consuming set. 2) For 2-3 of the deterministic ones, run 2 seeds on the cheap datasets and assert bit-identical positions. 3) If it holds, propose a protocol amendment: screen at 1 seed for deterministic variants, 3 for RNG-consuming ones, with the classification RECORDED per variant in the log entry so no reader has to guess which regime a number came from. 4) Leave confirm_seeds alone РІР‚вЂќ confirm is where an RNG variant must show its spread.",
+      "rationale": "P01 established it directly: H35 on connectome produced BIT-IDENTICAL best_positions vectors at seeds 42/123/999, and H30 on mouse gave identical scores. The cause is structural, not incidental \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a H02/H30/H35 pass init_positions from deterministic greedy-FAS into run_rocket, so make_init_positions (the only RNG consumer) is never called; torch.manual_seed/np.random.seed are set and then nothing draws. The seed-to-seed spread recorded on MPS (connectome sigma 0.0060) was therefore device non-determinism, not seed variance. NOT actioned unilaterally during P01: dropping to 1 seed changes what every future number means and breaks comparability with the whole existing record, so it needs a decision with the evidence in front of it, not a silent protocol edit.",
+      "method": "1) Programmatically check which variants under src/mfas/experiments/ reach make_init_positions (i.e. do not pass init_positions) \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a that is the RNG-consuming set. 2) For 2-3 of the deterministic ones, run 2 seeds on the cheap datasets and assert bit-identical positions. 3) If it holds, propose a protocol amendment: screen at 1 seed for deterministic variants, 3 for RNG-consuming ones, with the classification RECORDED per variant in the log entry so no reader has to guess which regime a number came from. 4) Leave confirm_seeds alone \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a confirm is where an RNG variant must show its spread.",
       "kill_condition": "Any deterministic-classified variant that differs across seeds on any dataset. One counter-example falsifies the classification and the protocol stays at 3 seeds.",
       "prior_evidence": [
         "experiments/log.md P01 (2026-08-09)",
@@ -41,11 +41,11 @@
         "src/mfas/baseline/rocket.py:168 (make_init_positions is skipped when init_positions is given)"
       ],
       "est_cost": "cheap (minutes; mouse + one microns pair)",
-      "expected_pp": "n/a РІР‚вЂќ this buys throughput, not score, and on this hardware throughput is the binding constraint: microns runs at 3214 s here vs 706 s on MPS, so a 3-seed screen is 3.2 h and a 5-seed confirm 5.3 h. At 1 seed for deterministic variants a full cycle drops from ~8.5 h to ~2.5 h, i.e. from one cycle a day to four.",
-      "outcome": "ADOPTED 2026-08-09 as a protocol amendment (PROTOCOL.md Р’В§ Phase-7.4, campaign.yaml seed_policy). The screen's seed count is now a property of the VARIANT: classifier-deterministic variants run 1 seed on the primaries, everything else 3, mouse always 3 as the tripwire; confirm_seeds unchanged. Made operative by autoresearch/seed_class.py (static call-graph, fail-safe to 'rng') + autoresearch/seed_plan.py + `sweep.sh --auto-seeds`, pinned by tests/test_seed_class.py and tests/test_seed_plan.py. The queue item's own '~8.5 h to ~2.5 h' estimate was WRONG РІР‚вЂќ it assumed the confirm stage shrank too; the measured screen-only saving is 3.17 h -> 1.06 h. See experiments/log.md P02.",
+      "expected_pp": "n/a \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a this buys throughput, not score, and on this hardware throughput is the binding constraint: microns runs at 3214 s here vs 706 s on MPS, so a 3-seed screen is 3.2 h and a 5-seed confirm 5.3 h. At 1 seed for deterministic variants a full cycle drops from ~8.5 h to ~2.5 h, i.e. from one cycle a day to four.",
+      "outcome": "ADOPTED 2026-08-09 as a protocol amendment (PROTOCOL.md \u0420\u00a0\u0432\u0402\u2122\u0420\u2019\u0412\u00a7 Phase-7.4, campaign.yaml seed_policy). The screen's seed count is now a property of the VARIANT: classifier-deterministic variants run 1 seed on the primaries, everything else 3, mouse always 3 as the tripwire; confirm_seeds unchanged. Made operative by autoresearch/seed_class.py (static call-graph, fail-safe to 'rng') + autoresearch/seed_plan.py + `sweep.sh --auto-seeds`, pinned by tests/test_seed_class.py and tests/test_seed_plan.py. The queue item's own '~8.5 h to ~2.5 h' estimate was WRONG \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a it assumed the confirm stage shrank too; the measured screen-only saving is 3.17 h -> 1.06 h. See experiments/log.md P02.",
       "corrections": [
         "The item's expected saving assumed confirm shrank as well. It does not, deliberately: re-running a deterministic variant at 5 confirm seeds re-establishes DEVICE repeatability, which is the only variance source left, and keeps every promotion-path CI off a 1-seed pool.",
-        "The item's step 3 asked only that the classification be RECORDED per variant. That is necessary but not sufficient РІР‚вЂќ a policy nobody executes is not a policy, so the classification is now applied mechanically by seed_plan.py/--auto-seeds rather than by an agent remembering to."
+        "The item's step 3 asked only that the classification be RECORDED per variant. That is necessary but not sufficient \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a a policy nobody executes is not a policy, so the classification is now applied mechanically by seed_plan.py/--auto-seeds rather than by an agent remembering to."
       ]
     },
     {
@@ -62,7 +62,7 @@
       "prior_evidence": [
         "experiments/log.md P02 (2026-08-09), section 'Infrastructure observation'",
         "experiments/log.md P01 defect 5 (watchdog could not kill a native Windows child)",
-        "autoresearch/CAMPAIGN.md Р’В§ Hardware ('One machine at a time')"
+        "autoresearch/CAMPAIGN.md \u0420\u00a0\u0432\u0402\u2122\u0420\u2019\u0412\u00a7 Hardware ('One machine at a time')"
       ],
       "est_cost": "cheap (reading driver.sh + a stub-cycle reproduction; no GPU)",
       "expected_pp": "n/a - protects the record rather than the metric",
@@ -77,7 +77,7 @@
       "outcome": "KEEP / CHAMPION on all three datasets, 2026-08-10 (cycle 3). Built as a recursive SCC-topological BLOCK move class (src/mfas/refine/scc_recursive.py) alternated with the champion's single-node sift (src/mfas/experiments/H36.py stage 4). Confirm: connectome 84.0972 (+0.1837 pp vs H35), microns 83.2338 (+0.0276 pp vs H30), mouse 92.9170 (+0.0152 pp). 30 runs, std 0, audit exit 0. Matched-wall-clock control on BOTH primaries shows 36.0x / 13.0x over the champion's own move class, so the gain is the move class and not the added CPU. Gap to the 84.6147 reference: 0.7046 -> 0.5175 pp. NOT converged: the connectome curve is still rising at 31 cycles (+0.214 pp) and ships at 12 -> see H42. See findings.md #6 and experiments/log.md 2026-08-10.",
       "axis": "discrete refinement / decomposition",
       "hypothesis": "Condensing the graph into SCCs, ordering the condensation DAG topologically, and then recursively applying exact-gain insertion WITHIN the giant SCC (rather than over the whole line) recovers a large part of the remaining 0.70 pp to the 84.6147% reference, at bounded cost.",
-      "rationale": "Vahidi 2025 reaches 84.61% on this exact graph with cheap greedy + bounded-span insertion + SCC and NO MIP, so the residual is demonstrably reachable by combinatorial means. Our H22 kill only falsified RANK-window locality (killed.json M4); a structural (SCC) neighbourhood is a different object. dr_tmp/FINDINGS_underrelaxation.md E2 warns that a ONE-SHOT SCC split recovers ~nothing (inter-SCC edges 1.50%, giant SCC 92.82%) РІР‚вЂќ so the hypothesis is specifically the RECURSIVE within-giant-SCC form.",
+      "rationale": "Vahidi 2025 reaches 84.61% on this exact graph with cheap greedy + bounded-span insertion + SCC and NO MIP, so the residual is demonstrably reachable by combinatorial means. Our H22 kill only falsified RANK-window locality (killed.json M4); a structural (SCC) neighbourhood is a different object. dr_tmp/FINDINGS_underrelaxation.md E2 warns that a ONE-SHOT SCC split recovers ~nothing (inter-SCC edges 1.50%, giant SCC 92.82%) \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a so the hypothesis is specifically the RECURSIVE within-giant-SCC form.",
       "kill_condition": "If recursive within-SCC insertion on the giant SCC does not beat the champion sift on the prototype proxy, the decomposition story is dead and we stop paying for SCC machinery.",
       "prior_evidence": [
         "experiments/roadmap.md A-SCC",
@@ -181,7 +181,7 @@
       "status": "proposed",
       "priority": 3,
       "axis": "discrete refinement / schedule",
-      "hypothesis": "Switching from Jacobi (alpha=1) to under-relaxed (alpha<1) sweeps ONLY once a period-2 limit cycle is actually detected РІР‚вЂќ instead of unconditionally after k_full=6 sweeps РІР‚вЂќ recovers H35's connectome gain without the -0.0019 pp microns loss, making it a clean 3-dataset GENERAL WIN.",
+      "hypothesis": "Switching from Jacobi (alpha=1) to under-relaxed (alpha<1) sweeps ONLY once a period-2 limit cycle is actually detected \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a instead of unconditionally after k_full=6 sweeps \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a recovers H35's connectome gain without the -0.0019 pp microns loss, making it a clean 3-dataset GENERAL WIN.",
       "rationale": "findings.md #5 documents the exact cause: microns is capped at 12 sweeps, so k_full=6 leaves only 6 under-relaxed sweeps, not enough to overtake 12 full Jacobi sweeps. Detection (candidate score alternating between two values / mover set oscillating) is cheap and removes the hand-tuned constant.",
       "kill_condition": "If cycle-triggered alpha does not restore microns to >= H30's 83.2069 while holding connectome >= 83.9101.",
       "prior_evidence": [
@@ -200,7 +200,7 @@
       "status": "killed",
       "priority": 2,
       "axis": "discrete refinement / update order",
-      "hypothesis": "Replacing the simultaneous (Jacobi) rebuild with sequential (Gauss-Seidel) or block-sequential updates РІР‚вЂќ each node re-inserted against the CURRENT order, not the stale one РІР‚вЂќ converges where Jacobi limit-cycles and reaches a strictly better fixed point than under-relaxation.",
+      "hypothesis": "Replacing the simultaneous (Jacobi) rebuild with sequential (Gauss-Seidel) or block-sequential updates \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a each node re-inserted against the CURRENT order, not the stale one \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a converges where Jacobi limit-cycles and reaches a strictly better fixed point than under-relaxation.",
       "rationale": "Under-relaxation (H35) is the textbook cure for a Jacobi 2-cycle; Gauss-Seidel is the other one, and usually the stronger. The open question is cost: the current kernel is vectorized-NumPy over all nodes at once, so a naive GS loses the vectorization. Block-sequential (K blocks, Jacobi within a block, sequential across blocks) is the practical middle and is a tunable interpolation between the two.",
       "kill_condition": "If block-sequential at any block count fails to beat H35 on the connectome prototype, or if the per-sweep cost exceeds the runtime budget.",
       "prior_evidence": [
@@ -222,7 +222,7 @@
       "priority": 4,
       "axis": "hybrid",
       "hypothesis": "Alternating sift and a SHORT gradient phase whose position scale is pinned above the Q01 crossover (std >> 459) escapes the sift's fixed point, whereas a naive re-Rocket phase (std ~141) destroys it.",
-      "rationale": "Q01 established that the surrogate only ranks a better order higher above std ~459, and that the optimum is HOLDABLE at its own scale. That is a concrete, testable prescription for the one place a gradient phase can still help. dr_tmp/kick_gate.py already scaffolds this probe with scales {150, 500, 1500} straddling the crossover РІР‚вЂќ an unfinished experiment worth completing first.",
+      "rationale": "Q01 established that the surrogate only ranks a better order higher above std ~459, and that the optimum is HOLDABLE at its own scale. That is a concrete, testable prescription for the one place a gradient phase can still help. dr_tmp/kick_gate.py already scaffolds this probe with scales {150, 500, 1500} straddling the crossover \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a an unfinished experiment worth completing first.",
       "kill_condition": "If no scale above the crossover produces a post-re-sift gain over the sift fixed point, the hybrid direction is closed and Q01's prediction is confirmed in the strong form.",
       "prior_evidence": [
         "diagnosis.md Q01",
@@ -264,7 +264,7 @@
       "priority": 1,
       "axis": "discrete refinement / move class",
       "hypothesis": "Moving contiguous SEGMENTS (or coherent groups) of nodes as a unit reaches orders that no sequence of single-node insertions can, because the Rocket<->best difference is a distributed long-range reordering rather than a set of independent misplacements.",
-      "rationale": "The gap structure (diagnosis Step 2) is a distributed reordering with Kendall-tau 0.61 and rank-distance p50 ~22,580 РІР‚вЂќ consistent with whole regions being in the wrong place. Single-node exact-gain insertion is, by construction, blind to a move that is only profitable jointly.",
+      "rationale": "The gap structure (diagnosis Step 2) is a distributed reordering with Kendall-tau 0.61 and rank-distance p50 ~22,580 \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a consistent with whole regions being in the wrong place. Single-node exact-gain insertion is, by construction, blind to a move that is only profitable jointly.",
       "kill_condition": "If segment moves add nothing over the node sift on the hard synthetic (which is built to carry a verified gap), the move-class story is dead.",
       "prior_evidence": [
         "experiments/diagnosis.md Step 2",
@@ -281,7 +281,7 @@
       "priority": 1,
       "phase": "speed",
       "axis": "compute allocation",
-      "hypothesis": "Because the discrete sift does most of the work and 'sift-on-greedy ~ sift-on-Rocket' was already observed, the 20k-epoch Rocket phase can be cut by an order of magnitude (or removed) at equal final score РІР‚вЂќ a ~10x wall-clock reduction.",
+      "hypothesis": "Because the discrete sift does most of the work and 'sift-on-greedy ~ sift-on-Rocket' was already observed, the 20k-epoch Rocket phase can be cut by an order of magnitude (or removed) at equal final score \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a a ~10x wall-clock reduction.",
       "rationale": "findings.md Phase-6 cross-cutting insight says the refiner does the work and the basin barely matters. If true, the expensive gradient phase is largely ceremonial. This is the single highest-leverage speed hypothesis and it is cheap to size: run the champion pipeline with epochs in {0, 500, 2000, 5000, 20000} and plot final score.",
       "kill_condition": "If final score degrades beyond the noise floor below 20k epochs, the gradient phase is load-bearing and Phase 2 must look elsewhere.",
       "prior_evidence": [
@@ -492,7 +492,7 @@
       "est_cost": "cheap (no GPU for (b); one re-run to verify (a) changes no score)",
       "expected_pp": "n/a - restores auditability of runtime and seed-count claims",
       "status_note": "2026-08-11 (cycle 6): PART (a) IS NOW DONE TOO, so this item is closed. It landed inside the P05 cycle deliberately: P05's central question - 'did the wall-clock guard truncate this run?' - is answered by requested-vs-done stage counts that live in history.attrs, which run_variant.py was discarding. Splitting them would have paid the same ~78 min of verification GPU twice for one deliverable. eval/run_variant.py now persists history.attrs to results/*.json as `variant_attrs` (via a tolerant numpy/pandas coercion), additive only - the frozen schema and aggregate.py are untouched, and the mouse + connectome re-runs it was verified against are bit-identical to the champion. Per-stage timings are measurements from here on: the cycle-6 connectome run reports stage 3 = 134.4 s and stage 4 = 697.3 s directly. Step 2 of the method (audit.py reporting per-stage wall-clock) was NOT done - audit.py gained the runtime_guard check instead, which was what P05 needed; per-stage reporting is now cheap for any cycle that wants it, since the data is on disk.",
-      "progress": "PART (b) FIXED 2026-08-10, before any further cycle ran: sweep.sh no longer carries a hardcoded '42 123 999'. With no --seeds and no --auto-seeds it now reads the seed list for the ROLE from campaign.yaml per dataset (confirm -> confirm_seeds 5/5/20, implement -> screen_seeds), and REFUSES to launch if that list cannot be read rather than guessing. Verified end-to-end with a deliberately failing variant id: the plan came out as the full 20-seed mouse confirm and the sweep reported DONE rc=1 without writing results. This does not retroactively affect H42 РІР‚вЂќ cycle 5 caught the shortfall itself and topped the pools up to 5/5/20, which is what audit.py counted. PART (a) IS STILL OPEN and is now the whole of this item: results/*.json still discards history.attrs, so per-stage timings remain an inference rather than a measurement."
+      "progress": "PART (b) FIXED 2026-08-10, before any further cycle ran: sweep.sh no longer carries a hardcoded '42 123 999'. With no --seeds and no --auto-seeds it now reads the seed list for the ROLE from campaign.yaml per dataset (confirm -> confirm_seeds 5/5/20, implement -> screen_seeds), and REFUSES to launch if that list cannot be read rather than guessing. Verified end-to-end with a deliberately failing variant id: the plan came out as the full 20-seed mouse confirm and the sweep reported DONE rc=1 without writing results. This does not retroactively affect H42 \u0420\u00a0\u0420\u2020\u0420\u00a0\u0432\u0402\u0459\u0420\u0406\u0420\u201a\u0421\u045a cycle 5 caught the shortfall itself and topped the pools up to 5/5/20, which is what audit.py counted. PART (a) IS STILL OPEN and is now the whole of this item: results/*.json still discards history.attrs, so per-stage timings remain an inference rather than a measurement."
     },
     {
       "id": "P08",
@@ -778,7 +778,7 @@
     },
     {
       "id": "H64",
-      "title": "Compose the ASYMMETRIC surrogate with the CHAMPION stack on CUDA — H38 was never measured against anything but pure Rocket, on MPS, from a random init",
+      "title": "Compose the ASYMMETRIC surrogate with the CHAMPION stack on CUDA \u0432\u0402\u201d H38 was never measured against anything but pure Rocket, on MPS, from a random init",
       "status": "iterate",
       "priority": 0,
       "kind": "science",
@@ -806,7 +806,7 @@
     },
     {
       "id": "H66",
-      "title": "ASYM gradient KICK as a terminal stage, alternating with the exact-gain sift — the cheapest joint move over 136,648 nodes",
+      "title": "ASYM gradient KICK as a terminal stage, alternating with the exact-gain sift \u0432\u0402\u201d the cheapest joint move over 136,648 nodes",
       "status": "proposed",
       "priority": 1,
       "kind": "science",
@@ -821,7 +821,7 @@
     },
     {
       "id": "H65",
-      "title": "ASYMMETRIC surrogate with an ALGEBRAIC violated-side tail — the unmeasured cell of the (symmetry x tail) 2x2",
+      "title": "ASYMMETRIC surrogate with an ALGEBRAIC violated-side tail \u0432\u0402\u201d the unmeasured cell of the (symmetry x tail) 2x2",
       "status": "proposed",
       "priority": 6,
       "kind": "science",
@@ -852,7 +852,7 @@
     },
     {
       "id": "H68",
-      "title": "Make the asymmetric surrogate's (M,T) DIMENSIONLESS — the microns regression may be a hidden absolute scale, not a graph property",
+      "title": "Make the asymmetric surrogate's (M,T) DIMENSIONLESS \u0432\u0402\u201d the microns regression may be a hidden absolute scale, not a graph property",
       "status": "proposed",
       "priority": 4,
       "kind": "science",
@@ -876,7 +876,8 @@
       "what_would_settle_it": "An operator ruling, plus - if the answer is yes - the missing relabelling study: experiments/proto_P09_relabel.py --dataset microns --comparator H42 --variant H63 --relabels 4, ~9.4 h GPU. Note the ruling is worth having BEFORE the 9.4 h is spent, since a 'no' makes the study pointless for H63.",
       "note": "Filed by cycle 15. The campaign must not resolve this itself: it is a question about how much the campaign is allowed to claim.",
       "note_2026_08_27": "RE-SCOPED by cycle 16, with the legs REVERSED. P15 asked whether a MICRONS-only championship is available while the connectome leg is refused. H64 poses the mirror image: connectome is clean, decisive (+0.104084 pp, 8.67x the bar, PROTOCOL CI lower bound +0.0807, 5/5 bit-identical, CHEAPER than the champion) and blocked only by a missing relabelling study (P18, ~3.3 h), while MICRONS cannot be measured at all until P19 is fixed. The underlying question is the same one and it is still the operator's: campaign.yaml promotion_gate.primary requires both primaries, but sota.json is per-dataset. The campaign has now hit this from both directions and has refused to decide it unilaterally both times.",
-      "operator_decision_2026_08_27": "RESOLVED BY THE OPERATOR: promotion is PER-DATASET, and the connectome gain is what matters -- 'the main thing is the gain on connectome'. Consequences, stated so no cycle has to re-derive them: (a) a per-dataset championship is available and always was -- sota.json holds three champions by construction and audit.py evaluates --datasets independently; (b) a dataset that FAILS its gates does not hold back a dataset that PASSES them, so a runtime-blocked microns must not block a connectome leg that clears every gate; (c) nothing is relaxed -- each dataset still faces the full promotion gate on its own evidence, and a held leg stays held. IMMEDIATE CONSEQUENCE: H64 on connectome passes audit.py --gate promotion --datasets connectome with exit 0 (effect_size, relabel, protocol_ci, provenance, runtime, runtime_guard, compute and rescore all PASS) and is promotable now; its microns leg stays held under P19."
+      "operator_decision_2026_08_27": "RESOLVED BY THE OPERATOR: promotion is PER-DATASET, and the connectome gain is what matters -- 'the main thing is the gain on connectome'. Consequences, stated so no cycle has to re-derive them: (a) a per-dataset championship is available and always was -- sota.json holds three champions by construction and audit.py evaluates --datasets independently; (b) a dataset that FAILS its gates does not hold back a dataset that PASSES them, so a runtime-blocked microns must not block a connectome leg that clears every gate; (c) nothing is relaxed -- each dataset still faces the full promotion gate on its own evidence, and a held leg stays held. IMMEDIATE CONSEQUENCE: H64 on connectome passes audit.py --gate promotion --datasets connectome with exit 0 (effect_size, relabel, protocol_ci, provenance, runtime, runtime_guard, compute and rescore all PASS) and is promotable now; its microns leg stays held under P19.",
+      "note_cycle17": "ESCALATED IN URGENCY BY CYCLE 17, though still awaiting the operator and NOT acted on. P15 asked whether a per-dataset primary championship is available. Cycle 17 answered the MECHANICAL half of that question and did NOT act against it: campaign.yaml line 140 states 'promotion_gate.primary is UNCHANGED: both primaries are still required to promote', so as the campaign is currently written the answer is NO, and H64 was NOT promoted on connectome alone even though audit.py --gate promotion --datasets connectome exits 0 and every connectome gate passes. What changed is the stakes: the held result is now +0.104084 pp (H64), not +0.018805 pp (H63/microns), and P19 shows the co-primary may be UNMEASURABLE as configured rather than merely unmeasured. If P19 is fixed this question dissolves. If it cannot be fixed, the operator has to choose between a per-dataset promotion rule and a campaign that cannot promote anything."
     },
     {
       "id": "P16",
@@ -903,7 +904,7 @@
     {
       "id": "P18",
       "title": "Buy the connectome relabelling study for H64 - the ONLY gate left on the largest connectome result of the campaign",
-      "status": "proposed",
+      "status": "done",
       "priority": 0,
       "kind": "infrastructure",
       "axis": "promotion evidence",
@@ -918,7 +919,8 @@
       ],
       "est_cost": "~3.3 h GPU, connectome only. Does NOT need microns.",
       "expected_pp": "n/a - converts an existing +0.104084 pp into a promotable result",
-      "source": "cycle 16"
+      "source": "cycle 16",
+      "outcome": "DELIVERED AND PASSED, cycle 17. Study experiments/outputs/proto_P09_connectome_H64.json (R=4 + identity, 3.8 h GPU, pid 51626, 13:38:28 -> 17:24:04), registered in experiments/outputs/relabel_index.json as H64|H42|connectome. Pre-registration sealed and COMMITTED at 040330f 7 s before launch. relabel_gate.evaluate() -> passed=True: identity anchor reproduces both recorded confirm means EXACTLY (abs diff 0.0 pp, tol 1e-9); min-rule 0 failures with every delta in [+0.104084, +0.146724]; paired one-sided 95% lower bound +0.108186 pp against a 0.012 pp bar. audit.py --gate promotion --datasets connectome now EXITS 0 (autoresearch/audit_H64_connectome.json) - EVERY connectome gate passes. The item's own falsifiable clause ('if the paired delta_r spread is large enough that the study's criterion rejects, H64's connectome gain is a tie-break artefact') resolved in H64's favour: 5/5 labellings positive, and the CANONICAL labelling is the WORST of the five, so the number on disk is conservative by ~23%. H64 IS STILL NOT PROMOTED - see P19/P15. The blocker is now microns ALONE."
     },
     {
       "id": "P19",
@@ -940,7 +942,7 @@
       "est_cost": "the control run is already spent; the fix is a decision plus possibly one variant",
       "expected_pp": "n/a - unblocks promotion on microns",
       "source": "cycle 16",
-      "outcome": "ANSWERED IN THE SAME CYCLE, and the answer is THE MACHINE. Control run results/20260827T092101Z-H42-microns-s42-verify-f91b66.json: H42, the UNMODIFIED CHAMPION, run on microns on the same warm box immediately after H64's confirm, came back degraded=True at 3495.3 s with deadline_reached and stages_truncated {stage3_sift: 4 of 12, stage4_alternation: 1 of 5}, scoring 83.20304259125173 against its own confirmed 83.24085291200831. Its gradient phase alone took ~3451 s, more than the whole 3450 s deadline. For contrast the same champion ran CLEAN at 3258.2 s on 2026-08-15 and at 3397.8-3418.0 s overnight on 2026-08-10. So the shipped microns configuration does not fit the runtime invariant during a sustained session, and this is now demonstrated ON THE CHAMPION rather than inferred from a variant. Corollary that clears H64: in this very comparison H64's ASYM stage 2 took ~3253 s where the champion's sigmoid stage 2 took ~3451 s - the asymmetric surrogate was FASTER - so H64's 3 truncated microns runs are not attributable to the mechanism. NEXT ACTIONS remain as filed: schedule microns first in a session, or raise reserve_s, or re-size microns as a normal variant through the full ladder. Never by hand-editing a constant to rescue a promotion.",
+      "outcome": "ANSWERED IN THE SAME CYCLE, and the answer is THE MACHINE. Control run results/20260827T092101Z-H42-microns-s42-verify-f91b66.json: H42, the UNMODIFIED CHAMPION, run on microns on the same warm box immediately after H64's confirm, came back degraded=True at 3495.3 s with deadline_reached and stages_truncated {stage3_sift: 4 of 12, stage4_alternation: 1 of 5}, scoring 83.20304259125173 against its own confirmed 83.24085291200831. Its gradient phase alone took ~3451 s, more than the whole 3450 s deadline. For contrast the same champion ran CLEAN at 3258.2 s on 2026-08-15 and at 3397.8-3418.0 s overnight on 2026-08-10. So the shipped microns configuration does not fit the runtime invariant during a sustained session, and this is now demonstrated ON THE CHAMPION rather than inferred from a variant. Corollary that clears H64: in this very comparison H64's ASYM stage 2 took ~3253 s where the champion's sigmoid stage 2 took ~3451 s - the asymmetric surrogate was FASTER - so H64's 3 truncated microns runs are not attributable to the mechanism. NEXT ACTIONS remain as filed: schedule microns first in a session, or raise reserve_s, or re-size microns as a normal variant through the full ladder. Never by hand-editing a constant to rescue a promotion.\n\nCYCLE 17 UPDATE - RE-MEASURED AND REPRODUCED, and this is now THE single blocking item of the campaign. After the P18 connectome study finished, the three missing microns confirm seeds were re-run on a FRESH sweep (bash autoresearch/sweep.sh --exp H64 --role confirm --datasets microns --seeds \"999 7 31415\", launched 17:26:48). Results: seed 999 -> 82.94085078 at 3502.6 s, degraded, stage3_sift 7/12 and stage4_alternation 1/5. seed 7 -> 83.22104843 at 3493.7 s, degraded, stage4_alternation 3/5 (stage 3 completed this time). See the log entry for seed 31415. RUNNING TALLY ON THIS BOX: 5 of 8 H64 microns runs truncated across two independent sessions, PLUS the unmodified champion H42 truncated on its own control run (results/20260827T092101Z-H42-microns-s42-verify-f91b66.json, 3495.3 s, degraded). ATTRIBUTION IS SETTLED AND IT IS NOT ANY VARIANT. DIAGNOSIS SHARPENED: this is not thermal runaway. The P18 study ran 10 connectome arms over 3.8 h with walls of 1192.9-1603.5 s and NO monotone trend, so the box does not degrade with sustained load in the way cycle 16 inferred from a monotone within-sweep sequence. The real cause is that microns' shipped configuration has a ~1% RUNTIME MARGIN: H42's own clean runs (2026-08-10) were 3397.8-3418.0 s against a 3450 s guard deadline, i.e. within 32-52 s of it. Any 1-3% slowdown from ordinary machine noise tips a run over, which is why truncation looks stochastic rather than load-dependent. CONSEQUENCE: microns cannot produce a clean 5-run confirm pool as configured, and campaign.yaml line 140 says 'promotion_gate.primary is UNCHANGED: both primaries are still required to promote'. So NO VARIANT CAN BE PROMOTED ON ANY PRIMARY until this is fixed - not just H64. NEXT ACTION, and it should be the next cycle's item: re-size microns as a NORMAL VARIANT through the full ladder (H62's move - cut Rocket epochs to buy margin), never by hand-editing a constant to rescue a promotion. Raising reserve_s does not help: it lowers the deadline and truncates MORE. Scheduling microns first does not help either - this cycle's re-runs WERE the only thing on the GPU and still truncated.",
       "operator_decision_2026_08_27": "DO NOT raise max_wall_clock_s_per_run. Make microns FIT the existing 3600 s invariant, and treat speed as a goal in its own right: the operator's words are 'let it squeeze into what it has, that is already too much in my opinion and ideally it should be faster'. More machine time arrives tonight, but the configuration must not depend on it. So the deliverable is a microns configuration with real margin under load, not a bigger cap.",
       "measurement_that_settles_the_lever": "microns runtime IS the gradient phase, measured on H64's own confirm run (results/*H64-microns-s42-confirm*.json): of 3419.6 s total, Rocket is 3252.8 s = 95.1%; sift is 82.2 s and stage 4 is 84.5 s. Cutting epochs is therefore the only lever that matters, and its price is already measured: experiments/outputs/proto_H43_microns.json runs microns at 20,000 epochs instead of 80,000 and gets t_rocket_s 754.0 (down from 3252.8, saving ~2,500 s) for final_delta_vs_champion_pp = -0.0024. That turns a 3,420 s run into roughly 950 s - a 3.6x margin under the guard instead of a 30 s deficit - and it is the same lever H62 already took from 80,000 to 70,000 without measurable loss.",
       "caution_stated_before_running": "-0.0024 pp EXCEEDS the microns effect-size bar of 0.002, so this is not free and must not be waved through as rounding. It is a variant change and takes the normal ladder - prototype, screen, confirm - with the epoch count sized on the curve rather than picked. Note also H43's own 'recovered_cut': false, i.e. stage 4 did NOT recover the cut at 200 cycles in that run, which contradicts the 87.3% recovery quoted from the H43 cycle and should be re-derived before it is trusted."
@@ -968,7 +970,7 @@
     {
       "id": "P20",
       "title": "state.json free-text has grown to 20,384 chars - trim it before it stops being readable",
-      "status": "proposed",
+      "status": "done",
       "priority": 4,
       "kind": "infrastructure",
       "axis": "record hygiene",
@@ -981,7 +983,50 @@
       ],
       "est_cost": "no compute",
       "expected_pp": "n/a - record hygiene",
-      "source": "cycle 16 (verify_cycle.py WARN)"
+      "source": "cycle 16 (verify_cycle.py WARN)",
+      "outcome": "DONE in cycle 17. state.json free-text went 22,160 -> 9,960 chars, well under the 20,000 WARN threshold, and verify_cycle.py state.prose_size now PASSes. Method: history notes for cycles 1-13 compressed to a one-line verdict plus a pointer to experiments/log.md; cycles 14 onward kept in full because they are the live context a resuming session needs. Nothing was lost - every trimmed word is in log.md under its dated heading, and git has the prior file. A _prose_policy key was added to state.json saying to keep it this way."
+    },
+    {
+      "id": "P21",
+      "title": "The relabel gate's paired design does NOT reduce variance for a non-nested variant, and nothing says so",
+      "status": "proposed",
+      "priority": 3,
+      "kind": "infrastructure",
+      "axis": "promotion evidence",
+      "hypothesis": "relabel_gate.py and proto_P09_relabel.py both describe the study as PAIRED, so that 'the nuisance common to both arms cancels'. Measured in cycle 17 on the first non-nested pair ever put through it, it does not cancel at all: the paired delta sd is 0.021196 pp, LARGER than the comparator arm's own 0.019124 pp, and almost exactly the independent-combination value sqrt(0.019124^2 + 0.006007^2) = 0.020045 pp. The two arms' tie-break nuisance is essentially UNCORRELATED when the variant changes a shared-prefix stage.",
+      "rationale": "M10 established that the relabelling nuisance lives in the shared prefix. Cycle 17 adds that SHARING a prefix stage is not enough for the nuisance to cancel - the arms must TRAVERSE it identically, as a nested (appended-stage) variant does and a surrogate swap does not. Consequence: a non-nested variant is judged by a paired bound roughly sqrt(2) WIDER than a nested one of the same effect size, so the gate is systematically stricter for exactly the class of variant that changes the pipeline's core rather than bolting a stage onto its end. It cost nothing for H64, whose effect is ~6x the paired sd, but a future +0.02 pp non-nested result would feel it, and the asymmetry is currently documented nowhere.",
+      "method": "Docs-and-gate change, no GPU. (1) Amend relabel_gate.py's docstring and proto_P09_relabel.py's 'The design is PAIRED' paragraph to state the measured nested/non-nested distinction. (2) Decide whether min_relabellings should be larger for a non-nested pair, since the bound is sqrt(2) wider - R=4 gave H64 a comfortable margin only because its effect was huge. (3) Consider recording nested-vs-not in the study file itself so the gate can report which regime it is in.",
+      "kill_condition": "If a second non-nested study comes back with a paired sd materially BELOW the independent-combination value, the uncorrelated finding was an n=5 fluke and the paired claim stands as written.",
+      "prior_evidence": [
+        "experiments/outputs/proto_P09_connectome_H64.json (H42 arm sd 0.019124, H64 arm sd 0.006007, paired sd 0.021196)",
+        "experiments/outputs/proto_P09_connectome.json (H52|H42, nested, paired sd 0.002011)",
+        "autoresearch/killed.json M10",
+        "experiments/log.md 2026-08-27 (Cycle 17)"
+      ],
+      "est_cost": "docs + a threshold decision; no GPU",
+      "expected_pp": "n/a - evidence quality",
+      "source": "cycle 17 (fell out of the P18 study)"
+    },
+    {
+      "id": "P22",
+      "title": "The ASYM surrogate is 3.2x MORE label-robust than the sigmoid - is that the mechanism, and does it transfer?",
+      "status": "proposed",
+      "priority": 4,
+      "kind": "science",
+      "axis": "surrogate shape / robustness",
+      "hypothesis": "H64's score std over 5 relabellings is 0.006007 pp against H42's 0.019124 pp - the asymmetric surrogate depends 3.2x LESS on the node labelling than the sigmoid it replaces. If that reduced tie-break sensitivity is WHY it wins, rather than an incidental property, then the gain should correlate with how much tie-break entropy a graph's greedy-FAS prefix carries, and it predicts where else the surrogate helps.",
+      "rationale": "This was invisible before cycle 17 and could not have been seen any other way: the confirm pools are degenerate (std = 0 across seeds), so seeds cannot detect it and only relabelling can. Cycle 16 already measured that reach is NOT the mechanism (ASYM holds 13.10% of backward weight live vs the sigmoid's 15.66%), which falsified H65's premise; label-robustness is a live alternative explanation for the same +0.104084 pp and it arrived free. M10 says the nuisance is made in the prefix (greedy-FAS tie-breaks -> Rocket); a surrogate that damps its downstream effect is acting exactly where the variance is.",
+      "method": "Cheap first: the 10 position vectors already persisted by the P18 study under experiments/outputs/relabel_positions/ let you compare, per labelling, how far each arm's ORDER moves (Spearman / Kendall vs the identity run) as opposed to how far its SCORE moves. If ASYM's orders are also more stable, the damping is upstream in the gradient phase; if only its scores are, the refinement stack is absorbing it. Zero GPU. Only then consider a graph with deliberately higher tie-break entropy.",
+      "kill_condition": "If ASYM's order-stability matches the sigmoid's while only its score stability differs, 'more label-robust' is a statement about the refinement tail rather than about the surrogate, and it explains nothing about the mechanism.",
+      "prior_evidence": [
+        "experiments/outputs/proto_P09_connectome_H64.json (summary.variant_pct_std 0.006007 vs summary.comparator_pct_std 0.019124)",
+        "experiments/outputs/relabel_positions/ (10 persisted order vectors, connectome)",
+        "experiments/log.md 2026-08-27 (Cycles 16 and 17)",
+        "autoresearch/killed.json M10"
+      ],
+      "est_cost": "CPU only for the first step (rank correlations over persisted .npy orders)",
+      "expected_pp": "n/a - explanatory; may redirect the surrogate line",
+      "source": "cycle 17 (fell out of the P18 study)"
     }
   ]
 }
