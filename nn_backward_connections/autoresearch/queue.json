@@ -650,7 +650,7 @@
     {
       "id": "H59",
       "title": "Minimal-FAS arc reclamation - re-add backward edges whose endpoints are not forward-reachable",
-      "status": "in_progress",
+      "status": "done",
       "priority": 1,
       "axis": "problem formulation / arc-set instead of position-space",
       "hypothesis": "The champion's order is a topological order of its forward-edge DAG F. If some backward edge (u,v) has no F-path from v to u, then F union {(u,v)} is acyclic and ANY topological order of it scores at least current + w_uv, exactly and monotonically. No move class in the campaign can find this, because reclaiming the arc may require re-sorting thousands of nodes none of which profits alone, and because the SCC refiner condenses the FULL graph G (where u and v are almost always in one SCC) rather than F union {e}. The claim: the total weight of such reclaimable backward edges on the champion's connectome order exceeds 0.012 pp.",
@@ -667,7 +667,8 @@
       "kind": "science",
       "source": "autoresearch/lit/scan-cycle12.md (cycle 12 divergent-mode scan)",
       "note_2026_08_26": "RE-SPECIFY THE GATE BEFORE RUNNING THIS. The stated kill_condition is a sum of reclaimable backward-edge weight, which is exactly the CAPACITY statistic M11 forbids as evidence. The secondary kill condition (greedy heaviest-first re-add with an acyclicity check, plus one topological re-sort, measured against the frozen scorer) is the realised number and must become the PRIMARY gate. M12 additionally applies: measure it inside the pipeline, or state the control arms remaining headroom next to any from-champion number.",
-      "note_2026_08_26_cycle14": "GATE RE-SPECIFIED AND RUN. The stated kill_condition (a reclaimable-WEIGHT sum) was demoted to context under M11 and the secondary condition - the REALISED oracle score after greedy heaviest-first re-add plus one rank-stable topological re-sort - became the primary gate. Sealed prereg experiments/prereg/H59_arc_reclamation.md, committed fd7ac84 BEFORE launch. PROTOTYPE PASSED ON ALL THREE DATASETS and the mechanism is confirmed real: the champion's feedback arc set is NOT minimal. connectome +0.017596 pp (2,508 reclaimable arcs, 2,221 accepted after 287 conflicts, bar 0.012); microns +0.018759 pp (4,249 reclaimable, 2,807 accepted, bar 0.002); mouse +0.072557 pp (5 arcs, bar 0.010). Every reachability query resolved exactly (n_unknown 0/1/0), and a SECOND round found exactly 0 reclaimable arcs on all three, so the stage reaches a fixed point and certifies the resulting arc set minimal. IMPLEMENTED: src/mfas/refine/reclaim.py (+60 tests) and src/mfas/experiments/H59.py, committed 70df34c before the screen. NOT YET PROMOTABLE: microns is blocked on P07 - the stage costs ~1075 s there and the champion already runs 3398-3418 s against a 3450 s guard deadline, so _RECLAIM_ROUNDS['microns']=0 ships and the microns delta is exactly 0 by construction. A screen cannot pass both primaries until that is fixed. NEXT: P13 (make the stage cheap) or H62 (buy the seconds from the microns Rocket budget)."
+      "note_2026_08_26_cycle14": "GATE RE-SPECIFIED AND RUN. The stated kill_condition (a reclaimable-WEIGHT sum) was demoted to context under M11 and the secondary condition - the REALISED oracle score after greedy heaviest-first re-add plus one rank-stable topological re-sort - became the primary gate. Sealed prereg experiments/prereg/H59_arc_reclamation.md, committed fd7ac84 BEFORE launch. PROTOTYPE PASSED ON ALL THREE DATASETS and the mechanism is confirmed real: the champion's feedback arc set is NOT minimal. connectome +0.017596 pp (2,508 reclaimable arcs, 2,221 accepted after 287 conflicts, bar 0.012); microns +0.018759 pp (4,249 reclaimable, 2,807 accepted, bar 0.002); mouse +0.072557 pp (5 arcs, bar 0.010). Every reachability query resolved exactly (n_unknown 0/1/0), and a SECOND round found exactly 0 reclaimable arcs on all three, so the stage reaches a fixed point and certifies the resulting arc set minimal. IMPLEMENTED: src/mfas/refine/reclaim.py (+60 tests) and src/mfas/experiments/H59.py, committed 70df34c before the screen. NOT YET PROMOTABLE: microns is blocked on P07 - the stage costs ~1075 s there and the champion already runs 3398-3418 s against a 3450 s guard deadline, so _RECLAIM_ROUNDS['microns']=0 ships and the microns delta is exactly 0 by construction. A screen cannot pass both primaries until that is fixed. NEXT: P13 (make the stage cheap) or H62 (buy the seconds from the microns Rocket budget).",
+      "outcome": "KEEP-PARTIAL as variant H63 (cycle 15, 2026-08-27). Mechanism confirmed real, exact, monotone and self-terminating on all three datasets. MOUSE PROMOTED 93.10282596057695 -> 93.17538325903584 (+0.072557 pp, n=20, std 0). CONNECTOME REFUSED: +0.017658 pp clears the effect size and fails protocol_ci (CI lower bound -0.0058); smaller than the +0.020927 pp already refused for H52 in cycle 8. MICRONS HELD: +0.018805 pp clears both numeric gates and fails only the P09 relabel gate (no study registered). See findings.md #10 and experiments/log.md 2026-08-27."
     },
     {
       "id": "H60",
@@ -740,7 +741,7 @@
     {
       "id": "H62",
       "title": "Buy the microns seconds for arc reclamation from the Rocket epoch budget",
-      "status": "proposed",
+      "status": "done",
       "priority": 2,
       "kind": "science",
       "axis": "compute allocation",
@@ -753,12 +754,13 @@
       ],
       "est_cost": "one microns prototype re-using the H43 arm, then a screen.",
       "expected_pp": "microns +0.010 to +0.018",
-      "source": "experiments/log.md 2026-08-26 (Cycle 14)"
+      "source": "experiments/log.md 2026-08-26 (Cycle 14)",
+      "outcome": "ANSWERED inside H63 (cycle 15). Cutting the microns Rocket budget 80,000 -> 70,000 epochs cost NOTHING: base_best_pct landed at 83.24154769207, +0.00069478 pp ABOVE the H42 champion, and it bought the ~1075 s the reclamation stage needs. Microns confirm ran 2954.6-3397.7 s against a 3450 s deadline. The hypothesis is confirmed; the seconds are real and were spent."
     },
     {
       "id": "P14",
       "title": "Variants are built on ONE pipeline but sota.json has a different champion per dataset",
-      "status": "proposed",
+      "status": "done",
       "priority": 1,
       "kind": "infrastructure",
       "axis": "comparator hygiene",
@@ -771,7 +773,8 @@
         "autoresearch/sota.json"
       ],
       "est_cost": "no compute; a check in the screening path plus a convention for variant modules.",
-      "source": "experiments/log.md 2026-08-26 (Cycle 14)"
+      "source": "experiments/log.md 2026-08-26 (Cycle 14)",
+      "outcome": "FIXED and VERIFIED in H63 (cycle 15). H63 composes stage 6 on the correct per-dataset champion base. Verified numerically by the critic: H63 mouse variant_attrs reproduce H52 bit-for-bit at four checkpoints (pure 90.12629794323948, sift/alt 93.08288021668459, pair 93.10282596057698), where cycle 14 H59 sat on H42 and scored 92.94798739. base_best_pct is bit-identical to the champion on connectome and mouse."
     },
     {
       "id": "H64",
@@ -859,6 +862,39 @@
       "est_cost": "proxy sweep ~20 min; the microns pure run is expensive (~2,300 s at 80,000 epochs) so run it ONLY if H64 comes back positive on connectome.",
       "expected_pp": "microns +0.0 to +0.67 (recovery of a known regression, not a new gain); connectome ~0 by construction. STRICTLY CONDITIONAL on H64.",
       "source": "ideator, cycle 15"
+    },
+    {
+      "id": "P15",
+      "title": "OPERATOR DECISION: is a microns-only championship available while the connectome leg is refused?",
+      "status": "awaiting-operator",
+      "priority": 0,
+      "kind": "infrastructure",
+      "axis": "promotion policy",
+      "hypothesis": "sota.json is per-dataset by construction and already holds three different champions (H42/H42/H52), so a per-dataset promotion is the norm. But campaign.yaml's microns entry says 'promotion_gate.primary is UNCHANGED: both primaries are still required to promote', which reads against promoting microns alone. Cycle 15 hit this for the first time with real stakes: H63's microns leg clears BOTH numeric gates (+0.018805 pp, protocol CI lower bound +0.0181, effect-size bar 0.002) and fails only the P09 relabel gate, while its connectome leg is refused outright. The cycle HELD microns under the standing rule 'if you are unsure whether something counts as a win, it does not'.",
+      "what_would_settle_it": "An operator ruling, plus - if the answer is yes - the missing relabelling study: experiments/proto_P09_relabel.py --dataset microns --comparator H42 --variant H63 --relabels 4, ~9.4 h GPU. Note the ruling is worth having BEFORE the 9.4 h is spent, since a 'no' makes the study pointless for H63.",
+      "note": "Filed by cycle 15. The campaign must not resolve this itself: it is a question about how much the campaign is allowed to claim."
+    },
+    {
+      "id": "P16",
+      "title": "The degeneracy-conditional relabel gate has a perverse incentive: a noisier pool faces a WEAKER gate",
+      "status": "proposed",
+      "priority": 1,
+      "kind": "infrastructure",
+      "axis": "promotion gate correctness",
+      "hypothesis": "promotion_gate.primary.degenerate_pool_rule arms only when BOTH pools are degenerate (std <= zero_std_tol). So a variant with ONE flaky run gets the P09 relabelling requirement switched off for free, and is judged by a strictly weaker standard than a perfectly reproducible one. Measured live in cycle 15: including the truncated microns run would have given the pool std 2.63e-2, disarming the relabel gate and leaving microns clearing every remaining numeric gate at +0.007062 pp; excluding it restored degeneracy and ARMED the gate that then refused the leg. That cycle walked in from the safe side. The next one may not.",
+      "what_would_settle_it": "Decide whether the relabelling requirement should be unconditional for primaries, or conditioned on something that cannot be gamed by adding noise (e.g. effective sample size, or 'pool std below the measured relabelling sigma' rather than 'below float tolerance'). audit.py:860 catches the specific case of a DEGRADED run, but not a genuinely stochastic variant with real dispersion.",
+      "note": "Raised by the critic in cycle 15 (autoresearch/critic_H63.md, FINDING 2)."
+    },
+    {
+      "id": "P17",
+      "title": "M8's marginal-rate clause is never evaluated by anything, and stage 6 fails it on both primaries",
+      "status": "proposed",
+      "priority": 2,
+      "kind": "infrastructure",
+      "axis": "kill-criterion enforcement",
+      "hypothesis": "killed.json's M8 carries a marginal-rate clause (pp per second) that no code and no cycle has ever evaluated. The critic computed it for H63 stage 6 in cycle 15: 1.13e-4 pp/s on connectome against a 3.45e-4 bar, and 1.20e-4 against 4.33e-4 on microns - it FAILS on both primaries, and clears on mouse by ~5 orders of magnitude. That is an independent argument against the primary legs which cycle 15 did not make and could not have made mechanically.",
+      "what_would_settle_it": "Add the marginal-rate computation to audit.py so the clause is enforced rather than remembered, and apply it to P13 BEFORE spending engineering time making stage 6 cheaper on microns - if the stage cannot clear the rate bar even when fast, P13 is not worth doing.",
+      "note": "Raised by the critic in cycle 15 (autoresearch/critic_H63.md, FINDING 1). Related: P13."
     }
   ]
 }

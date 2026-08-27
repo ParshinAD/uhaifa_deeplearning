@@ -63,6 +63,15 @@ _DELTA_RE = re.compile(r"(?<![\w.])([+-]\d+\.\d{4,})\s*pp")
 # Gates the ladder requires before each verdict. CAMPAIGN.md: "never skip a rung".
 _REQUIRED_GATES = {
     "keep":    ["novelty", "prototype", "screen", "confirm", "critic"],
+    # A keep-partial CHANGES A CHAMPION -- it promotes some legs and refuses others -- so it
+    # needs exactly the evidence a keep needs. It was missing from this table until 2026-08-27,
+    # which meant every keep-partial fell through to the `need is None` branch below and had its
+    # gate coverage checked by NOTHING, only WARNed about. That is precisely the cycle-5 hole
+    # this table exists to close, re-opened for the one verdict that promotes without saying
+    # "keep". Two cycles used the verdict while the hole was open: cycle 8 (H52, mouse) and
+    # cycle 15 (H63, mouse). Adding the row can only ever turn a WARN into a PASS or a FAIL, so
+    # it is a tightening and the campaign may impose it on itself.
+    "keep-partial": ["novelty", "prototype", "screen", "confirm", "critic"],
     "kill":    ["novelty"],
     "iterate": ["novelty"],
     "done":    ["novelty"],

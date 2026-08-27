@@ -6313,3 +6313,206 @@ PYTHONPATH=src $PY experiments/proto_H59_reclaim.py microns   --rounds 4 --budge
 PYTHONPATH=src $PY experiments/proto_H59_reclaim.py mouse     --rounds 4
 bash autoresearch/sweep.sh --exp H59 --role implement --datasets connectome,mouse --auto-seeds
 ```
+
+---
+
+## 2026-08-27 — Cycle 15 — H59 / variant **H63**: minimal-FAS arc reclamation, composed on the correct per-dataset bases
+
+**Verdict: KEEP-PARTIAL.** New **mouse** champion. The **connectome** leg is REFUSED and the
+**microns** leg is HELD. `gates_run`: novelty, prototype, screen, confirm, critic — all five.
+
+This cycle was **resumed**, not started: cycle 15 launched 2026-08-26 12:37, was paused by the
+operator at 00:57 with the confirm stage 28/30 complete, and `state.json.current_item` was still
+`H59`. The 28 completed runs were reused, not redone.
+
+### Hypothesis
+
+The champion's order is a topological order of its forward-edge DAG `F`. If a backward edge
+`(u,v)` has no `F`-path `v → u`, then `F ∪ {(u,v)}` is acyclic, so **every** topological order of
+it scores at least `base + w_uv`. Reclamation is therefore exactly monotone by construction rather
+than by search, and it operates on the **arc set** — a level no previous variant in this campaign
+has touched. H63 is H59's stage 6 composed onto the **correct per-dataset champion base** (P14,
+the defect cycle 14 discovered and cycle 13 committed unnoticed), plus H62's microns epoch cut
+80,000 → 70,000 to buy the stage its seconds (P07).
+
+Seed classification (`autoresearch/seed_class.py --variant H63`): **`rng`**, 3 screen seeds
+required — fail-safe on an unresolved `_time.time()` in `mfas.refine.pair_relocate:198`, the same
+call that classifies H52. The screen ran 3 seeds on every dataset accordingly. Empirically the
+pipeline is still bit-reproducible (std 0 in all 30 confirm runs), but the classifier may escalate
+and may never de-escalate, so 3 it was.
+
+### Screen — role=implement, seeds 42/123/999, std 0 everywhere (9/9 runs)
+
+| dataset | champion | H63 | Δ pp | bar | ratio |
+|---|---|---|---|---|---|
+| connectome | 84.15409511053134 (H42) | 84.17175347830596 | **+0.01765837** | 0.012 | ×1.47 |
+| microns | 83.24085291201 (H42) | 83.25965742668 | **+0.01880451** | 0.002 | ×9.40 |
+| mouse | 93.10282596057698 (H52) | 93.17538325903583 | **+0.07255730** | −0.26 (NI) | above the 0.010 promotion floor |
+
+Internal controls: `base_best_pct` is **bit-identical to the champion** on connectome
+(84.15409511053134) and on mouse (93.10282596057698), so the whole increment is stage 6 and P14 is
+genuinely fixed. On microns the base landed at 83.24154769207, **+0.00069478 pp ABOVE** the
+champion — H62's epoch cut cost nothing — so the microns delta is a **compound**: **+0.01810973 pp
+from stage 6** and **+0.00069478 pp from the epoch cut**. Reported as a compound, not as one
+number. Stage 6 settled every reachability query (`n_unknown = 0`) and rejected nothing on budget
+on all three.
+
+### Confirm — role=confirm, 30 runs, std 0 on all three
+
+| dataset | n | seeds | H63 | comparator | Δ pp | Welch CI_lo | PROTOCOL CI_lo |
+|---|---|---|---|---|---|---|---|
+| connectome | 5 | 42/123/999/7/31415 | 84.17175347830596 | H42 84.15409511053134 | +0.017658 | +0.0177 | **−0.0058** |
+| microns | 5 | 42/123/999/7/31415 | 83.25965742667618 | H42 83.24085291201 | +0.018805 | +0.0188 | **+0.0181** |
+| mouse | 20 | see `sota.json` | 93.17538325903583 | H52 93.10282596057698 | +0.072557 | +0.0726 | −0.0901 |
+
+Every one of the 30 runs was re-scored exact by the frozen oracle (`rescore` PASS). All runs are
+inside the 3600 s cap: connectome max 1552 s, microns max 3398 s, mouse max 1 s.
+
+**Compute is not equal on microns, and it favours the champion, not H63**: H63 uses **70,000**
+gradient steps against H42's **80,000** — 12.5% *fewer* — and still wins there. connectome (20,000)
+and mouse (0) are exactly matched.
+
+#### The truncated microns run, and what was done about it
+
+The paused confirm left microns seed 7 **degraded**: `runtime_guard.degraded=true`, 3547.5 s
+against a 3450 s deadline, `stage3_sift` 1/12 sweeps and `stage4_alternation` 1/5 cycles executed,
+scoring 83.20094526 — below the champion. Seed 31415 had never started.
+
+Before either replacement was launched, this cycle **sealed and committed**
+`experiments/outputs/prereg_H63_confirm_rerun.json` (commit `b20df5b`) fixing the disposition in
+advance: exclusion is decided by `runtime_guard.degraded`, a flag `eval/runtime_guard.py:222` sets
+from wall clock and stage counts alone; the run is quarantined, never deleted; it is replaced by
+**one** re-run of the **same** seed and no more; and **if either replacement had also been degraded
+the verdict was to be `iterate`, not `keep`**, with both runs left in `results/`.
+
+Both replacements came back clean and bit-identical to the other three seeds:
+
+| seed | wall | pct | degraded |
+|---|---|---|---|
+| 7 (replacement) | 2954.6 s | 83.25965742667618 | no |
+| 31415 | 2958.2 s | 83.25965742667618 | no |
+
+The re-run of seed 7 finished **592.9 s faster than the run it replaces on identical code and an
+identical seed**. That is the pre-registration's falsifiable prediction coming out as predicted:
+the truncation was the **box** (P07 — this machine measures ~20% slower under desktop load), not
+the variant. New policy artifacts: `results/quarantine/README.md` + `MANIFEST.md`.
+
+The critic computed the counterfactual and found the exclusion **binds against this cycle**:
+including the degraded run de-degenerates the microns pool (std 2.63e-2), which switches the P09
+relabel gate *off*, leaving microns clearing every remaining numeric gate at +0.007062 pp. Removing
+it restored degeneracy and **armed** the gate that now refuses microns. The exclusion cost the
+cycle the microns promotion; the sign of the result is unchanged either way.
+
+### Audit — `--gate promotion`
+
+`autoresearch/audit_H63.json`, all three datasets: **VERDICT FAIL, exit 1**, three hard FAILs.
+
+- `protocol_ci.connectome` **FAIL** — CI lower bound **−0.0058** does not clear 0. σ floored at
+  `baseline_sigma_pp = 0.0189` gives SE 0.0120, so n=5 demands Δ > 0.02343 pp and Δ is 0.017658.
+- `relabel.connectome` **FAIL** — no P09 relabelling study registered for (H63, H42, connectome).
+- `relabel.microns` **FAIL** — likewise for microns.
+- PASSing on the other side: `effect_size.connectome` (+0.0177 vs 0.0120),
+  `effect_size.microns` (+0.0188 vs 0.0020), `protocol_ci.microns` (+0.0181 > 0),
+  `non_inferiority.mouse`, `provenance.*` on all three, `runtime_guard.*` on all three,
+  `frozen.manifest`, `frozen.git`, `leakage`, `rescore`.
+
+`autoresearch/audit_H63_mouse.json` (`--datasets mouse --gate promotion`): **PASS, exit 0**. This
+is not a hunt for a passing exit code: `audit.py:706` gates `effect_size` / `relabel` /
+`protocol_ci` behind `if ds_role == "primary"`, so all three FAILs are **structurally unreachable**
+for a supporting dataset, and `update_sota.py:137-145` issues exactly this per-dataset command
+itself.
+
+### Critic — `autoresearch/critic_H63.md`
+
+**REFUSE connectome. REFUSE microns (the cycle's word "hold" is the correct one).
+APPROVE-WITH-CONDITIONS mouse**, four conditions, all bookkeeping, all executed before promotion.
+
+What the critic verified rather than accepted: all four frozen files re-hashed by hand (no campaign
+commit has ever touched them); every one of the 10 `dataset_keying` sites in `H63.py` is a **compute
+budget** (`_EPOCHS`, `_MAX_SWEEPS`, `_ALT_CYCLES`, `_ALT_SIFT_SWEEPS`, `_PAIR_MAX_POPS`,
+`_RECLAIM_ROUNDS`) and the oracle is called exactly twice, both times to accept-or-discard a
+**complete candidate vector**, so no oracle value ever influences a move (CLAUDE.md invariant 6);
+`H63.py` and `reclaim2.py` are **byte-identical by blob hash** at every commit any run was stamped
+with, so the multi-commit WARN is not the `H30@12 vs H30@40` failure mode; and the P14 fix is real —
+H63's mouse `variant_attrs` reproduce H52 bit-for-bit at four checkpoints (`pure` 90.12629794323948,
+`sift`/`alt` 93.08288021668459, `pair` 93.10282596057698) — where cycle 14's H59 mouse leg sat on
+H42 and scored 92.94798739.
+
+The critic also attacked the quarantine as data selection and could not break it: sealing order
+verified from git rather than prose (both replacements carry `git_commit=b20df5b…`, and
+`git cat-file -e 89a6896:…/prereg_H63_confirm_rerun.json` **fails** — the rule was absent from the
+tree the excluded run came from), `degraded` shown score-independent by reading
+`eval/runtime_guard.py:194-222`, and exactly one duplicate exists in the entire H63 corpus.
+
+### Decision
+
+**Mouse: PROMOTED.** `H52 93.10282596057695 → H63 93.17538325903584`, +0.072557 pp, n=20, std 0,
+with six `--caveat` strings recorded in `sota.json`. This is the same shape as cycle 8's H52
+keep-partial and the evidence is cleaner on both sides: exact compute match, a single-commit
+single-valued comparator pool, and the whole gain isolated to one terminal monotone stage and
+exactly equal to the reclaimed arc weight.
+
+**Connectome: REFUSED.** +0.017658 pp clears the minimum effect size and fails the PROTOCOL CI.
+This is the *third* time the campaign's two connectome criteria have disagreed, and this delta is
+**smaller** than the +0.020927 pp already refused for H52 in cycle 8 — so refusing it is consistent
+with the existing record, not a new stringency. Retiring `require_protocol_ci_lower_gt` for
+degenerate pools is the half of P09 explicitly reserved for the **operator**; the campaign does not
+get to admit its own result by relaxing its own gate.
+
+**Microns: HELD, not promoted.** It clears both numeric gates (+0.018805 pp, PROTOCOL CI lower
+bound +0.0181) and fails only the P09 relabelling requirement, which no study covers. Two things
+would have to be true to promote it: the study exists (~9.4 h GPU,
+`experiments/proto_P09_relabel.py --dataset microns --comparator H42 --variant H63 --relabels 4`),
+and the campaign settles whether a microns championship is available at all while connectome is
+refused — `campaign.yaml` says of microns "both primaries are still required to promote", which
+reads against a microns-only promotion, but `sota.json` is per-dataset by construction. **That
+ambiguity is not resolved here.** Per the standing rule — if it is unsure whether something counts
+as a win, it does not — microns stays on H42 and the question goes to the operator as **P15**.
+
+### Findings the critic raised that outlive the verdict
+
+1. **M8's marginal-rate clause was never evaluated, and stage 6 fails it on both primaries**:
+   1.13e-4 pp/s on connectome against a 3.45e-4 bar, and 1.20e-4 against 4.33e-4 on microns. Mouse
+   clears it by ~5 orders of magnitude. This is an **independent** argument against the primary legs
+   that this cycle did not make, and it should be applied before any further work on P13.
+2. **The degeneracy-conditional relabel gate has a perverse incentive**: it only arms when both
+   pools are degenerate, so a **noisier** variant faces a **weaker** gate, and any future variant
+   with one flaky run gets the P09 requirement switched off for free. This cycle walked into it from
+   the safe side. Filed as **P16**.
+3. **microns seed 999 had only 87 s of slack** against the 3450 s deadline. P07 is live, not
+   historical.
+4. The mouse gain is **4× larger relatively on the smallest graph** — 5 arcs / 148 nodes → +0.0726 pp
+   versus 2,231 arcs / 136,648 nodes → +0.0177 pp. Read against `diagnosis.md` § Q01 that is the
+   silhouette of a scale-dependent effect, and it **must not be extrapolated to the connectome**.
+   Recorded as a `sota.json` caveat as well as here.
+
+### Honest caveats
+
+- The mouse pass is **non-inferiority against a point estimate, not a significance result**. The
+  mouse PROTOCOL CI lower bound is **−0.0901**. The word "significant" does not apply to it.
+- Mouse is a **supporting** dataset. This promotion does **not** advance the Phase-1 mission target;
+  the connectome gap to 84.6147 is unchanged at **0.4606 pp**.
+- All 30 confirm runs carry `+dirty` commit stamps (results/state/log churn written while the sweeps
+  ran). `provenance` PASSes because `H63.py` is present at every stamping commit, and the critic
+  confirmed byte-identity by blob hash, but the exact trees are unverifiable. That is a WARN by
+  design and it is recorded rather than left to be noticed.
+- The `relabel` FAILs are **real gaps in the evidence**, not harness bugs. The sitting champions
+  H36/H42 have the same gap (`campaign.yaml`: "KNOWN DEBT").
+- The screen's microns leg and the confirm's microns leg used the same variant, but the screen ran
+  before `221a2b7` made microns confirm-only. Both are recorded; no verdict rests on the screen.
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY -m pytest tests/ -q                                  # 573 passed
+$PY autoresearch/seed_class.py --variant H63                            # -> rng, 3 seeds
+bash autoresearch/sweep.sh --exp H63 --role implement --auto-seeds      # the screen
+bash autoresearch/sweep.sh --exp H63 --role confirm                     # the confirm, 30 runs
+bash autoresearch/sweep.sh --exp H63 --role confirm --datasets microns --seeds "7 31415"
+$PY autoresearch/audit.py --variant H63 --comparator champion --role confirm \
+    --comparator-role confirm --gate promotion --out autoresearch/audit_H63.json   # exit 1
+$PY autoresearch/audit.py --variant H63 --comparator champion --role confirm \
+    --comparator-role confirm --datasets mouse --gate promotion \
+    --out autoresearch/audit_H63_mouse.json                                        # exit 0
+```

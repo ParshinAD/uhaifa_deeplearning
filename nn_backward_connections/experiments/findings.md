@@ -599,3 +599,103 @@ PY=/c/ProgramData/anaconda3/envs/allen/python.exe
 PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset connectome --relabels 4     --comparator H42 --variant H52     # ~4.2 h; launch detached via autoresearch/detach.sh
 PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset mouse --relabels 24     --comparator H44 --variant H52     # ~3 min
 ```
+
+---
+
+## #9 — *(unwritten)* H52: sequential exact-gain pair relocation, promoted on mouse in cycle 8
+
+**This section is a placeholder, deliberately left without numbers.** Cycle 8 (2026-08-17)
+promoted H52 to the mouse championship as a `keep-partial` — the connectome gain from the same
+stage was refused by `protocol_ci` — but it never wrote the corresponding `findings.md` section,
+so the slot was skipped and `#8` is followed by `#10`.
+
+The gap is recorded here rather than closed by renumbering, because `sota.json` rows carry
+`finding:` strings that point at these numbers and renumbering would silently break them.
+
+**The evidence exists and is not lost**: `experiments/log.md`, 2026-08-17 (cycle 8), and
+`results/*-H52-*-confirm-*.json`. H52 is currently the `runner_up` in `sota.json`'s mouse row,
+with its own caveats recorded there.
+
+Anyone writing this section should take its figures from those artifacts, not from this note.
+
+
+---
+
+## #10 — The champion's feedback arc set is **not minimal**, and reclaiming the slack is exactly monotone (Phase 7, H59/H63)
+
+**Rank: a real mechanism at a new level, promoted only on the supporting dataset.** Read the
+caveats in `sota.json`'s mouse row before quoting anything here.
+
+### The claim
+
+Let `F` be the forward-edge set of the champion's ordering. The ordering is a topological order of
+`F`, so `F` is acyclic. Take any **backward** edge `(u,v)`. If there is no `F`-path from `v` to
+`u`, then `F ∪ {(u,v)}` is still acyclic, and therefore **every** topological order of it scores at
+least `base + w_uv`.
+
+That makes reclamation **monotone by construction rather than by search**: the gain is not a hoped-for
+outcome of an optimizer, it is a lemma. It is also the first mechanism in this campaign that acts on
+the **arc set** instead of on positions or on the order — a genuinely different level of the problem.
+
+### What was measured
+
+Confirm stage, `role=confirm`, all runs re-scored exact by the frozen oracle, std 0 throughout.
+
+| dataset | n | base (champion) | with stage 6 | Δ pp | arcs reclaimed | promoted? |
+|---|---|---|---|---|---|---|
+| mouse | 20 | 93.10282596057698 (H52) | **93.17538325903583** | **+0.072557** | 5 of 148 nodes | **YES** |
+| microns | 5 | 83.24085291201 (H42) | 83.25965742667618 | +0.018805 (compound) | 2,833 | held |
+| connectome | 5 | 84.15409511053134 (H42) | 84.17175347830596 | +0.017658 | 2,231 | refused |
+
+The microns figure is a **compound**: +0.01810973 pp from stage 6 and +0.00069478 pp from cutting
+the microns Rocket budget 80,000 → 70,000 epochs to pay for it (H62). The epoch cut did not merely
+break even — the base landed **above** the champion.
+
+### Two properties worth more than the deltas
+
+**It certifies.** A second reclamation round finds **exactly 0** arcs on all three datasets. The
+stage reaches a fixed point, so it does not just improve the arc set, it **proves the new one
+minimal** in this sense. Every reachability query resolved exactly (`n_unknown = 0`); nothing was
+rejected on budget.
+
+**The heavy edges are genuinely stuck.** The heaviest reclaimable connectome arc weighs **39** of a
+2,405 maximum. The entire connectome gain is 2,231 *light* arcs. So this mechanism does not touch
+the expensive feedback at all, and there is no version of it that would.
+
+### Why only mouse was promoted
+
+- **connectome** +0.017658 pp clears the minimum effect size (0.012) and **fails the PROTOCOL CI**
+  (lower bound −0.0058): with σ floored at `baseline_sigma_pp = 0.0189`, n=5 demands Δ > 0.02343 pp.
+  It also has no P09 relabelling study. This is a *smaller* delta than the +0.020927 pp already
+  refused for H52 in cycle 8, so the refusal is consistent with the record.
+- **microns** clears both numeric gates and fails only the P09 relabelling requirement (~9.4 h GPU
+  to close). Held, not promoted; see P15 for the unresolved question of whether a microns-only
+  championship is available while connectome is refused.
+- **mouse** passes `--gate promotion` cleanly (`autoresearch/audit_H63_mouse.json`, exit 0).
+
+### The honest weakness: this looks scale-dependent
+
+The gain is about **4× larger relatively on the smallest graph**: 5 arcs on 148 nodes → +0.0726 pp,
+versus 2,231 arcs on 136,648 nodes → +0.0177 pp. The reclaimable fraction of the FAS shrinks fast
+with graph size. Against `diagnosis.md` § Q01 that is exactly the silhouette of a scale-dependent
+effect, and **the mouse result must not be extrapolated to the connectome**. If a later cycle shows
+the reclaimable set is essentially a small-graph phenomenon, the mouse championship still stands —
+it is a real, exact, certified gain on that graph — but the mechanism's standing as a *general*
+improvement does not.
+
+A second, independent argument against the primary legs, raised by the critic and not by the
+measurement: stage 6's **marginal rate** is 1.13e-4 pp/s on connectome against an M8 bar of
+3.45e-4, and 1.20e-4 against 4.33e-4 on microns. It fails M8 on both primaries and clears it on
+mouse by ~5 orders of magnitude. Apply this before spending anything further on P13.
+
+### Reproduce
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+bash autoresearch/sweep.sh --exp H63 --role confirm      # 30 runs: mouse 20, connectome 5, microns 5
+$PY autoresearch/audit.py --variant H63 --comparator champion --role confirm \
+    --comparator-role confirm --datasets mouse --gate promotion \
+    --out autoresearch/audit_H63_mouse.json              # exit 0
+```
+
+Full cycle record: `experiments/log.md`, 2026-08-27 (cycle 15). Critic: `autoresearch/critic_H63.md`.

@@ -1,8 +1,8 @@
 # Campaign dashboard
 
-*Generated 2026-08-27 00:59 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-27 04:26 by `autoresearch/dashboard.py` — do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 14 · **mode:** `divergent` · **consecutive kills:** 5
+**Phase:** `quality` · **cycle:** 15 · **mode:** `incremental` · **consecutive kills:** 0
 
 ## Progress — connectome (Phase 1 target)
 
@@ -19,9 +19,9 @@
 |---|---|---|---|---|---|
 | connectome | **H42** | 84.1541 ± 0.0 | 5 | ~1238s | findings.md #7 (H42, 2026-08-10) |
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
-| mouse | **H52** | 93.1028 ± 0.0 | 20 | ~1s | experiments/log.md 2026-08-17 (H52) |
+| mouse | **H63** | 93.1754 ± 0.0 | 20 | ~1s | findings.md #10 (H63, 2026-08-27) |
 
-## Queue — 17 proposed / 43 total
+## Queue — 17 proposed / 46 total
 
 | # | id | title | status |
 |---|---|---|---|
@@ -35,13 +35,14 @@
 | 0 | `P09` | The campaign's two significance criteria disagree for the first time - decide  | awaiting-operator |
 | 0 | `P13` | Make arc reclamation cheap enough to run on microns (it is worth +0.018759 pp  | proposed |
 | 0 | `H64` | Compose the ASYMMETRIC surrogate with the CHAMPION stack on CUDA — H38 was nev | proposed |
+| 0 | `P15` | OPERATOR DECISION: is a microns-only championship available while the connecto | awaiting-operator |
 | 1 | `P02` | The screen seeds are inert for deterministic variants РІР‚вЂќ is 3x the comput | done |
-| 1 | `H36` | SCC-decomposed recursive bounded-span insertion (the Vahidi route) | confirmed |
 
 ## Recent cycles
 
 | cycle | item | verdict | note |
 |---|---|---|---|
+| 15 | `H59` | **keep-partial** | Variant H63. NEW MOUSE CHAMPION 93.10282596057695 -> 93.17538325903584 (+0.07255 |
 | 14 | `H59` | **iterate** | Minimal-FAS arc reclamation. Prototype PASSED all three with exact certificates  |
 | 13 | `H60` | **kill** | Net-digraph condensation inside the SCC refiner, killed at the SCREEN. The proto |
 | 12 | `H47` | **kill** | Exact subset-DP at the SCC recursion's leaves, killed at the prototype rung for  |
@@ -53,11 +54,10 @@
 | 6 | `P05` | **iterate** | The run-level wall-clock guard is built, armed by default and verified on 2 of 3 |
 | 5 | `H42` | **keep** | NEW CHAMPION x3, second score move of the campaign, from two constants. Resumed  |
 | 4 | `None` | **lost** | RECONSTRUCTED 2026-08-25 to make the history contiguous, NOT a real cycle record |
-| 3 | `H36` | **keep** | NEW CHAMPION on all three datasets - the first score move of the autonomous camp |
 
 ## Evidence
 
-- `results/*.json`: **506** run records across **33** variants
+- `results/*.json`: **507** run records across **33** variants
 - killed mechanisms on record: **21** (+7 deferred, 12 meta-rules)
 - literature notes: **8** (latest: `vahidi-2025.md`)
 
