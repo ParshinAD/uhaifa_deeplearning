@@ -1,0 +1,391 @@
+{
+ "variant": "H64",
+ "rung": "0+1",
+ "M": 0.75,
+ "T": 1.5,
+ "cheap_gate_asym": {
+  "name": "ASYM(M=0.75,T=1.5)",
+  "sigmoid_reparametrization": {
+   "residual": 0.11920292202212981,
+   "a": 2.666666666666822,
+   "coarse_a": 2.691534803926917
+  },
+  "monotone_bounded": {
+   "monotone_non_decreasing": true,
+   "min_increment": 0.0,
+   "min_value": 0.0,
+   "max_value": 1.0,
+   "bounded": true
+  },
+  "autograd": {
+   "rows": [
+    {
+     "z": -100.0,
+     "autograd": 0.0,
+     "central_diff": 0.0,
+     "ok": true
+    },
+    {
+     "z": -50.0,
+     "autograd": 0.0,
+     "central_diff": 0.0,
+     "ok": true
+    },
+    {
+     "z": -7.3,
+     "autograd": 5.81463359385174e-05,
+     "central_diff": 5.8146265580205636e-05,
+     "ok": true
+    },
+    {
+     "z": -3.0,
+     "autograd": 0.017728151122107016,
+     "central_diff": 0.017728151169293938,
+     "ok": true
+    },
+    {
+     "z": -1.0,
+     "autograd": 0.2148937980713234,
+     "central_diff": 0.21489379831152178,
+     "ok": true
+    },
+    {
+     "z": -0.5,
+     "autograd": 0.3563458997206719,
+     "central_diff": 0.3563458994548796,
+     "ok": true
+    },
+    {
+     "z": -0.2,
+     "autograd": 0.45734366209985816,
+     "central_diff": 0.45734366238558977,
+     "ok": true
+    },
+    {
+     "z": 0.0,
+     "autograd": 0.5242984886439516,
+     "central_diff": 0.524298487958319,
+     "ok": true
+    },
+    {
+     "z": 0.2,
+     "autograd": 0.5844986648302454,
+     "central_diff": 0.5844986650238582,
+     "ok": true
+    },
+    {
+     "z": 0.35,
+     "autograd": 0.6214193982011139,
+     "central_diff": 0.6214193981612937,
+     "ok": true
+    },
+    {
+     "z": 0.5,
+     "autograd": 0.6484857626793886,
+     "central_diff": 0.6484857628663576,
+     "ok": true
+    },
+    {
+     "z": 0.75,
+     "autograd": 0.0,
+     "central_diff": 0.3333333331578814,
+     "ok": false
+    },
+    {
+     "z": 1.0,
+     "autograd": 0.0,
+     "central_diff": 0.0,
+     "ok": true
+    },
+    {
+     "z": 2.0,
+     "autograd": 0.0,
+     "central_diff": 0.0,
+     "ok": true
+    },
+    {
+     "z": 4.0,
+     "autograd": 0.0,
+     "central_diff": 0.0,
+     "ok": true
+    },
+    {
+     "z": 33.0,
+     "autograd": 0.0,
+     "central_diff": 0.0,
+     "ok": true
+    },
+    {
+     "z": 100.0,
+     "autograd": 0.0,
+     "central_diff": 0.0,
+     "ok": true
+    }
+   ],
+   "mismatch_points": [
+    0.75
+   ],
+   "all_match": false
+  },
+  "collapse": {
+   "g_at_0": 0.5378828427399902,
+   "sup_g": 1.0,
+   "inf_g": 0.0,
+   "headroom_frac_of_range": 0.4621171572600098,
+   "collapse_is_global_max": false
+  },
+  "transition_width_at_0.9": 0.5995149258481522,
+  "reasons": [
+   "WARN: autograd != central difference at z in [0.75] (kink / branch point). Harmless if measure-zero, but it must be documented, not claimed away."
+  ],
+  "verdict": "WARN"
+ },
+ "cheap_gate_sigmoid": {
+  "name": "sigmoid(baseline)",
+  "sigmoid_reparametrization": {
+   "residual": 5.1736392947532295e-14,
+   "a": 0.9999999999997694,
+   "coarse_a": 1.0
+  },
+  "monotone_bounded": {
+   "monotone_non_decreasing": true,
+   "min_increment": 0.0,
+   "min_value": 7.124576406741285e-218,
+   "max_value": 1.0,
+   "bounded": true
+  },
+  "autograd": {
+   "rows": [
+    {
+     "z": -100.0,
+     "autograd": 3.7200759760208356e-44,
+     "central_diff": 3.7200757560983705e-44,
+     "ok": true
+    },
+    {
+     "z": -50.0,
+     "autograd": 1.928749847963918e-22,
+     "central_diff": 1.9287498706992653e-22,
+     "ok": true
+    },
+    {
+     "z": -7.3,
+     "autograd": 0.0006746269939396394,
+     "central_diff": 0.0006746269954347253,
+     "ok": true
+    },
+    {
+     "z": -3.0,
+     "autograd": 0.04517665973091214,
+     "central_diff": 0.04517665967013196,
+     "ok": true
+    },
+    {
+     "z": -1.0,
+     "autograd": 0.19661193324148185,
+     "central_diff": 0.19661193340070326,
+     "ok": true
+    },
+    {
+     "z": -0.5,
+     "autograd": 0.2350037122015945,
+     "central_diff": 0.2350037120457671,
+     "ok": true
+    },
+    {
+     "z": -0.2,
+     "autograd": 0.24751657271185995,
+     "central_diff": 0.2475165725157602,
+     "ok": true
+    },
+    {
+     "z": 0.0,
+     "autograd": 0.25,
+     "central_diff": 0.24999999931329953,
+     "ok": true
+    },
+    {
+     "z": 0.2,
+     "autograd": 0.24751657271185995,
+     "central_diff": 0.24751657223820445,
+     "ok": true
+    },
+    {
+     "z": 0.35,
+     "autograd": 0.2424973950225001,
+     "central_diff": 0.24249739494219824,
+     "ok": true
+    },
+    {
+     "z": 0.5,
+     "autograd": 0.2350037122015945,
+     "central_diff": 0.2350037120457671,
+     "ok": true
+    },
+    {
+     "z": 0.75,
+     "autograd": 0.21789499376181404,
+     "central_diff": 0.2178949937148289,
+     "ok": true
+    },
+    {
+     "z": 1.0,
+     "autograd": 0.19661193324148185,
+     "central_diff": 0.19661193284559175,
+     "ok": true
+    },
+    {
+     "z": 2.0,
+     "autograd": 0.10499358540350662,
+     "central_diff": 0.10499358493731847,
+     "ok": true
+    },
+    {
+     "z": 4.0,
+     "autograd": 0.017662706213291107,
+     "central_diff": 0.017662706297549846,
+     "ok": true
+    },
+    {
+     "z": 33.0,
+     "autograd": 4.662936703425635e-15,
+     "central_diff": 0.0,
+     "ok": true
+    },
+    {
+     "z": 100.0,
+     "autograd": 0.0,
+     "central_diff": 0.0,
+     "ok": true
+    }
+   ],
+   "mismatch_points": [],
+   "all_match": true
+  },
+  "collapse": {
+   "g_at_0": 0.5,
+   "sup_g": 1.0,
+   "inf_g": 7.124576406741285e-218,
+   "headroom_frac_of_range": 0.5,
+   "collapse_is_global_max": false
+  },
+  "transition_width_at_0.9": 2.1972526655519187,
+  "is_baseline_sigmoid": true,
+  "reasons": [
+   "REJECT: this IS the baseline sigmoid (residual 5.17e-14)."
+  ],
+  "verdict": "REJECT"
+ },
+ "crossover_sweep_hard_synthetic": [
+  {
+   "std": 0.01,
+   "beta_std": 0.0105,
+   "A_asym": 0.003456558151867621,
+   "A_sigmoid": 0.0016619079906115422
+  },
+  {
+   "std": 0.1,
+   "beta_std": 0.10500000000000001,
+   "A_asym": 0.03233386427072098,
+   "A_sigmoid": 0.016810198411072425
+  },
+  {
+   "std": 1.0,
+   "beta_std": 1.05,
+   "A_asym": 0.6539078234665111,
+   "A_sigmoid": 0.25218561062455946
+  },
+  {
+   "std": 10.0,
+   "beta_std": 10.5,
+   "A_asym": 1.3797312252856881,
+   "A_sigmoid": 1.2631576816125643
+  },
+  {
+   "std": 100.0,
+   "beta_std": 105.0,
+   "A_asym": 0.9967431694362632,
+   "A_sigmoid": 1.2674327260384568
+  },
+  {
+   "std": 141.0,
+   "beta_std": 148.05,
+   "A_asym": 0.998268138890898,
+   "A_sigmoid": 1.195124131214089
+  },
+  {
+   "std": 1000.0,
+   "beta_std": 1050.0,
+   "A_asym": 0.9999999587185252,
+   "A_sigmoid": 1.0000946215288344
+  },
+  {
+   "std": 10000.0,
+   "beta_std": 10500.0,
+   "A_asym": 1.0,
+   "A_sigmoid": 1.0
+  },
+  {
+   "std": 100000.0,
+   "beta_std": 105000.0,
+   "A_asym": 1.0,
+   "A_sigmoid": 1.0
+  },
+  {
+   "std": 1000000.0,
+   "beta_std": 1050000.0,
+   "A_asym": 1.0,
+   "A_sigmoid": 1.0
+  }
+ ],
+ "asym_crossover_present": false,
+ "asym_A_min": 0.003456558151867621,
+ "asym_A_max": 1.3797312252856881,
+ "champion_npy_candidates": [
+  "results\\20260810T052352Z-H42-connectome-s42-implement-f41d7e_positions.npy",
+  "results\\20260810T064240Z-H42-connectome-s42-confirm-f41d7e_positions.npy",
+  "results\\20260810T070327Z-H42-connectome-s123-confirm-f41d7e_positions.npy",
+  "results\\20260810T072409Z-H42-connectome-s999-confirm-f41d7e_positions.npy",
+  "results\\20260810T103830Z-H42-connectome-s7-confirm-f41d7e_positions.npy",
+  "results\\20260810T105922Z-H42-connectome-s31415-confirm-f41d7e_positions.npy",
+  "results\\20260810T214020Z-H42-connectome-s42-verify-f41d7e_positions.npy",
+  "results\\20260810T052352Z-H42-connectome-s42-implement-f41d7e_positions.npy",
+  "results\\20260810T064240Z-H42-connectome-s42-confirm-f41d7e_positions.npy",
+  "results\\20260810T070327Z-H42-connectome-s123-confirm-f41d7e_positions.npy"
+ ],
+ "beta_max_schedule": 1.05,
+ "reach": [
+  {
+   "order": "rocket_best_positions.npy (parity anchor, 82.9161%)",
+   "backward_weight": 7160239.0,
+   "backward_weight_frac_of_total": 0.17083925633863467,
+   "median_backward_rank_distance": 25123.0,
+   "p75_backward_rank_distance": 49665.0,
+   "weighted_median_backward_rank_distance": 25185.0,
+   "asym_live_weight_frac@0.003753": 0.03732640767996711,
+   "sigmoid_live_weight_frac@0.003753": 0.057834103023656054,
+   "asym_reach_ranks@0.003753": 1798.5611510791368,
+   "sigmoid_reach_ranks@0.003753": 2131.6280309086064,
+   "backward_weight_frac_beyond_1000_ranks": 0.9745102083882954,
+   "backward_weight_frac_beyond_5000_ranks": 0.8644916740907671,
+   "backward_weight_frac_beyond_20000_ranks": 0.5701358571969455,
+   "backward_weight_frac_beyond_60000_ranks": 0.22506930285427623
+  },
+  {
+   "order": "20260810T214020Z-H42-connectome-s42-verify-f41d7e_positions.npy",
+   "backward_weight": 6641358.0,
+   "backward_weight_frac_of_total": 0.15845904889468662,
+   "median_backward_rank_distance": 20008.0,
+   "p75_backward_rank_distance": 39074.0,
+   "weighted_median_backward_rank_distance": 18776.0,
+   "asym_live_weight_frac@0.003753": 0.13098510876841754,
+   "sigmoid_live_weight_frac@0.003753": 0.15661962508270147,
+   "asym_reach_ranks@0.003753": 1798.5611510791368,
+   "sigmoid_reach_ranks@0.003753": 2131.6280309086064,
+   "backward_weight_frac_beyond_1000_ranks": 0.8838919690822269,
+   "backward_weight_frac_beyond_5000_ranks": 0.7696906265254787,
+   "backward_weight_frac_beyond_20000_ranks": 0.48367096006569743,
+   "backward_weight_frac_beyond_60000_ranks": 0.14811112426103215
+  }
+ ]
+}
