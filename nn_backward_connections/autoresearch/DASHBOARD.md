@@ -1,6 +1,6 @@
 # Campaign dashboard
 
-*Generated 2026-08-27 20:25 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-27 20:32 by `autoresearch/dashboard.py` — do not hand-edit.*
 
 **Phase:** `quality` · **cycle:** 17 · **mode:** `incremental` · **consecutive kills:** 0
 
@@ -8,16 +8,16 @@
 
 ```
   bootstrap  83.9101%
-  now        84.1541%   ███████████·····················   34.6% of the way
+  now        84.2582%   ████████████████················   49.4% of the way
   target     84.6147%   (reference solution / Vahidi 2025)
-  remaining  +0.4606 pp
+  remaining  +0.3565 pp
 ```
 
 ## Champions
 
 | dataset | champion | score | n | wall/run | evidence |
 |---|---|---|---|---|---|
-| connectome | **H42** | 84.1541 ± 0.0 | 5 | ~1238s | findings.md #7 (H42, 2026-08-10) |
+| connectome | **H64** | 84.2582 ± 0.0 | 5 | ~1185s | findings.md #11 (H64, promoted 2026-08-27 cycle 17) |
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H63** | 93.1754 ± 0.0 | 20 | ~1s | findings.md #10 (H63, 2026-08-27) |
 
@@ -42,7 +42,7 @@
 
 | cycle | item | verdict | note |
 |---|---|---|---|
-| 17 | `P18` | **iterate** | Connectome relabelling study for (H64, H42): PASSED. relabel_gate.evaluate() pas |
+| 17 | `P18` | **keep-partial** | NEW CONNECTOME CHAMPION H64 84.25817950936937 (+0.104084 pp over H42), the large |
 | 16 | `H64` | **iterate** | ASYMMETRIC surrogate composed with the champion stack. connectome +0.104084 pp ( |
 | 15 | `H59` | **keep-partial** | Variant H63. NEW MOUSE CHAMPION 93.10282596057695 -> 93.17538325903584 (+0.07255 |
 | 14 | `H59` | **iterate** | Minimal-FAS arc reclamation. Prototype PASSED all three with exact certificates  |

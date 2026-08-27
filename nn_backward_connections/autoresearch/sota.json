@@ -16,12 +16,12 @@
     "wall_clock_s_approx": "approximate per-run wall clock; recompute from JSONs before quoting"
   },
   "updated": "2026-08-27",
-  "updated_by": "update_sota.py --variant H63 --dataset mouse",
+  "updated_by": "update_sota.py --variant H64 --dataset connectome",
   "datasets": {
     "connectome": {
-      "champion": "H42",
-      "pipeline": "H02 greedy-FAS warm-start -> run_rocket -> under-relaxed exact-gain sift (H35) -> alternating recursive SCC-topological block refinement <-> SHORT 2-sweep under-relaxed sift, re-allocated cycle counts (stage 4)",
-      "pct_mean": 84.1541,
+      "champion": "H64",
+      "pipeline": "H02 greedy-FAS warm-start -> run_rocket with H38's ASYMMETRIC one-sided surrogate in place of torch.sigmoid (stage 2) -> under-relaxed exact-gain sift (H35) -> alternating recursive SCC-topological block refinement <-> SHORT 2-sweep under-relaxed sift (stage 4)",
+      "pct_mean": 84.2582,
       "pct_std": 0.0,
       "n_seeds": 5,
       "seeds": [
@@ -32,16 +32,23 @@
         31415
       ],
       "role": "confirm",
-      "evidence": "results/*-H42-connectome-*-confirm-*.json",
-      "finding": "findings.md #7 (H42, 2026-08-10)",
-      "caveats": [],
-      "wall_clock_s_approx": 1238,
+      "evidence": "results/*-H64-connectome-*-confirm-*.json",
+      "finding": "findings.md #11 (H64, promoted 2026-08-27 cycle 17)",
+      "caveats": [
+        "CONNECTOME LEG ONLY. Promoted per-dataset under the operator's P15 resolution of 2026-08-27 ('the main thing is the gain on connectome'); audit.py --gate promotion --datasets connectome exits 0.",
+        "The microns leg is HELD, not refused: 6 of 8 microns runs truncated on this box (as did the unmodified champion's own control), so H64 on microns is UNMEASURED. The 2 runs that completed the pipeline are +0.005344 pp over the champion. See P19.",
+        "mouse is exactly neutral BY CONSTRUCTION (_EPOCHS['mouse']=0, surrogate never called, bit-identical to H63), so the mouse tripwire does not exercise the changed code."
+      ],
+      "wall_clock_s_approx": 1185,
       "runner_up": {
-        "champion": "H36",
-        "pct_mean": 84.0972,
+        "champion": "H42",
+        "pct_mean": 84.1541,
         "pct_std": 0.0,
-        "n_seeds": 5
-      }
+        "n_seeds": 5,
+        "caveats": []
+      },
+      "pct_mean_exact": 84.25817950936937,
+      "pct_std_exact": 0.0
     },
     "microns": {
       "champion": "H42",

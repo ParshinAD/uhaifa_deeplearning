@@ -824,3 +824,108 @@ Evidence: `results/*-H64-connectome-*-confirm-a7490c.json` (5),
 `experiments/outputs/proto_H64_rung01.json`, `experiments/outputs/proto_H64_rung2.json`,
 `experiments/prereg/H64_prototype.md`, `experiments/prereg/H64_confirm.md`,
 `autoresearch/audit_H64.json`. Cycle entry: `experiments/log.md` 2026-08-27 (Cycle 16).
+
+### PROMOTED 2026-08-27 (cycle 17) — H64 is the connectome champion
+
+The cycle-16 text above ends with H64 held, blocked by `relabel.connectome` and by an ambiguity
+about whether one primary can promote while the other is blocked. Both were resolved on
+2026-08-27 and **H64 is now the connectome champion at 84.25817950936937**, `+0.104084 pp` over
+H42 — the largest connectome move of the autonomous campaign. Gap to the 84.6147 mission target:
+0.4606 pp → **0.3565 pp**.
+
+**What closed the last gate.** A relabelling-robustness study (P09 protocol, queue item P18) for
+the pair `(H64, H42, connectome)`, pre-registered and committed at `040330f` 7 s before launch,
+R = 4 fixed from `campaign.yaml`:
+
+| r | H42 | H64 | Δ (pp) |
+|---|---|---|---|
+| 0 (identity) | 84.15409511 | 84.25817951 | **+0.104084** |
+| 1 | 84.12643248 | 84.27315608 | +0.146724 |
+| 2 | 84.12184908 | 84.26135043 | +0.139501 |
+| 3 | 84.15550043 | 84.26217835 | +0.106678 |
+| 4 | 84.11418066 | 84.25916252 | +0.144982 |
+
+The identity row reproduces both recorded confirm means **exactly** (abs diff 0.0 pp against a
+1e-9 tolerance), which is the validity check on the script's harness bypass.
+`relabel_gate.evaluate()` returns `passed=True`: min-rule 0 failures, paired one-sided 95% lower
+bound **+0.108186 pp** against a 0.012 pp bar. `audit.py --gate promotion --datasets connectome`
+goes exit 1 → **exit 0**, every connectome check PASS.
+
+**Why it was a real test rather than a formality.** H52 — the only prior connectome study in the
+registry — is *nested* in H42 (an appended monotone stage), so `delta_r >= 0` held with
+probability 1 and `relabel_gate.py`'s D4 note warns that positivity was not evidence there. H64
+**swaps** the stage-2 surrogate inside the pipeline, so the arms diverge from the first gradient
+step and `delta_r` could have come back negative. It did not, on 5 of 5 labellings.
+
+**Two results that outlive the promotion.**
+
+1. **M10's dispersion constant replicated exactly, on a different pair.** The H42 arm's
+   relabelling std here is **0.019124286772961963 pp**; cycle 9 measured the whole-pipeline
+   connectome nuisance sigma at **0.019124 pp** from a different study, a different variant and a
+   different set of runs. Unsought — it fell out of the comparator arm.
+
+2. **The asymmetric surrogate is 3.2× MORE label-robust than the sigmoid it replaces** — std
+   **0.006007 pp** vs **0.019124 pp**. This is invisible to the seed pools, which are degenerate
+   (std = 0), so only relabelling can see it. It says ASYM does not merely find a better order on
+   the canonical labelling; it depends *less* on the labelling at all. Whether that robustness
+   *is* the mechanism is queue item **P22** — and its first step costs zero GPU, because the study
+   persisted all ten order vectors under `experiments/outputs/relabel_positions/`.
+
+   A corollary refines M10: the paired design does **not** cancel for a non-nested pair. The
+   paired sd is 0.021196 pp — *larger* than the comparator arm's own 0.019124 pp, and essentially
+   the independent-combination value `sqrt(0.019124² + 0.006007²) = 0.020045`. Sharing a prefix
+   stage is not enough for its nuisance to cancel; the arms must *traverse* it identically. Filed
+   as **P21**.
+
+   Minor but favourable: the **canonical labelling is the WORST of the five** for H64 (identity Δ
+   is the minimum; the mean over labellings is +0.128394 pp). The promoted number is conservative.
+
+**Scope — read the `caveats` in `sota.json`, this is not a three-dataset win.**
+
+* **Connectome leg only.** Promotion is per-dataset under the operator's P15 resolution of
+  2026-08-27 (`ca72f87`): *"the main thing is the gain on connectome"*, and a dataset that fails
+  its gates does not hold back one that passes them. Nothing was relaxed — the connectome leg
+  cleared the full gate on its own evidence.
+* **The microns leg is HELD, not refused, and it is UNMEASURED rather than negative.** The
+  `−0.271 pp` quoted in the cycle-16 text above is an **artifact of pooling** three
+  guard-truncated runs with two clean ones. The two runs that actually completed the pipeline are
+  bit-identical at 83.24619687 against the champion's 83.24085291 — **+0.005344 pp**, above
+  microns' 0.002 bar. n = 2 and one distinct value, so this is a correction, not evidence. Cycle
+  17 re-ran the three missing seeds on a fresh sweep and all three truncated again: **6 of 8**
+  H64 microns runs truncated, as did the unmodified champion's own control. See **P19**.
+* **mouse is exactly neutral by construction** (`_EPOCHS["mouse"] = 0`, so the surrogate is never
+  called and the run is bit-identical to H63 — pinned by a test). The mouse tripwire does not
+  exercise the changed code, and its non-inferiority pass is therefore vacuous.
+
+**The microns diagnosis, corrected.** Cycle 16 read a monotone within-sweep wall sequence as the
+box degrading under sustained load. That is wrong: the P18 study ran ten connectome arms over
+3.8 h with walls of 1192.9–1603.5 s and **no monotone trend**, and cycle 17's microns re-runs were
+alone on the GPU and still truncated, with walls that *decrease*. The real cause is a **~1%
+runtime margin** — H42's own clean microns runs took 3397.8–3418.0 s against a 3450 s deadline.
+Raising `reserve_s` makes it worse (`time_limit = cap − reserve`). Per the operator (`a95e2f6`),
+microns must **fit** the existing 3600 s cap, and the only lever that matters is the gradient
+phase: **95.1%** of a 3419.6 s run.
+
+### Reproduce (the promotion)
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+
+# the relabelling study (3.8 h GPU, connectome only) - --out is LOAD-BEARING:
+# the default path would overwrite the registered H52|H42|connectome study
+PYTHONPATH=src $PY experiments/proto_P09_relabel.py --dataset connectome \
+    --comparator H42 --variant H64 --relabels 4 \
+    --out experiments/outputs/proto_P09_connectome_H64.json
+
+PYTHONPATH=src $PY autoresearch/audit.py --variant H64 --comparator champion \
+    --role confirm --comparator-role confirm --gate promotion \
+    --datasets connectome --out autoresearch/audit_H64_connectome.json    # exit 0
+```
+
+Evidence: `experiments/outputs/proto_P09_connectome_H64.json` (the study),
+`experiments/outputs/proto_P18_prereg.json` (pre-registration, sealed at `040330f`),
+`experiments/outputs/relabel_index.json` (registry entry `H64|H42|connectome`),
+`experiments/outputs/relabel_positions/` (10 persisted orders),
+`autoresearch/audit_H64_connectome.json` (exit 0),
+`results/*-H64-connectome-*-confirm-a7490c.json` (5).
+Cycle entry: `experiments/log.md` 2026-08-27 (Cycle 17).
