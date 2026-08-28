@@ -67,7 +67,8 @@ def underrelaxed_rebuild(rank: np.ndarray, best_gap: np.ndarray, gain: np.ndarra
 
 def sift_underrelaxed(g: GraphData, init_rank: np.ndarray, *, k_full: int = 6,
                       alpha: float = 0.7, max_sweeps: int = 40,
-                      time_budget_s: Optional[float] = None, tol: float = 1e-9
+                      time_budget_s: Optional[float] = None, tol: float = 1e-9,
+                      tie_break: str = "first"
                       ) -> Tuple[np.ndarray, float, List[Dict]]:
     """Two-phase under-relaxed full-range exact-gain sift, best-by-oracle.
 
@@ -78,6 +79,12 @@ def sift_underrelaxed(g: GraphData, init_rank: np.ndarray, *, k_full: int = 6,
     ever scored and is what is returned — so the result can never regress below ``init_rank``
     and is >= plain Jacobi on every dataset. Stops early only at a true fixed point (no
     movers) or when ``time_budget_s`` is exceeded.
+
+    ``tie_break`` is forwarded to :func:`mfas.refine.insertion.jacobi_best_gaps` and
+    selects WHICH point of the exact-optimal plateau a mover is sent to (H73). It never
+    changes the gain, so the mover set is identical either way; it changes the
+    under-relaxed step's interpolation TARGET, and hence the transport distance. The
+    default ``"first"`` is what every champion through H64 was measured with.
 
     Returns ``(best_rank int64[n], best_score float, sweep_log)`` where each ``sweep_log``
     row is ``{sweep, alpha, candidate_pct, accepted, n_movers, wall}``.
@@ -101,7 +108,8 @@ def sift_underrelaxed(g: GraphData, init_rank: np.ndarray, *, k_full: int = 6,
             break
         t0 = time.time()
         a = 1.0 if s < k_full else float(alpha)
-        best_gap, gain = jacobi_best_gaps(work_rank, src, tgt, w, n)
+        best_gap, gain = jacobi_best_gaps(work_rank, src, tgt, w, n,
+                                          tie_break=tie_break)
         n_movers = int((gain > tol).sum())
         cand_rank = underrelaxed_rebuild(work_rank, best_gap, gain, a, tol=tol)
         cand_score = score_from_order(cand_rank, src_o, tgt_o, g.weight)

@@ -89,7 +89,8 @@ def build_sift_edges(g: GraphData) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
 # Vectorized exact best-gap / gain for every node (Jacobi)
 # ──────────────────────────────────────────────────────────────────────────────
 def jacobi_best_gaps(rank: np.ndarray, src: np.ndarray, tgt: np.ndarray,
-                     w: np.ndarray, n: int) -> Tuple[np.ndarray, np.ndarray]:
+                     w: np.ndarray, n: int, *, tie_break: str = "first"
+                     ) -> Tuple[np.ndarray, np.ndarray]:
     """Exact best insertion gap and gain for EVERY node, from the FIXED ``rank``.
 
     Parameters
@@ -100,6 +101,23 @@ def jacobi_best_gaps(rank: np.ndarray, src: np.ndarray, tgt: np.ndarray,
         Edge arrays with self-loops already dropped (see :func:`build_sift_edges`).
     n : int
         Number of nodes.
+    tie_break : {"first", "mindisp"}, keyword-only
+        Which gap to return when the profile's maximum is attained on an INTERVAL
+        (a plateau), which it usually is: the profile has at most ``deg(u)``
+        breakpoints over ``n`` gaps. Both choices have the SAME exact gain -- this
+        selects a point of the same argmax set and never changes ``gain``.
+
+        * ``"first"`` (default, and the behaviour every champion through H64 was
+          measured with): the smallest maximizing breakpoint, with gap 0 winning any
+          tie against it. Both are LEFTWARD, so a node whose plateau lies to its left
+          is transported to the FAR edge while one whose plateau lies to its right
+          lands on the NEAR edge.
+        * ``"mindisp"`` (H73): the maximizing gap closest to the node's current rank,
+          ties broken toward the smaller gap. Deterministic, RNG-free, same asymptotic
+          cost (one extra segmented min).
+
+        The default MUST stay ``"first"`` -- ``tests/test_H73_tiebreak.py`` pins
+        H42/H64 bit-reproducibility on it.
 
     Returns
     -------
@@ -236,6 +254,43 @@ def jacobi_best_gaps(rank: np.ndarray, src: np.ndarray, tgt: np.ndarray,
     use_bp = seg_max > gap0_val
     chosen_val = np.where(use_bp, seg_max, gap0_val)
     chosen_gap = np.where(use_bp, seg_best_b, 0).astype(np.int64)
+
+    if tie_break == "mindisp":
+        # ── H73: pick the maximizing gap NEAREST the node's current rank. ───────────
+        # Materialise the plateau as a union of gap intervals. Breakpoint group k owns
+        # the gaps [grp_b[k], next_b - 1]; the last group of a node owns [grp_b, n-1];
+        # and the gap-0 interval [0, b_first - 1] carries the value `base`.
+        is_last = np.empty(n_grp, dtype=bool)
+        is_last[:-1] = node_start[1:]
+        is_last[-1] = True
+        nxt = np.empty(n_grp, dtype=np.int64)
+        nxt[:-1] = grp_b[1:]
+        nxt[-1] = n
+        lo_i = grp_b
+        hi_i = np.where(is_last, n - 1, nxt - 1)
+
+        # `chosen_val` is the OVERALL max per node (breakpoints and gap 0 together).
+        overall = chosen_val[seg_id]
+        p_grp = p[grp_u]
+        closest = np.minimum(np.maximum(p_grp, lo_i), hi_i)
+        # Lexicographic key: minimise |displacement| first, then the gap index. Both
+        # fit int64 comfortably (dist, gap <= n).
+        sent = np.int64(1) << np.int64(62)
+        key = np.where(grp_val == overall,
+                       np.abs(closest - p_grp) * np.int64(n + 1) + closest, sent)
+        seg_key = np.minimum.reduceat(key, seg_first_pos)
+
+        b_first = grp_b[seg_first_pos]
+        p_seg = p[nodes]
+        base_is_max = (b_first >= 1) & (gap0_val == chosen_val)
+        c_base = np.minimum(p_seg, np.maximum(b_first - 1, 0))
+        seg_key = np.minimum(seg_key,
+                             np.where(base_is_max,
+                                      np.abs(c_base - p_seg) * np.int64(n + 1) + c_base,
+                                      sent))
+        chosen_gap = (seg_key % np.int64(n + 1)).astype(np.int64)
+    elif tie_break != "first":
+        raise ValueError("tie_break must be 'first' or 'mindisp', got %r" % (tie_break,))
 
     best_val[nodes] = chosen_val
     best_gap[nodes] = chosen_gap

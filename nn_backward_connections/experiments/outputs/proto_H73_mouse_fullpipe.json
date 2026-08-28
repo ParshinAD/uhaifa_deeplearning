@@ -1,0 +1,15 @@
+{
+  "item": "H73",
+  "rung": 2,
+  "dataset": "mouse",
+  "device": "cpu",
+  "what": "Rung 2 on the SMALL dataset, where the whole champion pipeline runs in seconds on CPU. Two things at once: (a) the IDENTITY PIN - H73 with its knob at 'first' must reproduce H64 bit-identically through all six stages, which is what makes adding the keyword safe for sota.json; (b) the first real SCORE reading for 'mindisp' through the full pipeline.",
+  "H64_pct": 93.17538325903583,
+  "H73_first_pct": 93.17538325903583,
+  "H73_first_positions_identical": true,
+  "H73_mindisp_pct": 93.18415504034846,
+  "delta_pp": 0.008771781312631788,
+  "wall_clock_s_H64": 0.7261736392974854,
+  "wall_clock_s_H73": 0.04555988311767578,
+  "note": "mouse is a SUPPORTING dataset (non-inferiority only) and its champion H63 is the same pipeline, so H64_pct here IS the mouse champion 93.17538325903584 reproduced on CPU. This is a prototype reading, not a screen: the screen runs via eval/harness.py."
+}

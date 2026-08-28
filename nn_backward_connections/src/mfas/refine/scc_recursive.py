@@ -297,7 +297,7 @@ def alternate_scc_sift(g: GraphData, init_rank: np.ndarray, *, n_cycles: int,
                        min_block: int = 32,
                        split_fracs: Sequence[float] = DEFAULT_SPLIT_FRACS,
                        time_budget_s: Optional[float] = None,
-                       g_struct=None
+                       g_struct=None, tie_break: str = "first"
                        ) -> Tuple[np.ndarray, float, List[Dict]]:
     """Alternate the block refiner with the champion's single-node sift.
 
@@ -313,6 +313,9 @@ def alternate_scc_sift(g: GraphData, init_rank: np.ndarray, *, n_cycles: int,
     Passing :func:`mfas.refine.net_condense.net_structure_graph(g) <net_structure_graph>`
     condenses the NET digraph instead, which strictly refines ``g``'s components and is
     still exactly monotone (see that module's docstring for the proof).
+
+    ``tie_break`` is forwarded to the inner sift (H73); it defaults to ``"first"``, the
+    rule every champion through H64 was measured with.
 
     Returns ``(best_rank, best_score, log)``; ``log`` has one row per cycle. The
     returned order is the best the frozen oracle has scored, so it can never be
@@ -343,7 +346,7 @@ def alternate_scc_sift(g: GraphData, init_rank: np.ndarray, *, n_cycles: int,
             0.0, time_budget_s - (time.time() - t0))
         rank, s_sift, _ = sift_underrelaxed(g, rank, k_full=k_full, alpha=alpha,
                                             max_sweeps=sift_sweeps,
-                                            time_budget_s=left)
+                                            time_budget_s=left, tie_break=tie_break)
         t_sift = time.time() - tb
         if s_sift > best_score:
             best_score, best_rank = s_sift, rank.copy()
