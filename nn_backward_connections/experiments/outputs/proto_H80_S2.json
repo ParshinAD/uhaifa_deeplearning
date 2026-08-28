@@ -23,9 +23,9 @@
       "k": 40,
       "greedy_pct": 67.42090875754242,
       "rocket_pct": 72.76644331099777,
-      "A0_sift_pct": 73.41317465079841,
-      "t_rocket_s": 7.19,
-      "t_sift_s": 0.71,
+      "A0_sift_pct": 73.41484148414841,
+      "t_rocket_s": 8.83,
+      "t_sift_s": 0.74,
       "n_sift_sweeps": 20,
       "budget_s": 120.0,
       "arms": {
@@ -35,16 +35,16 @@
           "t0_mult": 0.0,
           "delta_med_pp": 0.0,
           "T0_pp": 0.0,
-          "best_pct": 74.15241524152415,
-          "rounds": 1903,
-          "n_accepted": 353,
+          "best_pct": 74.14658132479914,
+          "rounds": 1793,
+          "n_accepted": 363,
           "n_uphill_accepted": 0,
           "n_sideways_accepted": 0,
-          "n_proposed_downhill": 120,
+          "n_proposed_downhill": 126,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.05,
+          "wall_s": 120.01,
           "cal_s": 0.0,
           "n_cal_downhill": 0
         },
@@ -54,16 +54,16 @@
           "t0_mult": 0.0,
           "delta_med_pp": 0.0,
           "T0_pp": 0.0,
-          "best_pct": 73.83905057172385,
-          "rounds": 1389,
-          "n_accepted": 248,
+          "best_pct": 73.88238823882388,
+          "rounds": 1409,
+          "n_accepted": 271,
           "n_uphill_accepted": 0,
           "n_sideways_accepted": 0,
-          "n_proposed_downhill": 111,
+          "n_proposed_downhill": 59,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.08,
+          "wall_s": 120.07,
           "cal_s": 0.0,
           "n_cal_downhill": 0
         },
@@ -73,17 +73,17 @@
           "t0_mult": 0.5,
           "delta_med_pp": 1e-06,
           "T0_pp": 5e-07,
-          "best_pct": 73.92822615594893,
-          "rounds": 1824,
-          "n_accepted": 1703,
+          "best_pct": 73.90822415574891,
+          "rounds": 1555,
+          "n_accepted": 1448,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 1403,
-          "n_proposed_downhill": 121,
+          "n_sideways_accepted": 1170,
+          "n_proposed_downhill": 107,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.04,
-          "cal_s": 2.09,
+          "wall_s": 120.07,
+          "cal_s": 2.21,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T1.0": {
@@ -92,17 +92,17 @@
           "t0_mult": 1.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 1e-06,
-          "best_pct": 73.93072640597393,
-          "rounds": 1834,
-          "n_accepted": 1713,
+          "best_pct": 73.9073907390739,
+          "rounds": 1544,
+          "n_accepted": 1438,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 1412,
-          "n_proposed_downhill": 121,
+          "n_sideways_accepted": 1161,
+          "n_proposed_downhill": 106,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.05,
-          "cal_s": 2.07,
+          "wall_s": 120.03,
+          "cal_s": 2.19,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T2.0": {
@@ -111,17 +111,17 @@
           "t0_mult": 2.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 2e-06,
-          "best_pct": 73.92822615594893,
-          "rounds": 1822,
-          "n_accepted": 1701,
+          "best_pct": 73.90822415574891,
+          "rounds": 1556,
+          "n_accepted": 1449,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 1401,
-          "n_proposed_downhill": 121,
+          "n_sideways_accepted": 1171,
+          "n_proposed_downhill": 107,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.06,
-          "cal_s": 2.08,
+          "wall_s": 120.01,
+          "cal_s": 2.2,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T4.0": {
@@ -130,17 +130,17 @@
           "t0_mult": 4.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 4e-06,
-          "best_pct": 73.92822615594893,
-          "rounds": 1822,
-          "n_accepted": 1701,
+          "best_pct": 73.90822415574891,
+          "rounds": 1559,
+          "n_accepted": 1451,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 1401,
-          "n_proposed_downhill": 121,
+          "n_sideways_accepted": 1173,
+          "n_proposed_downhill": 108,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.05,
-          "cal_s": 2.08,
+          "wall_s": 120.01,
+          "cal_s": 2.19,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T8.0": {
@@ -149,35 +149,35 @@
           "t0_mult": 8.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 8e-06,
-          "best_pct": 73.93072640597393,
-          "rounds": 1840,
-          "n_accepted": 1718,
+          "best_pct": 73.90822415574891,
+          "rounds": 1555,
+          "n_accepted": 1448,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 1417,
-          "n_proposed_downhill": 122,
+          "n_sideways_accepted": 1170,
+          "n_proposed_downhill": 107,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
           "wall_s": 120.02,
-          "cal_s": 2.08,
+          "cal_s": 2.23,
           "n_cal_downhill": 0
         }
       },
       "reference_pct": 72.7981131446478,
-      "gap_A0_to_ref_pp": -0.6150615061506102,
+      "gap_A0_to_ref_pp": -0.6167283395006109,
       "barrier": {
         "path": [
           [
             0.0,
-            73.41317465079841
+            73.41484148414841
           ],
           [
             0.05,
-            72.63142980964763
+            72.63643030969763
           ],
           [
             0.1,
-            71.83801713504684
+            71.83885055172183
           ],
           [
             0.15,
@@ -185,43 +185,43 @@
           ],
           [
             0.2,
-            70.67706770677067
+            70.67456745674568
           ],
           [
             0.25,
-            70.24952495249525
+            70.24619128579525
           ],
           [
             0.3,
-            69.92532586591993
+            69.93532686601993
           ],
           [
             0.35,
-            69.64696469646965
+            69.64446444644464
           ],
           [
             0.4,
-            69.44444444444444
+            69.44694469446945
           ],
           [
             0.45,
-            69.33610027669434
+            69.33360002666933
           ],
           [
             0.5,
-            69.27276060939427
+            69.27526085941928
           ],
           [
             0.55,
-            69.29442944294429
+            69.2935960262693
           ],
           [
             0.6,
-            69.35026836016935
+            69.35193519351935
           ],
           [
             0.65,
-            69.47444744474447
+            69.47111377804447
           ],
           [
             0.7,
@@ -229,19 +229,19 @@
           ],
           [
             0.75,
-            69.92365903256993
+            69.92199219921993
           ],
           [
             0.8,
-            70.33453345334533
+            70.33870053672034
           ],
           [
             0.85,
-            70.84958495849585
+            70.85041837517085
           ],
           [
             0.9,
-            71.53548688202153
+            71.53632029869654
           ],
           [
             0.95,
@@ -252,10 +252,10 @@
             72.7981131446478
           ]
         ],
-        "endpoint_max_pct": 73.41317465079841,
+        "endpoint_max_pct": 73.41484148414841,
         "valley_t": 0.5,
-        "valley_pct": 69.27276060939427,
-        "barrier_depth_pp": 4.140414041404142
+        "valley_pct": 69.27526085941928,
+        "barrier_depth_pp": 4.139580624729135
       }
     },
     {
@@ -265,9 +265,9 @@
       "k": 40,
       "greedy_pct": 67.29729245756035,
       "rocket_pct": 72.4894348542368,
-      "A0_sift_pct": 73.25943700308001,
-      "t_rocket_s": 7.42,
-      "t_sift_s": 0.7,
+      "A0_sift_pct": 73.25585559773656,
+      "t_rocket_s": 7.94,
+      "t_sift_s": 0.72,
       "n_sift_sweeps": 20,
       "budget_s": 120.0,
       "arms": {
@@ -277,16 +277,16 @@
           "t0_mult": 0.0,
           "delta_med_pp": 0.0,
           "T0_pp": 0.0,
-          "best_pct": 74.17269536566148,
-          "rounds": 1876,
-          "n_accepted": 402,
+          "best_pct": 74.14941623092902,
+          "rounds": 1830,
+          "n_accepted": 395,
           "n_uphill_accepted": 0,
           "n_sideways_accepted": 0,
-          "n_proposed_downhill": 125,
+          "n_proposed_downhill": 142,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.05,
+          "wall_s": 120.03,
           "cal_s": 0.0,
           "n_cal_downhill": 0
         },
@@ -296,16 +296,16 @@
           "t0_mult": 0.0,
           "delta_med_pp": 0.0,
           "T0_pp": 0.0,
-          "best_pct": 73.73039180574457,
-          "rounds": 1428,
-          "n_accepted": 191,
+          "best_pct": 73.75008953513358,
+          "rounds": 1348,
+          "n_accepted": 213,
           "n_uphill_accepted": 0,
           "n_sideways_accepted": 0,
-          "n_proposed_downhill": 156,
+          "n_proposed_downhill": 124,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.04,
+          "wall_s": 120.06,
           "cal_s": 0.0,
           "n_cal_downhill": 0
         },
@@ -315,17 +315,17 @@
           "t0_mult": 0.5,
           "delta_med_pp": 1e-06,
           "T0_pp": 5e-07,
-          "best_pct": 73.80918272330062,
-          "rounds": 1489,
-          "n_accepted": 1309,
+          "best_pct": 73.819926939331,
+          "rounds": 1554,
+          "n_accepted": 1448,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 1045,
-          "n_proposed_downhill": 180,
+          "n_sideways_accepted": 1162,
+          "n_proposed_downhill": 106,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
           "wall_s": 120.03,
-          "cal_s": 2.02,
+          "cal_s": 2.13,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T1.0": {
@@ -334,17 +334,17 @@
           "t0_mult": 1.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 1e-06,
-          "best_pct": 73.8100780746365,
-          "rounds": 1502,
-          "n_accepted": 1319,
+          "best_pct": 73.81903158799513,
+          "rounds": 1551,
+          "n_accepted": 1445,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 1054,
-          "n_proposed_downhill": 183,
+          "n_sideways_accepted": 1160,
+          "n_proposed_downhill": 106,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.02,
-          "cal_s": 2.0,
+          "wall_s": 120.0,
+          "cal_s": 2.13,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T2.0": {
@@ -353,17 +353,17 @@
           "t0_mult": 2.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 2e-06,
-          "best_pct": 73.80560131795717,
-          "rounds": 1416,
-          "n_accepted": 1248,
+          "best_pct": 73.81903158799513,
+          "rounds": 1549,
+          "n_accepted": 1443,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 988,
-          "n_proposed_downhill": 168,
+          "n_sideways_accepted": 1158,
+          "n_proposed_downhill": 106,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.04,
-          "cal_s": 2.07,
+          "wall_s": 120.02,
+          "cal_s": 2.14,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T4.0": {
@@ -372,17 +372,17 @@
           "t0_mult": 4.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 4e-06,
-          "best_pct": 73.79843850727025,
-          "rounds": 1359,
-          "n_accepted": 1195,
+          "best_pct": 73.819926939331,
+          "rounds": 1571,
+          "n_accepted": 1464,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 941,
-          "n_proposed_downhill": 164,
+          "n_sideways_accepted": 1178,
+          "n_proposed_downhill": 107,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.02,
-          "cal_s": 2.13,
+          "wall_s": 120.01,
+          "cal_s": 2.17,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T8.0": {
@@ -391,31 +391,31 @@
           "t0_mult": 8.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 8e-06,
-          "best_pct": 73.79664780459852,
-          "rounds": 1333,
-          "n_accepted": 1171,
+          "best_pct": 73.819926939331,
+          "rounds": 1580,
+          "n_accepted": 1473,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 919,
-          "n_proposed_downhill": 162,
+          "n_sideways_accepted": 1187,
+          "n_proposed_downhill": 107,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.0,
-          "cal_s": 2.25,
+          "wall_s": 120.05,
+          "cal_s": 2.11,
           "n_cal_downhill": 0
         }
       },
       "reference_pct": 72.69894706682902,
-      "gap_A0_to_ref_pp": -0.5604899362509883,
+      "gap_A0_to_ref_pp": -0.5569085309075348,
       "barrier": {
         "path": [
           [
             0.0,
-            73.25943700308001
+            73.25585559773656
           ],
           [
             0.05,
-            72.34438793782681
+            72.34707399183439
           ],
           [
             0.1,
@@ -423,81 +423,81 @@
           ],
           [
             0.15,
-            70.92973282716137
+            70.92615142181792
           ],
           [
             0.2,
-            70.40326624167324
+            70.40147553900151
           ],
           [
             0.25,
-            69.94932311439008
+            69.956485925077
           ],
           [
             0.3,
-            69.65743857889836
+            69.65922928157009
           ],
           [
             0.35,
-            69.44434496096268
+            69.4515077716496
           ],
           [
             0.4,
-            69.25811188310293
+            69.26169328844638
           ],
           [
             0.45,
-            69.14529761478404
+            69.15962323615787
           ],
           [
             0.5,
-            69.13813480409713
+            69.15156507413509
           ],
           [
             0.55,
-            69.19543728959243
+            69.19096053291311
           ],
           [
             0.6,
-            69.19991404627176
+            69.20707685695866
           ],
           [
             0.65,
-            69.3315306926438
+            69.35570517871213
           ],
           [
             0.7,
-            69.59207793138027
+            69.6064035527541
           ],
           [
             0.75,
-            69.85710192679608
+            69.8714275481699
           ],
           [
             0.8,
-            70.27075424396533
+            70.27970775732398
           ],
           [
             0.85,
-            70.78110450540792
+            70.77752310006447
           ],
           [
             0.9,
-            71.50812979012964
+            71.49738557409928
           ],
           [
             0.95,
-            72.2897715063391
+            72.28081799298045
           ],
           [
             1.0,
             72.69894706682902
           ]
         ],
-        "endpoint_max_pct": 73.25943700308001,
+        "endpoint_max_pct": 73.25585559773656,
         "valley_t": 0.5,
-        "valley_pct": 69.13813480409713,
-        "barrier_depth_pp": 4.121302198982875
+        "valley_pct": 69.15156507413509,
+        "barrier_depth_pp": 4.104290523601463
       }
     },
     {
@@ -507,9 +507,9 @@
       "k": 40,
       "greedy_pct": 66.6087981567808,
       "rocket_pct": 72.010930718534,
-      "A0_sift_pct": 72.49852649627606,
-      "t_rocket_s": 8.78,
-      "t_sift_s": 0.73,
+      "A0_sift_pct": 72.49531157906017,
+      "t_rocket_s": 8.58,
+      "t_sift_s": 0.72,
       "n_sift_sweeps": 20,
       "budget_s": 120.0,
       "arms": {
@@ -519,16 +519,16 @@
           "t0_mult": 0.0,
           "delta_med_pp": 0.0,
           "T0_pp": 0.0,
-          "best_pct": 73.27117826715963,
-          "rounds": 1849,
-          "n_accepted": 341,
+          "best_pct": 73.32154530354177,
+          "rounds": 1906,
+          "n_accepted": 361,
           "n_uphill_accepted": 0,
           "n_sideways_accepted": 0,
-          "n_proposed_downhill": 111,
+          "n_proposed_downhill": 114,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.08,
+          "wall_s": 120.07,
           "cal_s": 0.0,
           "n_cal_downhill": 0
         },
@@ -538,16 +538,16 @@
           "t0_mult": 0.0,
           "delta_med_pp": 0.0,
           "T0_pp": 0.0,
-          "best_pct": 72.95825965814714,
-          "rounds": 1543,
-          "n_accepted": 237,
+          "best_pct": 72.95718801907518,
+          "rounds": 1803,
+          "n_accepted": 267,
           "n_uphill_accepted": 0,
           "n_sideways_accepted": 0,
-          "n_proposed_downhill": 93,
+          "n_proposed_downhill": 102,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.02,
+          "wall_s": 120.04,
           "cal_s": 0.0,
           "n_cal_downhill": 0
         },
@@ -557,17 +557,17 @@
           "t0_mult": 0.5,
           "delta_med_pp": 1e-06,
           "T0_pp": 5e-07,
-          "best_pct": 73.0514922574077,
-          "rounds": 1401,
-          "n_accepted": 1275,
+          "best_pct": 73.05042061833575,
+          "rounds": 1811,
+          "n_accepted": 1667,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 991,
-          "n_proposed_downhill": 126,
+          "n_sideways_accepted": 1367,
+          "n_proposed_downhill": 144,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.03,
-          "cal_s": 2.25,
+          "wall_s": 120.06,
+          "cal_s": 2.11,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T1.0": {
@@ -576,17 +576,17 @@
           "t0_mult": 1.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 1e-06,
-          "best_pct": 73.0514922574077,
-          "rounds": 1411,
-          "n_accepted": 1285,
+          "best_pct": 73.05042061833575,
+          "rounds": 1817,
+          "n_accepted": 1671,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 1001,
-          "n_proposed_downhill": 126,
+          "n_sideways_accepted": 1371,
+          "n_proposed_downhill": 146,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.02,
-          "cal_s": 2.21,
+          "wall_s": 120.03,
+          "cal_s": 2.1,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T2.0": {
@@ -595,17 +595,17 @@
           "t0_mult": 2.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 2e-06,
-          "best_pct": 73.0514922574077,
-          "rounds": 1408,
-          "n_accepted": 1282,
+          "best_pct": 73.04934897926378,
+          "rounds": 1808,
+          "n_accepted": 1664,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 998,
-          "n_proposed_downhill": 126,
+          "n_sideways_accepted": 1365,
+          "n_proposed_downhill": 144,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.0,
-          "cal_s": 2.2,
+          "wall_s": 120.05,
+          "cal_s": 2.24,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T4.0": {
@@ -614,17 +614,17 @@
           "t0_mult": 4.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 4e-06,
-          "best_pct": 73.0514922574077,
-          "rounds": 1423,
-          "n_accepted": 1297,
+          "best_pct": 73.05042061833575,
+          "rounds": 1816,
+          "n_accepted": 1670,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 1013,
-          "n_proposed_downhill": 126,
+          "n_sideways_accepted": 1370,
+          "n_proposed_downhill": 146,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.04,
-          "cal_s": 2.21,
+          "wall_s": 120.05,
+          "cal_s": 2.08,
           "n_cal_downhill": 0
         },
         "A3_struct_anneal_T8.0": {
@@ -633,113 +633,113 @@
           "t0_mult": 8.0,
           "delta_med_pp": 1e-06,
           "T0_pp": 8e-06,
-          "best_pct": 73.0514922574077,
-          "rounds": 1429,
-          "n_accepted": 1303,
+          "best_pct": 73.05042061833575,
+          "rounds": 1812,
+          "n_accepted": 1668,
           "n_uphill_accepted": 0,
-          "n_sideways_accepted": 1019,
-          "n_proposed_downhill": 126,
+          "n_sideways_accepted": 1368,
+          "n_proposed_downhill": 144,
           "deepest_uphill_step_pp": 0.0,
           "max_excursion_pp": 0.0,
           "k": 40,
-          "wall_s": 120.05,
-          "cal_s": 2.14,
+          "wall_s": 120.04,
+          "cal_s": 2.07,
           "n_cal_downhill": 0
         }
       },
       "reference_pct": 72.10952151315436,
-      "gap_A0_to_ref_pp": -0.3890049831216942,
+      "gap_A0_to_ref_pp": -0.3857900659058089,
       "barrier": {
         "path": [
           [
             0.0,
-            72.49852649627606
+            72.49531157906017
           ],
           [
             0.05,
-            71.82232224186893
+            71.83303863258854
           ],
           [
             0.1,
-            70.97787065316402
+            70.98858704388363
           ],
           [
             0.15,
-            70.23308149815142
+            70.2362964153673
           ],
           [
             0.2,
-            69.72619621711408
+            69.7336976906178
           ],
           [
             0.25,
-            69.24074371751594
+            69.24824519101966
           ],
           [
             0.3,
-            68.93532658200718
+            68.95032952901462
           ],
           [
             0.35,
-            68.68992123452821
+            68.69635106895997
           ],
           [
             0.4,
-            68.49595456250334
+            68.50452767507903
           ],
           [
             0.45,
-            68.35985640036435
+            68.369501152012
           ],
           [
             0.5,
-            68.3127042811981
+            68.3287788672775
           ],
           [
             0.55,
-            68.3448534533569
+            68.34699673150084
           ],
           [
             0.6,
-            68.40057868509886
+            68.40272196324278
           ],
           [
             0.65,
-            68.58704388362
+            68.60311846969941
           ],
           [
             0.7,
-            68.83459250924288
+            68.84959545625034
           ],
           [
             0.75,
-            69.11750522424047
+            69.12714997588812
           ],
           [
             0.8,
-            69.55044740931254
+            69.56437871724803
           ],
           [
             0.85,
-            70.12913250817125
+            70.13234742538712
           ],
           [
             0.9,
-            70.83855757380914
+            70.83748593473717
           ],
           [
             0.95,
-            71.68300916251407
+            71.68515244065799
           ],
           [
             1.0,
             72.10952151315436
           ]
         ],
-        "endpoint_max_pct": 72.49852649627606,
+        "endpoint_max_pct": 72.49531157906017,
         "valley_t": 0.5,
-        "valley_pct": 68.3127042811981,
-        "barrier_depth_pp": 4.1858222150779625
+        "valley_pct": 68.3287788672775,
+        "barrier_depth_pp": 4.166532711782665
       }
     }
   ],
@@ -747,74 +747,74 @@
     "per_seed": [
       {
         "seed": 42,
-        "monotone_best": 74.15241524152415,
-        "A0": 73.41317465079841,
-        "A1": 74.15241524152415,
-        "A2": 73.83905057172385,
+        "monotone_best": 74.14658132479914,
+        "A0": 73.41484148414841,
+        "A1": 74.14658132479914,
+        "A2": 73.88238823882388,
         "A3_by_T": {
-          "0.5": 73.92822615594893,
-          "1.0": 73.93072640597393,
-          "2.0": 73.92822615594893,
-          "4.0": 73.92822615594893,
-          "8.0": 73.93072640597393
+          "0.5": 73.90822415574891,
+          "1.0": 73.9073907390739,
+          "2.0": 73.90822415574891,
+          "4.0": 73.90822415574891,
+          "8.0": 73.90822415574891
         },
-        "A3_best": 73.93072640597393,
-        "delta_A3": -0.2216888355502249,
-        "structure_alone": -0.31336466980030764
+        "A3_best": 73.90822415574891,
+        "delta_A3": -0.2383571690502322,
+        "structure_alone": -0.2641930859752648
       },
       {
         "seed": 123,
-        "monotone_best": 74.17269536566148,
-        "A0": 73.25943700308001,
-        "A1": 74.17269536566148,
-        "A2": 73.73039180574457,
+        "monotone_best": 74.14941623092902,
+        "A0": 73.25585559773656,
+        "A1": 74.14941623092902,
+        "A2": 73.75008953513358,
         "A3_by_T": {
-          "0.5": 73.80918272330062,
-          "1.0": 73.8100780746365,
-          "2.0": 73.80560131795717,
-          "4.0": 73.79843850727025,
-          "8.0": 73.79664780459852
+          "0.5": 73.819926939331,
+          "1.0": 73.81903158799513,
+          "2.0": 73.81903158799513,
+          "4.0": 73.819926939331,
+          "8.0": 73.819926939331
         },
-        "A3_best": 73.8100780746365,
-        "delta_A3": -0.3626172910249892,
-        "structure_alone": -0.4423035599169083
+        "A3_best": 73.819926939331,
+        "delta_A3": -0.32948929159802276,
+        "structure_alone": -0.39932669579543756
       },
       {
         "seed": 999,
-        "monotone_best": 73.27117826715963,
-        "A0": 72.49852649627606,
-        "A1": 73.27117826715963,
-        "A2": 72.95825965814714,
+        "monotone_best": 73.32154530354177,
+        "A0": 72.49531157906017,
+        "A1": 73.32154530354177,
+        "A2": 72.95718801907518,
         "A3_by_T": {
-          "0.5": 73.0514922574077,
-          "1.0": 73.0514922574077,
-          "2.0": 73.0514922574077,
-          "4.0": 73.0514922574077,
-          "8.0": 73.0514922574077
+          "0.5": 73.05042061833575,
+          "1.0": 73.05042061833575,
+          "2.0": 73.04934897926378,
+          "4.0": 73.05042061833575,
+          "8.0": 73.05042061833575
         },
-        "A3_best": 73.0514922574077,
-        "delta_A3": -0.21968600975192487,
-        "structure_alone": -0.3129186090124847
+        "A3_best": 73.05042061833575,
+        "delta_A3": -0.2711246852060185,
+        "structure_alone": -0.36435728446659255
       }
     ],
-    "mean_delta_A3": -0.267997378775713,
-    "mean_structure_alone": -0.3561956129099002,
+    "mean_delta_A3": -0.27965704861809115,
+    "mean_structure_alone": -0.342625688745765,
     "mean_delta_A3_by_T0": {
-      "0.5": -0.2691292458960011,
-      "1.0": -0.267997378775713,
-      "2.0": -0.2703230476771523,
-      "4.0": -0.2727106512394594,
-      "8.0": -0.272474135455037
+      "0.5": -0.27965704861809115,
+      "1.0": -0.28023330462171714,
+      "2.0": -0.28031271208737013,
+      "4.0": -0.27965704861809115,
+      "8.0": -0.27965704861809115
     },
     "mean_delta_by_cell": {
-      "A3_struct_anneal_T0.5": -0.2691292458960011,
-      "A3_struct_anneal_T1.0": -0.267997378775713,
-      "A3_struct_anneal_T2.0": -0.2703230476771523,
-      "A3_struct_anneal_T4.0": -0.2727106512394594,
-      "A3_struct_anneal_T8.0": -0.272474135455037
+      "A3_struct_anneal_T0.5": -0.27965704861809115,
+      "A3_struct_anneal_T1.0": -0.28023330462171714,
+      "A3_struct_anneal_T2.0": -0.28031271208737013,
+      "A3_struct_anneal_T4.0": -0.27965704861809115,
+      "A3_struct_anneal_T8.0": -0.27965704861809115
     },
-    "best_cell": "A3_struct_anneal_T1.0",
-    "best_cell_mean_delta": -0.267997378775713,
+    "best_cell": "A3_struct_anneal_T0.5",
+    "best_cell_mean_delta": -0.27965704861809115,
     "n_adjacent_T0_pairs_positive_in_best_family": 0,
     "total_uphill_accepted_by_T0": {
       "0.5": 0,
@@ -831,6 +831,6 @@
       "8.0": 0.0
     },
     "n_T0_beating_monotone": 0,
-    "mean_barrier_depth_pp": 4.149179485154993
+    "mean_barrier_depth_pp": 4.136801286704421
   }
 }

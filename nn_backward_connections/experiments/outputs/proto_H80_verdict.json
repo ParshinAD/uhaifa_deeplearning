@@ -1,0 +1,180 @@
+{
+  "_doc": "MECHANICAL evaluation of H80's rung-1 kill conditions against the sealed pre-registration and amendments 4 and 5. Produced by experiments/proto_H80_verdict.py from the S1r/S2r/S3r artifacts.",
+  "item": "H80",
+  "cycle": 23,
+  "sources": {
+    "S1r": "proto_H80_S1r.json",
+    "S2r": "proto_H80_S2r.json",
+    "S3r": "proto_H80_S3r.json"
+  },
+  "checks": {
+    "K1_void_if_no_uphill": {
+      "uphill_accepted_A3": 2737,
+      "uphill_accepted_A4": 1910,
+      "fires": false,
+      "reading": "not void"
+    },
+    "K2_effect_size_S1": {
+      "delta_ACCEPT_pp": 0.30417487900883583,
+      "bar_pp": 0.05,
+      "fires": false
+    },
+    "K3_singleton_temperature": {
+      "n_adjacent_positive_pairs": 4,
+      "fires": false
+    },
+    "K4_scale_up_S2": {
+      "delta_ACCEPT_pp": 0.1474927966197157,
+      "fires": false
+    },
+    "K5_drift_not_barrier_crossing": {
+      "sideways_recovery_fraction_S1": 0.30702736208547626,
+      "threshold": 0.7,
+      "temperature_buys_pp_S1": 0.21078486829408405,
+      "fires": false
+    }
+  },
+  "stages": {
+    "S1r": {
+      "best_cell": "A4_topk_anneal_T8.0",
+      "delta_ACCEPT_pp": 0.30417487900883583,
+      "delta_A3_pp_preregistered": 0.1425559686081641,
+      "structure_alone_pp": -0.2706588408892401,
+      "acceptance_alone_pp": 0.34373128220160254,
+      "sideways_alone_pp": {
+        "A5_topk_sideways": 0.09339001071475177,
+        "A6_struct_sideways": -0.03411245747184921
+      },
+      "best_sideways_mean_delta_pp": 0.09339001071475177,
+      "K5_sideways_recovery_fraction": 0.30702736208547626,
+      "temperature_buys_pp": 0.21078486829408405,
+      "n_adjacent_T0_pairs_positive": 4,
+      "uphill_accepted_by_T0_A3": {
+        "0.5": 95,
+        "1.0": 263,
+        "2.0": 503,
+        "4.0": 773,
+        "8.0": 1103
+      },
+      "max_excursion_pp_by_T0_A3": {
+        "0.5": 0.023495320515330695,
+        "1.0": 0.07094882224955065,
+        "2.0": 0.12297795856588781,
+        "4.0": 0.11443102352193261,
+        "8.0": 0.16105107014197922
+      },
+      "mean_barrier_depth_pp": 3.7243486688557064,
+      "mean_delta_by_cell": {
+        "A3_struct_anneal_T0.5": 0.003652439023942596,
+        "A3_struct_anneal_T1.0": 0.03434550849154997,
+        "A3_struct_anneal_T2.0": 0.10046421061043039,
+        "A3_struct_anneal_T4.0": 0.03784489618057307,
+        "A3_struct_anneal_T8.0": 0.05006266918209216,
+        "A4_topk_anneal_T0.5": 0.1659034756834501,
+        "A4_topk_anneal_T1.0": 0.17784437946057588,
+        "A4_topk_anneal_T2.0": 0.2649415361126491,
+        "A4_topk_anneal_T4.0": 0.2467279772354137,
+        "A4_topk_anneal_T8.0": 0.30417487900883583
+      },
+      "calibration_health": [
+        "downhill",
+        "given"
+      ]
+    },
+    "S2r": {
+      "best_cell": "A4_topk_anneal_T4.0",
+      "delta_ACCEPT_pp": 0.1474927966197157,
+      "delta_A3_pp_preregistered": -0.27287259674012887,
+      "structure_alone_pp": -0.3354685515002321,
+      "acceptance_alone_pp": 0.16456323457983046,
+      "sideways_alone_pp": {
+        "A5_topk_sideways": 0.1670865595330374,
+        "A6_struct_sideways": -0.25668330361182257
+      },
+      "best_sideways_mean_delta_pp": 0.1670865595330374,
+      "K5_sideways_recovery_fraction": 1.132845558307778,
+      "temperature_buys_pp": -0.019593762913321683,
+      "n_adjacent_T0_pairs_positive": 4,
+      "uphill_accepted_by_T0_A3": {
+        "0.5": 1,
+        "1.0": 7,
+        "2.0": 19,
+        "4.0": 34,
+        "8.0": 71
+      },
+      "max_excursion_pp_by_T0_A3": {
+        "0.5": 0.0010716390719605637,
+        "1.0": 0.0010716390719605637,
+        "2.0": 0.0032149172158816913,
+        "4.0": 0.0021432781439211274,
+        "8.0": 0.004286556287842255
+      },
+      "mean_barrier_depth_pp": 4.162625762528118,
+      "mean_delta_by_cell": {
+        "A3_struct_anneal_T0.5": -0.2898972542988787,
+        "A3_struct_anneal_T1.0": -0.31846489280209767,
+        "A3_struct_anneal_T2.0": -0.2963682842859896,
+        "A3_struct_anneal_T4.0": -0.28057037365675325,
+        "A3_struct_anneal_T8.0": -0.30330837901309354,
+        "A4_topk_anneal_T0.5": 0.11470296653076655,
+        "A4_topk_anneal_T1.0": 0.11501532963143764,
+        "A4_topk_anneal_T2.0": 0.13499564905491468,
+        "A4_topk_anneal_T4.0": 0.1474927966197157,
+        "A4_topk_anneal_T8.0": 0.12647020451103685
+      },
+      "calibration_health": [
+        "abs_all_moves",
+        "downhill",
+        "given"
+      ]
+    },
+    "S3r": {
+      "best_cell": "A4_topk_anneal_T0.5",
+      "delta_ACCEPT_pp": -0.017936184248403226,
+      "delta_A3_pp_preregistered": -0.03242922912462139,
+      "structure_alone_pp": -0.05156291020085746,
+      "acceptance_alone_pp": -0.017936184248403226,
+      "sideways_alone_pp": {
+        "A5_topk_sideways": 0.0034170776244858794,
+        "A6_struct_sideways": -0.04966917829271248
+      },
+      "best_sideways_mean_delta_pp": 0.0034170776244858794,
+      "K5_sideways_recovery_fraction": null,
+      "temperature_buys_pp": -0.021353261872889107,
+      "n_adjacent_T0_pairs_positive": 0,
+      "uphill_accepted_by_T0_A3": {
+        "0.5": 1689,
+        "1.0": 3052,
+        "2.0": 5610,
+        "4.0": 6310,
+        "8.0": 10281
+      },
+      "max_excursion_pp_by_T0_A3": {
+        "0.5": 1.2270225034847555,
+        "1.0": 1.2800888876455425,
+        "2.0": 1.3078334906725484,
+        "4.0": 1.4495875781546455,
+        "8.0": 1.5044631750400113
+      },
+      "mean_barrier_depth_pp": null,
+      "mean_delta_by_cell": {
+        "A3_struct_anneal_T0.5": -0.05046697169487876,
+        "A3_struct_anneal_T1.0": -0.055980912669923555,
+        "A3_struct_anneal_T2.0": -0.04031815809153727,
+        "A3_struct_anneal_T4.0": -0.08600850970174652,
+        "A3_struct_anneal_T8.0": -0.050696355449782494,
+        "A4_topk_anneal_T0.5": -0.017936184248403226,
+        "A4_topk_anneal_T1.0": -0.017936184248403226,
+        "A4_topk_anneal_T2.0": -0.02358912231797679,
+        "A4_topk_anneal_T4.0": -0.023140121628642873,
+        "A4_topk_anneal_T8.0": -0.026155815453080322
+      },
+      "calibration_health": [
+        "downhill",
+        "given"
+      ]
+    }
+  },
+  "kill_conditions_fired": [],
+  "verdict": "RUNG 1 PASSES -> rung 2"
+}
