@@ -136,6 +136,11 @@ def _victims_struct(rank, src, tgt, w, n, k, rng, adj=None):
     p = back / tot
     chosen: List[int] = []
     seen = np.zeros(n, dtype=bool)
+    # `seen` is set when a node is PUSHED, but the back-edge subgraph has parallel edges,
+    # so one `stack.extend` can push the same node twice (both copies pass the ~seen test
+    # in the same vectorized call). `taken` deduplicates at POP time, which leaves the
+    # traversal order untouched - the duplicate is skipped where it sits in the LIFO.
+    taken = np.zeros(n, dtype=bool)
     guard = 0
     while len(chosen) < k and guard < 64:
         guard += 1
@@ -146,6 +151,9 @@ def _victims_struct(rank, src, tgt, w, n, k, rng, adj=None):
         seen[seed] = True
         while stack and len(chosen) < k:
             u = stack.pop()
+            if taken[u]:
+                continue
+            taken[u] = True
             chosen.append(u)
             lo, hi = int(indptr[u]), int(indptr[u + 1])
             cand = nbr[lo:hi]
