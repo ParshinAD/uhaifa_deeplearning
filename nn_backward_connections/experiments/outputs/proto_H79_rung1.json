@@ -19,16 +19,16 @@
     "champion_final": 84.25817950936937
   },
   "wall_clock_s": {
-    "greedy_fas": 17.1133553981781,
-    "ratio_greedy": 19.43637466430664,
-    "reverse_greedy_fas": 19.03907871246338,
-    "imbalance_sort": 0.5313427448272705,
-    "scc_topo": 1.0051424503326416,
-    "ball_r1": 17.459614038467407,
-    "ball_r2": 17.328969955444336,
-    "ball_r3": 17.298949003219604,
-    "ball_r4": 17.456980228424072,
-    "ball_r5": 17.5960795879364
+    "greedy_fas": 17.199695587158203,
+    "ratio_greedy": 19.309828519821167,
+    "reverse_greedy_fas": 18.445751667022705,
+    "imbalance_sort": 0.4896249771118164,
+    "scc_topo": 0.8745372295379639,
+    "ball_r1": 17.3084716796875,
+    "ball_r2": 17.272592782974243,
+    "ball_r3": 17.343820810317993,
+    "ball_r4": 17.329282999038696,
+    "ball_r5": 17.35952067375183
   },
   "kendall_tau": {
     "greedy_fas|ratio_greedy": 0.3841064543857023,
@@ -113,7 +113,7 @@
       "tau_vs_canonical": 0.3841064543857023,
       "distinct": true,
       "admissible_as_rung2_arm": false,
-      "blocked_reason": "H48 revival condition: never again as a drop-in warm start",
+      "blocked_reason": "H48 revival condition: never again as a drop-in warm start for this stack",
       "init_pct": 74.61730241840903
     },
     "reverse_greedy_fas": {
@@ -145,5 +145,5 @@
   ],
   "rung1_pass": true,
   "decision_rule": "distinct(C) iff tau(C, greedy_fas) < min pairwise tau inside the champion's relabelling ball; rung 1 passes iff >= 2 ADMISSIBLE constructions are distinct (ratio_greedy is blocked by H48)",
-  "total_wall_clock_s": 157.74600648880005
+  "total_wall_clock_s": 156.2547571659088
 }
