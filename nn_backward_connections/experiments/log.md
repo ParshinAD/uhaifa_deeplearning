@@ -8714,3 +8714,171 @@ Artifacts: `experiments/outputs/proto_H79_prereg.json` (sealed at `894492e`),
 Modules committed at `0a51187` **before** the first run; tree clean at `9cb41cf` before the arms.
 
 **Cost:** ~4.4 h GPU (13 connectome runs at ~1185 s, 12 mouse runs at ~1 s), ~5 min CPU.
+
+---
+
+## 2026-08-28 — Cycle 23 (Phase 7, DIVERGENT): H80 — barrier-crossing search. **KILL at rung 2.**
+
+**Machine:** Windows 10 laptop, RTX 4060 (CUDA), torch 2.8.0+cu128, python 3.9.25, Git Bash.
+**GPU used: ZERO.** ~5 h CPU. Preflight: tree clean, branch `auto/campaign-v3` = `campaign.yaml`,
+`pytest tests/ -q` **611 passed in 171.46 s**.
+
+**P23 checked FIRST, for the eighth cycle running.** Still `awaiting-operator`; no operator commit at
+HEAD `8f3dbda`. So the cycle-22 handoff's option (b) applies and the item is H80.
+
+### Hypothesis
+
+Every search this campaign has run is monotone or near-monotone, and M15 measured the prize sitting
+behind a **0.786097 pp** valley. H80 predicts that a search which *accepts temporary loss at that
+scale* — with a structure-aware destroy operator and an exact-gain rebuild — escapes the fixed point
+that M14 (87.7% absorption) and H66 (0.000000 pp repair headroom) both describe.
+
+### Rung 1 — NOVELTY: **PASS**
+
+Admitted under `killed.json` H31's `revival_if`, verbatim: *"The destroy operator is STRUCTURE-AWARE
+(SCC-, block- or cycle-guided) rather than random, and the rebuild is exact-gain."* That is queue item
+**H40**, filed 2026-08-16 and never built. The standing counter-evidence was named in the sealed
+pre-registration **before any number existed**: H17 (deferred on the basin-hopping axis, *"reachability,
+not stability, is the barrier"*, and M16 has since measured that barrier as a 409x contraction), M15,
+M13/H66, M8, M12.
+
+### Pre-registration, and three amendments each sealed before the run it governs
+
+| file | commit | what |
+|---|---|---|
+| `proto_H80_prereg.json` | `1b81070` | arms, instances, K1-K4 |
+| `proto_H80_prereg_amendment.json` | `1b81070` | true ruin-and-recreate; `delta_ACCEPT` as primary |
+| `proto_H80_prereg_amendment4.json` | `c7c02f2` | the adversarial sideways-drift control; K5 |
+| `proto_H80_prereg_amendment5.json` | `c895ea1` | the calibration fix; S1/S2/S3 **voided** |
+
+Two of those amendments exist because the first design was **measurably wrong**, and both defects were
+found by the instrument rather than argued about:
+
+1. **The rebuild the pre-registration named is monotone by construction.**
+   `mfas.refine.lns.apply_victim_reinsertions` moves each victim to its optimal gap *with every other
+   victim still in place*, and only when the exact gain is > 0 — so every proposal is >= its input.
+   Measured: **0 downhill proposals out of 72** (`proto_H80_rebuild_monotone.json`). An acceptance
+   schedule on top of it has nothing to accept, and indeed all five T0 values returned identical
+   scores. Replaced by a true ruin-and-recreate: remove the victims, then re-insert each at the slot
+   maximising its exact gain **given only the nodes already placed**, so early placements are blind to
+   later ones and the recreated order genuinely can be worse.
+2. **The temperature calibration was dead at scale.** It drew a fixed 24 proposals from the sift fixed
+   point and fell back to a 1e-6 floor when none were downhill. From a fresh fixed point most proposals
+   still *improve*, so that is exactly what happened: **0/24 downhill on all three n=4000 seeds** (T0 <=
+   8e-6 pp, zero uphill moves accepted) and **1/24 at n=400** (a median of one observation) — while
+   8-12% of *in-run* proposals were downhill. The first S2 pass reported `delta = -0.267997 pp`; that
+   number tests a switched-off thermostat, not the hypothesis, and it is **VOID**. Fixed to draw until
+   8 downhill samples or 15% of the arm's budget, falling back to the median |delta| over all non-zero
+   proposals, never to a floor. Everything was re-run as S1r/S2r/S3r.
+
+### Rung 1 — the 2x2 (destroy structure x acceptance rule), 3 seeds, matched wall
+
+`proto_H80_S1r.json`, `proto_H80_S2r.json`, `proto_H80_S3r.json`; verdict computed mechanically by
+`experiments/proto_H80_verdict.py` into `proto_H80_verdict.json`. **All five sealed kill conditions PASS:**
+
+| check | value | fires? |
+|---|---|---|
+| K1 uphill moves accepted (S1r) | 4,647 | no |
+| K2 `delta_ACCEPT` on S1r vs a 0.05 pp bar | **+0.30417487900883583** | no |
+| K3 adjacent positive T0 pairs in the winning family | 4 of 4 | no |
+| K4 `delta_ACCEPT` at n=4000 | **+0.1474927966197157** | no |
+| K5 sideways-drift recovery on S1r vs a 0.70 threshold | 0.30702736208547626 | no |
+
+So rung 1 bought exactly what the pre-registration says it buys: one connectome measurement.
+
+**H40 is falsified in passing.** Structure-aware destroy, isolated as `A2 - A1`, is **negative at every
+scale**: -0.270659 pp (n=400), -0.335469 pp (n=4000), -0.051563 pp (mouse). H31's revival condition has
+now been *paid* and it loses.
+
+### Rung 2 — CONNECTOME, from the champion, and it settles the item
+
+`proto_H80_rung2_connectome.json`. A pure terminal append, so a from-champion prototype is admissible
+and predictive: cycle 14 measured that instrument agreeing with the screen to +0.000062 pp.
+**Identity anchor exact** — the champion positions re-score to `84.25817950936937`.
+
+| arm | final | delta vs champion | rounds in 600 s | uphill accepted |
+|---|---|---|---|---|
+| M12 control (champion + the same short sift, no LNS) | 84.25817950936937 | **+0.000000** | — | — |
+| `sideways` (zero temperature) | 84.25867817155893 | **+0.0004986621895568533** | 88 | 0 |
+| `anneal_T4` | 84.25860659325421 | +0.0004270838848441372 | 74 | 0 |
+| `anneal_T8` | 84.25860659325421 | +0.0004270838848441372 | 69 | 0 |
+
+The pre-registered rung-2 kill condition is `|connectome delta| < 0.012 pp`. The best arm is **24.06x
+below it**. The M12 control reproduces H66's result exactly: the champion order has **0.000000 pp** of
+headroom under the repair alone, so the whole (tiny) gain is the destroy-and-recreate.
+
+**M8:** the stage's marginal rate is 8.311e-07 pp/s against stage 4's measured 3.45e-04 pp/s — **415x
+below the stage it would be inserted into.**
+
+### Why it fails, measured rather than asserted — the round rate collapses with n
+
+The pre-registration wrote down, before running, that crossing a barrier `D` deep needs roughly
+`D/delta_med` consecutive accepted uphill moves. What it did not anticipate is that the *supply* of
+rounds collapses faster than n grows (`proto_H80_aggregate.json`):
+
+| n | rounds/s | temperature buys | deepest excursion / measured barrier |
+|---|---|---|---|
+| 148 (mouse) | 1106.99 | -0.021353 pp | 1.5045 pp / — |
+| 400 (synthetic) | 173.60 | **+0.210785 pp** | 0.1611 / 3.7243 pp = **4.32%** |
+| 4,000 (synthetic) | 15.91 | -0.019594 pp | 0.0043 / 4.1626 pp = **0.10%** |
+| 136,648 (connectome) | **0.1467** | -0.000072 pp | 0.0000 / 0.786097 pp = **0.00%** |
+
+n grows 342x from the n=400 synthetic to the connectome while the round rate falls **1,183x**. The
+single scale where the temperature is worth anything is n=400 — and even there the search's deepest
+excursion is 4.32% of the barrier it was sized to cross. It was never crossing M15's valley; it was
+jittering inside its own basin, and the jitter is worth less the larger the graph gets.
+
+**The prediction made before rung 2 ran was confirmed.** Rung 1 said the temperature's worth shrinks
+with scale, so the annealed arms should be <= the sideways arm on the connectome. They are, and no
+annealed arm accepted a single uphill move there.
+
+### What the acceptance rule was actually buying, and it is not barrier crossing
+
+98.5-100% of every Metropolis arm's accepted moves are **exact-tie sideways** moves, not uphill ones —
+which is why amendment 4's zero-temperature control exists. At n=400 drift recovers 30.7% of the
+effect; **at n=4000 it recovers 113.28%**, i.e. the zero-temperature arm (+0.167087 pp) *beats* the best
+annealed cell (+0.147493 pp) and the temperature is a net cost. The surviving mechanism is plateau
+drift over M14's piecewise-constant insertion profile — a real thing, with no hyperparameter, and worth
++0.000499 pp on the connectome.
+
+### New meta-rule — M17-acceptance-cannot-outrun-the-round-rate
+
+Recorded in `killed.json`. In short: on this problem an acceptance schedule is not a mechanism, because
+barrier crossing is bought in *rounds* and rounds are priced in `n`.
+
+### Decision: **KILL**
+
+H80 dies at its own pre-registered rung-2 condition. `sota.json` untouched. `gates_run` lists
+`novelty`, `prototype`, `screen` and only those three: the connectome measurement is the pre-registered
+rung 2 and it failed, so there is no confirm and no critic.
+
+### Filed
+
+* **M17** (new meta-rule), **H80** and **H40** killed with revival conditions.
+* **H31 amended, kill UPHELD on better evidence.** Its `ils_lns` never destroyed anything (0/72
+  downhill), and a true ruin-and-recreate beats it by +0.7851669662283598 / +0.9493536766264015 /
+  +0.975055801386219 pp at matched wall on the synthetic — so H31's *operator* was mis-specified. But
+  the corrected operator was then run on the connectome and returns +0.000499 pp, so H31's *conclusion*
+  stands.
+* **H81** — the mouse lead. `A5_topk_sideways` reaches a 3-seed mean of 93.19762778281786, which is
+  +0.02224452378202102 pp above the mouse champion, and `A1_topk_greedy` 93.19421070519338
+  (+0.018827446157544614 pp). Both clear mouse's 0.01 pp floor — but on a PROXY pipeline (greedy-FAS ->
+  40-sweep sift -> LNS), not the champion stack, so this is a moving comparator (P14) and is filed as a
+  lead, not a result. Note it is also exactly what M17 predicts: mouse is where rounds are cheapest
+  (1,107/s).
+* **P27** — `src/mfas/refine/lns.py`'s docstring says the ruin mode will *"Pull them out and re-insert
+  each at its exact-optimal gap"*. It does not pull anything out. That sentence is why H31 stood on
+  record as a ruin-and-recreate null.
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+export PYTHONPATH=src
+$PY experiments/proto_H80_rebuild_check.py                       # 0/72 downhill
+$PY experiments/proto_H80_anneal.py --stage S1r                  # n=400,  15 arms x 30 s x 3 seeds
+$PY experiments/proto_H80_anneal.py --stage S3r                  # mouse,  same
+$PY experiments/proto_H80_anneal.py --stage S2r                  # n=4000, 15 arms x 120 s x 3 seeds
+$PY experiments/proto_H80_verdict.py                             # K1-K5, mechanically
+$PY experiments/proto_H80_rung2.py --dataset connectome --budget-s 600 --seed 42
+```

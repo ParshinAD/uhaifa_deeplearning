@@ -1,0 +1,178 @@
+{
+  "_doc": "DERIVED aggregate for H80 cycle 23. Every figure quoted in experiments/log.md cycle 23 that is a RATIO or a MEAN OVER SEEDS is computed here from proto_H80_S{1r,2r,3r}.json and proto_H80_rung2_connectome.json, so no number in the narrative lacks an artifact (CAMPAIGN.md rule 3).",
+  "scale_series": [
+    {
+      "stage": "S3r",
+      "n": 148,
+      "budget_s": 30.0,
+      "mean_rounds_A5": 33209.666666666664,
+      "rounds_per_s": 1106.9888888888888,
+      "temperature_buys_pp": -0.021353261872889107,
+      "K5_sideways_recovery_fraction": null,
+      "best_cell": "A4_topk_anneal_T0.5",
+      "best_cell_mean_delta_pp": -0.017936184248403226,
+      "best_sideways_mean_delta_pp": 0.0034170776244858794,
+      "structure_alone_pp": -0.05156291020085746,
+      "deepest_excursion_pp": 1.5044631750400113,
+      "barrier_depth_pp": null,
+      "excursion_over_barrier_pct": null
+    },
+    {
+      "stage": "S1r",
+      "n": 400,
+      "budget_s": 30.0,
+      "mean_rounds_A5": 5208.0,
+      "rounds_per_s": 173.6,
+      "temperature_buys_pp": 0.21078486829408405,
+      "K5_sideways_recovery_fraction": 0.30702736208547626,
+      "best_cell": "A4_topk_anneal_T8.0",
+      "best_cell_mean_delta_pp": 0.30417487900883583,
+      "best_sideways_mean_delta_pp": 0.09339001071475177,
+      "structure_alone_pp": -0.2706588408892401,
+      "deepest_excursion_pp": 0.16105107014197922,
+      "barrier_depth_pp": 3.7243486688557064,
+      "excursion_over_barrier_pct": 4.3242747782650985
+    },
+    {
+      "stage": "S2r",
+      "n": 4000,
+      "budget_s": 120.0,
+      "mean_rounds_A5": 1909.6666666666667,
+      "rounds_per_s": 15.91388888888889,
+      "temperature_buys_pp": -0.019593762913321683,
+      "K5_sideways_recovery_fraction": 1.132845558307778,
+      "best_cell": "A4_topk_anneal_T4.0",
+      "best_cell_mean_delta_pp": 0.1474927966197157,
+      "best_sideways_mean_delta_pp": 0.1670865595330374,
+      "structure_alone_pp": -0.3354685515002321,
+      "deepest_excursion_pp": 0.004286556287842255,
+      "barrier_depth_pp": 4.162625762528118,
+      "excursion_over_barrier_pct": 0.10297721996605501
+    },
+    {
+      "stage": "rung2_connectome",
+      "n": 136648,
+      "budget_s": 600.0,
+      "mean_rounds_A5": 88,
+      "rounds_per_s": 0.14666666666666667,
+      "temperature_buys_pp": -7.157830471271609e-05,
+      "best_sideways_mean_delta_pp": 0.0004986621895568533,
+      "deepest_excursion_pp": 0.0,
+      "barrier_depth_pp": 0.786097,
+      "excursion_over_barrier_pct": 0.0
+    }
+  ],
+  "mouse_absolute_vs_champion": {
+    "mouse_champion_H63_pct": 93.17538325903584,
+    "arms": {
+      "A1p_ils_lns_production": {
+        "mean_pct": 92.91629587453781,
+        "max_pct": 92.91629587453781,
+        "mean_delta_vs_mouse_champion_pp": -0.2590873844980308
+      },
+      "A1_topk_greedy": {
+        "mean_pct": 93.19421070519338,
+        "max_pct": 93.19578679327864,
+        "mean_delta_vs_mouse_champion_pp": 0.018827446157544614
+      },
+      "A2_struct_greedy": {
+        "mean_pct": 93.14264779499253,
+        "max_pct": 93.1511529713838,
+        "mean_delta_vs_mouse_champion_pp": -0.032735464043312845
+      },
+      "A5_topk_sideways": {
+        "mean_pct": 93.19762778281786,
+        "max_pct": 93.20219444246342,
+        "mean_delta_vs_mouse_champion_pp": 0.02224452378202102
+      },
+      "A6_struct_sideways": {
+        "mean_pct": 93.14454152690068,
+        "max_pct": 93.1519908352872,
+        "mean_delta_vs_mouse_champion_pp": -0.030841732135158395
+      },
+      "A3_struct_anneal_T0.5": {
+        "mean_pct": 93.14374373349851,
+        "max_pct": 93.15465405332823,
+        "mean_delta_vs_mouse_champion_pp": -0.031639525537329405
+      },
+      "A3_struct_anneal_T1.0": {
+        "mean_pct": 93.13822979252346,
+        "max_pct": 93.17584104938625,
+        "mean_delta_vs_mouse_champion_pp": -0.03715346651237894
+      },
+      "A3_struct_anneal_T2.0": {
+        "mean_pct": 93.15389254710185,
+        "max_pct": 93.17584104938625,
+        "mean_delta_vs_mouse_champion_pp": -0.021490711933992657
+      },
+      "A3_struct_anneal_T4.0": {
+        "mean_pct": 93.10820219549164,
+        "max_pct": 93.15412712504325,
+        "mean_delta_vs_mouse_champion_pp": -0.06718106354419717
+      },
+      "A3_struct_anneal_T8.0": {
+        "mean_pct": 93.1435143497436,
+        "max_pct": 93.15484932549182,
+        "mean_delta_vs_mouse_champion_pp": -0.03186890929224262
+      },
+      "A4_topk_anneal_T0.5": {
+        "mean_pct": 93.176274520945,
+        "max_pct": 93.17627452094499,
+        "mean_delta_vs_mouse_champion_pp": 0.0008912619091603347
+      },
+      "A4_topk_anneal_T1.0": {
+        "mean_pct": 93.176274520945,
+        "max_pct": 93.17627452094499,
+        "mean_delta_vs_mouse_champion_pp": 0.0008912619091603347
+      },
+      "A4_topk_anneal_T2.0": {
+        "mean_pct": 93.17062158287541,
+        "max_pct": 93.17627452094499,
+        "mean_delta_vs_mouse_champion_pp": -0.004761676160427442
+      },
+      "A4_topk_anneal_T4.0": {
+        "mean_pct": 93.17107058356476,
+        "max_pct": 93.17627452094499,
+        "mean_delta_vs_mouse_champion_pp": -0.004312675471084049
+      },
+      "A4_topk_anneal_T8.0": {
+        "mean_pct": 93.1680548897403,
+        "max_pct": 93.17555232049642,
+        "mean_delta_vs_mouse_champion_pp": -0.007328369295535708
+      }
+    },
+    "note": "PROXY PIPELINE, NOT the mouse champion stack: greedy-FAS -> 40-sweep sift -> this LNS. Comparing it to H63 is a MOVING COMPARATOR (P14) and it is recorded as a lead, not a result."
+  },
+  "rung2": {
+    "best_delta_pp": 0.0004986621895568533,
+    "budget_s": 600.0,
+    "marginal_rate_pp_per_s": 8.311036492614221e-07,
+    "stage4_marginal_rate_pp_per_s": 0.000345,
+    "times_below_stage4": 415.11067880232696,
+    "screen_bar_pp": 0.012,
+    "times_below_screen_bar": 24.064387176946493,
+    "m12_control_headroom_pp": 0.0
+  },
+  "true_ruin_vs_production_ils_lns_S1r": {
+    "_doc": "A1 (true ruin-and-recreate + greedy acceptance) MINUS A1p (production mfas.refine.ils_lns at H31 settings), same instance, same start, same 30 s wall. Quantifies how much of H31 was lost to a destroy operator that never destroyed anything.",
+    "per_seed": {
+      "42": 0.7851669662283598,
+      "123": 0.9493536766264015,
+      "999": 0.975055801386219
+    },
+    "rounds_per_seed": {
+      "42": [
+        527,
+        5159
+      ],
+      "123": [
+        527,
+        5082
+      ],
+      "999": [
+        525,
+        5319
+      ]
+    }
+  }
+}

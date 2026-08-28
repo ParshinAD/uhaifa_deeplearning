@@ -1,8 +1,8 @@
 # Campaign dashboard
 
-*Generated 2026-08-28 10:05 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-28 14:46 by `autoresearch/dashboard.py` — do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 22 · **mode:** `divergent` · **consecutive kills:** 3
+**Phase:** `quality` · **cycle:** 23 · **mode:** `divergent` · **consecutive kills:** 4
 
 ## Progress — connectome (Phase 1 target)
 
@@ -21,7 +21,7 @@
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H63** | 93.1754 ± 0.0 | 20 | ~1s | findings.md #10 (H63, 2026-08-27) |
 
-## Queue — 29 proposed / 68 total
+## Queue — 29 proposed / 70 total
 
 | # | id | title | status |
 |---|---|---|---|
@@ -42,6 +42,7 @@
 
 | cycle | item | verdict | note |
 |---|---|---|---|
+| 23 | `H80` | **kill** | H80 killed at the pre-registered rung 2 (connectome, from-champion terminal appe |
 | 22 | `H79` | **kill** | H79 killed at the SCREEN on its own pre-registered condition (spread <= 0.019124 |
 | 21 | `H78` | **done** | DIVERGENT. Residual connectome gap structure re-measured from the CHAMPION inste |
 | 20 | `H73` | **kill** | H73 killed at the SCREEN (sift argmax tie-break, min-displacement inside the opt |
@@ -53,12 +54,11 @@
 | 14 | `H59` | **iterate** | Minimal-FAS arc reclamation. Prototype PASSED all three with exact certificates  |
 | 13 | `H60` | **kill** | H60 killed at the SCREEN (net-digraph condensation; connectome +0.007311 vs a 0. |
 | 12 | `H47` | **kill** | H47 killed at the prototype rung (exact subset-DP at the SCC leaves). New meta-r |
-| 11 | `H57` | **kill** | H57 killed at the prototype rung (prefix-shared tail multi-start; anchored gain  |
 
 ## Evidence
 
 - `results/*.json`: **605** run records across **40** variants
-- killed mechanisms on record: **24** (+7 deferred, 16 meta-rules)
+- killed mechanisms on record: **26** (+7 deferred, 17 meta-rules)
 - literature notes: **11** (latest: `vahidi-2025.md`)
 
 ## Control

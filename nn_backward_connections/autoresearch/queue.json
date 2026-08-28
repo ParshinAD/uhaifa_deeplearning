@@ -244,7 +244,7 @@
     {
       "id": "H40",
       "title": "Structure-aware destroy operator for ruin-and-recreate (revives H31 under its stated condition)",
-      "status": "proposed",
+      "status": "killed",
       "priority": 6,
       "axis": "metaheuristic / discrete",
       "hypothesis": "A destroy operator that removes a CYCLE-DENSE or SCC-coherent set of nodes (rather than a random contiguous span) and re-inserts them by exact gain beats the plain sift, where H31's random ruin-and-recreate did not.",
@@ -255,7 +255,9 @@
         "src/mfas/refine/lns.py"
       ],
       "est_cost": "medium",
-      "expected_pp": "connectome +0.05 to +0.2"
+      "expected_pp": "connectome +0.05 to +0.2",
+      "killed_at": "2026-08-28 (cycle 23)",
+      "result": "BUILT AND MEASURED for the first time, as the isolated A2-A1 cell of H80's 2x2. Structure-aware destroy is HARMFUL at every scale: -0.270659 pp (n=400), -0.335469 pp (n=4000), -0.051563 pp (mouse). This pays and spends H31's revival condition. See killed.json H40."
     },
     {
       "id": "H41",
@@ -1322,7 +1324,7 @@
       "id": "H80",
       "priority": 1,
       "kind": "science",
-      "status": "proposed",
+      "status": "killed",
       "axis": "metaheuristic / acceptance criterion (revives H31 under its stated condition, now with a sizing number)",
       "title": "Barrier-crossing search: an acceptance schedule sized to the 0.786 pp valley M15 measured, with a structure-aware destroy operator",
       "hypothesis": "Every search this campaign has run is monotone or near-monotone, and M15 shows the prize sits behind a valley 0.786 pp deep - 2.2x the prize itself and 66x the 0.012 pp promotion bar. PREDICTION: a search that accepts temporary loss at that scale, with a STRUCTURE-AWARE destroy operator (SCC- or cycle-guided) and an exact-gain rebuild, escapes the fixed point that M14 (87.7% absorption) and H66 (0.000000 pp repair headroom) both describe.",
@@ -1340,7 +1342,9 @@
       "est_cost": "rung 1 ~1 h CPU on synthetic; rung 2 one ~1,250 s connectome run",
       "predicted_effect_pp": "connectome -0.01 to +0.05, midpoint +0.005 - below the bar in the median case, and said so before running. The value is the axis, not the point estimate.",
       "source": "cycle 21 (H78 / M15)",
-      "note_2026_08_28": "PROMOTED to the top science slot by cycle 22. H79's kill removes one of this item's escape routes: 'restart from a different basin' is now measured dead (M16, 409x contraction), so the acceptance schedule has to do all the work. Read M16 and M15 together before sizing the temperature."
+      "note_2026_08_28": "PROMOTED to the top science slot by cycle 22. H79's kill removes one of this item's escape routes: 'restart from a different basin' is now measured dead (M16, 409x contraction), so the acceptance schedule has to do all the work. Read M16 and M15 together before sizing the temperature.",
+      "killed_at": "2026-08-28 (cycle 23)",
+      "result": "KILLED at the pre-registered RUNG 2. Rung 1 passed all five sealed kill conditions (+0.304175 pp at n=400, +0.147493 pp at n=4000); the connectome measurement is +0.000499 pp, 24.06x below the 0.012 pp bar, with the M12 control at exactly 0.000000 pp. See killed.json H80 and M17."
     },
     {
       "id": "L02",
@@ -1382,6 +1386,48 @@
       "est_cost": "~30 min to diagnose; unknown to repair (a conda env change is an operator-visible action)",
       "expected_pp": "n/a",
       "source": "cycle 22 (H79 rung 1)"
+    },
+    {
+      "id": "H81",
+      "priority": 4,
+      "kind": "science",
+      "status": "proposed",
+      "axis": "discrete move class / mouse only",
+      "title": "True ruin-and-recreate with plateau (sideways) acceptance, composed on the MOUSE champion - the one place M17's round-rate arithmetic is favourable",
+      "hypothesis": "The move class H80 built - remove k victims, re-insert each at the slot maximising its exact gain given only the nodes already placed, accept iff not strictly worse - is worth a mouse championship when composed on H63 rather than on a proxy pipeline.",
+      "rationale": "Cycle 23 measured it reaching a 3-seed mean of 93.19762778281786 on mouse (+0.02224452378202102 pp over the H63 champion 93.17538325903584), with A1_topk_greedy at 93.19421070519338 (+0.018827446157544614 pp). Both clear mouse's 0.01 pp min_promotion_delta. AND IT IS EXACTLY WHAT M17 PREDICTS: mouse is where rounds are cheapest (1,106.99 rounds/s vs 0.1467/s on the connectome), so the one dataset where a round-hungry move class can afford to work is the small one. The zero-temperature arm is the right one to carry: it has NO hyperparameter, and at n=4000 it beat every annealed cell.",
+      "method": "Compose the stage as a TERMINAL append on the mouse champion H63 (stages 1-6 byte-identical), isolated module src/mfas/experiments/H81.py committed BEFORE the screen. Screen at 3 seeds on connectome + mouse per the standard ladder; the connectome leg is expected to be ~+0.000499 pp and is run only as the non-inferiority/no-regression check, NOT as a claim.",
+      "kill_condition": "mouse delta < +0.01 pp (min_promotion_delta_pp) when measured from the H63 champion rather than from the proxy pipeline; or the connectome leg regresses.",
+      "novelty": "Distinct from H80 (which is the ACCEPTANCE SCHEDULE, killed) and from H40 (structure-aware destroy, killed). What is carried forward is only the destroy-and-recreate operator plus zero-temperature tie acceptance - the hyperparameter-free half that survived every scale.",
+      "prior_evidence": [
+        "experiments/outputs/proto_H80_S3r.json",
+        "experiments/outputs/proto_H80_aggregate.json (mouse_absolute_vs_champion)",
+        "autoresearch/killed.json M17"
+      ],
+      "prior_evidence_base": "MOVING COMPARATOR WARNING (P14): the 93.19762778281786 figure comes from a PROXY pipeline - greedy-FAS -> 40-sweep sift -> this LNS - and NOT from the mouse champion stack H63. The delta above is therefore not yet a like-for-like comparison and the whole point of this item is to make it one. Do not quote it as a result until it is.",
+      "est_cost": "cheap - mouse runs in ~1 s plus the LNS budget; the connectome leg is the only real cost",
+      "predicted_effect_pp": "mouse +0.00 to +0.02, connectome +0.0005. SUPPORTING DATASET ONLY - it cannot advance the Phase-1 mission target.",
+      "source": "cycle 23 (H80)"
+    },
+    {
+      "id": "P27",
+      "priority": 3,
+      "kind": "protocol",
+      "status": "proposed",
+      "axis": "documentation integrity / production code",
+      "title": "mfas.refine.lns.ils_lns is documented as a ruin-and-recreate and is not one - the docstring is why H31 stood as a null",
+      "hypothesis": "Not a hypothesis. src/mfas/refine/lns.py's module docstring says of the 'ruin' mode: 'Pull them out and re-insert each at its exact-optimal gap given the OTHERS' current ranks'. Nothing is pulled out. apply_victim_reinsertions moves each victim while every other victim is still in place, and applies the move only when the exact gain is strictly positive - so the operator is MONOTONE BY CONSTRUCTION and cannot destroy anything.",
+      "rationale": "Measured at 0 downhill proposals out of 72 (experiments/outputs/proto_H80_rebuild_monotone.json). The consequence was not cosmetic: killed.json H31 recorded 'generic random ruin-and-recreate finds nothing the full-range sift has not already taken', and every later item that wanted to revive ruin-and-recreate read that sentence and believed the class had been tried. Cycle 23 found a TRUE ruin-and-recreate beats the production one by +0.785 to +0.975 pp at matched wall on the synthetic. H31's conclusion survived re-measurement on the connectome, so nothing needs re-deciding - but the next reader should not have to rediscover this.",
+      "method": "Correct the docstring in place to describe what the code does (a coordinated multi-node IMPROVEMENT move, monotone by construction), cite proto_H80_rebuild_monotone.json, and cross-reference experiments/proto_H80_anneal.py:ruin_and_recreate as the true-destroy implementation. src/mfas/refine/lns.py is NOT a frozen file. No behaviour change.",
+      "kill_condition": "n/a - a documentation correction.",
+      "prior_evidence": [
+        "experiments/outputs/proto_H80_rebuild_monotone.json",
+        "src/mfas/refine/lns.py (module docstring, 'Perturbation' section)",
+        "autoresearch/killed.json H31 amendment 2026-08-28"
+      ],
+      "est_cost": "minutes",
+      "predicted_effect_pp": "n/a",
+      "source": "cycle 23 (H80)"
     }
   ]
 }
