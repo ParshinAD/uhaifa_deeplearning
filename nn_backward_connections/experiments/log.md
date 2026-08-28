@@ -9058,3 +9058,176 @@ PYTHONPATH=src $PY experiments/proto_H71_tuck.py --stage 1 --dataset mouse --top
 PYTHONPATH=src $PY experiments/proto_H71_tuck.py --stage 2 --dataset connectome --max-pops 100000 --passes 2
 PYTHONPATH=src $PY experiments/proto_H71_tuck.py --stage 2 --dataset mouse --max-pops 20000 --passes 3
 ```
+
+---
+
+## 2026-08-28 — Cycle 25 (Phase 7, DIVERGENT): H82 — exact block-partition crossover (PX / IPT). **KILL at the prototype rung.** (The decomposition is REAL, EXACT and reaches k = 10,553 blocks — and the best of 2^k offspring is EXACTLY the better parent, on 264 pairs across three datasets, because every block but one is a singleton.)
+
+**Machine:** Windows 10 laptop, RTX 4060 (CUDA), torch 2.8.0+cu128, python 3.9.25, Git Bash.
+**GPU used: ZERO.** ~3 minutes of CPU in total. Preflight: tree clean, branch `auto/campaign-v3`
+= `campaign.yaml`'s `campaign.branch`, `pytest tests/ -q` **611 passed in 173.94 s**.
+
+**Mode: DIVERGENT, on both triggers** — `consecutive_kills` = 5 and `cycles_since_score_move` = 7.
+`cycles_since_literature_scan` = 0 (L02 ran last cycle), so no scan was due. H82 was cycle 24's
+top-priority science item and is the direct product of that scan. **H74 (also priority 1) was passed
+over deliberately**: it is compute re-allocation inside the current design, which is exactly what
+divergent mode says to stop doing. H82 is a move class the campaign has never had.
+
+**P23 checked FIRST, for the tenth cycle running.** Still `awaiting-operator`; no operator commit.
+
+### Hypothesis (H82, as filed)
+
+For two orders `A`, `B` over the same node set, scan `A` left to right and cut at every `p` where
+`max(rank_B[A_order[0:p]]) == p-1`. Those cuts define `k` **common blocks** holding the same node set
+in the same position interval in both parents. Every cross-block edge is then oriented identically in
+every offspring, so the exact score decomposes as `C + sum_i f_i(c_i)` with `c_i in {A, B}`, and the
+per-block argmax realises the **best of 2^k offspring** — `>= max(score(A), score(B))` by construction
+— in one `O(n)` scan plus one `O(m)` edge pass. THE CLAIM: over the connectome orders already stored
+in `results/*_positions.npy`, the best offspring beats the H64 champion by more than **+0.012 pp**.
+
+Sources: Chicano, Whitley, Ochoa, Tinos, arXiv:2407.06742 (PPSN 2024) Corollary 1; Mobius et al.,
+cond-mat/9902034 (Phys. Rev. E 59, 1999) sections II.1-II.2. Both full text, via
+`autoresearch/lit/scan_cycle24.md`.
+
+### Rung 1 — NOVELTY: **PASS**
+
+The nearest dead axis is `restarts / multi-start` (**H01**, **H56**, **H57**) with meta-rules **M9**,
+**M10**, **M16**. None of them covers this item, and the reason is precise: they all bound the maximum
+**over** the parents — M9 prices best-of-R at `sigma * a_R` against a 0.021269 pp required sigma, and
+M16 records that the champion's own construction is the maximum of four by enumeration, so
+canonical-anchored best-of-basins gains exactly 0.000000 pp at every R. PX does not harvest the max
+over the parents; it produces a point **outside** the parent set, with gain
+`sum_i max(f_i(A), f_i(B)) - max(sum_i f_i(A), sum_i f_i(B)) >= 0`, independent of the parents' score
+spread and growing with `k`. Distinct from **H41** (relocates a rigid block; PX moves nothing — each
+block keeps its own position interval and its *interior* is re-permuted wholesale by the other
+solution's global opinion) and from **H46** (permutes coarse blocks relative to each other; PX holds
+block order fixed). **M18** does not bite: PX pays one `O(n)` scan plus one `O(m)` edge pass for the
+whole permutation, not a per-candidate degree sum. **M17**'s two mandatory questions answer "one
+round" and "zero uphill moves". The item enters legitimately.
+
+### Rung 2 — PROTOTYPE: the census. **KILL on pre-registered condition (1).**
+
+CPU only, zero GPU, as filed. Every stored `results/*_positions.npy` was loaded, converted to a rank
+vector, scored against the frozen scorer and **deduplicated by exact permutation identity** — the
+champion pipelines are deterministic, so 58 connectome files collapse to 13 distinct orders.
+
+| dataset | files | distinct | pairs | max k | pairs k>1 | **pairs with positive gain** | **best gain** |
+|---|---|---|---|---|---|---|---|
+| connectome | 58 | 13 | 78 | **10,553** | 31 | **0** | **0.00000000 pp** |
+| microns | 46 | 16 | 120 | **4,428** | 53 | **0** | **0.00000000 pp** |
+| mouse | 199 | 12 | 66 | **118** | 62 | **0** | **0.00000000 pp** |
+
+**264 pairs across three datasets, and the best of `2^k` offspring is EXACTLY the better parent on
+every single one.** Not "below the 0.012 pp bar" — identically zero.
+
+### The implementation is CORRECT; the mechanism is EMPTY. Three independent checks.
+
+1. **The decomposition reproduces the frozen scorer exactly**: `C + sum_i f_i(A) == score(A)` and
+   likewise for `B` on **78/78, 120/120 and 66/66** pairs.
+2. **The theory check passes**: every cross-block edge is oriented identically in both parents on
+   **264/264** pairs — which is the premise the decomposition rests on.
+3. **Realised offspring were built and re-scored by the frozen scorer**: predicted == realised on
+   **41/41** (25 connectome + 10 microns + 6 mouse), zero mismatches. Pre-registered kill condition
+   (2) — "any mismatch against the frozen scorer" — did **not** fire.
+
+A bug worth recording, because it was caught by a control and not by inspection: the first kernel cast
+edge weights to `int64` unconditionally, which silently truncates **every mouse weight to 0** (mouse
+weights are floats, total weight 9.0). The mouse smoke test reported 0/66 decompositions exact and
+`predicted=0 realised=8`, and that is the only reason it was found. The kernel now matches the frozen
+scorer's accumulator choice — int64 for integer weights, float64 for float weights.
+
+### WHY it is zero — the anatomy, and the cycle's transferable product
+
+`k` is large and **almost entirely singletons**. A singleton block holds no internal edge, so
+`f_i(A) = f_i(B) = 0`: it is a tie by construction and contributes nothing to `2^k`.
+
+| pair | k | blocks size>1 | giant block | % nodes | edge mass PX can re-decide | **non-trivial choices** |
+|---|---|---|---|---|---|---|
+| H42 x H59 | 10,553 | **1** | 126,096 | 92.28 % | 98.1837 % | **1** |
+| H42 x H52 | 10,503 | **2** | 126,142 | 92.31 % | 98.2055 % | **2** |
+| H64 x H73 | 4,169 | **5** | 126,824 | 92.81 % | 98.4733 % | **1** |
+| H64 x H79B | 21 | **8** | 136,610 | 99.97 % | 99.9005 % | **1** |
+| H64 x H79C | 20 | **7** | 136,610 | 99.97 % | 99.9005 % | **1** |
+| **H64 x every other stored order** | **1** | 1 | 136,648 | **100.00 %** | 100.0000 % | **1** |
+
+So the offspring set has **one or two** real binary choices, never `2^10553`, and each one is
+"take A's or B's ordering of the 92–100 % of the graph that they disagree about". PX therefore
+collapses to **best-of-2 over the parents** — precisely the quantity M9 priced and M16 measured at
+0.000000 pp. **Against the champion specifically there is no proper cut at all: `k = 1`.**
+
+**The nodes the pipeline agrees on are the low-degree periphery.** Median degree of a singleton-block
+node is **3.0** against **59.0** for a giant-block node (H42 x H41) — a ~20x separation. The common
+blocks are the fringe; the core is one indivisible lump.
+
+**New meta-rule M19-no-shared-interior-structure**, filed in `killed.json`: *this campaign's solutions
+share no interior structure to recombine. The common-block partition of any two of them is an
+end-fringe of low-degree singletons plus ONE giant block carrying 98–100 % of the edge mass, so every
+exact recombination operator on this solution set degenerates to selection over the parents.* This
+closes the multi-start family on a **fourth** independent axis (after H56 relabelling, H57 prefix
+sharing, H79/M16 basin) and it closes it *constructively* rather than statistically: the previous
+three bounded what best-of-R could win, this one shows the recombination operator itself has nothing
+to operate on.
+
+### DIAGNOSTIC arm (labelled as such in the artifact; measurement only, via `mfas.analysis.gap`)
+
+Champion H64 (84.25817951) x the downloaded reference (84.61467764), residual **+0.356498 pp**:
+
+> **k = 1.** One block, 136,648 nodes, 100 % of the edge mass. **0.000000 pp of M15's residual is
+> block-decomposable.**
+
+This is the **fourth** geometric family of partial adoption to return exactly zero on that residual,
+after M15's rank-blend path, top-k teleport and slot-preserving adoption — and it is the strongest of
+the four, because PX is **monotone-safe by construction** (parent A is always a member of the offspring
+set, so the family cannot lose) and **exact** (no surrogate, no search). M15 is corroborated on new,
+independent and provably-safe ground.
+
+### H83 — its free pre-gate, and why it dies on it once correctly scoped
+
+H83 (forced-cut PX: manufacture cuts where the symmetric difference
+`D(p) = |prefix_A(p) delta prefix_B(p)|` is small) pre-gates on *"fewer than 50 positions with
+`D(p) <= 32`"*. Measured over the whole line that gate **passes** — 188 such positions on champion
+pairs, 13,603 on H42 x H52. **It passes on end effects.** The median `D <= 32` position sits
+**0.0006*n** from an end of the line (`proto_H82_rung0c.json`).
+
+Restricted to the deep interior — the middle 80 %, where a forced cut would actually split the
+indivisible core (`proto_H82_rung0d.json`):
+
+| pair | positions with D <= 32 in [13664, 122983) | min interior D |
+|---|---|---|
+| H64 x H42 | **0** | 2,838 |
+| H64 x H79B | **0** | 1,546 |
+| H64 x H79C | **0** | 1,486 |
+| H64 x H73 | **0** | 706 |
+| H64 x H36 | **0** | 2,770 |
+| H42 x H52 | **0** | 106 |
+| H79B x H79C | **0** | 1,236 |
+
+**Zero, on all seven pairs, and zero at every threshold up to `D <= 128` for six of them.**
+Manufacturing one interior cut costs relocating a minimum of **706** nodes and typically 1,500–2,800
+— not H83's "bounded, exactly-scored repair", and squarely back inside M15's 0.786097 pp valley.
+**H83 is killed on its own pre-gate, correctly scoped**, without spending a cycle on it.
+
+### Decision: **KILL** (pre-registered condition 1), and **KILL H83** on its own pre-gate.
+
+`sota.json` UNTOUCHED. No screen, no confirm, no critic — the prototype settled it, which is what the
+rung is for. `gates_run` lists two rungs and only two.
+
+**What the item asked to be reported whatever the verdict, reported:** `k` (up to 10,553), the
+block-size distribution (1–11 blocks of size > 1; everything else a singleton), the per-block win
+split (`n_nontrivial_choices` = 1 or 2 on every connectome pair), and the redundancy question — which
+is moot here, since the class realises no gain to be redundant with.
+
+**Cost:** ~3 minutes CPU, zero GPU, zero sweep budget. The free pre-gate did exactly what the
+prototype rung exists to do.
+
+### Re-runnable
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+$PY experiments/proto_h82_px_census.py  --dataset connectome --out experiments/outputs/proto_H82_rung0.json --verify-top 25
+$PY experiments/proto_h82_px_census.py  --dataset microns    --out experiments/outputs/proto_H82_rung0_microns.json --verify-top 10
+$PY experiments/proto_h82_px_census.py  --dataset mouse      --out experiments/outputs/proto_H82_rung0_mouse.json --verify-top 6
+$PY experiments/proto_h82_px_anatomy.py    # -> proto_H82_rung0b.json (+ the diagnostic arm)
+$PY experiments/proto_h82_px_nearcut.py    # -> proto_H82_rung0c.json (+ the microns control)
+$PY experiments/proto_h82_px_interior.py   # -> proto_H82_rung0d.json
+```

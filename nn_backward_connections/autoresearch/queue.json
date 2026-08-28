@@ -1436,7 +1436,7 @@
       "id": "H82",
       "priority": 1,
       "kind": "science",
-      "status": "proposed",
+      "status": "killed",
       "axis": "recombination / solution merging (a move class the campaign has never had)",
       "title": "Exact block-partition crossover (PX / IPT) between two independently produced orders - best of 2^k in one O(n + m) pass",
       "hypothesis": "For two orders A, B over the same node set, scan positions left to right and cut at every p where max(rank_B[A_order[0:p]]) == p-1; the cuts define k COMMON BLOCKS holding the same node set in the same position interval in both orders. Because block membership and block order are shared, every cross-block edge is oriented identically in every offspring, so the exact score decomposes as C + sum_i f_i(c_i) with c_i in {A, B}, and the per-block argmax realises the BEST OF 2^k offspring - which is >= max(score(A), score(B)) by construction - in one O(n) scan plus one O(m) edge pass. THE CLAIM: over the connectome orders already stored in results/*_positions.npy, the best offspring beats the H64 champion by more than +0.012 pp, and that advantage survives a terminal repair sift.",
@@ -1454,13 +1454,15 @@
       ],
       "est_cost": "rungs 0/0b/1: minutes to ~1 h CPU, ZERO GPU. Rung 2: one ~1,185 s connectome pipeline run for a cheap second parent plus seconds of PX. Deterministic, no RNG -> 1-seed screen on the primaries. It ADDS the second parent's seconds, which microns cannot afford under P19 -> plan for a connectome-only result.",
       "predicted_effect_pp": "connectome 0 to +0.10, midpoint +0.006 - BELOW the 0.012 bar in the median case and well below the 0.02343 pp PROTOCOL CI floor, stated up front. Strongly right-skewed: gain is roughly linear in k, and k is unmeasured in the literature at ANY n, so rung 0 would be the first such measurement. Against it: two orders with median node displacement in the thousands may share no proper cut at all. For it: it costs almost nothing to find out and it CANNOT regress.",
-      "source": "autoresearch/lit/scan_cycle24.md (cycle 24 scheduled scan L02)"
+      "source": "autoresearch/lit/scan_cycle24.md (cycle 24 scheduled scan L02)",
+      "killed_at": "2026-08-28",
+      "outcome": "KILLED at the prototype rung on pre-registered condition (1): best-of-2^k gain over max(parents) EXACTLY 0.00000000 pp on 264 pairs across three datasets, against a 0.012 pp bar. k reaches 10,553 but is almost all singletons; one giant block holds 92-100% of nodes and 98-100% of edge mass, so 2^k collapses to the 2 parents. Against the champion H64, k = 1. Operator verified exact (264/264 decompositions, 41/41 realised offspring). See M19 and experiments/log.md cycle 25."
     },
     {
       "id": "H83",
       "priority": 4,
       "kind": "science",
-      "status": "proposed-conditional-on-H82",
+      "status": "killed",
       "axis": "recombination / solution merging",
       "title": "Forced-cut partition crossover: buy extra blocks by paying a bounded, exactly-scored repair",
       "hypothesis": "If H82's census finds too few natural cuts, manufacture them: at positions p where the symmetric difference D(p) = |prefix_A(p) delta prefix_B(p)| is small, relocate those few nodes to force a cut, paying an exactly-scored cost. Because parent A remains a member of the offspring set, the operator stays monotone-safe.",
@@ -1473,7 +1475,9 @@
       ],
       "est_cost": "minutes of CPU on top of H82's rung 0",
       "predicted_effect_pp": "unknown - gated entirely by H82's near-cut profile",
-      "source": "autoresearch/lit/scan_cycle24.md (cycle 24 scheduled scan L02)"
+      "source": "autoresearch/lit/scan_cycle24.md (cycle 24 scheduled scan L02)",
+      "killed_at": "2026-08-28",
+      "outcome": "KILLED on its own free pre-gate, correctly scoped. Whole-line count passes (188-13,603 positions with D(p) <= 32) but on END EFFECTS - median such position sits 0.0006*n from an end. In the deep interior (middle 80%) there are ZERO positions with D(p) <= 32 on all 7 pairs; min interior D is 706-2,838. One forced interior cut costs >= 706 node relocations. See experiments/log.md cycle 25."
     },
     {
       "id": "H84",

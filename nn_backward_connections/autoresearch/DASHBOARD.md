@@ -1,8 +1,8 @@
 # Campaign dashboard
 
-*Generated 2026-08-28 15:58 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-28 16:17 by `autoresearch/dashboard.py` — do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 24 · **mode:** `divergent` · **consecutive kills:** 5
+**Phase:** `quality` · **cycle:** 25 · **mode:** `divergent` · **consecutive kills:** 6
 
 ## Progress — connectome (Phase 1 target)
 
@@ -21,7 +21,7 @@
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H63** | 93.1754 ± 0.0 | 20 | ~1s | findings.md #10 (H63, 2026-08-27) |
 
-## Queue — 29 proposed / 73 total
+## Queue — 28 proposed / 73 total
 
 | # | id | title | status |
 |---|---|---|---|
@@ -42,6 +42,7 @@
 
 | cycle | item | verdict | note |
 |---|---|---|---|
+| 25 | `H82` | **kill** | H82 (exact block-partition crossover PX/IPT) killed at the prototype rung on pre |
 | 24 | `H71` | **kill** | H71 (GRaSP subset-bipartition tuck) killed at the prototype rung on pre-register |
 | 23 | `H80` | **kill** | H80 killed at the pre-registered rung 2 (connectome, from-champion terminal appe |
 | 22 | `H79` | **kill** | H79 killed at the SCREEN on its own pre-registered condition (spread <= 0.019124 |
@@ -53,12 +54,11 @@
 | 16 | `H64` | **iterate** | ASYMMETRIC surrogate composed with the champion stack. connectome +0.104084 pp ( |
 | 15 | `H59` | **keep-partial** | Variant H63. NEW MOUSE CHAMPION 93.10282596057695 -> 93.17538325903584 (+0.07255 |
 | 14 | `H59` | **iterate** | Minimal-FAS arc reclamation. Prototype PASSED all three with exact certificates  |
-| 13 | `H60` | **kill** | H60 killed at the SCREEN (net-digraph condensation; connectome +0.007311 vs a 0. |
 
 ## Evidence
 
 - `results/*.json`: **605** run records across **40** variants
-- killed mechanisms on record: **27** (+7 deferred, 18 meta-rules)
+- killed mechanisms on record: **29** (+7 deferred, 19 meta-rules)
 - literature notes: **12** (latest: `vahidi-2025.md`)
 
 ## Control
