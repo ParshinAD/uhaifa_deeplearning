@@ -7364,3 +7364,483 @@ PYTHONPATH=src $PY autoresearch/update_sota.py --variant H64 --dataset connectom
 ```
 
 ---
+
+---
+
+## 2026-08-28 — Cycle 18 · P19 / variant **H70**: re-allocate microns compute — **ITERATE** (P19's runtime invariant is RESTORED and its kill_condition literally met; the score leg is confirmed-but-blocked on `relabel.microns`, and `sota.json` is untouched)
+
+**Item.** `queue.json` **P19**, priority 0, `kind: infrastructure`, `axis: runtime safety`, executed as
+science variant **H70** — which is what P19's own `method` step 2 and the operator's decision both
+required: *"re-size microns as a NORMAL VARIANT through the full ladder … never by hand-editing a
+constant to rescue a promotion."*
+**Mode.** incremental. `cycles_since_score_move` = 0 (< 3), `consecutive_kills` = 0, and ~15 open
+science items, so no divergence and no ideation trigger. **`cycles_since_literature_scan` = 5 → the
+scheduled literature scan fired and ran FIRST** (§ Rung 0).
+**Machine.** Windows 10 laptop, NVIDIA RTX 4060 Laptop GPU (CUDA), torch 2.8.0+cu128, Git Bash.
+**Preflight.** clean tree; branch `auto/campaign-v3` = `campaign.yaml`'s `campaign.branch`;
+`PYTHONPATH=src $PY -m pytest tests/ -q` gives **598 passed** in 164.30 s.
+
+**Why this item.** P19 was the single blocking item of the campaign, and the operator had already
+specified the fix, the lever and the caution (commit `a95e2f6`): do **not** raise
+`max_wall_clock_s_per_run`; make microns fit with real margin; treat speed as a goal in its own
+right; size the epoch count **on the curve, never picked**; and note in advance that the known
+−0.0024 pp data point at 20,000 epochs *exceeds* the 0.002 pp microns bar, so the trade is real and
+not rounding. Taking a P-item at the top of the queue is legitimate here because divergent mode was
+not active and because P19 is not tooling debt — it is a runtime-invariant violation that blocks
+promotion on a primary dataset for **every** variant, not just this one.
+
+---
+
+### Gates run
+
+`novelty`, `prototype`, `screen`, `confirm`, `critic` — all five, for this variant, in this cycle.
+**Both the `confirm` and `critic` rungs were executed by independent subagents** (`verifier`,
+`critic`), which fixes the weakness cycles 16 and 17 both recorded against themselves ("the critic
+rung was inline, not an independent subagent, for the second cycle running; that is the weakest part
+of this promotion's evidence"). The verifier did not *generate* the confirm runs — the cycle
+launched that sweep, because there is one GPU and the sweep is 3.3 h — it **independently
+re-derived every number from the artifacts, re-scoring position vectors with the frozen oracle
+rather than reading `pct` fields, and re-ran the audit itself**. That distinction is recorded rather
+than glossed.
+
+**This cycle promotes nothing.** `sota.json` is unchanged.
+
+---
+
+### Rung 0 — the scheduled LITERATURE SCAN (`cycles_since_literature_scan` = 5)
+
+Ran first, by the `scout` subagent → `autoresearch/lit/scan_cycle18.md`. Filed **H71** (subset-
+bipartition "tuck" interval repair, from GRaSP / Lam–Andrews–Ramsey UAI 2022 — H45/H52's pair
+relocation is its prefix special case), **H72** (minimum-backward-crossing split point in the SCC
+recursion; `scc_recursive.py:275` currently cuts at a fixed *positional* fraction that never reads
+an edge weight), **H73** (displacement-minimising tie-break in the exact-gain sift;
+`insertion.py:208` makes rightward movers stop at the near edge of their optimal plateau while
+leftward movers overshoot to the far edge). `next_free_id` → **H74**.
+
+Two results from the scan that matter beyond the queue, both recorded because they are calibration,
+not hypotheses:
+
+* **LP/SDP rounding for linear ordering is a dead axis and should never be searched again.** Best
+  guarantees are the trivial 2-approximation, beating random ordering by any constant is UG-hard,
+  and every guarantee sits ~34 pp *below* where this campaign already is.
+* **The FlyWire leaderboard is unchanged since 2026-01-09, and H64's +0.104084 pp — the largest
+  single connectome move of the campaign — overtook exactly zero entries.** The same seven public
+  solutions sit above us as sat above H42; the nearest rung is Hashorva at 84.37753%, **+0.11935 pp**
+  away. Worth stating plainly: cycle 17's headline gain did not change our standing.
+
+Third consecutive scan blocked on missing `poppler`/`pdftotext`, so `2506.13799v1.pdf` still cannot
+be read. That is now the cheapest research-infrastructure fix available and it has cost three scans.
+
+### Rung 1 — NOVELTY: **PASS**
+
+H70's axis is *compute allocation / runtime safety*. All 21 entries in `killed.json` and the 7
+`deferred_not_falsified` were scanned: none sits on this axis. No revival condition is needed. The
+axis is in fact H42's own — its recorded hypothesis is "cut the inner sift and spend the freed
+seconds on more alternations" — so H70 extends a **live champion's** axis rather than reviving a
+dead one. **M2** (dynamics null) does not reach an epoch count, and the result below *corroborates*
+M2 rather than contesting it.
+
+### Rung 2 — PROTOTYPE: the iso-budget sizing study
+
+`experiments/proto_P19_sizing.py` → `experiments/outputs/proto_P19_microns.json`. Three arms,
+E ∈ {30,000, 40,000, 50,000}; each runs the **full pipeline from scratch** (greedy-FAS → Rocket →
+sift → stage 4) and then drives stage 4 **one cycle at a time**, logging score and cumulative wall
+after every cycle, to a 2600 s run-wall cap. **174 measured (E, C) points.** Launched detached at
+20:43:16, finished 22:58; script committed at `a7d4333` *before* launch.
+
+Two artifacts already on disk pin the ends of the range and were reused rather than re-run:
+`proto_P07.json` (epoch grid at 5 cycles) and `proto_H43_microns.json` (the stage-4 recovery curve
+at E = 20,000, to 120 cycles / 3401.9 s).
+
+**P19 asked for two things to be re-derived. Both are answered.**
+
+1. `proto_H43_microns.json` is **not** self-contradictory. `recovered_cut: false` means "final delta
+   > 0" is false — it is −0.002428 pp. The separately quoted **87.3% recovery** is the fraction *of
+   the cut* recovered, (0.019188 − 0.002428) / 0.019188 = 87.3%. Both correct; different questions.
+   What that artifact actually establishes is the load-bearing fact: **at E = 20,000 stage 4
+   asymptotes SHORT of the champion** (−0.019188 @ 5 cycles → −0.003636 @ 50 → −0.002428 @ 120,
+   where it ran out of budget), and −0.002428 pp exceeds the 0.002 pp bar. So E = 20,000 is too deep
+   a cut at *any* affordable cycle count, and the operating point had to come from higher up.
+2. The operator's caution was therefore correct and binding, and it was respected: the sizing rule
+   below required `delta ≥ +0.002`, not mere non-inferiority.
+
+**M12 does not apply, and this was verified rather than asserted.** M12 says a prototype started
+from the champion's converged order overstates. Every arm here ran from scratch, so the prototype
+*is* the pipeline. Affirmative evidence: the E=50,000 arm's `rocket_pct` **83.11318220503324** and
+`sift_pct` **83.20086085198088** equal the production run's `pure_best_pct` / `sift_best_pct` to
+every digit, and its predicted cycle-19 `best_pct` equals the confirm `pct` **83.25311870213525** —
+the same integer score, 12,821,444.
+
+**The arms CROSS, which is why the selection rule had to be sealed.**
+
+| best Δ vs champion reachable within… | E = 30,000 | E = 40,000 | E = 50,000 |
+|---|---|---|---|
+| 1800 s | **+0.007824** | +0.001954 | — |
+| 2000 s | **+0.008630** | +0.007032 | — |
+| 2200 s | **+0.008980** | +0.008831 | +0.008396 |
+| 2400 s | +0.009175 | +0.009889 | **+0.012753** |
+| 2600 s | +0.009331 | +0.010292 | **+0.014201** |
+
+E = 30,000 wins below ~2150 s and E = 50,000 wins above ~2350 s. With a crossing family, any rule
+chosen after seeing the whole surface is fitted to it — so the rule was written to
+`experiments/outputs/proto_P19_sizing_rule.json` and **committed at `72fd700`, 22:50:28**, while the
+sizing artifact's final write is **22:52:39** (filesystem mtime): the seal precedes the completed
+curve by 131 s. Three constraints: margin (`run_wall × 1.205 ≤ 3450 s`, the largest slowdown ever
+measured on this box), score (`Δ ≥ +0.002 pp`), then **minimise wall subject to being within one
+microns bar of the measured best**.
+
+Applied mechanically — and re-applied independently by both the verifier and the critic, who each
+reproduced the choice from the artifact without reference to the cycle's answer — it selects
+**E = 50,000, C = 20 cycles**: 83.25311870, +0.01226579 pp, 2338.3 s.
+
+**Three caveats on that sizing, all of which the log must carry (critic condition 6):**
+
+* **The margin constraint was inert.** The 2600 s study cap means no measured point could violate
+  `run_wall ≤ 2863 s`. The binding terms were the score bar and the within-one-bar band.
+* **C = 20 sits on a rising slope, not a plateau.** The same arm reaches +0.014266 pp at cycle 35 /
+  2611 s and was still climbing when the study cap stopped it. So the specific +0.012266 pp is a
+  property of where the study was stopped as much as of the mechanism.
+* **The seal was pre-commitment but NOT blind pre-registration, and must not be described as
+  P18-equivalent.** At seal time arm 3 had reached ~2480 s (~cycle 27), so the winning point at
+  2338.3 s was *already visible*; only cycles ~28–35, which set the rule's `max` anchor, were not.
+  The rule's own `why_sealed` field says so. Bounded exposure: the feasible optimum was cycle 35 at
+  +0.014266 pp, so maximal fitting could have bought only ~+0.002 pp more.
+* Cosmetic: the pick clears the 0.002 pp tolerance by 7.23e-08 pp. Immaterial — perturbing the
+  tolerance by 5e-5 relative moves the pick one cycle (17 s, +0.0002 pp). A flat neighbourhood, not
+  a fitted cliff.
+
+### Rung 3 — SCREEN: **PASS on the dataset under test**
+
+Seed plan (`seed_plan.py --variant H70 --role implement`): `class=rng` variant-wide (fail-safe, from
+`pair_relocate`'s unresolved `time.time()` — the same classification H63 and H52 carry), but the
+**per-dataset** classifier returns `deterministic` on both primaries because stage 5 is gated off
+there, giving connectome ×1 and mouse ×3.
+
+**`microns` is `in_screen: false`, so `--auto-seeds` excludes it — and H70's entire mechanism is the
+microns configuration.** Screening without it would screen nothing. So the policy-resolved legs were
+run by `--auto-seeds` exactly as written, and microns was run **additionally**, at seed 42, the
+count its own per-dataset classification gives. That is additive: it relaxes no threshold and skips
+no rung. Recorded here because "remember to also run microns" is not a policy either.
+
+| dataset | pct | Δ vs its champion | wall | note |
+|---|---|---|---|---|
+| **microns** | **83.25311870213525** | **+0.01226579 pp** | **2332.8 s** | not degraded; 6.1× the 0.002 bar |
+| connectome | 84.25817950936937 | **exactly 0** | 1201.5 s | bit-identical to H64 |
+| mouse ×3 | 93.17538325903583 | **exactly 0** | 0.7 s | bit-identical to H63; 3 seeds agree |
+
+The controls are **not** an assertion. The verifier hashed the position vectors:
+`SHA-256(positions.tobytes())[:16]` for H70/connectome/s42 = `01c5df6f28087bf3` = identical to all
+five H64 connectome confirm runs, and H70/mouse = `41f36bb281646ca0` = identical to all twenty H63
+mouse confirm runs. Bit-identity holds at the position-vector level, so the `_SURROGATE` dispatch
+perturbs nothing.
+
+### Rung 4 — CONFIRM: microns 5 seeds + mouse 20 seeds
+
+`bash autoresearch/sweep.sh --exp H70 --role confirm --datasets microns,mouse`, launched 00:01:02,
+finished 03:15:42 — **one continuous 3.3 h session, which is precisely the sustained-load condition
+that broke the champion.**
+
+| seed | pct | wall | degraded | deadline_reached |
+|---|---|---|---|---|
+| 42 | 83.25311870213525 | 2321.8 s | False | False |
+| 123 | 83.25311870213525 | 2324.6 s | False | False |
+| 999 | 83.25311870213525 | 2322.0 s | False | False |
+| 7 | 83.25311870213525 | 2321.8 s | False | False |
+| 31415 | 83.25311870213525 | 2324.6 s | False | False |
+
+n = 5, one distinct value, std 0. **Δ = 1,889 weight units / 15,400,557 = +0.01226579012694 pp**
+(exact, re-derived by the verifier in `Decimal`). PROTOCOL CI lower bound **+0.01152202 > 0**.
+Mouse: 20/20 at 93.17538325903583, Δ exactly 0, non-inferior.
+
+**Runtime — this is the solid half of the cycle.** Spread **2.8 s (0.122%)**, **no drift with start
+time**, **0 of 5 truncated**, margin to the 3450 s deadline **1125.4 s**, tolerating a **+48.4%**
+slowdown. Against the champion's best-ever recorded walls (3397.8–3418.0 s, i.e. 32 s = **0.93%** of
+margin) that is **1.470× faster on 62% of the gradient budget** (50,000 vs 80,000 steps), so H70
+wins on both admissible compute bases and the `compute.microns` WARN runs in its favour.
+
+**P19's literal `kill_condition` — "closes when five consecutive microns runs complete untruncated
+under representative conditions, with the spread recorded" — is SATISFIED for this configuration.**
+
+Correction to the record while it is being quoted: the truncation tally at the 80,000-epoch
+configuration is **6 of 8 H64 microns runs, PLUS the unmodified H42 control = 7 of 9**, not "6 of 8
+including the control" — the control is a ninth run. The cycle's own earlier phrasing understated it.
+
+### Rung 5 — CRITIC + mechanical audit: **FAIL → do not promote**
+
+```bash
+PYTHONPATH=src $PY autoresearch/audit.py --variant H70 --comparator champion \
+    --role confirm --comparator-role confirm --gate promotion --datasets microns \
+    --out autoresearch/audit_H70.json          # VERDICT: FAIL
+```
+
+`effect_size` PASS (+0.0123 vs a 0.0020 bar) · `protocol_ci` PASS (+0.0115 > 0) · **`provenance`
+PASS** · `runtime` PASS · **`runtime_guard` PASS — all 5 ran under an armed deadline, none
+truncated** · `rescore` PASS (25 runs re-scored exact) · `frozen.manifest` / `frozen.git` PASS.
+
+**Hard FAIL: `relabel.microns`** — both pools are degenerate (std = 0), so the seed pool carries no
+robustness evidence, and no P09 relabelling study is registered for the `(H70, H42, microns)` triple.
+
+**Audit scope, stated honestly (critic condition 2).** "Exactly one hard FAIL" is true only at
+`--datasets microns`. Run **unscoped** there are **two**: `relabel.microns` and **`runs.connectome`
+— no H70 connectome confirm pool exists**. The confirm sweep deliberately covered only microns and
+mouse: H70's connectome leg is bit-identical to the champion (proven at the position-vector level
+above) and no connectome promotion is sought, so 5 × ~1200 s to re-derive a delta of exactly 0 was
+not spent. That is a defensible economy, but it is a real gate failure and it is named here rather
+than hidden behind the scope flag.
+
+**Provenance — the H36/H42 defect is fixed here.** `2bbc6dc` (which adds `H70.py`) is timestamped
+`23:00:06`; the earliest H70 run starts `23:00:21`, **15 s later**, and all 30 H70 runs postdate it.
+`git diff 2bbc6dc -- src/mfas/experiments/H70.py` is empty. The module landed **before** the runs
+that cite it, which is exactly what H36 and H42 both fail. The `+dirty` WARN concerns
+`queue.json`/`state.json`, not `src/`.
+
+**Moving comparator — WARN adjudicated, benign.** H42's pool spans two commits (`1865372b+dirty`
+n=3, `3791350d+dirty` n=2). The critic loaded all five `_positions.npy`: **all five are bit-identical
+vectors**, same `config_hash` f91b66, same 80,000 grad steps. The split did not denote a different
+configuration — proven by output identity. The degraded 2026-08-27 control (83.20304259) is **not**
+in the comparator pool; that was checked specifically.
+
+**Dataset keying, named as the audit demands (critic condition 7).** `_EPOCHS`, `_ALT_CYCLES`,
+`_MAX_SWEEPS`, `_ALT_SIFT_SWEEPS` are compute budgets; `_PAIR_MAX_POPS`, `_RECLAIM_ROUNDS` switch a
+stage off at budget 0. **`_SURROGATE` is not a budget — it keys the *algorithm* on the dataset
+name.** That is legitimate only because `sota.json` is per-dataset and P14 requires each leg to
+compose on its own champion, and it is inherited from H64 rather than introduced here. Nothing is
+keyed on the target metric; `_SIZING` contains the champion's pct but is a documentation dict
+referenced nowhere in executable code.
+
+---
+
+### The result that outlives the verdict: **the microns gradient tail is worth one weight unit**
+
+The delta decomposes exactly, along the two constants that moved, and both terms are measured on the
+same arm of the sizing study:
+
+```
+Δ = [ H70 @ (50k, C=20) − H70 @ (50k, C=5) ]  +  [ H70 @ (50k, C=5) − H42 @ (80k, C=5) ]
+  = +0.01225930 pp                             +  +0.00000649 pp
+  = +0.01226579 pp
+```
+
+The second bracket — **the entire 80,000 → 50,000 epoch cut, holding stage 4 fixed at the champion's
+5 cycles — is +0.00000649 pp, which is ONE weight unit out of 15,400,557.** The last 30,000 gradient
+epochs cost ~1,131 s and buy nothing measurable at all. Every bit of the gain is the 15 extra
+alternation cycles.
+
+**M8's marginal-rate clause, evaluated at the operating point:**
+
+| stage | seconds | Δ bought | marginal rate |
+|---|---|---|---|
+| Rocket tail, 50k → 80k epochs | 1,131 s | −0.0000065 pp | **−5.7e-9 pp/s** |
+| stage 4, cycles 5 → 20 | 256 s | +0.012259 pp | **+4.79e-5 pp/s** |
+
+Stage 4 beats the stage it competes with by **four orders of magnitude**. Stated honestly:
+4.79e-5 pp/s is itself an order *below* M8's quoted microns stage-4 rate of 4.33e-4 pp/s, because
+that figure is the rate at cycles 0–5 and the curve is well down its slope by cycle 20.
+
+**So the finding to quote is the mechanism, not the number: on microns the gradient phase is
+saturated well before 80,000 epochs, and stage 4 at the champion's 5 cycles has not converged.**
+The particular +0.012266 pp is a property of a stopping choice (C = 20 on a rising slope, E sampled
+only at 30k/40k/50k with score monotone increasing in E) and should not be quoted as the finding.
+
+---
+
+### Why this is ITERATE and not KEEP — the score claim is not established
+
+The `relabel.microns` FAIL is **substantive, not bureaucratic**, and P21 — filed by cycle 17 and not
+previously applied to a new variant — is what makes it so:
+
+* **H52|H42** is a *nested* pair (an appended monotone stage): paired delta sd **0.002011 pp**.
+* **H64|H42** is a *non-nested* pair (a shared-prefix stage changed): paired delta sd **0.021196 pp**
+  — *larger* than the comparator's own marginal 0.019124 pp, i.e. essentially no cancellation.
+
+**H70|H42 is non-nested**: it changes stage 2, a shared-prefix stage. Under P21's own measurement the
+relevant dispersion regime for this pair is ~0.02 pp, and **+0.012266 pp is below one paired sd of
+the only comparable pair the campaign has ever measured.** microns' relabelling dispersion has never
+been measured; the two datasets that have been sit at 0.0191 pp (connectome, 136,648 nodes) and
+0.0154 pp (mouse, 148 nodes), and microns is *smaller* than connectome, so there is no basis for
+assuming its σ is an order smaller. The passing PROTOCOL CI is no reassurance: it is floored at
+`baseline_sigma_pp = 0.0006`, a **seed**-noise floor 32× smaller than the measured **relabelling**
+noise on the sister dataset.
+
+The mitigating structural argument, recorded because it is real and because it is what a future
+study should test: the first bracket of the decomposition above (+0.01225930 pp) is a monotone,
+best-tracked continuation of the *same* trajectory and is ≥ 0 under any labelling with probability 1
+— only its magnitude varies — and H70's stage 2 is literally a **prefix** of H42's (identical init,
+identical optimizer, stopped 30,000 steps earlier), which is far tighter sharing than a surrogate
+swap. So the true paired sd here plausibly sits between the 0.002 and 0.021 regimes. *Plausibly.*
+The campaign's own rule is that an unmeasured dispersion is not a small one.
+
+**The honest claim is therefore: "equal to the champion on the canonical labelling, possibly better,
+at 0.68× the wall clock."** At ~0.02 pp dispersion even the hypothesis as written — non-inferiority
+at ≥ −0.002 pp — is not robustly established.
+
+### And H70 is not the best measured microns configuration — which the cycle nearly failed to notice
+
+The verifier found this and it is decision-relevant. `results/*-H63-microns-*-confirm-*.json`: n = 5,
+`role=confirm`, guard-armed, **0 degraded**, **83.25965742667618 = +0.01880451 pp over H42** — that
+is **+0.0065 pp ABOVE H70** — at walls 2954.6 / 2958.2 / 3079.8 / 3100.8 / **3397.7 s**. H63 was
+refused on the *same* `relabel` gate H70 fails.
+
+The configurations differ in two places: H63 runs `_EPOCHS["microns"] = 70_000` with
+`_RECLAIM_ROUNDS["microns"] = 1`; **H70 sets `_RECLAIM_ROUNDS["microns"] = 0`, i.e. it switches OFF
+the stage-6 arc reclamation that produced H63's larger microns gain**, because it inherited H64's
+constants rather than H63's. That was not a considered choice and it is recorded as an error of
+omission.
+
+But H63 does **not** solve P19: at 3397.7 s its worst run has 52 s of margin — P19's failure mode
+exactly. So the two results are complements, not competitors:
+
+| | Δ vs H42 | worst wall | margin | solves P19? |
+|---|---|---|---|---|
+| H42 (champion) | — | 3418.0 s | 32 s (0.93%) | no — 7 of 9 truncated |
+| H63 microns leg | **+0.018805 pp** | 3397.7 s | 52 s (1.5%) | **no** |
+| **H70** | +0.012266 pp | 2324.6 s | **1125 s (48%)** | **yes** |
+
+And the arithmetic that makes the next experiment obvious: H70 frees **1,073 s**, while stage 6 on
+microns costs **~1,065 s** (222 s reachability scan + 843 s conflict resolution, cycle 14). The
+freed seconds are almost exactly the price of the stage H70 turned off. So the composition is
+feasible — but only just, and only if either P13 cheapens reclamation or the epoch count is cut
+further (the sealed study's runner-up, E = 30,000 / C = 40, is +0.008467 pp at **1,920 s**, leaving
+1,530 s). Filed as **H74**.
+
+---
+
+### Critic verdict (independent subagent)
+
+**APPROVE-WITH-CONDITIONS — iterate. Do not promote.** *"The cycle's proposed action (treat
+`relabel.microns` as decisive, record H70 as confirmed-but-blocked) is the right call, and it is
+neither too weak nor too strong: the runtime deliverable is proven and should be kept; the score
+claim is a canonical-labelling point estimate below the only measured paired dispersion for its own
+variant class."* Nine conditions; all nine executed in this entry or in the queue/state updates:
+(1) do not promote — `sota.json` untouched; (2) audit scope stated, `runs.connectome` named;
+(3) headline demoted to point-estimate-plus-dispersion with the two-term decomposition and P21;
+(4) `queue.json` P19 status corrected (below); (5) tally corrected to 7 of 9; (6) three sizing
+caveats recorded; (7) `_SURROGATE` named as algorithm keying; (8) relabel-study design escalated to
+the operator as **P23**; (9) `tests/test_experiment_H70.py` added, pinning the two constants and the
+structural-no-op property, which H63 and H64 both had and H70 did not.
+
+### Verifier verdict (independent subagent)
+
+**Microns runtime leg CONFIRMED; microns score leg NOT CONFIRMED.** Reproduced the audit exit 1
+independently, re-derived Δ to 14 digits from oracle re-scores of the `.npy` position vectors,
+verified the seal ordering from filesystem mtimes and the provenance ordering from `git log`, and
+found the H63 comparison above. Five claims it judged overstated are corrected in this entry —
+including the one worth repeating: **"the prototype predicted the screen to 0.00000000 pp" is the
+wrong word.** `proto_P19_sizing.py` imports the same deterministic stage code `H70.py` calls, same
+seed, same device, so identity is *entailed*, not predicted. What it genuinely proves is that the
+prototype drove stage 4 one cycle at a time in a loop while `H70.py` calls the refiner once with
+`n_cycles=20`, and the two drive patterns agree bitwise — a real wiring and statelessness check that
+rules out a transcription error in (E, C). Credit it as **reproducibility, not predictive skill**.
+
+---
+
+### Decision — **ITERATE**
+
+* **P19 is ANSWERED but its fix is NOT SHIPPED.** The runtime invariant is restored *for the H70
+  configuration*, and P19's `kill_condition` is literally satisfied. But the shipped microns champion
+  is still H42 at 80,000 epochs and still truncates, so **the blocker is not cleared**. Status set to
+  `answered-fix-built-not-shipped`, not `resolved` (critic condition 4).
+* **H70 is CONFIRMED on microns and BLOCKED on `relabel.microns`.** `sota.json` unchanged.
+* `cycles_since_score_move` → 1. `consecutive_kills` stays 0 (this is not a kill: the mechanism
+  works, the evidence for its *size* is incomplete). `cycles_since_literature_scan` → 0.
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY experiments/proto_P19_sizing.py                       # the sizing study (2.2 h)
+bash autoresearch/sweep.sh --exp H70 --role implement --auto-seeds       # connectome + mouse controls
+bash autoresearch/sweep.sh --exp H70 --role implement --datasets microns --seeds 42
+bash autoresearch/sweep.sh --exp H70 --role confirm --datasets microns,mouse
+PYTHONPATH=src $PY autoresearch/audit.py --variant H70 --comparator champion \
+    --role confirm --comparator-role confirm --gate promotion --datasets microns \
+    --out autoresearch/audit_H70.json
+```
+
+### New queue items
+
+* **P23** (priority 0, escalation) — the microns relabelling study cannot be run as designed:
+  `proto_P09_relabel.py:112` resolves the production deadline, so the **H42 comparator arm would
+  itself truncate** and its r = 0 identity anchor would return 83.20304259 instead of the recorded
+  83.24085291200831, failing the study's own validity check before measuring anything. Running that
+  arm **unguarded** is sound study design — the guard is documented as "an ABORT, never a SIZING
+  rule", it is directionally adverse to H70, it never binds on H70, and **the recorded comparator was
+  itself measured unguarded** (all five 2026-08-10 runs carry `runtime_guard: None`), so reproducing
+  it unguarded is fidelity rather than deviation. **But it would knowingly produce runs outside the
+  3600 s hard cap, and it is a change that makes it easier for the campaign to promote its own held
+  result — so it goes to the operator, not to the campaign's own authority.** Cost if approved
+  ~8.1 h. Two cheaper designs in the packet: (a) measure only the H42 arm's microns relabelling
+  dispersion, 5 unguarded runs, ~4.9 h — this is the number nobody has and it is what actually
+  decides whether +0.0123 pp is inside noise; (b) exploit the prefix-nesting — checkpoint one
+  unguarded H42 run per labelling at 50,000 epochs and branch H70's arm from it, halving the cost and
+  making the pairing exact by construction.
+* **H74** (priority 1) — compose H70's re-allocation with stage-6 reclamation on microns
+  (`_RECLAIM_ROUNDS["microns"] = 1`), epoch count re-sized to pay for it. Never run. H63's microns
+  leg is +0.018805 pp with stage 6 at 3397.7 s; H70 is +0.012266 pp without it at 2324.6 s and frees
+  1,073 s against stage 6's ~1,065 s cost.
+* **H71 / H72 / H73** from the literature scan (§ Rung 0).
+
+### What would falsify this, written down so the next phase knows where it is fragile
+
+* A microns relabelling study whose **paired delta sd ≥ ~0.006 pp**, or whose **min `delta_r` falls
+  below +0.002 pp at R = 4**, kills the score claim outright. This is the single measurement that
+  decides the variant and it has never been taken on this dataset.
+* The **runtime** result falls only if a microns run at (E = 50,000, C = 20) is ever observed with
+  `deadline_reached: true`. The 1,125 s margin makes that unlikely — but it was measured on one box.
+* The score result is fragile to the **stopping choice**: C = 20 is on a rising slope and E was
+  sampled only at 30k/40k/50k with score monotone increasing in E, so 60,000 may be better still at
+  ~2,600 s (70,000+ cannot fit — Rocket alone would be ~2,640 s). Re-running the sizing at a higher
+  cap would select a different point and a different delta.
+* Everything here is **CUDA/RTX-4060-specific**. `s_per_epoch` ≈ 0.0377 is what makes 50,000 epochs
+  fit. On a machine with a different gradient-to-refinement cost ratio the whole allocation must be
+  re-sized, and "the epoch cut is free" must be re-measured before it is reused.
+
+### Found while doing the bookkeeping: `verify_cycle.py` was inspecting the wrong text
+
+`autoresearch/verify_cycle.py` is the script that enforces CAMPAIGN.md rule 3 — *every score figure
+in the log must trace to an artifact*. On its first run this cycle it reported:
+
+```
+      cycle18.figures: all 0 score figure(s) trace to an artifact
+      cycle18.deltas:  all 0 pp-delta(s) reconcile with artifact figures
+      VERDICT: PASS
+```
+
+**Zero, from a section quoting several dozen scores.** `extract_cycle_section()` keyed on the ITEM
+id first and took the **first** match at **any** heading level, so cycle 17's subsection
+`### THE OPERATOR RESOLVED P15 AND P19 WHILE THIS CYCLE WAS RUNNING` (line 7222) shadowed cycle 18's
+own `##` heading (line 7370). That subsection quotes no scores, so both checks passed **vacuously**
+— and they are the only mechanical enforcement rule 3 has.
+
+This is the same failure mode the campaign has now recorded three times in its tooling: a check that
+cannot fail is indistinguishable from a check that passes. It would have shadowed **any** cycle whose
+item id was discussed by an earlier cycle in a sub-heading, which is the common case for a P-item
+that the operator answers mid-cycle.
+
+Fixed in place, and the fix can only ever make the gate stricter (the cycle-9 principle: a
+tightening the campaign may impose on itself, unlike a relaxation): try the **cycle number** first —
+the more specific key whenever the heading carries it — prefer a **level-2** heading, which is the
+log's actual per-cycle convention, and take the **last** match rather than the first, since a later
+cycle discussing an earlier item is the common case and the reverse is not. The item id remains the
+fallback for older headings that carry no cycle number. Regression-checked: cycles 10 and 13–17 all
+still resolve to their own `##` headings, with unchanged section lengths.
+
+Re-run against the correct text, the gate did real work immediately:
+
+```
+      cycle18.figures: all 10 score figure(s) trace to an artifact (1 by declaration)
+      cycle18.deltas:  all 15 pp-delta(s) reconcile with artifact figures
+      VERDICT: PASS   (0 FAIL, 0 WARN, 13 checks)
+```
+
+The one declared figure is **84.37753** — Hashorva's entry on the public FlyWire leaderboard, the
+nearest solution above this campaign. It is a competitor's score and can never have a
+`results/*.json`, so it is registered in `autoresearch/known_figures.json` **with that reason**
+rather than left bare. It first FAILed, which is the check behaving correctly.
+
+**Consequence for the record, stated rather than left implied:** every cycle before this one had its
+`figures`/`deltas` checks run against whatever section the old extractor happened to find. For most
+cycles that was the right section — the shadowing needs an earlier sub-heading naming the item — but
+it is not guaranteed for any of them, and this cycle is the first whose numbers are known to have
+been mechanically traced. Filed as **P24** to re-verify the back catalogue, which is cheap now that
+the extractor is right.

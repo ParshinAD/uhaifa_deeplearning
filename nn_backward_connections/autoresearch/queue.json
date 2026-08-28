@@ -1,8 +1,8 @@
 {
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
-  "updated": "2026-08-27",
-  "next_free_id": "H74",
-  "next_free_protocol_id": "P12",
+  "updated": "2026-08-28",
+  "next_free_id": "H75",
+  "next_free_protocol_id": "P25",
   "items": [
     {
       "id": "P01",
@@ -925,7 +925,7 @@
     {
       "id": "P19",
       "title": "P07 CONFIRMED on the champion itself: microns truncates 3/5 under sustained load, and no variant can be promoted on microns until it is fixed",
-      "status": "proposed",
+      "status": "answered-fix-built-not-shipped",
       "priority": 0,
       "kind": "infrastructure",
       "axis": "runtime safety",
@@ -946,7 +946,31 @@
       "operator_decision_2026_08_27": "DO NOT raise max_wall_clock_s_per_run. Make microns FIT the existing 3600 s invariant, and treat speed as a goal in its own right: the operator's words are 'let it squeeze into what it has, that is already too much in my opinion and ideally it should be faster'. More machine time arrives tonight, but the configuration must not depend on it. So the deliverable is a microns configuration with real margin under load, not a bigger cap.",
       "measurement_that_settles_the_lever": "microns runtime IS the gradient phase, measured on H64's own confirm run (results/*H64-microns-s42-confirm*.json): of 3419.6 s total, Rocket is 3252.8 s = 95.1%; sift is 82.2 s and stage 4 is 84.5 s. Cutting epochs is therefore the only lever that matters, and its price is already measured: experiments/outputs/proto_H43_microns.json runs microns at 20,000 epochs instead of 80,000 and gets t_rocket_s 754.0 (down from 3252.8, saving ~2,500 s) for final_delta_vs_champion_pp = -0.0024. That turns a 3,420 s run into roughly 950 s - a 3.6x margin under the guard instead of a 30 s deficit - and it is the same lever H62 already took from 80,000 to 70,000 without measurable loss.",
       "caution_stated_before_running": "-0.0024 pp EXCEEDS the microns effect-size bar of 0.002, so this is not free and must not be waved through as rounding. It is a variant change and takes the normal ladder - prototype, screen, confirm - with the epoch count sized on the curve rather than picked. Note also H43's own 'recovered_cut': false, i.e. stage 4 did NOT recover the cut at 200 cycles in that run, which contradicts the 87.3% recovery quoted from the H43 cycle and should be re-derived before it is trusted.",
-      "note_cycle17_operator": "The operator answered P19 at 19:48 (commit a95e2f6) DURING cycle 17, and the answer supersedes the 'next actions' cycle 17 had drafted an hour earlier. DO NOT raise max_wall_clock_s_per_run. Make microns FIT 3600 s with real margin, and treat speed as a goal in its own right. The lever is identified by measurement: microns runtime IS the gradient phase (3252.8 s of a 3419.6 s run = 95.1%; sift 82.2 s, stage 4 84.5 s), and its price is already on disk (proto_H43_microns.json at 20,000 epochs: t_rocket_s 754.0, final_delta_vs_champion_pp -0.0024). CAUTION STATED BY THE OPERATOR IN ADVANCE: -0.0024 EXCEEDS the 0.002 microns bar, so this is a real trade, not rounding - it takes the normal ladder with the epoch count SIZED ON THE CURVE, never picked. Also flagged for re-derivation: proto_H43_microns reports recovered_cut=false, contradicting the 87.3% stage-4 recovery quoted from the H43 cycle. Cycle 17's own contribution stands: raising reserve_s would make it WORSE (time_limit = cap - reserve), and scheduling microns alone does not help - cycle 17's re-runs WERE alone on the GPU and still truncated."
+      "note_cycle17_operator": "The operator answered P19 at 19:48 (commit a95e2f6) DURING cycle 17, and the answer supersedes the 'next actions' cycle 17 had drafted an hour earlier. DO NOT raise max_wall_clock_s_per_run. Make microns FIT 3600 s with real margin, and treat speed as a goal in its own right. The lever is identified by measurement: microns runtime IS the gradient phase (3252.8 s of a 3419.6 s run = 95.1%; sift 82.2 s, stage 4 84.5 s), and its price is already on disk (proto_H43_microns.json at 20,000 epochs: t_rocket_s 754.0, final_delta_vs_champion_pp -0.0024). CAUTION STATED BY THE OPERATOR IN ADVANCE: -0.0024 EXCEEDS the 0.002 microns bar, so this is a real trade, not rounding - it takes the normal ladder with the epoch count SIZED ON THE CURVE, never picked. Also flagged for re-derivation: proto_H43_microns reports recovered_cut=false, contradicting the 87.3% stage-4 recovery quoted from the H43 cycle. Cycle 17's own contribution stands: raising reserve_s would make it WORSE (time_limit = cap - reserve), and scheduling microns alone does not help - cycle 17's re-runs WERE alone on the GPU and still truncated.",
+      "resolution_2026_08_28": "ANSWERED BY H70 - BUT THE FIX IS BUILT, NOT SHIPPED. Corrected from an earlier 'resolved-by-H70' on the cycle-18 critic's condition 4, which is right: the shipped microns champion is STILL H42 at 80,000 epochs and still truncates, so the blocker is NOT cleared. WHAT IS ESTABLISHED: P19's literal kill_condition ('five consecutive microns runs complete untruncated under representative conditions, with the spread recorded') is SATISFIED FOR THE H70 CONFIGURATION - 5/5 clean in one continuous 3.3 h session, walls 2321.8-2324.6 s, spread 2.8 s (0.122%), no drift with start time, 1125 s of margin under the 3450 s deadline, tolerating a +48.4% slowdown, against the champion's 32 s (0.93%). The lever was SIZED ON THE CURVE and not picked: experiments/proto_P19_sizing.py ran the FULL pipeline from scratch at E=30,000/40,000/50,000 driving stage 4 one cycle at a time to a 2600 s cap = 174 measured (E,C) points; the arms CROSS, so the selection rule was sealed and committed at 72fd700 before the last arm finished (pre-commitment, though NOT blind - the winning region was already visible; see the log entry). BOTH SUB-QUESTIONS P19 ASKED ARE ANSWERED. (1) proto_H43_microns.json is not self-contradictory: 'recovered_cut: false' means final delta > 0 is false (-0.002428 pp), while '87.3% recovery' is the fraction OF THE CUT recovered. Both correct, different questions - and what that artifact really shows is that E=20,000 is TOO DEEP a cut, which is why the operating point came from higher in the range. (2) The operator's warning that -0.0024 pp exceeds the 0.002 bar was correct and was respected: the sizing rule demanded delta >= +0.002, not mere non-inferiority. THE FINDING THAT OUTLIVES THE ITEM: the 80,000->50,000 epoch cut, holding stage 4 at the champion's 5 cycles, costs ONE WEIGHT UNIT out of 15,400,557 (+0.00000649 pp) for ~1,131 s. The microns gradient phase is saturated long before 80,000 epochs and stage 4 at 5 cycles has NOT converged. Marginal rates at the operating point: rocket tail -5.7e-9 pp/s vs stage 4 +4.79e-5 pp/s - four orders of magnitude. WHAT REMAINS: H70 cannot become the microns champion until relabel.microns is paid, and that study cannot be run as designed - see P23. Until then microns keeps a champion that truncates."
+    },
+    {
+      "id": "H70",
+      "title": "Re-allocate microns compute: gradient epochs 80,000 -> 50,000, stage-4 cycles 5 -> 20 (P19's deliverable)",
+      "status": "confirmed-blocked-on-relabel",
+      "priority": 0,
+      "kind": "science",
+      "axis": "compute allocation / runtime safety",
+      "hypothesis": "Moving microns' seconds out of the gradient phase and into the alternating refiner produces a run that finishes with REAL MARGIN under the 3450 s guard deadline while staying non-inferior to the champion (delta >= -0.002 pp). Measured outcome is stronger than the hypothesis: it is non-inferior AND better.",
+      "rationale": "P19 is blocking. microns' shipped configuration has ~1% runtime margin (3397.8-3418.0 s against a 3450 s deadline) and truncates stochastically - 6 of 8 H64 runs, plus the unmodified champion H42 on its own control run at 3495.3 s. Runtime IS the gradient phase (95.1% of the run), so epochs are the only lever with enough seconds in it, and the seconds freed are worth far more in stage 4 near the operating point.",
+      "prior_evidence": [
+        "experiments/outputs/proto_P19_microns.json (3 arms, 174 measured (E,C) points)",
+        "experiments/outputs/proto_P19_sizing_rule.json (rule sealed at 72fd700 before the last arm)",
+        "experiments/outputs/proto_P07.json (epoch grid at 5 cycles)",
+        "experiments/outputs/proto_H43_microns.json (stage-4 recovery at E=20,000 - asymptotes SHORT)",
+        "results/20260827T202108Z-H70-microns-s42-implement-ce6e46.json (screen)"
+      ],
+      "screen_result": "microns 83.25311870213525 = +0.01226579 pp over the champion, 6.1x the 0.002 bar, wall 2332.8 s vs ~3418 s (1.47x faster, 1117 s margin, tolerates +48%), not degraded. connectome and mouse bit-identical to H64/H63 by construction.",
+      "est_cost": "prototype 2.2 h + screen 1.0 h + confirm ~3.3 h, all GPU",
+      "expected_pp": "+0.0123 pp on microns, and ~1080 s/run returned to the budget",
+      "source": "P19 (operator decision a95e2f6, 2026-08-27)",
+      "confirm_result": "microns 5/5 bit-identical at 83.25311870213525 = +0.01226579012694 pp over H42 (1,889 weight units), PROTOCOL CI lower bound +0.01152202; walls 2321.8-2324.6 s, spread 2.8 s, 0/5 truncated, 1125 s margin. mouse 20/20 bit-identical to H63, delta exactly 0. connectome NOT confirmed (implement-role control only, but bit-identical POSITION VECTORS to H64). audit --gate promotion --datasets microns = FAIL on relabel.microns (unscoped: also runs.connectome). NOT PROMOTED. The score claim is a canonical-labelling POINT ESTIMATE: H70|H42 is a NON-NESTED pair and P21 measured non-nested paired sd at 0.021196 pp, so +0.012266 pp is below one paired sd of the only comparable pair ever measured, and microns' relabelling sigma is UNMEASURED. Honest claim: equal to the champion on the canonical labelling, possibly better, at 0.68x the wall clock.",
+      "next": "P23 (the relabel study design) decides this variant; H74 is the composition worth building meanwhile."
     },
     {
       "id": "H69",
@@ -1105,6 +1129,66 @@
       "predicted_effect_pp": "connectome -0.02 to +0.05, midpoint +0.010 - two-sided, and the negative branch is informative. It sits AT the bar in the median case and it will NOT clear the 0.02343 pp PROTOCOL CI threshold on a median outcome, which is the H52/H63 refusal trap - say so before running, not after.",
       "expected_pp": "connectome -0.02 to +0.05, midpoint +0.010",
       "source": "autoresearch/lit/scan_cycle18.md (cycle 18 scheduled scan)"
+    },
+    {
+      "id": "P23",
+      "priority": 0,
+      "kind": "protocol",
+      "status": "awaiting-operator",
+      "axis": "promotion evidence / runtime invariant",
+      "title": "ESCALATION: the microns relabelling study cannot be run as designed - the COMPARATOR arm truncates",
+      "hypothesis": "Not a hypothesis - a design decision that belongs to the operator. audit.py's degenerate-pool rule (P09) requires a paired relabelling study before any microns promotion, and experiments/proto_P09_relabel.py:112 calls runtime_guard.resolve(dataset, None), i.e. 'the same deadline production runs get'. On microns the H42 comparator arm needs ~3400-3500 s against a 3450 s deadline, so it would TRUNCATE, and its r=0 identity anchor would return 83.20304259 instead of the recorded 83.24085291200831 - the study fails its own validity check before it measures anything. So the gate is currently UNPAYABLE on microns, and the reason is P19 itself.",
+      "rationale": "Running the comparator arm UNGUARDED is sound study design, on four grounds: (1) campaign.yaml documents the guard as 'an ABORT, never a SIZING rule' - infrastructure, not part of the algorithm's definition; (2) it is directionally ADVERSE to the variant, since giving H42 its full 12 sweeps and 5 cycles can only raise the comparator and shrink the delta; (3) the guard never binds on H70 (2290 s against 3450 s), so the arms stay like-for-like on stages executed; (4) DECISIVE - the comparator as recorded in sota.json was ITSELF measured unguarded (all five 2026-08-10 H42 microns confirm runs carry runtime_guard: None), so reproducing it unguarded is FIDELITY to the recorded comparator and guarding it would be the deviation. WHY IT IS STILL ESCALATED AND NOT SELF-AUTHORISED: an unguarded H42 microns arm would very likely exceed the 3600 s HARD CAP (the 2026-08-27 run reached 3495.3 s having SKIPPED 8 sift sweeps and 4 alternation cycles; completing them adds roughly 60-130 s). The campaign would be knowingly producing runs outside its own runtime invariant, in a change that makes it EASIER to promote a result it already holds. That is precisely the class of change relabel_gate.py's own docstring reserves for the operator, and it is the same shape as P09 and P15.",
+      "options_for_the_operator": [
+        "A. Approve an explicit, logged runtime-invariant exemption for COMPARATOR arms of relabelling studies only, and run the paired (H70, H42, microns) study at R=4. Cost ~8.1 h GPU (5 pairs x ~5,800 s). Closes the gate for H70 and gives the campaign its first microns relabelling sigma.",
+        "B. CHEAPER AND ARGUABLY MORE INFORMATIVE - measure ONLY the H42 arm's microns relabelling dispersion, 5 unguarded runs, ~4.9 h. No identity anchor is needed for a single-arm dispersion measurement. This is the number nobody has, and it is what actually decides whether +0.0123 pp is inside noise - for H70, for H63, and for every future microns variant.",
+        "C. CHEAPEST AND EXACT - exploit the prefix-nesting. H70's stage 2 is literally a PREFIX of H42's (identical init, identical optimizer, stopped 30,000 steps earlier), so checkpoint ONE unguarded H42 run per labelling at 50,000 epochs and branch H70's arm from it. Halves the cost and makes the pairing exact by construction.",
+        "D. Do nothing. microns keeps a champion that truncates 7 of 9 times, and no variant can ever be promoted on it. This is the status quo and it is why P19 was filed."
+      ],
+      "prior_evidence": [
+        "experiments/proto_P09_relabel.py:112 (runtime_guard.resolve(dataset, None))",
+        "results/20260827T092101Z-H42-microns-s42-verify-f91b66.json (3495.3 s, degraded, 83.20304259)",
+        "results/*-H42-microns-*-confirm-*.json (all five carry runtime_guard: None, 2026-08-10)",
+        "autoresearch/audit_H70.json (relabel.microns FAIL)",
+        "autoresearch/campaign.yaml promotion_gate.primary.degenerate_pool_rule"
+      ],
+      "est_cost": "operator decision; then 4.9-8.1 h GPU depending on the option chosen",
+      "expected_pp": "n/a - unblocks microns promotion for H70, H63 and everything after them",
+      "source": "cycle 18 critic, condition 8"
+    },
+    {
+      "id": "H74",
+      "priority": 1,
+      "kind": "science",
+      "status": "proposed",
+      "axis": "compute allocation / stage composition",
+      "title": "Compose H70's re-allocation with stage-6 arc reclamation on microns - the freed seconds are almost exactly its price",
+      "hypothesis": "H70 frees 1,073 s on microns and switches stage 6 OFF (_RECLAIM_ROUNDS['microns']=0, inherited from H64 rather than H63). Stage 6 on microns costs ~1,065 s and is worth +0.018805 pp in H63's hands. Turning it back ON inside H70's allocation, with the epoch count re-sized to pay for it, beats BOTH H70 (+0.012266 pp at 2324.6 s) and H63's microns leg (+0.018805 pp at 3397.7 s) on the (score, margin) pair - i.e. it gets H63's score inside H70's runtime envelope.",
+      "rationale": "The cycle-18 verifier found that H63's microns confirm pool is +0.0065 pp ABOVE H70 and 0 degraded, but at up to 3397.7 s it has only 52 s of margin - P19's failure mode. H70 solves the runtime and gives up the score; H63 has the score and not the runtime. Nobody has run the combination, and the arithmetic says it almost fits: 1,073 s freed against ~1,065 s needed. That is too tight to ship as-is, so the epoch count must be re-sized DOWNWARD to buy headroom - the sealed sizing study's runner-up, E=30,000 / C=40, is +0.008467 pp at 1,920 s and leaves 1,530 s. CAUTION, from sota.json's own mouse caveat: stage 6 is BASE-DEPENDENT - it certifies a specific input arc set minimal, so its increment does NOT transfer across bases and must be re-measured from H70's output, never assumed additive. P13 (make reclamation cheap) would make this comfortable rather than marginal and should be considered first.",
+      "cheap_prototype": "Reuse experiments/proto_P19_sizing.py's harness: take H70's stage-4 output at a couple of (E, C) allocations and run reclaim_arcs_fast once on each, measuring BOTH the realised increment and the stage's wall clock on microns. Minutes of setup, ~1 h GPU, and it kills the item outright if the increment from H70's base is near zero (M11: capacity is not achievability; M8: it must clear the rate of the cycles it displaces).",
+      "predicted_effect_pp": "+0.015 to +0.019 pp on microns at <2900 s, vs H70's +0.012266 at 2324.6 s",
+      "est_cost": "prototype ~1 h; full ladder ~5 h",
+      "prior_evidence": [
+        "results/*-H63-microns-*-confirm-*.json (83.25965742667618, walls 2954.6-3397.7 s, 0 degraded)",
+        "results/*-H70-microns-*-confirm-*.json (83.25311870213525, walls 2321.8-2324.6 s, 0 degraded)",
+        "experiments/log.md 2026-08-26 cycle 14 (stage 6 on microns ~1,065 s: 222 s scan + 843 s conflict)",
+        "experiments/outputs/proto_P19_microns.json (the runner-up allocation E=30,000/C=40 at 1,920 s)"
+      ],
+      "source": "cycle 18 verifier finding (8b)"
+    },
+    {
+      "id": "P24",
+      "priority": 2,
+      "kind": "infrastructure",
+      "status": "proposed",
+      "axis": "bookkeeping / gate integrity",
+      "title": "Re-verify the back catalogue now that verify_cycle.py extracts the right log section",
+      "hypothesis": "Until 2026-08-28 verify_cycle.py's extract_cycle_section() keyed on the ITEM id first and took the FIRST match at ANY heading level, so a '###' subsection of an EARLIER cycle mentioning the same item id shadowed the real '##' cycle heading. Cycle 18 hit it: its figures/deltas checks reported 'all 0 figure(s)' and PASSED VACUOUSLY against cycle 17's '### THE OPERATOR RESOLVED P15 AND P19 ...' subsection. Those two checks are the ONLY mechanical enforcement CAMPAIGN.md rule 3 has, so for every cycle before 18 it is UNKNOWN whether they inspected the right text.",
+      "rationale": "The extractor is fixed (cycle number first, prefer level-2, take the last match) and cycles 10 and 13-17 were spot-checked to resolve correctly, but 'resolves correctly NOW' is not the same as 'was checked correctly THEN' - the checks ran under the old extractor at the time. This is cheap to close: loop verify_cycle's figures/deltas checks over every history entry with the corrected extractor and report which cycles have untraced figures. Any that surface are either real rule-3 violations to correct or foreign figures to declare in known_figures.json with a reason. Expect a handful of the latter (prior-machine MPS numbers, the published 84.6147 reference) and ideally none of the former.",
+      "kill_condition": "Closes when every cycle in state.history has had its figures/deltas checks run under the corrected extractor, with the results recorded and any foreign figures declared.",
+      "est_cost": "CPU only, minutes; the artifact index is already built by verify_cycle.py",
+      "expected_pp": "n/a - closes a gap in the evidentiary record",
+      "source": "cycle 18, found while running the bookkeeping"
     }
   ]
 }

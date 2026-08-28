@@ -161,27 +161,38 @@ def extract_cycle_section(log_md: str, cycle: int, item: Optional[str]) -> Optio
     """Pull one cycle's section out of experiments/log.md.
 
     The log's own convention is one ``## <date> - <ITEM>: <title> - <VERDICT>`` heading per cycle
-    (e.g. ``## 2026-08-11 - P05: arm the run-level wall-clock guard - ITERATE``), so the ITEM ID is
-    the reliable key, not the cycle number -- the cycle number appears nowhere in those headings.
-    Fall back to a cycle-number match for any section written under a different convention, since
-    the headings were authored by different sessions and are not perfectly uniform.
+    (e.g. ``## 2026-08-11 - P05: arm the run-level wall-clock guard - ITERATE``). Headings were
+    authored by different sessions and are not perfectly uniform, so two keys are tried.
+
+    ORDER MATTERS, and it was WRONG until 2026-08-28 (cycle 18). The item id used to be tried
+    first and the FIRST match at ANY heading level won, so a ``###`` SUBSECTION of an EARLIER
+    cycle that merely MENTIONS the item id shadowed the real cycle heading. Measured: cycle 18's
+    item was P19, and cycle 17 contains ``### THE OPERATOR RESOLVED P15 AND P19 WHILE THIS CYCLE
+    WAS RUNNING``; that subsection was extracted instead, and because it quotes no scores the
+    ``figures`` and ``deltas`` checks reported "all 0 figure(s) trace to an artifact" and PASSED
+    VACUOUSLY. Those two checks are the enforcement of CAMPAIGN.md rule 3, so the gate was
+    silently inspecting the wrong text.
+
+    Fixed by (a) trying the CYCLE NUMBER first, which is the more specific key whenever the
+    heading carries it, (b) preferring a level-2 (``##``) heading, which is the actual per-cycle
+    convention, and (c) taking the LAST match rather than the first, since a later cycle
+    discussing an earlier item is the common case and the reverse is not. The item id remains the
+    fallback for older headings that carry no cycle number.
     """
     lines = log_md.splitlines()
-    pats = []
+    pats = [re.compile(rf"^(#{{1,4}})\s.*\bcycle\s*#?{cycle}\b", re.IGNORECASE)]
     if item:
         # Word-boundary on the item id so P05 does not match P050.
         pats.append(re.compile(rf"^(#{{1,4}})\s.*\b{re.escape(item)}\b"))
-    pats.append(re.compile(rf"^(#{{1,4}})\s.*\bcycle\s*#?{cycle}\b", re.IGNORECASE))
 
     for pat in pats:
-        start = level = None
-        for i, ln in enumerate(lines):
-            m = pat.match(ln)
-            if m:
-                start, level = i, len(m.group(1))
-                break
-        if start is None:
+        hits = [(i, len(m.group(1)))
+                for i, ln in enumerate(lines) if (m := pat.match(ln))]
+        if not hits:
             continue
+        # Prefer the log's per-cycle convention (level 2); among candidates take the LAST.
+        level2 = [h for h in hits if h[1] == 2]
+        start, level = (level2 or hits)[-1]
         for j in range(start + 1, len(lines)):
             m2 = re.match(r"^(#{1,4})\s", lines[j])
             if m2 and len(m2.group(1)) <= level:

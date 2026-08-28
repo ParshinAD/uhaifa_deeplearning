@@ -1,0 +1,186 @@
+{
+  "variant": "H70",
+  "comparator": "champion",
+  "gate": "promotion",
+  "per_dataset": {
+    "microns": {
+      "variant": "H70",
+      "comparator": "H42",
+      "variant_stats": {
+        "n": 5,
+        "mean": 83.25311870213525,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260827T210104Z-H70-microns-s42-confirm-ce6e46.json",
+          "20260827T213948Z-H70-microns-s123-confirm-ce6e46.json",
+          "20260827T221835Z-H70-microns-s999-confirm-ce6e46.json",
+          "20260827T225720Z-H70-microns-s7-confirm-ce6e46.json",
+          "20260827T233604Z-H70-microns-s31415-confirm-ce6e46.json"
+        ],
+        "max_wall_s": 2324.6329514980316,
+        "grad_steps": [
+          50000
+        ],
+        "commits": [
+          "b4728024+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "comparator_stats": {
+        "n": 5,
+        "mean": 83.24085291200831,
+        "std": 0.0,
+        "seeds": [
+          7,
+          42,
+          123,
+          999,
+          31415
+        ],
+        "files": [
+          "20260810T074449Z-H42-microns-s42-confirm-f91b66.json",
+          "20260810T084129Z-H42-microns-s123-confirm-f91b66.json",
+          "20260810T093826Z-H42-microns-s999-confirm-f91b66.json",
+          "20260810T112007Z-H42-microns-s7-confirm-f91b66.json",
+          "20260810T121650Z-H42-microns-s31415-confirm-f91b66.json"
+        ],
+        "max_wall_s": 3418.017822742462,
+        "grad_steps": [
+          80000
+        ],
+        "commits": [
+          "1865372b+dirty",
+          "3791350d+dirty"
+        ],
+        "roles": [
+          "confirm"
+        ],
+        "devices": [
+          "NVIDIA GeForce RTX 4060 Laptop GPU"
+        ]
+      },
+      "dataset_role": "primary",
+      "delta_pp": 0.012265790126946285,
+      "welch_se": 0.0,
+      "welch_ci_lower": 0.012265790126946285,
+      "protocol_se": 0.0003794733192202055,
+      "protocol_ci_lower": 0.011522022421274683,
+      "noninferiority_se": 4.110960958218893e-06,
+      "noninferiority_ci_lower": 0.012257732643468177
+    }
+  },
+  "checks": [
+    {
+      "check": "frozen.manifest",
+      "status": "PASS",
+      "detail": "SHA-256 manifest matches all frozen files"
+    },
+    {
+      "check": "frozen.git",
+      "status": "PASS",
+      "detail": "no frozen path modified in the working tree"
+    },
+    {
+      "check": "leakage",
+      "status": "PASS",
+      "detail": "no oracle value or reference solution in 16 algorithm file(s)"
+    },
+    {
+      "check": "leakage.dataset_keying",
+      "status": "WARN",
+      "detail": "dataset-name keying present (legitimate for compute budgets, but the cycle must state WHAT it keys):\n    src\\mfas\\experiments\\H70.py:192: cfg = RocketConfig(epochs=_EPOCHS.get(g.name, RocketConfig.epochs))\n    src\\mfas\\experiments\\H70.py:193: surrogate = _SURROGATE.get(g.name, \"sigmoid\")\n    src\\mfas\\experiments\\H70.py:212: max_sweeps=_MAX_SWEEPS.get(g.name, 40), time_budget_s=sift_budget)\n    src\\mfas\\experiments\\H70.py:220: n_cycles=_ALT_CYCLES.get(g.name, 32),\n    src\\mfas\\experiments\\H70.py:221: sift_sweeps=_ALT_SIFT_SWEEPS.get(g.name, 2),\n    src\\mfas\\experiments\\H70.py:227: max_pops = _PAIR_MAX_POPS.get(g.name, 0)\n    src\\mfas\\experiments\\H70.py:249: rounds = _RECLAIM_ROUNDS.get(g.name, 0)\n    src\\mfas\\experiments\\H70.py:284: g.name)\n    src\\mfas\\experiments\\H70.py:286: g.name)\n    src\\mfas\\experiments\\H70.py:287: hist.attrs[\"is_structural_noop_vs_champion\"] = g.name in (\"connectome\", \"mouse\")\n    src\\mfas\\experiments\\H70.py:290: hist.attrs[\"epochs_requested\"] = _EPOCHS.get(g.name, RocketConfig.epochs)\n    src\\mfas\\experiments\\H70.py:294: hist.attrs[\"sift_sweeps_requested\"] = _MAX_SWEEPS.get(g.name, 40)"
+    },
+    {
+      "check": "promotion_gate.config",
+      "status": "INFO",
+      "detail": "strict promotion gate armed from campaign.yaml (z=1.96, zero_std_tol=1e-12)"
+    },
+    {
+      "check": "device",
+      "status": "INFO",
+      "detail": "counting only runs measured on 'NVIDIA GeForce RTX 4060 Laptop GPU' (sota.json is machine-specific; see CAMPAIGN.md \u00a7 Hardware)"
+    },
+    {
+      "check": "significance.microns.degenerate",
+      "status": "WARN",
+      "detail": "zero variance in a pool (variant std=0, comparator std=0): the pipeline is deterministic on this device, so the Welch CI is degenerate (SE=0 makes any positive delta 'significant'). Use the PROTOCOL CI, floored at baseline_sigma_pp=0.0006, and the min_promotion_delta_pp minimum effect size. See experiments/log.md P01."
+    },
+    {
+      "check": "significance.microns",
+      "status": "INFO",
+      "detail": "H70 83.2531+/-0.0000 (n=5, seeds=[7, 42, 123, 999, 31415]) vs H42 83.2409+/-0.0000 (n=5) | delta=+0.0123 pp, Welch CI_lo=+0.0123, PROTOCOL CI_lo=+0.0115"
+    },
+    {
+      "check": "inventory.microns",
+      "status": "INFO",
+      "detail": "5 run(s) for H70: 20260827T210104Z-H70-microns-s42-confirm-ce6e46.json, 20260827T213948Z-H70-microns-s123-confirm-ce6e46.json, 20260827T221835Z-H70-microns-s999-confirm-ce6e46.json, 20260827T225720Z-H70-microns-s7-confirm-ce6e46.json, 20260827T233604Z-H70-microns-s31415-confirm-ce6e46.json"
+    },
+    {
+      "check": "effect_size.microns",
+      "status": "PASS",
+      "detail": "delta +0.0123 pp clears the minimum effect size +0.0020 pp"
+    },
+    {
+      "check": "relabel.microns",
+      "status": "FAIL",
+      "detail": "both pools are degenerate (variant std=0, comparator std=0), so the seed pool carries no robustness evidence, and no relabelling study is registered for (H70, H42, microns) in experiments/outputs/relabel_index.json \u2014 run `experiments/proto_P09_relabel.py --dataset microns --comparator H42 --variant H70 --relabels 4`"
+    },
+    {
+      "check": "protocol_ci.microns",
+      "status": "PASS",
+      "detail": "PROTOCOL CI lower bound +0.0115 > +0.0000 (SE=0.0004, sigma floor 0.0006)"
+    },
+    {
+      "check": "provenance.microns",
+      "status": "PASS",
+      "detail": "src/mfas/experiments/H70.py exists at every commit backing these runs"
+    },
+    {
+      "check": "provenance.microns.dirty",
+      "status": "WARN",
+      "detail": "produced from a MODIFIED working tree at b4728024+dirty: n=5 \u2014 src/mfas/experiments/H70.py is present at those commits, so the run is reproducible in principle but the exact tree is unverifiable"
+    },
+    {
+      "check": "comparator_homogeneity.microns.comparator",
+      "status": "WARN",
+      "detail": "H42 runs span 2 commits \u2014 the same id may denote different configurations. Restrict by role/commit before quoting a delta. Breakdown: 1865372b+dirty: n=3, mean=83.2409; 3791350d+dirty: n=2, mean=83.2409"
+    },
+    {
+      "check": "runtime.microns",
+      "status": "PASS",
+      "detail": "max wall 2325s within budget"
+    },
+    {
+      "check": "runtime_guard.microns",
+      "status": "PASS",
+      "detail": "all 5 runs ran under an armed deadline, none truncated"
+    },
+    {
+      "check": "compute.microns",
+      "status": "WARN",
+      "detail": "grad-step budget differs from comparator: variant [50000] vs H42 [80000] \u2014 equal-compute claim needs justification"
+    },
+    {
+      "check": "rescore",
+      "status": "PASS",
+      "detail": "5 run(s) re-scored with the frozen oracle, all exact"
+    },
+    {
+      "check": "evidence.per_dataset",
+      "status": "PASS",
+      "detail": "significance analysed on 1 dataset(s): microns"
+    }
+  ]
+}
