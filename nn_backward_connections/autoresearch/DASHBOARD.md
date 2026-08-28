@@ -1,6 +1,6 @@
 # Campaign dashboard
 
-*Generated 2026-08-28 16:17 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-28 16:48 by `autoresearch/dashboard.py` — do not hand-edit.*
 
 **Phase:** `quality` · **cycle:** 25 · **mode:** `divergent` · **consecutive kills:** 6
 
