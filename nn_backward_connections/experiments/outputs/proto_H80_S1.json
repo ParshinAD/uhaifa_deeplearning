@@ -1,0 +1,1168 @@
+{
+  "stage": "S1",
+  "seeds": [
+    42,
+    123,
+    999
+  ],
+  "t0_grid": [
+    0.5,
+    1.0,
+    2.0,
+    4.0,
+    8.0
+  ],
+  "cool_ratio": 0.01,
+  "n_cal": 24,
+  "inner_sweeps": 2,
+  "rows": [
+    {
+      "seed": 42,
+      "n": 400,
+      "m": 7679,
+      "k": 20,
+      "greedy_pct": 68.14397880995176,
+      "rocket_pct": 72.9779585658878,
+      "A0_sift_pct": 73.72528616024974,
+      "t_rocket_s": 2.7,
+      "t_sift_s": 0.05,
+      "n_sift_sweeps": 20,
+      "budget_s": 30.0,
+      "arms": {
+        "A1p_ils_lns_production": {
+          "best_pct": 73.92394286254849,
+          "rounds": 553,
+          "n_accepted": 3,
+          "n_uphill_accepted": 0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.03
+        },
+        "A1_topk_greedy": {
+          "destroy": "topk",
+          "acceptance": "greedy",
+          "t0_mult": 0.0,
+          "delta_med_pp": 0.0,
+          "T0_pp": 0.0,
+          "best_pct": 74.71383975026015,
+          "rounds": 5451,
+          "n_accepted": 78,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 0,
+          "n_proposed_downhill": 1031,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.0,
+          "n_cal_downhill": 0
+        },
+        "A2_struct_greedy": {
+          "destroy": "struct",
+          "acceptance": "greedy",
+          "t0_mult": 0.0,
+          "delta_med_pp": 0.0,
+          "T0_pp": 0.0,
+          "best_pct": 74.5151830479614,
+          "rounds": 5055,
+          "n_accepted": 64,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 0,
+          "n_proposed_downhill": 1343,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.01,
+          "cal_s": 0.0,
+          "n_cal_downhill": 0
+        },
+        "A3_struct_anneal_T0.5": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 0.5,
+          "delta_med_pp": 0.004729921483303377,
+          "T0_pp": 0.0023649607416516886,
+          "best_pct": 74.86992715920915,
+          "rounds": 5207,
+          "n_accepted": 3980,
+          "n_uphill_accepted": 4,
+          "n_sideways_accepted": 3880,
+          "n_proposed_downhill": 1231,
+          "deepest_uphill_step_pp": 0.004729921483303377,
+          "max_excursion_pp": 0.004729921483303377,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A3_struct_anneal_T1.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 1.0,
+          "delta_med_pp": 0.004729921483303377,
+          "T0_pp": 0.004729921483303377,
+          "best_pct": 74.75167912212657,
+          "rounds": 5235,
+          "n_accepted": 3773,
+          "n_uphill_accepted": 17,
+          "n_sideways_accepted": 3652,
+          "n_proposed_downhill": 1479,
+          "deepest_uphill_step_pp": 0.009459842966606754,
+          "max_excursion_pp": 0.01418976444991013,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A3_struct_anneal_T2.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 2.0,
+          "delta_med_pp": 0.004729921483303377,
+          "T0_pp": 0.009459842966606754,
+          "best_pct": 74.73275943619336,
+          "rounds": 5096,
+          "n_accepted": 3843,
+          "n_uphill_accepted": 63,
+          "n_sideways_accepted": 3636,
+          "n_proposed_downhill": 1316,
+          "deepest_uphill_step_pp": 0.009459842966606754,
+          "max_excursion_pp": 0.01891968593321351,
+          "k": 20,
+          "wall_s": 30.01,
+          "cal_s": 0.19,
+          "n_cal_downhill": 1
+        },
+        "A3_struct_anneal_T4.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 4.0,
+          "delta_med_pp": 0.004729921483303377,
+          "T0_pp": 0.01891968593321351,
+          "best_pct": 74.7800586510264,
+          "rounds": 5074,
+          "n_accepted": 3763,
+          "n_uphill_accepted": 116,
+          "n_sideways_accepted": 3442,
+          "n_proposed_downhill": 1427,
+          "deepest_uphill_step_pp": 0.023649607416516887,
+          "max_excursion_pp": 0.05202913631633715,
+          "k": 20,
+          "wall_s": 30.01,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A3_struct_anneal_T8.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 8.0,
+          "delta_med_pp": 0.004729921483303377,
+          "T0_pp": 0.03783937186642702,
+          "best_pct": 74.88411692365906,
+          "rounds": 5226,
+          "n_accepted": 4556,
+          "n_uphill_accepted": 200,
+          "n_sideways_accepted": 4069,
+          "n_proposed_downhill": 870,
+          "deepest_uphill_step_pp": 0.05202913631633715,
+          "max_excursion_pp": 0.1040582726326743,
+          "k": 20,
+          "wall_s": 30.01,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A4_topk_anneal_T0.5": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 0.5,
+          "delta_med_pp": 0.004729921483303377,
+          "T0_pp": 0.0023649607416516886,
+          "best_pct": 74.96925551035852,
+          "rounds": 5354,
+          "n_accepted": 4394,
+          "n_uphill_accepted": 6,
+          "n_sideways_accepted": 4259,
+          "n_proposed_downhill": 966,
+          "deepest_uphill_step_pp": 0.004729921483303377,
+          "max_excursion_pp": 0.004729921483303377,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A4_topk_anneal_T1.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 1.0,
+          "delta_med_pp": 0.004729921483303377,
+          "T0_pp": 0.004729921483303377,
+          "best_pct": 75.01182480370827,
+          "rounds": 5393,
+          "n_accepted": 4403,
+          "n_uphill_accepted": 16,
+          "n_sideways_accepted": 4243,
+          "n_proposed_downhill": 1006,
+          "deepest_uphill_step_pp": 0.01418976444991013,
+          "max_excursion_pp": 0.01418976444991013,
+          "k": 20,
+          "wall_s": 30.01,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A4_topk_anneal_T2.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 2.0,
+          "delta_med_pp": 0.004729921483303377,
+          "T0_pp": 0.009459842966606754,
+          "best_pct": 74.96452558887522,
+          "rounds": 5353,
+          "n_accepted": 4434,
+          "n_uphill_accepted": 48,
+          "n_sideways_accepted": 4227,
+          "n_proposed_downhill": 967,
+          "deepest_uphill_step_pp": 0.01891968593321351,
+          "max_excursion_pp": 0.02837952889982026,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.18,
+          "n_cal_downhill": 1
+        },
+        "A4_topk_anneal_T4.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 4.0,
+          "delta_med_pp": 0.004729921483303377,
+          "T0_pp": 0.01891968593321351,
+          "best_pct": 75.03074448964148,
+          "rounds": 5339,
+          "n_accepted": 4468,
+          "n_uphill_accepted": 113,
+          "n_sideways_accepted": 4118,
+          "n_proposed_downhill": 984,
+          "deepest_uphill_step_pp": 0.02837952889982026,
+          "max_excursion_pp": 0.04256929334973039,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A4_topk_anneal_T8.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 8.0,
+          "delta_med_pp": 0.004729921483303377,
+          "T0_pp": 0.03783937186642702,
+          "best_pct": 75.0685838615079,
+          "rounds": 5325,
+          "n_accepted": 4639,
+          "n_uphill_accepted": 197,
+          "n_sideways_accepted": 4114,
+          "n_proposed_downhill": 883,
+          "deepest_uphill_step_pp": 0.06621890076624729,
+          "max_excursion_pp": 0.07567874373285403,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        }
+      },
+      "reference_pct": 73.27594361933592,
+      "gap_A0_to_ref_pp": -0.4493425409138183,
+      "barrier": {
+        "path": [
+          [
+            0.0,
+            73.72528616024974
+          ],
+          [
+            0.05,
+            72.8218711569388
+          ],
+          [
+            0.1,
+            72.20698136410935
+          ],
+          [
+            0.15,
+            71.87588686027811
+          ],
+          [
+            0.2,
+            71.31302620376502
+          ],
+          [
+            0.25,
+            70.96774193548387
+          ],
+          [
+            0.3,
+            70.71705609686879
+          ],
+          [
+            0.35,
+            70.54204900198657
+          ],
+          [
+            0.4,
+            70.34812222117112
+          ],
+          [
+            0.45,
+            70.19676473370542
+          ],
+          [
+            0.5,
+            70.21095449815533
+          ],
+          [
+            0.55,
+            70.37177182858764
+          ],
+          [
+            0.6,
+            70.51366947308675
+          ],
+          [
+            0.65,
+            70.49947970863684
+          ],
+          [
+            0.7,
+            70.63191751016933
+          ],
+          [
+            0.75,
+            70.88260334878441
+          ],
+          [
+            0.8,
+            71.19950808816574
+          ],
+          [
+            0.85,
+            71.65358055056286
+          ],
+          [
+            0.9,
+            72.38198845899159
+          ],
+          [
+            0.95,
+            73.04890738813735
+          ],
+          [
+            1.0,
+            73.27594361933592
+          ]
+        ],
+        "endpoint_max_pct": 73.72528616024974,
+        "valley_t": 0.45,
+        "valley_pct": 70.19676473370542,
+        "barrier_depth_pp": 3.528521426544316
+      }
+    },
+    {
+      "seed": 123,
+      "n": 400,
+      "m": 7645,
+      "k": 20,
+      "greedy_pct": 67.74740411104048,
+      "rocket_pct": 72.80779826234372,
+      "A0_sift_pct": 73.74019919474465,
+      "t_rocket_s": 2.69,
+      "t_sift_s": 0.05,
+      "n_sift_sweeps": 20,
+      "budget_s": 30.0,
+      "arms": {
+        "A1p_ils_lns_production": {
+          "best_pct": 74.0241576605213,
+          "rounds": 561,
+          "n_accepted": 3,
+          "n_uphill_accepted": 0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.03
+        },
+        "A1_topk_greedy": {
+          "destroy": "topk",
+          "acceptance": "greedy",
+          "t0_mult": 0.0,
+          "delta_med_pp": 0.0,
+          "T0_pp": 0.0,
+          "best_pct": 74.97774952320407,
+          "rounds": 5353,
+          "n_accepted": 105,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 0,
+          "n_proposed_downhill": 1169,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.0,
+          "n_cal_downhill": 0
+        },
+        "A2_struct_greedy": {
+          "destroy": "struct",
+          "acceptance": "greedy",
+          "t0_mult": 0.0,
+          "delta_med_pp": 0.0,
+          "T0_pp": 0.0,
+          "best_pct": 74.62174189446917,
+          "rounds": 5219,
+          "n_accepted": 65,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 0,
+          "n_proposed_downhill": 1040,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.0,
+          "n_cal_downhill": 0
+        },
+        "A3_struct_anneal_T0.5": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 0.5,
+          "delta_med_pp": 0.04238186056367874,
+          "T0_pp": 0.02119093028183937,
+          "best_pct": 74.93112947658402,
+          "rounds": 4995,
+          "n_accepted": 3807,
+          "n_uphill_accepted": 138,
+          "n_sideways_accepted": 3460,
+          "n_proposed_downhill": 1326,
+          "deepest_uphill_step_pp": 0.03814367450731087,
+          "max_excursion_pp": 0.11019283746556474,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A3_struct_anneal_T1.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 1.0,
+          "delta_med_pp": 0.04238186056367874,
+          "T0_pp": 0.04238186056367874,
+          "best_pct": 74.91417673235856,
+          "rounds": 5119,
+          "n_accepted": 4173,
+          "n_uphill_accepted": 220,
+          "n_sideways_accepted": 3661,
+          "n_proposed_downhill": 1166,
+          "deepest_uphill_step_pp": 0.03814367450731087,
+          "max_excursion_pp": 0.08052553507098961,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A3_struct_anneal_T2.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 2.0,
+          "delta_med_pp": 0.04238186056367874,
+          "T0_pp": 0.08476372112735749,
+          "best_pct": 74.90570036024582,
+          "rounds": 5047,
+          "n_accepted": 4074,
+          "n_uphill_accepted": 340,
+          "n_sideways_accepted": 3320,
+          "n_proposed_downhill": 1313,
+          "deepest_uphill_step_pp": 0.0508582326764145,
+          "max_excursion_pp": 0.10595465140919687,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A3_struct_anneal_T4.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 4.0,
+          "delta_med_pp": 0.04238186056367874,
+          "T0_pp": 0.16952744225471497,
+          "best_pct": 74.95232040686587,
+          "rounds": 4943,
+          "n_accepted": 4315,
+          "n_uphill_accepted": 431,
+          "n_sideways_accepted": 3342,
+          "n_proposed_downhill": 1059,
+          "deepest_uphill_step_pp": 0.08900190718372536,
+          "max_excursion_pp": 0.18648018648018647,
+          "k": 20,
+          "wall_s": 30.01,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A3_struct_anneal_T8.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 8.0,
+          "delta_med_pp": 0.04238186056367874,
+          "T0_pp": 0.33905488450942994,
+          "best_pct": 75.06251324433143,
+          "rounds": 5031,
+          "n_accepted": 4704,
+          "n_uphill_accepted": 477,
+          "n_sideways_accepted": 3649,
+          "n_proposed_downhill": 804,
+          "deepest_uphill_step_pp": 0.11019283746556474,
+          "max_excursion_pp": 0.2627675354948082,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 1
+        },
+        "A4_topk_anneal_T0.5": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 0.5,
+          "delta_med_pp": 1e-06,
+          "T0_pp": 5e-07,
+          "best_pct": 74.91417673235856,
+          "rounds": 5396,
+          "n_accepted": 4345,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 4252,
+          "n_proposed_downhill": 1051,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 0
+        },
+        "A4_topk_anneal_T1.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 1.0,
+          "delta_med_pp": 1e-06,
+          "T0_pp": 1e-06,
+          "best_pct": 74.91417673235856,
+          "rounds": 5479,
+          "n_accepted": 4412,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 4319,
+          "n_proposed_downhill": 1067,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 0
+        },
+        "A4_topk_anneal_T2.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 2.0,
+          "delta_med_pp": 1e-06,
+          "T0_pp": 2e-06,
+          "best_pct": 74.91417673235856,
+          "rounds": 5594,
+          "n_accepted": 4508,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 4415,
+          "n_proposed_downhill": 1086,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.01,
+          "cal_s": 0.16,
+          "n_cal_downhill": 0
+        },
+        "A4_topk_anneal_T4.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 4.0,
+          "delta_med_pp": 1e-06,
+          "T0_pp": 4e-06,
+          "best_pct": 74.91417673235856,
+          "rounds": 5591,
+          "n_accepted": 4506,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 4413,
+          "n_proposed_downhill": 1085,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.16,
+          "n_cal_downhill": 0
+        },
+        "A4_topk_anneal_T8.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 8.0,
+          "delta_med_pp": 1e-06,
+          "T0_pp": 8e-06,
+          "best_pct": 74.91417673235856,
+          "rounds": 5615,
+          "n_accepted": 4524,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 4431,
+          "n_proposed_downhill": 1091,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.16,
+          "n_cal_downhill": 0
+        }
+      },
+      "reference_pct": 73.16380589107862,
+      "gap_A0_to_ref_pp": -0.5763933036660234,
+      "barrier": {
+        "path": [
+          [
+            0.0,
+            73.74019919474465
+          ],
+          [
+            0.05,
+            72.59588895952533
+          ],
+          [
+            0.1,
+            71.73129900402628
+          ],
+          [
+            0.15,
+            70.84975630430176
+          ],
+          [
+            0.2,
+            70.23098114007205
+          ],
+          [
+            0.25,
+            69.88344988344988
+          ],
+          [
+            0.3,
+            69.58677685950413
+          ],
+          [
+            0.35,
+            69.2731510913329
+          ],
+          [
+            0.4,
+            69.30705657978385
+          ],
+          [
+            0.45,
+            69.02733630006357
+          ],
+          [
+            0.5,
+            68.99343081161263
+          ],
+          [
+            0.55,
+            69.15024369569824
+          ],
+          [
+            0.6,
+            69.39605848696758
+          ],
+          [
+            0.65,
+            69.56982411527866
+          ],
+          [
+            0.7,
+            70.03602458147913
+          ],
+          [
+            0.75,
+            70.29879211697394
+          ],
+          [
+            0.8,
+            70.70141979232888
+          ],
+          [
+            0.85,
+            71.11676202585294
+          ],
+          [
+            0.9,
+            71.72706081796991
+          ],
+          [
+            0.95,
+            72.7696545878364
+          ],
+          [
+            1.0,
+            73.16380589107862
+          ]
+        ],
+        "endpoint_max_pct": 73.74019919474465,
+        "valley_t": 0.5,
+        "valley_pct": 68.99343081161263,
+        "barrier_depth_pp": 4.7467683831320215
+      }
+    },
+    {
+      "seed": 999,
+      "n": 400,
+      "m": 7672,
+      "k": 20,
+      "greedy_pct": 69.9612327211497,
+      "rocket_pct": 75.31424991189255,
+      "A0_sift_pct": 75.81156752946704,
+      "t_rocket_s": 2.54,
+      "t_sift_s": 0.05,
+      "n_sift_sweeps": 20,
+      "budget_s": 30.0,
+      "arms": {
+        "A1p_ils_lns_production": {
+          "best_pct": 76.07393194188825,
+          "rounds": 573,
+          "n_accepted": 3,
+          "n_uphill_accepted": 0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0
+        },
+        "A1_topk_greedy": {
+          "destroy": "topk",
+          "acceptance": "greedy",
+          "t0_mult": 0.0,
+          "delta_med_pp": 0.0,
+          "T0_pp": 0.0,
+          "best_pct": 77.15471668559346,
+          "rounds": 5778,
+          "n_accepted": 109,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 0,
+          "n_proposed_downhill": 1200,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.0,
+          "n_cal_downhill": 0
+        },
+        "A2_struct_greedy": {
+          "destroy": "struct",
+          "acceptance": "greedy",
+          "t0_mult": 0.0,
+          "delta_med_pp": 0.0,
+          "T0_pp": 0.0,
+          "best_pct": 76.78270744410072,
+          "rounds": 5616,
+          "n_accepted": 63,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 0,
+          "n_proposed_downhill": 1226,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.0,
+          "n_cal_downhill": 0
+        },
+        "A3_struct_anneal_T0.5": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 0.5,
+          "delta_med_pp": 0.011747660257665347,
+          "T0_pp": 0.005873830128832674,
+          "best_pct": 77.0372400830168,
+          "rounds": 5237,
+          "n_accepted": 3830,
+          "n_uphill_accepted": 43,
+          "n_sideways_accepted": 3636,
+          "n_proposed_downhill": 1450,
+          "deepest_uphill_step_pp": 0.011747660257665347,
+          "max_excursion_pp": 0.015663547010220463,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.16,
+          "n_cal_downhill": 2
+        },
+        "A3_struct_anneal_T1.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 1.0,
+          "delta_med_pp": 0.011747660257665347,
+          "T0_pp": 0.011747660257665347,
+          "best_pct": 76.97850178172847,
+          "rounds": 5384,
+          "n_accepted": 4007,
+          "n_uphill_accepted": 133,
+          "n_sideways_accepted": 3657,
+          "n_proposed_downhill": 1510,
+          "deepest_uphill_step_pp": 0.01957943376277558,
+          "max_excursion_pp": 0.043074754278106274,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.16,
+          "n_cal_downhill": 2
+        },
+        "A3_struct_anneal_T2.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 2.0,
+          "delta_med_pp": 0.011747660257665347,
+          "T0_pp": 0.023495320515330695,
+          "best_pct": 77.0294083095117,
+          "rounds": 5266,
+          "n_accepted": 4016,
+          "n_uphill_accepted": 212,
+          "n_sideways_accepted": 3506,
+          "n_proposed_downhill": 1462,
+          "deepest_uphill_step_pp": 0.031327094020440927,
+          "max_excursion_pp": 0.09006539530876767,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.16,
+          "n_cal_downhill": 2
+        },
+        "A3_struct_anneal_T4.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 4.0,
+          "delta_med_pp": 0.011747660257665347,
+          "T0_pp": 0.04699064103066139,
+          "best_pct": 77.00591298899636,
+          "rounds": 5288,
+          "n_accepted": 4376,
+          "n_uphill_accepted": 338,
+          "n_sideways_accepted": 3616,
+          "n_proposed_downhill": 1250,
+          "deepest_uphill_step_pp": 0.023495320515330695,
+          "max_excursion_pp": 0.08223362180365743,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.16,
+          "n_cal_downhill": 2
+        },
+        "A3_struct_anneal_T8.0": {
+          "destroy": "struct",
+          "acceptance": "metropolis",
+          "t0_mult": 8.0,
+          "delta_med_pp": 0.011747660257665347,
+          "T0_pp": 0.09398128206132278,
+          "best_pct": 77.01766064925403,
+          "rounds": 5067,
+          "n_accepted": 4571,
+          "n_uphill_accepted": 388,
+          "n_sideways_accepted": 3710,
+          "n_proposed_downhill": 884,
+          "deepest_uphill_step_pp": 0.03915886752555116,
+          "max_excursion_pp": 0.11356071582409835,
+          "k": 20,
+          "wall_s": 30.01,
+          "cal_s": 0.16,
+          "n_cal_downhill": 2
+        },
+        "A4_topk_anneal_T0.5": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 0.5,
+          "delta_med_pp": 1e-06,
+          "T0_pp": 5e-07,
+          "best_pct": 77.31918392920076,
+          "rounds": 5393,
+          "n_accepted": 4323,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 4188,
+          "n_proposed_downhill": 1070,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 0
+        },
+        "A4_topk_anneal_T1.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 1.0,
+          "delta_med_pp": 1e-06,
+          "T0_pp": 1e-06,
+          "best_pct": 77.31526804244821,
+          "rounds": 5302,
+          "n_accepted": 4243,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 4109,
+          "n_proposed_downhill": 1059,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 0
+        },
+        "A4_topk_anneal_T2.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 2.0,
+          "delta_med_pp": 1e-06,
+          "T0_pp": 2e-06,
+          "best_pct": 77.31526804244821,
+          "rounds": 5244,
+          "n_accepted": 4195,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 4061,
+          "n_proposed_downhill": 1049,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 0
+        },
+        "A4_topk_anneal_T4.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 4.0,
+          "delta_med_pp": 1e-06,
+          "T0_pp": 4e-06,
+          "best_pct": 77.31526804244821,
+          "rounds": 5243,
+          "n_accepted": 4194,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 4060,
+          "n_proposed_downhill": 1049,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 0
+        },
+        "A4_topk_anneal_T8.0": {
+          "destroy": "topk",
+          "acceptance": "metropolis",
+          "t0_mult": 8.0,
+          "delta_med_pp": 1e-06,
+          "T0_pp": 8e-06,
+          "best_pct": 77.31526804244821,
+          "rounds": 5128,
+          "n_accepted": 4104,
+          "n_uphill_accepted": 0,
+          "n_sideways_accepted": 3970,
+          "n_proposed_downhill": 1024,
+          "deepest_uphill_step_pp": 0.0,
+          "max_excursion_pp": 0.0,
+          "k": 20,
+          "wall_s": 30.0,
+          "cal_s": 0.17,
+          "n_cal_downhill": 0
+        }
+      },
+      "reference_pct": 75.7802404354466,
+      "gap_A0_to_ref_pp": -0.03132709402044043,
+      "barrier": {
+        "path": [
+          [
+            0.0,
+            75.81156752946704
+          ],
+          [
+            0.05,
+            75.18110976230568
+          ],
+          [
+            0.1,
+            74.49191369385598
+          ],
+          [
+            0.15,
+            74.00242784978659
+          ],
+          [
+            0.2,
+            73.62258683478873
+          ],
+          [
+            0.25,
+            73.31714766808943
+          ],
+          [
+            0.3,
+            73.21925049927556
+          ],
+          [
+            0.35,
+            73.18009163175002
+          ],
+          [
+            0.4,
+            73.16834397149235
+          ],
+          [
+            0.45,
+            73.05086736891569
+          ],
+          [
+            0.5,
+            72.91381133257626
+          ],
+          [
+            0.55,
+            72.99604495437993
+          ],
+          [
+            0.6,
+            73.05478325566824
+          ],
+          [
+            0.65,
+            73.22708227278068
+          ],
+          [
+            0.7,
+            73.3993812898931
+          ],
+          [
+            0.75,
+            73.5912597407683
+          ],
+          [
+            0.8,
+            73.87320358695227
+          ],
+          [
+            0.85,
+            74.30395112973333
+          ],
+          [
+            0.9,
+            74.99706308493559
+          ],
+          [
+            0.95,
+            75.5452872302933
+          ],
+          [
+            1.0,
+            75.7802404354466
+          ]
+        ],
+        "endpoint_max_pct": 75.81156752946704,
+        "valley_t": 0.5,
+        "valley_pct": 72.91381133257626,
+        "barrier_depth_pp": 2.897756196890782
+      }
+    }
+  ],
+  "summary": {
+    "per_seed": [
+      {
+        "seed": 42,
+        "monotone_best": 74.71383975026015,
+        "A0": 73.72528616024974,
+        "A1": 74.71383975026015,
+        "A2": 74.5151830479614,
+        "A3_by_T": {
+          "0.5": 74.86992715920915,
+          "1.0": 74.75167912212657,
+          "2.0": 74.73275943619336,
+          "4.0": 74.7800586510264,
+          "8.0": 74.88411692365906
+        },
+        "A3_best": 74.88411692365906,
+        "delta_A3": 0.17027717339891524,
+        "structure_alone": -0.19865670229874866,
+        "A4_best": 75.0685838615079,
+        "acceptance_alone": 0.3547441112477543,
+        "acceptance_given_structure": 0.3689338756976639,
+        "interaction": 0.014189764449909603
+      },
+      {
+        "seed": 123,
+        "monotone_best": 74.97774952320407,
+        "A0": 73.74019919474465,
+        "A1": 74.97774952320407,
+        "A2": 74.62174189446917,
+        "A3_by_T": {
+          "0.5": 74.93112947658402,
+          "1.0": 74.91417673235856,
+          "2.0": 74.90570036024582,
+          "4.0": 74.95232040686587,
+          "8.0": 75.06251324433143
+        },
+        "A3_best": 75.06251324433143,
+        "delta_A3": 0.0847637211273593,
+        "structure_alone": -0.35600762873490055,
+        "A4_best": 74.91417673235856,
+        "acceptance_alone": -0.06357279084551237,
+        "acceptance_given_structure": 0.44077134986225985,
+        "interaction": 0.5043441407077722
+      },
+      {
+        "seed": 999,
+        "monotone_best": 77.15471668559346,
+        "A0": 75.81156752946704,
+        "A1": 77.15471668559346,
+        "A2": 76.78270744410072,
+        "A3_by_T": {
+          "0.5": 77.0372400830168,
+          "1.0": 76.97850178172847,
+          "2.0": 77.0294083095117,
+          "4.0": 77.00591298899636,
+          "8.0": 77.01766064925403
+        },
+        "A3_best": 77.0372400830168,
+        "delta_A3": -0.1174766025766587,
+        "structure_alone": -0.3720092414927336,
+        "A4_best": 77.31918392920076,
+        "acceptance_alone": 0.16446724360730514,
+        "acceptance_given_structure": 0.2545326389160749,
+        "interaction": 0.09006539530876978
+      }
+    ],
+    "mean_delta_A3": 0.04585476398320528,
+    "mean_structure_alone": -0.3088911908421276,
+    "mean_delta_A3_by_T0": {
+      "0.5": -0.0026697467492340365,
+      "1.0": -0.0673161076146916,
+      "2.0": -0.05947928436893335,
+      "4.0": -0.03600463738968548,
+      "8.0": 0.03932828606228137
+    },
+    "mean_delta_by_cell": {
+      "A3_struct_anneal_T0.5": -0.0026697467492340365,
+      "A3_struct_anneal_T1.0": -0.0673161076146916,
+      "A3_struct_anneal_T2.0": -0.05947928436893335,
+      "A3_struct_anneal_T4.0": -0.03600463738968548,
+      "A3_struct_anneal_T8.0": 0.03932828606228137,
+      "A4_topk_anneal_T0.5": 0.11877007095338854,
+      "A4_topk_anneal_T1.0": 0.13165453981911904,
+      "A4_topk_anneal_T2.0": 0.1158881348747703,
+      "A4_topk_anneal_T4.0": 0.13796110179685664,
+      "A4_topk_anneal_T8.0": 0.15057422575233184
+    },
+    "best_cell": "A4_topk_anneal_T8.0",
+    "best_cell_mean_delta": 0.15057422575233184,
+    "n_adjacent_T0_pairs_positive_in_best_family": 4,
+    "total_uphill_accepted_by_T0": {
+      "0.5": 185,
+      "1.0": 370,
+      "2.0": 615,
+      "4.0": 885,
+      "8.0": 1065
+    },
+    "max_excursion_pp_by_T0": {
+      "0.5": 0.11019283746556474,
+      "1.0": 0.08052553507098961,
+      "2.0": 0.10595465140919687,
+      "4.0": 0.18648018648018647,
+      "8.0": 0.2627675354948082
+    },
+    "n_T0_beating_monotone": 1,
+    "mean_acceptance_alone": 0.1518795213365157,
+    "mean_acceptance_given_structure": 0.3547459548253329,
+    "mean_interaction": 0.2028664334888172,
+    "mean_barrier_depth_pp": 3.7243486688557064
+  }
+}

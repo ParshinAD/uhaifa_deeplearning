@@ -1,0 +1,30 @@
+{
+  "_doc": "AMENDMENT 4 to the H80 rung-1 pre-registration, SEALED AND COMMITTED BEFORE THE CONTROL RAN. Cycle 23, 2026-08-28. It adds one ADVERSARIAL control arm. The control can only take credit AWAY from H80; it cannot manufacture a pass. It is added because S1 produced a number that makes the pre-registered primary uninterpretable as written.",
+  "item": "H80",
+  "cycle": 23,
+  "what_S1_showed_that_forced_this": {
+    "fact": "In every Metropolis arm on S1, 98.5% to 100.0% of the ACCEPTED moves are SIDEWAYS - exact-tie proposals with d_pp == 0 - and not uphill moves at all.",
+    "numbers": {
+      "A4_topk_anneal_T0.5": "6 uphill vs 12,699 sideways over 3 seeds (fraction uphill 0.000), max excursion 0.0047 pp, mean delta +0.118770 pp",
+      "A4_topk_anneal_T8.0": "197 uphill vs 12,515 sideways (0.015), max excursion 0.0757 pp, mean delta +0.150574 pp",
+      "A3_struct_anneal_T8.0": "1,065 uphill vs 11,428 sideways (0.085), max excursion 0.2628 pp, mean delta +0.039328 pp",
+      "context": "the mean blend-path barrier on the same instances is 3.7243 pp, so the deepest excursion any arm made is 1.4% to 7.1% of it"
+    },
+    "why_it_matters": "H80's hypothesis is specifically that a search which ACCEPTS TEMPORARY LOSS at the ~0.8 pp scale escapes the fixed point. An arm that wins while accepting 6 losing moves in three seeds, and never sitting more than 0.0047 pp below its own best, is not evidence for that hypothesis - whatever its delta. The obvious alternative explanation is PLATEAU DRIFT: the exact-gain insertion profile is piecewise-constant with plateaus of median width 574-1,646 ranks (M14), so accepting exact ties lets the search wander a plateau for free and re-descend elsewhere. That mechanism needs no temperature and is not barrier crossing.",
+    "relation_to_existing_rules": "M14 measured that plateau TRANSPORT is absorbed by stage 4 on the connectome; it did not test whether plateau DRIFT AS AN ACCEPTANCE RULE is worth anything. M5-no-ties is explicitly scoped to CONTINUOUS position ties and M14 already says it does not generalise to the discrete profile. So this control is testing something the campaign has not tested - but it is testing it as a RIVAL to H80, not as a friend."
+  },
+  "the_control": {
+    "arms_added": {
+      "A5_topk_sideways": "top-k ruin-and-recreate, acceptance = accept iff NOT STRICTLY WORSE (d_pp >= 0). Zero temperature, no calibration, no uphill move ever accepted.",
+      "A6_struct_sideways": "the same with the structure-aware destroy."
+    },
+    "run_as": "--stage S1c and --stage S2c, on the SAME instances, the SAME seeds (42/123/999), the SAME start and the SAME wall budgets (30 s / 120 s). A1 and A2 are re-run inside the control pass so the comparison is within-pass and free of cross-pass wall noise.",
+    "why_it_is_safe_to_add_after_seeing_S1": "It is adversarial by construction. If A5 recovers the Metropolis arms' advantage, H80 LOSES a claim it appeared to have won; if A5 does not, H80's claim survives a test it would otherwise never have faced. No configuration of this control can turn a rung-1 fail into a rung-1 pass."
+  },
+  "kill_condition_added": {
+    "K5": "If mean(A5_topk_sideways) - max(A0, A1, A2) recovers at least 70% of the winning Metropolis cell's mean delta on S1, then the acceptance SCHEDULE is not the mechanism - zero-temperature plateau drift is - and H80 AS STATED is killed even if K1-K4 pass. The surviving mechanism would then be a different item (plateau-drift LNS), filed on its own evidence and named as such, not promoted under H80's banner.",
+    "70_percent_justification": "The winning cell's advantage over the best sideways arm is what the temperature buys. At 70% recovery the temperature is buying under a third of the effect while carrying all of the sizing machinery and all of the risk of a random walk, and the honest description of the mechanism becomes 'drift', not 'barrier crossing'. The threshold is a judgement and is stated here rather than chosen afterwards."
+  },
+  "unchanged": ["K1-K4 as amended in proto_H80_prereg_amendment.json", "every leakage rule", "the rung-2 design"],
+  "sealed_at_commit": "the commit that adds this file; see experiments/log.md cycle 23"
+}

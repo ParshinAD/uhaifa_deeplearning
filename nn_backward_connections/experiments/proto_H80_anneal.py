@@ -330,7 +330,10 @@ def search(g, init_rank, *, destroy: str, acceptance: str, k: int,
         if d_pp > 0:
             take = True
         elif d_pp == 0:
-            take = acceptance == "metropolis"     # sideways drift, not an uphill move
+            # Sideways drift across an exact-tie plateau. NOT an uphill move, and the S1
+            # data says it is 98.5-100% of everything the Metropolis arms accept - which
+            # is why "sideways" exists as its own acceptance rule (amendment 4).
+            take = acceptance in ("metropolis", "sideways")
             n_sideways += int(take)
         elif acceptance == "metropolis" and T > 0:
             take = bool(rng.random_sample() < np.exp(d_pp / T))
@@ -543,12 +546,88 @@ def _summarise(rows: List[Dict], full_grid: bool) -> Dict:
     return out
 
 
+def run_control(g, seed: int, *, epochs: int, sift_sweeps: int, budget_s: float) -> Dict:
+    """AMENDMENT 4 control: does ZERO-temperature sideways drift explain the whole gain?
+
+    Same instance, same start, same budget, same destroy operators - the only change is
+    the acceptance rule, which becomes "accept iff not strictly worse". If this recovers
+    the Metropolis arms' advantage, then the temperature is decorative and what the arms
+    were actually buying is plateau drift, not barrier crossing.
+    """
+    n = g.n_nodes
+    greedy = greedy_fas_order(g)
+    if epochs > 0:
+        res = run_rocket(g, RocketConfig(epochs=epochs), seed=seed, device=CPU,
+                         init_positions=_init_positions_from_order(greedy, CPU))
+        rank0 = np.argsort(np.argsort(res.best_positions, kind="stable"),
+                           kind="stable").astype(np.int64)
+    else:
+        rank0 = np.asarray(greedy, dtype=np.int64)
+    a0_rank, a0_score, _ = sift(g, rank0, max_sweeps=sift_sweeps)
+    k = max(4, min(40, int(round(0.05 * n))))
+    arms = {}
+    for nm, dz, ac in (("A1_topk_greedy", "topk", "greedy"),
+                       ("A2_struct_greedy", "struct", "greedy"),
+                       ("A5_topk_sideways", "topk", "sideways"),
+                       ("A6_struct_sideways", "struct", "sideways")):
+        arms[nm] = search(g, a0_rank, destroy=dz, acceptance=ac, k=k,
+                          time_budget_s=budget_s, seed=seed)
+    return dict(seed=seed, n=int(n), m=int(g.n_edges), k=k,
+                A0_sift_pct=pct(a0_score, g.total_weight), budget_s=budget_s, arms=arms)
+
+
+def _summarise_control(rows: List[Dict]) -> Dict:
+    def a(r, key):
+        return r["arms"][key]["best_pct"]
+    per_seed = [dict(seed=r["seed"], A0=r["A0_sift_pct"],
+                     A1_topk_greedy=a(r, "A1_topk_greedy"),
+                     A2_struct_greedy=a(r, "A2_struct_greedy"),
+                     A5_topk_sideways=a(r, "A5_topk_sideways"),
+                     A6_struct_sideways=a(r, "A6_struct_sideways"),
+                     sideways_alone_topk=a(r, "A5_topk_sideways") - max(
+                         r["A0_sift_pct"], a(r, "A1_topk_greedy"),
+                         a(r, "A2_struct_greedy")),
+                     sideways_alone_struct=a(r, "A6_struct_sideways") - max(
+                         r["A0_sift_pct"], a(r, "A1_topk_greedy"),
+                         a(r, "A2_struct_greedy")))
+                for r in rows]
+    return dict(per_seed=per_seed,
+                mean_sideways_alone_topk=float(np.mean(
+                    [p["sideways_alone_topk"] for p in per_seed])),
+                mean_sideways_alone_struct=float(np.mean(
+                    [p["sideways_alone_struct"] for p in per_seed])),
+                total_sideways_accepted={
+                    nm: int(sum(r["arms"][nm]["n_sideways_accepted"] for r in rows))
+                    for nm in ("A5_topk_sideways", "A6_struct_sideways")},
+                total_uphill_accepted={
+                    nm: int(sum(r["arms"][nm]["n_uphill_accepted"] for r in rows))
+                    for nm in ("A5_topk_sideways", "A6_struct_sideways")})
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stage", required=True, choices=["S1", "S2", "S3"])
+    ap.add_argument("--stage", required=True,
+                    choices=["S1", "S2", "S3", "S1c", "S2c"])
     args = ap.parse_args()
     seeds = (42, 123, 999)
     rows: List[Dict] = []
+
+    if args.stage in ("S1c", "S2c"):
+        big = args.stage == "S2c"
+        for s in seeds:
+            g, _ref, _p = gapmod.make_hard_synthetic_graph(
+                **({"n": 4000} if big else {}), seed=s)
+            rows.append(run_control(g, s, epochs=4000, sift_sweeps=20,
+                                    budget_s=120.0 if big else 30.0))
+            print(f"[{args.stage} s{s}] done", flush=True)
+        summary = _summarise_control(rows)
+        payload = dict(stage=args.stage, seeds=list(seeds), inner_sweeps=INNER_SWEEPS,
+                       rows=rows, summary=summary)
+        path = OUT / f"proto_H80_{args.stage}.json"
+        path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        print(f"\nwrote {path}")
+        print(json.dumps(summary, indent=2)[:3000])
+        return
 
     if args.stage == "S1":
         for s in seeds:
