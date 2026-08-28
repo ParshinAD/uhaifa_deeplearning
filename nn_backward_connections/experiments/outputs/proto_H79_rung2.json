@@ -1,0 +1,251 @@
+{
+  "id": "H79-rung2",
+  "role": "implement",
+  "champion_connectome_pct": 84.25817950936937,
+  "nuisance_sigma_pp": 0.019124,
+  "min_effect_pp": 0.012,
+  "validity": {
+    "anchor_reproduces_champion": true,
+    "anchor_pct": [
+      84.25817950936937
+    ],
+    "verdict": "PASS"
+  },
+  "per_arm": {
+    "H79": {
+      "construction": "greedy_fas (identity anchor)",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "pct": [
+        84.25817950936937
+      ],
+      "pct_mean": 84.25817950936937,
+      "pct_std": 0.0,
+      "distinct_values": 1,
+      "delta_vs_champion_pp": 0.0,
+      "init_pct": [
+        68.91342773446004
+      ],
+      "pure_best_pct": [
+        83.23791666953974
+      ],
+      "sift_best_pct": [
+        84.11761164861514
+      ],
+      "wall_clock_s": [
+        1193.0929477214813
+      ],
+      "degraded": [
+        false
+      ],
+      "commit": [
+        "0a511876024768cb484950c54fe498accb529c6c+dirty"
+      ],
+      "files": [
+        "20260828T033655Z-H79-connectome-s42-implement-a073e9.json"
+      ],
+      "mouse_pct": [
+        93.17538325903583,
+        93.17538325903583,
+        93.17538325903583
+      ],
+      "mouse_files": [
+        "20260828T070111Z-H79-mouse-s42-implement-4553ed.json",
+        "20260828T070114Z-H79-mouse-s123-implement-4553ed.json",
+        "20260828T070117Z-H79-mouse-s999-implement-4553ed.json"
+      ]
+    },
+    "H79A": {
+      "construction": "reverse_greedy_fas",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "pct": [
+        84.25286124132862,
+        84.25286124132862,
+        84.25286124132862
+      ],
+      "pct_mean": 84.25286124132862,
+      "pct_std": 0.0,
+      "distinct_values": 1,
+      "delta_vs_champion_pp": -0.0053182680407530825,
+      "init_pct": [
+        71.32032219494585,
+        71.32032219494585,
+        71.32032219494585
+      ],
+      "pure_best_pct": [
+        83.31639989472264,
+        83.31639989472264,
+        83.31639989472264
+      ],
+      "sift_best_pct": [
+        84.11313800457009,
+        84.11313800457009,
+        84.11313800457009
+      ],
+      "wall_clock_s": [
+        1195.3144636154175,
+        1196.1062910556793,
+        1195.7724635601044
+      ],
+      "degraded": [
+        false,
+        false,
+        false
+      ],
+      "commit": [
+        "9cb41cf965d2fb1010485a707b4e2eb3c15b2930+dirty"
+      ],
+      "files": [
+        "20260828T035837Z-H79A-connectome-s42-implement-929555.json",
+        "20260828T041845Z-H79A-connectome-s123-implement-929555.json",
+        "20260828T043854Z-H79A-connectome-s999-implement-929555.json"
+      ],
+      "mouse_pct": [
+        93.14077703351612,
+        93.14077703351612,
+        93.14077703351612
+      ],
+      "mouse_files": [
+        "20260828T045903Z-H79A-mouse-s42-implement-467439.json",
+        "20260828T045905Z-H79A-mouse-s123-implement-467439.json",
+        "20260828T045908Z-H79A-mouse-s999-implement-467439.json"
+      ]
+    },
+    "H79B": {
+      "construction": "scc_topo",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "pct": [
+        84.25748758575708,
+        84.25748758575708,
+        84.25748758575708
+      ],
+      "pct_mean": 84.25748758575708,
+      "pct_std": 0.0,
+      "distinct_values": 1,
+      "delta_vs_champion_pp": -0.0006919236122939765,
+      "init_pct": [
+        70.03817581163415,
+        70.03817581163415,
+        70.03817581163415
+      ],
+      "pure_best_pct": [
+        83.30051666890508,
+        83.30051666890508,
+        83.30051666890508
+      ],
+      "sift_best_pct": [
+        84.10823011880973,
+        84.10823011880973,
+        84.10823011880973
+      ],
+      "wall_clock_s": [
+        1178.5294857025146,
+        1180.7308475971222,
+        1181.2491402626038
+      ],
+      "degraded": [
+        false,
+        false,
+        false
+      ],
+      "commit": [
+        "9cb41cf965d2fb1010485a707b4e2eb3c15b2930+dirty"
+      ],
+      "files": [
+        "20260828T045939Z-H79B-connectome-s42-implement-c37d52.json",
+        "20260828T051930Z-H79B-connectome-s123-implement-c37d52.json",
+        "20260828T053923Z-H79B-connectome-s999-implement-c37d52.json"
+      ],
+      "mouse_pct": [
+        92.96606505828233,
+        92.96606505828233,
+        92.96606505828233
+      ],
+      "mouse_files": [
+        "20260828T055917Z-H79B-mouse-s42-implement-858434.json",
+        "20260828T055920Z-H79B-mouse-s123-implement-858434.json",
+        "20260828T055923Z-H79B-mouse-s999-implement-858434.json"
+      ]
+    },
+    "H79C": {
+      "construction": "imbalance_sort",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "pct": [
+        84.2523005446083,
+        84.2523005446083,
+        84.2523005446083
+      ],
+      "pct_mean": 84.2523005446083,
+      "pct_std": 0.0,
+      "distinct_values": 1,
+      "delta_vs_champion_pp": -0.005878964761066641,
+      "init_pct": [
+        69.63445269951731,
+        69.63445269951731,
+        69.63445269951731
+      ],
+      "pure_best_pct": [
+        83.29790167483928,
+        83.29790167483928,
+        83.29790167483928
+      ],
+      "sift_best_pct": [
+        84.10919642592346,
+        84.10919642592346,
+        84.10919642592346
+      ],
+      "wall_clock_s": [
+        1180.2893257141113,
+        1180.624093055725,
+        1180.2959175109863
+      ],
+      "degraded": [
+        false,
+        false,
+        false
+      ],
+      "commit": [
+        "9cb41cf965d2fb1010485a707b4e2eb3c15b2930+dirty"
+      ],
+      "files": [
+        "20260828T055944Z-H79C-connectome-s42-implement-86241f.json",
+        "20260828T061937Z-H79C-connectome-s123-implement-86241f.json",
+        "20260828T063931Z-H79C-connectome-s999-implement-86241f.json"
+      ],
+      "mouse_pct": [
+        92.96606505828233,
+        92.96606505828233,
+        92.96606505828233
+      ],
+      "mouse_files": [
+        "20260828T065924Z-H79C-mouse-s42-implement-35ba64.json",
+        "20260828T065926Z-H79C-mouse-s123-implement-35ba64.json",
+        "20260828T065929Z-H79C-mouse-s999-implement-35ba64.json"
+      ]
+    }
+  },
+  "spread_incl_anchor_pp": 0.005878964761066641,
+  "spread_arms_only_pp": 0.005187041148772664,
+  "spread_exceeds_nuisance_sigma": false,
+  "best_arm": "H79",
+  "best_arm_delta_vs_champion_pp": 0.0,
+  "screen_gate_any_arm_passes": false,
+  "decision_rule": "kill iff spread <= nuisance_sigma_pp (the stack erases the basin); the SPREAD is the deliverable, the max is NOT a claim (M9/M10)"
+}

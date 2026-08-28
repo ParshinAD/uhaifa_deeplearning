@@ -8456,3 +8456,261 @@ PYTHONPATH=src $PY experiments/diagnostics/h78_slot_adoption.py
 # the H02-era comparator these are read against
 cat experiments/outputs/localsearch_sizing.json
 ```
+
+## 2026-08-28 - Cycle 22 - H79: a structurally DIFFERENT starting basin - **KILL at the screen** (the stack ERASES the basin: constructions Kendall tau 0.09-0.43 apart, spanning 2.406894 pp of initial quality, converge to within 0.005879 pp - a 409x contraction - and the champion's own construction is the maximum of the four)
+
+**Mode: DIVERGENT.** Trigger `cycles_since_score_move = 4` >= `campaign.yaml`
+`escalation.divergent_after_k_cycles_without_score_move` (3). `consecutive_kills = 2`, not yet
+armed. `cycles_since_literature_scan = 3` (fires at 5), and cycle 21's handoff (d) explicitly said
+not to run a broad scan while `scan_cycle18.md`'s yield is unexhausted - so none was run. Reasoning
+written to `autoresearch/lit/divergence-cycle22.md` **before** the item was worked.
+
+**P23 was checked first, for the sixth cycle running, and is still `awaiting-operator`.** HEAD at
+preflight was `894492e`; no ruling commit exists on the branch. H70, H63's microns leg and H74 stay
+blocked. Nothing in this cycle changes that.
+
+Preflight: tree clean, branch `auto/campaign-v3` = `campaign.yaml` `campaign.branch`, full suite
+**611 passed in 165.15 s**, frozen manifest untouched. Machine: Windows 10 laptop, RTX 4060, CUDA,
+torch 2.8.0+cu128.
+
+### Why this item
+
+M15 (cycle 21) closed the monotone-move-class question from the champion's basin and named exactly
+two surviving levels: a structurally **different** basin (H79) and a search that accepts uphill
+moves at ~0.8 pp scale (H80). H79 went first for one reason - **it has a free rung**. Its rung 1 is
+CPU-only Kendall-tau geometry and can kill the whole axis for ~20 minutes of CPU. H80 has no free
+rung: it needs the structure-aware destroy operator H40 never built, and its cheapest honest test is
+~1 h of synthetic CPU followed by a full connectome run.
+
+The five queue items M15's directive puts under a burden of proof - H61, H71, H72, H77, H67 - were
+left alone rather than killed. They are move-class work on the existing basin; M15 predicts each at
+or under the +0.018 pp ceiling every move class since H42 has hit, and none carries the argument M15
+now asks for.
+
+### Rung 1 - NOVELTY: **PASS**, and the axis is crowded enough that the argument is written out
+
+Three kills sit on this axis, and each constrains the design rather than forbidding it:
+
+* **H48** (`starting basin`). Its revival condition is *"never again as a drop-in warm start for the
+  current stack"*. So `ratio_greedy` is **blocked by name** as an arm - `H79.BLOCKED_AS_ARM` carries
+  the string and the rung-1 script enforces it in the pass criterion. It appears in the geometry
+  measurement only, as a reference point whose post-pipeline outcome is already known (-0.01382 pp).
+* **H56/H57** (`restarts / multi-start`). M10 states the one surviving door in its own words: *"a
+  mechanism that WIDENS the PREFIX's sigma at the champion's per-arm cost"*, and H56's revival
+  condition (b) sets the bar at **0.021269 pp**. A different **construction** is exactly a
+  prefix-level mechanism. That is the revival condition this item satisfies, and it was written by
+  the kill index rather than invented here.
+* **M6/M7** (`init is flat`, `expensive warm-starts lose`). Neither is contradicted: the arms are
+  not quality proposals - two of three start within 1.2 pp of greedy-FAS - and all three cost under
+  20 s against greedy-FAS's 17 s.
+
+### Rung 2 - PROTOTYPE (CPU, 157.7 s, zero GPU): **PASS**
+
+`experiments/diagnostics/h79_basin_distance.py` -> `experiments/outputs/proto_H79_rung1.json`.
+Pre-registration sealed at `894492e` and committed **before** the script ran
+(`experiments/outputs/proto_H79_prereg.json`).
+
+The measurement needs a scale, and the scale is the champion's **own construction ball**: greedy-FAS
+re-run on R = 5 randomly **relabelled** copies of the connectome (an exact isomorphism - only index
+tie-breaks move), each mapped back to canonical node ids. That is the campaign's already-established
+unit of "same construction, different tie-breaks" (M10).
+
+| construction | init % | Kendall tau vs greedy-FAS | inside the ball? |
+|---|---|---|---|
+| `greedy_fas` (champion, H02) | 68.913428 | - | anchor |
+| ball, r = 1..5 (relabelled greedy-FAS) | 68.908778 - 68.911421 | **0.937858 - 0.942799** | by construction |
+| `ratio_greedy` (H48; blocked as an arm) | 74.617302 | 0.384106 | no |
+| `reverse_greedy_fas` (H79A) | 71.320322 | **0.089885** | no |
+| `imbalance_sort` (H79C) | 69.634453 | **0.370638** | no |
+| `scc_topo` (H79B) | 70.038176 | **0.432855** | no |
+
+The gap is not marginal: the ball's own diameter is tau >= 0.9379, and the nearest alternative
+construction sits at 0.4329. Rung 1 passed its pre-registered criterion (>= 2 admissible distinct
+constructions; three qualified).
+
+**Two by-products worth keeping, neither of which H79 was filed to measure:**
+
+1. **The champion's final order is FARTHER from its own init than from two of the alternatives'
+   inits.** tau(`greedy_fas`, champion final) = **0.224115**, against 0.471206 for `ratio_greedy`
+   and 0.419985 for `reverse_greedy_fas`. The pipeline travels a very long way from where it starts,
+   which is the first quantitative reason to doubt that "the init determines the basin" at all.
+2. `imbalance_sort` and `scc_topo` are tau = 0.874521 from **each other** - outside the ball, but far
+   closer to one another than to anything else. Their intra-SCC key is the same imbalance sort and
+   the connectome is dominated by one giant SCC, so as a pair they contribute roughly one direction
+   of contrast, not two. Stated so the spread below is not over-read.
+
+### The variant family, committed BEFORE the screen
+
+`src/mfas/experiments/H79.py` holds the constructions and one copy of the champion pipeline in which
+the single line `order = greedy_fas_order(g)` becomes `order = CONSTRUCTIONS[construction](g)`. Every
+constant and the gradient loop itself are **imported from H64**, not copied, so an arm cannot drift
+from the champion by editing. `H79A`/`H79B`/`H79C` are three lines of configuration each.
+`experiments/diagnostics/h79_basin_distance.py` imports `CONSTRUCTIONS` from that module too, so the
+geometry above and the arms below are the same functions - and the rung-1 artifact was **re-run**
+from the shared code after the refactor, reproducing every figure.
+
+Committed at **`0a51187`** before the first run (the H36/H42 provenance defect, not repeated), and
+the tree was clean again at **`9cb41cf`** before the arms.
+
+### IDENTITY ANCHOR: **PASS**
+
+`H79` with `_CONSTRUCTION = "greedy_fas"` is the champion pipeline reached through the new
+indirection. It must reproduce H64 bit-for-bit or the arms measure the refactor instead of the basin
+- the same validity check H57's prefix study used.
+
+`results/20260828T033655Z-H79-connectome-s42-implement-a073e9.json` -> **84.25817950936937**,
+exactly `sota.json`'s `pct_mean_exact`, wall 1193.1 s, `degraded: false`. Stage-by-stage it is the
+champion too: init 68.91342773, pure 83.23791667, sift 84.11761165.
+
+### Rung 3 - SCREEN: **FAIL**, and it fails by the item's OWN pre-registered kill condition
+
+Three arms, `--auto-seeds`. `autoresearch/seed_class.py` classifies every arm **`rng`**
+(`UNRESOLVED: mfas.experiments.H79.run_with_construction: _ALT_CYCLES.get() line 249`), so each ran
+at **3 connectome seeds + 3 mouse seeds**. That is not a concession: the classifier calls the
+**champion H64 itself** `rng` for the same kind of reason (`_time.time()` inside `pair_relocate`),
+so the arms got exactly the champion's own treatment. microns is `in_screen: false` and was not run.
+All 12 connectome runs completed clean - `degraded: false`, 1179-1196 s against a 3450 s deadline.
+
+| arm | construction | tau vs greedy-FAS | init % | pure % | after sift % | **final %** | delta vs champion |
+|---|---|---|---|---|---|---|---|
+| `H79` | `greedy_fas` (anchor) | - | 68.913428 | 83.237917 | 84.117612 | **84.25817951** | +0.000000 |
+| `H79A` | `reverse_greedy_fas` | 0.089885 | 71.320322 | **83.316400** | 84.113138 | **84.25286124** | **-0.005318** |
+| `H79B` | `scc_topo` | 0.432855 | 70.038176 | 83.300517 | 84.108230 | **84.25748759** | **-0.000692** |
+| `H79C` | `imbalance_sort` | 0.370638 | 69.634453 | 83.297902 | 84.109196 | **84.25230054** | **-0.005879** |
+
+Every arm is bit-identical across its 3 seeds (1 distinct value each), so sigma = 0 within an arm
+and the only dispersion here is the basin's.
+
+**SPREAD = 0.005879 pp** (arms only: 0.005187 pp) against the pre-registered kill threshold of
+**0.019124 pp**, the measured relabelling nuisance sigma. The item dies on the condition it wrote
+for itself before the numbers existed.
+
+### Why this is a strong null and not a weak one
+
+**1. The contraction is monotone and enormous, and it is visible stage by stage.**
+
+| after stage | spread across the four basins |
+|---|---|
+| construction (stage 1) | **2.406894 pp** |
+| pure Rocket (stage 2) | 0.078483 pp (**30.7x** contraction) |
+| under-relaxed sift (stage 3) | 0.009382 pp (**8.4x**) |
+| alternating SCC/sift (stage 4) | **0.005879 pp** (**1.6x**) |
+
+End to end the stack divides the input spread by **409x**. The inputs are not near-duplicates being
+squeezed: they are Kendall tau **0.089885 to 0.432855** apart from the champion's construction,
+against a champion relabelling ball whose own diameter is tau >= **0.937858**. The pipeline maps a
+genuinely wide set of starts onto essentially one point.
+
+**2. The champion's own construction is the MAXIMUM of the four, by enumeration.** So a
+best-of-basins multi-start, anchored on the canonical arm - the only monotone form, per M9's
+corollary (1) - gains **exactly 0.000000 pp**, at every R and for every subset. This is the same
+shape M10 found for relabelling, reached independently on a different axis.
+
+**3. It fails the revival condition it was admitted under, quantitatively.** H56's condition (b) and
+M10 both require a mechanism that widens the prefix dispersion past **0.021269 pp** at the
+champion's per-arm cost. The basin-induced sample std over the four arms is **0.003054 pp** - a
+factor of **7.0** short, and 0.144x the bar. Not a near miss.
+
+**4. Non-monotonicity in input quality, for the fourth measured time.** `reverse_greedy_fas` ends
+stage 2 as the **best** of the four (83.316400, **+0.078483 pp above the champion's own** pure
+Rocket) and finishes third of four. `imbalance_sort` starts **+0.721 pp above** greedy-FAS and
+finishes last. H48 saw this at +5.70 pp, H60 and H73 saw it downstream; it is a property of the
+stack, not of any one input.
+
+### mouse - the tripwire, and it is a real one here
+
+Unlike H64 (where `_EPOCHS["mouse"] = 0` makes the surrogate swap vacuous on mouse), a construction
+swap **does** exercise the changed code on mouse: stage 1 feeds stage 3 directly. So the mouse leg
+tests the mechanism for once.
+
+| arm | mouse % (3 seeds, 1 distinct value) | delta vs champion H63 93.17538325903584 |
+|---|---|---|
+| `H79` anchor | 93.17538325903583 | -1.4e-14 pp (one float64 ulp; below `measurement_resolution_pp` = 1e-12) |
+| `H79A` | 93.14077703351612 | -0.034606 |
+| `H79B` | 92.96606505828233 | -0.209318 |
+| `H79C` | 92.96606505828233 | -0.209318 |
+
+All three arms clear the -0.26 pp non-inferiority margin, `H79B`/`H79C` not by much. They land on the
+**same** mouse value because on 148 nodes their constructions coincide. Directionally mouse agrees
+with connectome - every alternative basin is worse - on a dataset whose own sigma is 0.2624 pp, so
+this corroborates rather than proves.
+
+### New meta-rule - M16-the-stack-erases-the-basin
+
+Filed in `autoresearch/killed.json`. In short: **the champion pipeline's connectome output is a
+property of the graph, not of the start.** Over four cheap graph-structural constructions spanning
+2.406894 pp of initial quality and Kendall tau 0.09-0.43, the final scores span 0.005879 pp - 409x
+contraction, 3.3x tighter than the relabelling nuisance sigma, with the champion's own construction
+at the maximum. Consequences: the multi-start family is closed on a *third* independent axis (after
+H56's relabelling and H57's prefix sharing); M6 ("the init -> plateau curve is flat", stated for
+plain Rocket at the 82.9% plateau) is confirmed to survive the entire H64 stack at 84.26%; and M15
+gains a mechanism - a contraction cannot reach a point outside its image, whatever the start.
+
+### What it does NOT say, stated because the temptation is obvious
+
+* It is measured over **cheap graph-structural constructions** (peel by imbalance, peel by imbalance
+  on the transpose, static imbalance sort, SCC-topological). It says nothing about a construction
+  from a different algorithmic family - though M7 already blocks the expensive ones, and H48 blocks
+  the one good cheap alternative from being an arm.
+* `imbalance_sort` and `scc_topo` are tau = 0.874521 from **each other**, so the four arms supply
+  roughly **three** independent directions of contrast, not four. The reported spread is a range over
+  four points, and a range is a downward-biased estimate of dispersion at small n. Both the
+  point estimate (0.003054 pp) and the range (0.005879 pp) are far enough from the 0.021269 pp bar
+  that this does not change the verdict, and it is stated rather than buried.
+* **connectome + mouse only.** microns is `in_screen: false`; a variant that loses on connectome has
+  no path to promotion, so no microns GPU was spent. The contraction is therefore not established
+  for microns.
+* It does not say the basin is irrelevant to a **different stack**. It says this stack erases it.
+
+### Decision: **KILL**
+
+Pre-registered condition met. `sota.json` untouched. No confirm and no critic rung: the screen
+failed, and the ladder does not run rungs above a failed one. `gates_run` is
+`["novelty", "prototype", "screen"]` and lists only what ran.
+
+### Filed
+
+* **M16-the-stack-erases-the-basin** (`killed.json` meta-rules) and the **H79** kill entry with its
+  revival condition.
+* **P26** - `scipy.stats.spearmanr` aborts the interpreter in the `allen` env at every n, including
+  n = 10: `Windows fatal exception: code 0xc06d007f` inside `numpy.corrcoef -> np.dot`, i.e. a broken
+  BLAS in this environment. Found while building the rung-1 probe; worked around by dropping
+  Spearman (Kendall tau, the pre-registered statistic, is unaffected and needs no BLAS). Nothing in
+  the campaign's measured record depends on `np.dot` today - the pipelines are torch - but a
+  diagnostic that reaches for `numpy.corrcoef`, `numpy.cov` or `@` will die silently under
+  `detach.sh`, with **no traceback**, because the process aborts rather than raising. That is exactly
+  how this cycle first lost a run.
+* **H80** is now the queue's ranked science item and the remaining M15-licensed axis. This cycle
+  strengthens its premise and narrows its design: with the basin erased, the only way out of this
+  fixed point is a search that is allowed to **stay** worse. It also removes one of H80's escape
+  routes - "restart from somewhere else" is measured dead, so the acceptance schedule has to do all
+  the work.
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+
+# rung 1 - geometry (CPU, 157.7 s)
+PYTHONPATH=src $PY experiments/diagnostics/h79_basin_distance.py \
+    --dataset connectome --relabellings 5 \
+    --champion-positions results/20260827T024801Z-H64-connectome-s42-confirm-a7490c_positions.npy \
+    --out experiments/outputs/proto_H79_rung1.json
+
+# identity anchor (connectome, 1 seed) and the three arms (3+3 seeds each)
+bash autoresearch/sweep.sh --exp H79  --datasets connectome --seeds 42 --role implement
+bash autoresearch/sweep.sh --exp H79  --datasets mouse --seeds "42 123 999" --role implement
+bash autoresearch/sweep.sh --exp H79A --role implement --auto-seeds
+bash autoresearch/sweep.sh --exp H79B --role implement --auto-seeds
+bash autoresearch/sweep.sh --exp H79C --role implement --auto-seeds
+
+# rung 2 - the spread
+PYTHONPATH=src $PY experiments/diagnostics/h79_basin_spread.py \
+    --out experiments/outputs/proto_H79_rung2.json
+```
+
+Artifacts: `experiments/outputs/proto_H79_prereg.json` (sealed at `894492e`),
+`proto_H79_rung1.json`, `proto_H79_rung2.json`; `results/*-H79{,A,B,C}-*-implement-*.json` (16 runs).
+Modules committed at `0a51187` **before** the first run; tree clean at `9cb41cf` before the arms.
+
+**Cost:** ~4.4 h GPU (13 connectome runs at ~1185 s, 12 mouse runs at ~1 s), ~5 min CPU.

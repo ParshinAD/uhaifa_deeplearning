@@ -1,5 +1,5 @@
 {
-  "_doc": "Do-not-repeat memory. Machine-readable index of every mechanism already falsified, with the evidence and \u0420\u0406\u0420\u201a\u0432\u0402\u045c critically \u0420\u0406\u0420\u201a\u0432\u0402\u045c the REVIVAL CONDITION that would make it worth re-testing. This is not a blacklist: it is a cost filter. The ideator MUST read it before proposing, and any proposal sharing an axis with an entry here MUST name the revival condition it satisfies.",
+  "_doc": "Do-not-repeat memory. Machine-readable index of every mechanism already falsified, with the evidence and РІР‚вЂќ critically РІР‚вЂќ the REVIVAL CONDITION that would make it worth re-testing. This is not a blacklist: it is a cost filter. The ideator MUST read it before proposing, and any proposal sharing an axis with an entry here MUST name the revival condition it satisfies.",
   "updated": "2026-08-28",
   "meta_rules": [
     {
@@ -93,6 +93,12 @@
       "added": "2026-08-28 (cycle 21: H78, divergent mode)",
       "evidence": "experiments/outputs/proto_H78_connectome.json; proto_H78b_path_connectome.json; proto_H78c_slot_adoption.json; experiments/diagnostics/h78_residual_gap_structure.py, h78_path_to_reference.py, h78_slot_adoption.py; autoresearch/lit/divergence-cycle21.md; experiments/log.md 2026-08-28 cycle 21",
       "instrument_caveat": "proto_H78b_path_connectome.json records barrier_confirmed: false. THAT FLAG IS WRONG and the rule behind it was mis-specified by the cycle, not by the data: it counted t=0.995 (+0.038146 pp over the champion) as an 'interior' point. At t=0.995 the blend is the REFERENCE order locally re-sorted within ~200-rank windows; it scores 84.29632597385103, i.e. 0.318 pp BELOW the reference, sits on the reference's side of the valley, and cannot be constructed without the reference. It is not a reachable point and not a win. Probe (3), slot-preserving adoption, has no such ambiguity and is the load-bearing evidence."
+    },
+    {
+      "id": "M16-the-stack-erases-the-basin",
+      "rule": "THE CHAMPION PIPELINE'S CONNECTOME OUTPUT IS A PROPERTY OF THE GRAPH, NOT OF THE START. Measured on the H64 stack over FOUR cheap graph-structural constructions - greedy-FAS (the champion's), greedy-FAS on the transpose, static out_w-in_w sort, and SCC-condensation topological seeding - that span 2.406894 pp of initial quality (68.913428-71.320322 %) and sit Kendall tau 0.089885-0.432855 from the champion's construction, against a champion RELABELLING BALL whose own diameter is tau >= 0.937858. The FINAL scores span 0.005879 pp (84.25230054-84.25817951), i.e. the stack divides the input spread by 409x. THE CONTRACTION IS STAGE-WISE AND MONOTONE: 2.406894 pp (construction) -> 0.078483 pp after pure Rocket (30.7x) -> 0.009382 pp after the under-relaxed sift (8.4x) -> 0.005879 pp after stage 4 (1.6x). THREE CONSEQUENCES. (1) The multi-start family is closed on a THIRD independent axis, after H56 (relabelling) and H57 (prefix sharing): the champion's own construction is the MAXIMUM of the four by enumeration, so canonical-anchored best-of-basins gains EXACTLY 0.000000 pp at every R; and the basin-induced sample std is 0.003054 pp against M9/M10's 0.021269 pp bar - short by 7.0x, not a near miss. (2) M6 ('the init -> plateau curve is flat'), stated for plain Rocket at the 82.87-82.93 % plateau, SURVIVES THE WHOLE H64 STACK at 84.26 %: it is not an artefact of the weak 2026-06 pipeline. (3) It supplies a mechanism for M15 - a contraction cannot reach a point outside its image, whatever the start - and it is a fourth measured instance of the stack being NON-MONOTONE in input quality (reverse_greedy_fas leads pure Rocket by +0.078483 pp and finishes third of four; imbalance_sort starts +0.721 pp above greedy-FAS and finishes last; cf. H48 at +5.70387 pp). SCOPE, and it is a real limit: cheap graph-structural constructions only; imbalance_sort and scc_topo are tau = 0.874521 from EACH OTHER, so the four arms give ~three independent directions of contrast; connectome + mouse only (microns is in_screen: false and no variant losing on connectome can be promoted, so none was spent); and 'range over 4 points' is a downward-biased dispersion estimate - both it and the sample std clear the bar by wide margins, which is why the verdict does not turn on the choice. It says THIS stack erases the basin, not that the basin is irrelevant to a different one.",
+      "added": "2026-08-28 (cycle 22: H79, divergent mode)",
+      "evidence": "experiments/outputs/proto_H79_rung1.json; experiments/outputs/proto_H79_rung2.json; experiments/outputs/proto_H79_prereg.json (sealed at 894492e before the probe ran); results/*-H79{,A,B,C}-connectome-*-implement-*.json (13 runs); results/*-H79{,A,B,C}-mouse-*-implement-*.json (12 runs); src/mfas/experiments/H79.py, H79A.py, H79B.py, H79C.py; experiments/diagnostics/h79_basin_distance.py, h79_basin_spread.py; autoresearch/lit/divergence-cycle22.md; experiments/log.md 2026-08-28 cycle 22"
     }
   ],
   "killed": [
@@ -120,7 +126,7 @@
       },
       "verdict": "screen fail (both phases)",
       "why_dead": "beta and position scale are the SAME knob (F sees only beta*std). Sharper beta = larger effective scale = saturation and vanishing gradient. This also kills the roadmap item A-SCALE, which is identical.",
-      "revival_if": "A mechanism changes the operating scale WITHOUT saturating the sigmoid (e.g. per-edge normalized margins) \u0420\u0406\u0420\u201a\u0432\u0402\u045c must be argued against Q01's crossover analysis.",
+      "revival_if": "A mechanism changes the operating scale WITHOUT saturating the sigmoid (e.g. per-edge normalized margins) РІР‚вЂќ must be argued against Q01's crossover analysis.",
       "evidence": "experiments/log.md H03 / H03r; diagnosis.md Q01"
     },
     {
@@ -199,7 +205,7 @@
       },
       "verdict": "screen fail (large regression)",
       "why_dead": "Noise in the loss destroys the plateau rather than escaping it.",
-      "revival_if": "Only as a DISCRETE stochastic move (random subset of movers in the sift) \u0420\u0406\u0420\u201a\u0432\u0402\u045c that is a different axis; see queue.",
+      "revival_if": "Only as a DISCRETE stochastic move (random subset of movers in the sift) РІР‚вЂќ that is a different axis; see queue.",
       "evidence": "experiments/log.md H13"
     },
     {
@@ -312,7 +318,7 @@
       "result_pp": {
         "hard_synthetic": -0.643
       },
-      "verdict": "killed by prototype gate \u0420\u0406\u0420\u201a\u0432\u0402\u045c FALSIFIED",
+      "verdict": "killed by prototype gate РІР‚вЂќ FALSIFIED",
       "why_dead": "The decisive falsifier for M1: the gradient is genuinely non-vanishing (398/400 nodes move) and it STILL loses to the plain sigmoid. The bottleneck is the relaxation basin, not the gradient estimator.",
       "revival_if": "Never for continuous-only. This closed the family.",
       "evidence": "experiments/outputs/proto_h34_perturbsort.json"
@@ -400,6 +406,25 @@
       "why_dead": "NOT emptiness of the premise - the premise is TRUE and pervasive, and is now measured: 95.0-99.7% of stage-3 movers sit on an exact-optimal plateau of width > 1 (the item's free pre-gate was 1%), median width 574-1,646 ranks, and the new rule redirects 44.0-74.9% of movers and cuts mean transport by 800-4,961 ranks each. It is ABSORPTION (M14). Per-stage attribution from the run records: stage 2 identical (83.23791666953974 both, the change is confined to stages 3-4 as designed); stage 3 gets WORSE by -0.018505 pp; stage 4's increment grows by +0.016234 pp, giving back 87.7% of it; net -0.002271 pp. Two secondary results outlive the item. (a) THE SIGN IS OPPOSITE TO THE HYPOTHESIS: the leftward over-transport is load-bearing FOR THE SIFT - removing it costs stage 3 more than the bar - so 'first' is the better stage-3 rule and min-displacement is the worse one. (b) IT IS NOT RUNTIME-NEUTRAL, which the item predicted it would be: 1253.3 s vs 1184.0 s (+5.8%), sift +9.7%, alternation +9.0%, for one extra segmented min - a real cost under P19. Implementation is exact and validated (gap_first bit-identical to the production kernel, mover set identical, plateau widths and nearest maximizers cross-checked against an O(n^2) brute-force enumeration; H73(tie_break='first') reproduces H64 bit-identically through all six stages).",
       "revival_if": "The ABSORBER is removed or shown not to apply - not the rule re-tuned. Two concrete routes. (a) Run the sift WITHOUT stage 4 behind it, i.e. where there is no alternation to re-optimise the difference away: as the ONLY refiner, or in a time-limited / low-cycle configuration (microns runs 5 alternation cycles against connectome's 77, so the absorption there is measurable and may be far weaker - but see the runtime cost above, and microns is blocked on P23). Any such revival must report the absorption fraction, exactly as M8 requires a redundancy fraction. (b) Find a tie-break that beats 'first' AT STAGE 3, since this cycle measured 'first' to be the BETTER stage-3 rule by 0.018505 pp - the open direction is MORE over-transport, not less, and that is a different hypothesis with a different sign, which must be filed as such and not as a re-run of this one. What is NOT a revival condition: any other point-selection rule inside the same argmax set (max-displacement, midpoint, degree-weighted, ...) proposed without first showing it survives stage 4. M14 covers that whole family and this item is its measurement.",
       "evidence": "results/20260828T014426Z-H73-connectome-s42-implement-4ea4ce.json (+ s123, s999); results/20260828T024748Z-H73-mouse-s42-implement-355f5c.json (+ s123, s999); experiments/outputs/proto_H73_connectome.json; experiments/outputs/proto_H73_mouse_fullpipe.json; src/mfas/experiments/H73.py; tests/test_H73_tiebreak.py; experiments/log.md 2026-08-28"
+    },
+    {
+      "id": "H79",
+      "axis": "starting basin (a structurally DIFFERENT construction, not a better one)",
+      "mechanism": "the UNCHANGED H64 champion stack started from constructions that lie outside the champion's own relabelling ball: reverse_greedy_fas (H79A), scc_topo (H79B), imbalance_sort (H79C). ratio_greedy was measured for geometry only and BLOCKED as an arm by H48's revival condition.",
+      "result_pp": {
+        "connectome_H79A_reverse_greedy_fas": -0.005318,
+        "connectome_H79B_scc_topo": -0.000692,
+        "connectome_H79C_imbalance_sort": -0.005879,
+        "connectome_spread_across_basins": 0.005879,
+        "connectome_basin_sample_std": 0.003054,
+        "mouse_H79A": -0.034606,
+        "mouse_H79B": -0.209318,
+        "mouse_H79C": -0.209318
+      },
+      "verdict": "KILL at the SCREEN 2026-08-28 (cycle 22), on the item's OWN pre-registered kill condition: spread <= 0.019124 pp, the measured relabelling nuisance sigma",
+      "why_dead": "NOT emptiness of the premise - rung 1 PASSED decisively and the premise is TRUE: the three arms are structurally distinct from the champion's construction by a wide margin (Kendall tau 0.089885 / 0.370638 / 0.432855 against a relabelling-ball diameter of tau >= 0.937858), and they span 2.406894 pp of initial quality. The stack simply erases it. The refined scores span 0.005879 pp - 3.3x TIGHTER than the nuisance sigma the kill condition used, and a 409x contraction of the input spread - with the contraction visible stage by stage (30.7x at pure Rocket, 8.4x at the sift, 1.6x at stage 4). Every arm is BELOW the champion and the champion's own construction is the maximum of the four, so canonical-anchored best-of-basins gains exactly 0.000000 pp by enumeration, at every R. The item was admitted under H56's revival condition (b) / M10 - 'widen the PREFIX's sigma past 0.021269 pp at the champion's per-arm cost' - and it fails that condition by a factor of 7.0. Validity is not in doubt: the identity anchor reproduced the champion bit-for-bit on connectome (84.25817950936937) and to one float64 ulp on mouse, all 12 arm runs completed clean at 1179-1196 s, and each arm is bit-identical across its 3 seeds. See M16.",
+      "revival_if": "NOT by another cheap construction - that family is measured and the contraction is 409x. Two admissible routes, both unmeasured: (a) a construction from a genuinely different algorithmic family shown to survive the contraction, which must first clear M7 (expensive warm-starts lose) - i.e. it has to be both structurally distant AND cheap, and the cheap structural family is now enumerated; or (b) a change to the STACK that makes it non-contracting - but note that would be a different item on a different axis, and M16 would then have to be re-measured against it rather than revived. Re-proposing 'start the current stack from somewhere else' in any form is dead. The one thing this kill LICENSES is H80: with restarts measured dead, an acceptance schedule that lets the search STAY worse is the remaining M15 axis.",
+      "evidence": "experiments/outputs/proto_H79_rung1.json; proto_H79_rung2.json; proto_H79_prereg.json; results/*-H79{,A,B,C}-*-implement-*.json; experiments/log.md 2026-08-28 (Cycle 22)"
     }
   ],
   "deferred_not_falsified": [
@@ -426,7 +451,7 @@
     {
       "id": "H17",
       "axis": "basin hopping",
-      "note": "deferred by the drift probe; partially re-opened by Q01 (the optimum IS holdable at its own scale) \u0420\u0406\u0420\u201a\u0432\u0402\u045c but reachability, not stability, is the barrier"
+      "note": "deferred by the drift probe; partially re-opened by Q01 (the optimum IS holdable at its own scale) РІР‚вЂќ but reachability, not stability, is the barrier"
     },
     {
       "id": "H18",
