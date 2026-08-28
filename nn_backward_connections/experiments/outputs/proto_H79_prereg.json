@@ -1,0 +1,42 @@
+{
+  "id": "H79-rung1-prereg",
+  "sealed_at_commit": "894492eb2f8c78cde99a4f0154691c2c3c624dfb",
+  "sealed_date": "2026-08-28",
+  "cycle": 22,
+  "mode": "divergent (cycles_since_score_move=4 >= 3)",
+  "item": "H79 - a structurally DIFFERENT starting basin, not a better one",
+  "question": "Is there more than one starting construction to choose from at all, measured against the champion's OWN relabelling ball as the unit of 'same construction'?",
+  "novelty_gate": {
+    "shares_axis_with": [
+      "H48 (starting basin)",
+      "H56/H57 (restarts / multi-start)",
+      "M6",
+      "M7"
+    ],
+    "revival_condition_named": "H56 revival_if (b): 'a mechanism is shown to WIDEN the labelling sigma past 0.021269 pp at the champion's current per-run cost'. A structurally different CONSTRUCTION is a prefix-level mechanism, and M10 states the only surviving door is one that widens the PREFIX's dispersion, which is where 96% of it lives.",
+    "h48_constraint_respected": "ratio_greedy is measured as a reference point only and is BLOCKED by name from any rung-2 arm ('never again as a drop-in warm start for the current stack').",
+    "m15_argument": "M15's operative directive requires an item whose mechanism is a new/extended MONOTONE move class on the existing basin to argue against M15. H79 is not such an item: it changes the basin rather than the move class, and M15 names it as one of the two surviving levels."
+  },
+  "constructions": [
+    "greedy_fas (anchor)",
+    "ratio_greedy (reference point, blocked as arm)",
+    "reverse_greedy_fas",
+    "imbalance_sort",
+    "scc_topo"
+  ],
+  "control": "greedy_fas re-run on R=5 random node relabellings (exact isomorphism), mapped back to canonical ids",
+  "statistic": "Kendall tau between rank vectors (Spearman rho also recorded)",
+  "decision_rule": {
+    "ball_tau_min": "min pairwise Kendall tau over {canonical greedy_fas, ball_r1..ball_r5}",
+    "distinct": "tau(C, greedy_fas) < ball_tau_min",
+    "rung1_pass": ">= 2 ADMISSIBLE constructions distinct",
+    "rung1_kill": "< 2 admissible constructions distinct -> H79 dies here, kill entry written"
+  },
+  "rung2_if_pass": {
+    "what": "run the UNCHANGED connectome champion stack (H64) from each admissible distinct construction; report the SPREAD of refined scores, not the max",
+    "kill_condition": "refined-score spread <= 0.019124 pp (the measured relabelling nuisance sigma, M10) -> the stack erases the basin, which is M2/M6's shape, and the axis closes",
+    "cost": "1 connectome run per arm at ~1250 s"
+  },
+  "stated_before_the_numbers": "Distinct INITS do not imply distinct BASINS. M6, M2 and H48 all describe a stack that absorbs input differences (H48: 99.4% of a +5.70 pp init advantage). Rung 1 can only REFUSE; it cannot establish the basin is live.",
+  "leakage": "No construction reads the oracle or data/best_solution. Nothing is written to results/."
+}
