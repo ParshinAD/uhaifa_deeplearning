@@ -63,7 +63,8 @@ OUT = _ROOT / "experiments" / "outputs"
 # Grid of T0 multipliers applied to the instance's OWN measured delta_med (pre-registered).
 T0_GRID = (0.5, 1.0, 2.0, 4.0, 8.0)
 COOL_RATIO = 0.01          # geometric cooling T0 -> T0 * COOL_RATIO over the budget
-N_CAL = 24                 # calibration proposals used to measure delta_med
+N_CAL_DOWN = 8             # downhill samples wanted before delta_med is fixed (amend. 5)
+CAL_CAP_FRAC = 0.15        # ... and at most this fraction of the arm's own wall budget
 INNER_SWEEPS = 2           # short production sift after every rebuild (same for all arms)
 
 
@@ -299,14 +300,33 @@ def search(g, init_rank, *, destroy: str, acceptance: str, k: int,
     t_start = time.time()
 
     # ── Calibration: measure the instance's OWN downhill scale (target-blind) ──────
+    # AMENDMENT 5. The first version drew a FIXED 24 proposals and fell back to a 1e-6
+    # floor if none were downhill. From a fresh sift fixed point most proposals still
+    # IMPROVE, so that happened: 0/24 downhill on every n=4000 seed (T0 collapsed to
+    # ~0 and the thermostat was dead) and only 1/24 at n=400 (a median of one sample).
+    # Now: keep drawing until N_CAL_DOWN downhill samples or a time cap, and if there
+    # are still none, use the median |delta| over ALL non-zero proposals rather than a
+    # floor - so the temperature is always on the scale of a real move.
     cal: List[float] = []
+    cal_abs: List[float] = []
+    cal_source = "given"
+    n_cal_draws = 0
     if acceptance == "metropolis" and delta_med is None:
-        for _ in range(N_CAL):
+        cal_cap_s = CAL_CAP_FRAC * time_budget_s
+        while len(cal) < N_CAL_DOWN and (time.time() - t_start) < cal_cap_s:
             r = _propose(cur_rank)
             d = (_ff_weight(r, src, tgt, w) - cur_ff) * ff_to_pct
+            n_cal_draws += 1
             if d < 0:
                 cal.append(-d)
-        delta_med = float(np.median(cal)) if cal else 1e-6
+            if d != 0:
+                cal_abs.append(abs(d))
+        if cal:
+            delta_med, cal_source = float(np.median(cal)), "downhill"
+        elif cal_abs:
+            delta_med, cal_source = float(np.median(cal_abs)), "abs_all_moves"
+        else:
+            delta_med, cal_source = ff_to_pct, "one_weight_unit"
     t_cal = time.time() - t_start
 
     T0 = float(t0_mult) * float(delta_med or 0.0)
@@ -368,7 +388,7 @@ def search(g, init_rank, *, destroy: str, acceptance: str, k: int,
         deepest_uphill_step_pp=float(deepest_uphill_step_pp),
         max_excursion_pp=float(max_excursion), k=int(k),
         wall_s=round(time.time() - t_start, 2), cal_s=round(t_cal, 2),
-        n_cal_downhill=len(cal),
+        n_cal_downhill=len(cal), n_cal_draws=int(n_cal_draws), cal_source=cal_source,
     )
 
 
@@ -447,6 +467,15 @@ def run_instance(g, seed: int, *, epochs: int, sift_sweeps: int, budget_s: float
                                     k=k, time_budget_s=budget_s, seed=seed)
     arms["A2_struct_greedy"] = search(g, a0_rank, destroy="struct", acceptance="greedy",
                                       k=k, time_budget_s=budget_s, seed=seed)
+    if full_grid:
+        # Amendment 4: the ZERO-TEMPERATURE drift control, in the same pass as the
+        # arms it is a control for, so no cross-pass wall noise separates them.
+        arms["A5_topk_sideways"] = search(g, a0_rank, destroy="topk",
+                                          acceptance="sideways", k=k,
+                                          time_budget_s=budget_s, seed=seed)
+        arms["A6_struct_sideways"] = search(g, a0_rank, destroy="struct",
+                                            acceptance="sideways", k=k,
+                                            time_budget_s=budget_s, seed=seed)
     for m in T0_GRID:
         arms[f"A3_struct_anneal_T{m}"] = search(
             g, a0_rank, destroy="struct", acceptance="metropolis", k=k,
@@ -540,6 +569,19 @@ def _summarise(rows: List[Dict], full_grid: bool) -> Dict:
         out["mean_acceptance_alone"] = mean("acceptance_alone")
         out["mean_acceptance_given_structure"] = mean("acceptance_given_structure")
         out["mean_interaction"] = mean("interaction")
+    if full_grid:
+        # K5 (amendment 4): does ZERO-temperature sideways drift recover the winning
+        # Metropolis cell's advantage? If it does, the mechanism is plateau drift and
+        # not barrier crossing, and H80 AS STATED is dead whatever K1-K4 say.
+        sw = {nm: float(np.mean([arm(r, nm) - _mono(r) for r in rows]))
+              for nm in ("A5_topk_sideways", "A6_struct_sideways")}
+        out["mean_sideways_alone"] = sw
+        best_sw = max(sw.values())
+        out["best_sideways_mean_delta"] = best_sw
+        bc = cell_mean[best_cell]
+        out["K5_sideways_recovery_fraction"] = (
+            float(best_sw / bc) if bc > 0 else None)
+        out["K5_temperature_buys_pp"] = float(bc - best_sw)
     if rows and "barrier" in rows[0]:
         out["mean_barrier_depth_pp"] = float(np.mean([r["barrier"]["barrier_depth_pp"]
                                                       for r in rows]))
@@ -607,7 +649,8 @@ def _summarise_control(rows: List[Dict]) -> Dict:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--stage", required=True,
-                    choices=["S1", "S2", "S3", "S1c", "S2c"])
+                    choices=["S1", "S2", "S3", "S1c", "S2c",
+                             "S1r", "S2r", "S3r"])
     args = ap.parse_args()
     seeds = (42, 123, 999)
     rows: List[Dict] = []
@@ -627,6 +670,34 @@ def main():
         path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         print(f"\nwrote {path}")
         print(json.dumps(summary, indent=2)[:3000])
+        return
+
+    if args.stage in ("S1r", "S2r", "S3r"):
+        # AMENDMENT 5 re-run: every stage gets the FULL arm set (including the amendment-4
+        # drift control) and the FIXED calibration. Supersedes S1/S2/S3, which are kept on
+        # disk as the record of the broken-thermostat run.
+        big = args.stage == "S2r"
+        for s in seeds:
+            if args.stage == "S3r":
+                g = io.load_dataset("mouse")
+                rows.append(run_instance(g, s, epochs=0, sift_sweeps=40, budget_s=30.0,
+                                         full_grid=True))
+            else:
+                g, ref, ref_pct = gapmod.make_hard_synthetic_graph(
+                    **({"n": 4000} if big else {}), seed=s)
+                rows.append(run_instance(g, s, epochs=4000, sift_sweeps=20,
+                                         budget_s=120.0 if big else 30.0,
+                                         full_grid=True, ref_order=ref, ref_pct=ref_pct))
+            print(f"[{args.stage} s{s}] A0={rows[-1]['A0_sift_pct']:.4f}", flush=True)
+        summary = _summarise(rows, True)
+        payload = dict(stage=args.stage, seeds=list(seeds), t0_grid=list(T0_GRID),
+                       cool_ratio=COOL_RATIO, n_cal_down=N_CAL_DOWN,
+                       cal_cap_frac=CAL_CAP_FRAC, inner_sweeps=INNER_SWEEPS,
+                       rows=rows, summary=summary)
+        path = OUT / f"proto_H80_{args.stage}.json"
+        path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        print("wrote " + str(path))
+        print(json.dumps(summary, indent=2)[:4000])
         return
 
     if args.stage == "S1":
@@ -658,7 +729,8 @@ def main():
         summary = _summarise(rows, False)
 
     payload = dict(stage=args.stage, seeds=list(seeds), t0_grid=list(T0_GRID),
-                   cool_ratio=COOL_RATIO, n_cal=N_CAL, inner_sweeps=INNER_SWEEPS,
+                   cool_ratio=COOL_RATIO, n_cal_down=N_CAL_DOWN,
+                   cal_cap_frac=CAL_CAP_FRAC, inner_sweeps=INNER_SWEEPS,
                    rows=rows, summary=summary)
     path = OUT / f"proto_H80_{args.stage}.json"
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")

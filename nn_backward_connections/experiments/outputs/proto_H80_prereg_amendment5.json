@@ -1,0 +1,27 @@
+{
+  "_doc": "AMENDMENT 5 to the H80 rung-1 pre-registration, SEALED AND COMMITTED BEFORE THE RE-RUN. Cycle 23, 2026-08-28. It fixes a MEASUREMENT INSTRUMENT that was broken, and it VOIDS the first pass's Metropolis arms rather than quoting them. The kill conditions are unchanged.",
+  "item": "H80",
+  "cycle": 23,
+  "the_defect": {
+    "what": "The temperature calibration drew a FIXED 24 proposals from the sift fixed point and, if none of them were downhill, fell back to a hard floor of delta_med = 1e-6 pp. T0 = mult x delta_med then collapsed to ~0 and the Metropolis rule degenerated into 'accept ties only'.",
+    "why_it_fires_exactly_where_it_matters": "Calibration is taken from a FRESH sift fixed point, and from there the ruin-and-recreate still has easy gains to take, so almost every early proposal IMPROVES. The bigger the instance, the more such gains remain and the fewer downhill samples 24 draws will contain.",
+    "measured": {
+      "S2_n4000": "n_cal_downhill = 0 on ALL THREE seeds, so delta_med = 1e-6 and T0 <= 8e-6 pp. Uphill moves accepted: 0 at every T0, max excursion 0.0000 pp. Yet DURING the run 121-183 proposals per arm WERE downhill, out of 1,333-1,840 rounds (8-12%). So the landscape offers downhill moves in abundance; the thermostat simply could not see them.",
+      "S1_n400": "n_cal_downhill = 1. The temperature rested on the median of a SINGLE observation.",
+      "S3_mouse": "n_cal_downhill = 9. Healthy - and it is the one stage whose Metropolis arms actually crossed anything (up to 1.36 pp of excursion)."
+    },
+    "consequence_stated_plainly": "K4 was recorded as FAILING on S2 with delta = -0.267997 pp. THAT NUMBER DOES NOT TEST H80. It tests a thermostat that was switched off, and a search with T0 = 0 is not the hypothesis. Quoting it as H80's kill would be exactly the 'believing your own summary' failure CAMPAIGN.md warns about. The S2 Metropolis arms are VOID."
+  },
+  "the_fix": {
+    "what": "Draw until N_CAL_DOWN = 8 downhill samples are collected OR CAL_CAP_FRAC = 15% of the arm's own wall budget is spent. If there are still no downhill samples, use the median |delta| over ALL non-zero proposals; only if there are no non-zero proposals at all does it fall back to one weight unit. Never a 1e-6 floor. The chosen source is recorded per arm as cal_source, so a future reader can see which branch fired.",
+    "still_target_blind": "Unchanged. Every calibration draw is the arm's own destroy -> exact-gain recreate -> short sift on the input graph; nothing about the reference or the oracle enters the temperature."
+  },
+  "what_is_re_run": {
+    "stages": "S1r, S2r, S3r - the SAME three instances, seeds, budgets and arms as S1/S2/S3, with the fixed calibration AND the amendment-4 drift control (A5_topk_sideways, A6_struct_sideways) present in EVERY stage, so the control and the arms it controls for share one pass and one wall-clock.",
+    "arm_count": "15 per instance (A1p, A1, A2, A5, A6, A3 x 5 T0, A4 x 5 T0). 30 s per arm on S1r/S3r and 120 s on S2r; ~2.1 h CPU total, zero GPU.",
+    "the_old_artifacts_are_kept": "experiments/outputs/proto_H80_S1.json, _S2.json and _S3.json stay on disk and stay committed. They are the record of the broken-thermostat run and they are the EVIDENCE for this amendment. The three findings that do NOT depend on the thermostat - the 98.5-100% sideways fraction, the A1-vs-production-ils_lns gap, and the sign of structure-aware destroy - are re-derived in the re-run and only the re-run's numbers are quoted in the verdict."
+  },
+  "kill_conditions": "UNCHANGED. K1-K4 as amended in proto_H80_prereg_amendment.json, K5 as added in proto_H80_prereg_amendment4.json. They are now evaluated on S1r / S2r / S3r.",
+  "note_on_what_this_does_to_the_verdict": "The fix can only HELP H80: a live thermostat is what the hypothesis asked for and the broken one could not accept a single losing move at n=4000. If H80 still fails after this, it fails on its own terms.",
+  "sealed_at_commit": "the commit that adds this file; see experiments/log.md cycle 23"
+}
