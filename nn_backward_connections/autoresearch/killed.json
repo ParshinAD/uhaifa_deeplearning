@@ -1,5 +1,5 @@
 {
-  "_doc": "Do-not-repeat memory. Machine-readable index of every mechanism already falsified, with the evidence and вЂ” critically вЂ” the REVIVAL CONDITION that would make it worth re-testing. This is not a blacklist: it is a cost filter. The ideator MUST read it before proposing, and any proposal sharing an axis with an entry here MUST name the revival condition it satisfies.",
+  "_doc": "Do-not-repeat memory. Machine-readable index of every mechanism already falsified, with the evidence and \u0420\u0406\u0420\u201a\u0432\u0402\u045c critically \u0420\u0406\u0420\u201a\u0432\u0402\u045c the REVIVAL CONDITION that would make it worth re-testing. This is not a blacklist: it is a cost filter. The ideator MUST read it before proposing, and any proposal sharing an axis with an entry here MUST name the revival condition it satisfies.",
   "updated": "2026-08-28",
   "meta_rules": [
     {
@@ -80,6 +80,12 @@
       "rule": "A PERTURB-AND-REPAIR GAIN MEASURED ON AN OLDER, WEAKER BASE DOES NOT TRANSFER TO THE CURRENT CHAMPION, and must be re-measured there before it may motivate an item. MEASURED on one mechanism, both directions of the same grid: the ASYM gradient kick is worth +0.018620 pp attributable at base 83.91351804242117 and at best -0.020779 pp at base 84.25817950936937 - a SIGN REVERSAL across 0.344661 pp of base improvement. The reason is mechanical: a repair stage can only re-take ground the base has not already taken, so every improvement to the base consumes the repair's headroom. The diagnostic is CHEAP and should be run FIRST for any repair-shaped item - run the repair operator alone from the champion order and read its headroom. Here it was EXACTLY 0.000000 pp, which settled the item before any arm was run. RELATION TO M12: M12 says a from-champion prototype OVERSTATES an inner-stage change (mis-sited measurement); M13 says an INHERITED number from a superseded base overstates everything (out-of-date measurement). PRACTICAL FORM: an item whose prior_evidence is a delta on a superseded base has NO evidence until that delta is re-measured on the sitting champion. Queue items P25 and H75 exist to apply this to the standing queue.",
       "added": "2026-08-28",
       "evidence": "experiments/outputs/proto_H66_connectome_rung3.json vs proto_H66_connectome_weakbase.json; experiments/log.md 2026-08-28 (Cycle 19)"
+    },
+    {
+      "id": "M14-plateau-transport-is-absorbed",
+      "rule": "WHERE INSIDE THE EXACT-OPTIMAL PLATEAU A MOVER IS SENT IS NOT LOAD-BEARING FOR THE FINAL SCORE, because the stage-4 alternation absorbs it. The exact-gain insertion profile is piecewise-constant with at most deg(u) breakpoints over n gaps, so its maximum is attained on an INTERVAL, not a point: measured on a real connectome stage-3 trajectory, 95.0-99.7% of movers sit on a plateau of width > 1, median width 574-1,646 ranks. Replacing the production rule (leftmost maximizing gap) with the nearest maximizing gap redirects 44.0-74.9% of movers and cuts mean transport by 800-4,961 ranks per mover FOR THE SAME EXACT GAIN - and moves the final connectome score by -0.002271 pp, 19% of the bar. The mechanism of the null is measured, not assumed: stage 3 gets WORSE by -0.018505 pp (84.11761164861514 -> 84.09910627090132) and stage 4's increment grows by +0.016234 pp (0.14056786075423133 -> 0.15680182026491707), i.e. 87.7% ABSORPTION. NOTE THE SIGN: the leftward bias is load-bearing FOR THE SIFT and in the direction opposite to H73's hypothesis - over-transport helps stage 3 - but the pipeline does not care either way. CONSEQUENCE FOR THE QUEUE: any item whose mechanism changes a move's DESTINATION without changing its exact GAIN (same argmax set, a different point of it) must show it survives stage 4. The cheap diagnostic needs no new code - run one arm of each and read sift_best_pct and alt_increment_pp side by side in the run JSONs. M14 is the sibling of M8 (a move class's own stage credit is not its contribution), with the competitor being the SAME class at a later stage rather than a different one, and of M12 (a difference measured before the absorber is not the difference that ships). It also SCOPES M5: M5-no-ties is about CONTINUOUS position ties and does NOT generalise to the discrete profile, where plateaus are pervasive - the ties are real, they are just not worth anything.",
+      "evidence": "experiments/log.md 2026-08-28 cycle 20; experiments/outputs/proto_H73_connectome.json; results/*-H73-connectome-*-implement-4ea4ce.json (3 seeds, bit-identical) vs results/*-H64-connectome-*-confirm-a7490c.json; src/mfas/refine/insertion.py tie_break",
+      "added": "2026-08-28 (cycle 20: H73)"
     }
   ],
   "killed": [
@@ -107,7 +113,7 @@
       },
       "verdict": "screen fail (both phases)",
       "why_dead": "beta and position scale are the SAME knob (F sees only beta*std). Sharper beta = larger effective scale = saturation and vanishing gradient. This also kills the roadmap item A-SCALE, which is identical.",
-      "revival_if": "A mechanism changes the operating scale WITHOUT saturating the sigmoid (e.g. per-edge normalized margins) вЂ” must be argued against Q01's crossover analysis.",
+      "revival_if": "A mechanism changes the operating scale WITHOUT saturating the sigmoid (e.g. per-edge normalized margins) \u0420\u0406\u0420\u201a\u0432\u0402\u045c must be argued against Q01's crossover analysis.",
       "evidence": "experiments/log.md H03 / H03r; diagnosis.md Q01"
     },
     {
@@ -186,7 +192,7 @@
       },
       "verdict": "screen fail (large regression)",
       "why_dead": "Noise in the loss destroys the plateau rather than escaping it.",
-      "revival_if": "Only as a DISCRETE stochastic move (random subset of movers in the sift) вЂ” that is a different axis; see queue.",
+      "revival_if": "Only as a DISCRETE stochastic move (random subset of movers in the sift) \u0420\u0406\u0420\u201a\u0432\u0402\u045c that is a different axis; see queue.",
       "evidence": "experiments/log.md H13"
     },
     {
@@ -299,7 +305,7 @@
       "result_pp": {
         "hard_synthetic": -0.643
       },
-      "verdict": "killed by prototype gate вЂ” FALSIFIED",
+      "verdict": "killed by prototype gate \u0420\u0406\u0420\u201a\u0432\u0402\u045c FALSIFIED",
       "why_dead": "The decisive falsifier for M1: the gradient is genuinely non-vanishing (398/400 nodes move) and it STILL loses to the plain sigmoid. The bottleneck is the relaxation basin, not the gradient estimator.",
       "revival_if": "Never for continuous-only. This closed the family.",
       "evidence": "experiments/outputs/proto_h34_perturbsort.json"
@@ -374,6 +380,19 @@
       "why_dead": "THE MECHANISM IS REAL AND IT HAS EXPIRED. Reproduced at +0.018620 pp attributable on H35's 83.91351804242117 order (7/12 arms positive), which independently matches backlog.md:2119's logged +0.0179 pp for the same mechanism on the 83.9035 order to within 0.0007 pp - so the harness is validated and the null is not an implementation defect. On the H64 champion (84.25817950936937) the SAME code and the SAME grid give exactly +0.000000 pp on all 18 arms, and the best raw repair (84.23740032750892) lands 0.020779 pp BELOW its own input. Two structural facts explain it: (1) the M12 control - champion order plus the same repair sift, no kick - has EXACTLY 0.000000 pp of headroom, so there is no ground left for this class to take; (2) the champion order is a STRICT LOCAL MAXIMUM of the discrete score along the ASYM gradient, the first node-moving step already losing 0.041754-0.159932 pp and the trajectory monotone down to -1.189355 pp. Not a reach problem: at reach 414 the champion has 10.43% of backward weight live vs the weak base's 2.15% and still gains nothing. M8 redundancy fraction is UNDEFINED - both terms are 0.",
       "revival_if": "EITHER (a) the REPAIR operator is strictly stronger than an 8-sweep under-relaxed exact-gain sift - e.g. the SCC-recursive block refiner, or a repair that is not a member of the champion's own stage-4 move classes - because what was falsified is that THIS repair can undo the damage, not that no repair can; OR (b) the base changes materially, i.e. a NEW connectome champion at least ~0.1 pp above 84.25817950936937 arrives whose stage-4 control headroom is measurably non-zero, in which case M13 requires the delta to be re-measured there rather than inherited from this cycle or from backlog.md. A revival on a base whose no-kick control headroom is 0.000000 pp is refused without measurement: that control IS the kill.",
       "evidence": "experiments/outputs/proto_H66_connectome.json, proto_H66_connectome_rung2.json, proto_H66_connectome_rung3.json (the champion arms), proto_H66_connectome_weakbase.json (the positive control); experiments/proto_H66_kick.py; experiments/log.md 2026-08-28 Cycle 19"
+    },
+    {
+      "id": "H73",
+      "axis": "discrete refinement / tie-break within the exact-optimal plateau",
+      "mechanism": "replace the sift's argmax tie-break - first maximizing breakpoint, gap 0 wins ties, i.e. always the LEFTMOST gap of the optimal plateau - with the maximizing gap NEAREST the node's current rank (tie_break='mindisp'). Same exact gain, same mover set, no RNG; only the destination inside the argmax set changes.",
+      "result_pp": {
+        "connectome": -0.002271,
+        "mouse": 0.008772
+      },
+      "verdict": "screen FAIL on connectome (2026-08-28): -0.002271 pp against a screen_delta_pp of 0.012, two-sided, 3/3 seeds bit-identical",
+      "why_dead": "NOT emptiness of the premise - the premise is TRUE and pervasive, and is now measured: 95.0-99.7% of stage-3 movers sit on an exact-optimal plateau of width > 1 (the item's free pre-gate was 1%), median width 574-1,646 ranks, and the new rule redirects 44.0-74.9% of movers and cuts mean transport by 800-4,961 ranks each. It is ABSORPTION (M14). Per-stage attribution from the run records: stage 2 identical (83.23791666953974 both, the change is confined to stages 3-4 as designed); stage 3 gets WORSE by -0.018505 pp; stage 4's increment grows by +0.016234 pp, giving back 87.7% of it; net -0.002271 pp. Two secondary results outlive the item. (a) THE SIGN IS OPPOSITE TO THE HYPOTHESIS: the leftward over-transport is load-bearing FOR THE SIFT - removing it costs stage 3 more than the bar - so 'first' is the better stage-3 rule and min-displacement is the worse one. (b) IT IS NOT RUNTIME-NEUTRAL, which the item predicted it would be: 1253.3 s vs 1184.0 s (+5.8%), sift +9.7%, alternation +9.0%, for one extra segmented min - a real cost under P19. Implementation is exact and validated (gap_first bit-identical to the production kernel, mover set identical, plateau widths and nearest maximizers cross-checked against an O(n^2) brute-force enumeration; H73(tie_break='first') reproduces H64 bit-identically through all six stages).",
+      "revival_if": "The ABSORBER is removed or shown not to apply - not the rule re-tuned. Two concrete routes. (a) Run the sift WITHOUT stage 4 behind it, i.e. where there is no alternation to re-optimise the difference away: as the ONLY refiner, or in a time-limited / low-cycle configuration (microns runs 5 alternation cycles against connectome's 77, so the absorption there is measurable and may be far weaker - but see the runtime cost above, and microns is blocked on P23). Any such revival must report the absorption fraction, exactly as M8 requires a redundancy fraction. (b) Find a tie-break that beats 'first' AT STAGE 3, since this cycle measured 'first' to be the BETTER stage-3 rule by 0.018505 pp - the open direction is MORE over-transport, not less, and that is a different hypothesis with a different sign, which must be filed as such and not as a re-run of this one. What is NOT a revival condition: any other point-selection rule inside the same argmax set (max-displacement, midpoint, degree-weighted, ...) proposed without first showing it survives stage 4. M14 covers that whole family and this item is its measurement.",
+      "evidence": "results/20260828T014426Z-H73-connectome-s42-implement-4ea4ce.json (+ s123, s999); results/20260828T024748Z-H73-mouse-s42-implement-355f5c.json (+ s123, s999); experiments/outputs/proto_H73_connectome.json; experiments/outputs/proto_H73_mouse_fullpipe.json; src/mfas/experiments/H73.py; tests/test_H73_tiebreak.py; experiments/log.md 2026-08-28"
     }
   ],
   "deferred_not_falsified": [
@@ -400,7 +419,7 @@
     {
       "id": "H17",
       "axis": "basin hopping",
-      "note": "deferred by the drift probe; partially re-opened by Q01 (the optimum IS holdable at its own scale) вЂ” but reachability, not stability, is the barrier"
+      "note": "deferred by the drift probe; partially re-opened by Q01 (the optimum IS holdable at its own scale) \u0420\u0406\u0420\u201a\u0432\u0402\u045c but reachability, not stability, is the barrier"
     },
     {
       "id": "H18",

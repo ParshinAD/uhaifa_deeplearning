@@ -8067,3 +8067,219 @@ rungs 1-2. No sweep, no confirm, no champion run.
   M13 exists.
 - **P25** (infrastructure, priority 3) — `queue.json` items carry `prior_evidence` deltas with no
   field recording which BASE they were measured against. M13 makes that field load-bearing.
+
+## 2026-08-28 - Cycle 20 - H73: the exact-gain sift's argmax TIE-BREAK - **KILL at the screen** (the premise is TRUE and pervasive, the intervention is large, and the pipeline absorbs 87.7% of it: -0.002271 pp against a +/-0.012 pp bar)
+
+**Verdict: KILL.** `gates_run: ["novelty", "prototype", "screen"]`. Confirm and critic were not
+run and are deliberately absent from that list: the screen failed on the mission primary, which
+per `campaign.yaml` gates ends the ladder (precedent: cycles 10-13).
+
+**Device / environment.** Windows 10 laptop, NVIDIA RTX 4060 Laptop GPU (CUDA 12.8), torch
+2.8.0+cu128, python 3.9.25, conda env `allen`. Preflight: branch `auto/campaign-v3` (matches
+`campaign.yaml`), tree clean, `pytest tests/ -q` gives **606 passed** in 165.80 s. After the
+H73 changes the suite is **611 passed** in 163.85 s (the 5 new pins in
+`tests/test_H73_tiebreak.py`).
+
+### Why this item, and what happened to P23
+
+`state.json` (cycle 19) instructed this cycle to check **P23 first**. P23 is still
+`awaiting-operator`: `HEAD` was `4f6e2d1`, the cycle-19 commit, and there is no ruling anywhere
+on the branch. So the microns axis (**H74**, and H70's held score leg) stays blocked for the
+third cycle running, and this cycle took the **connectome** axis, which is the mission dataset
+and is not blocked.
+
+Mode is **incremental**: `cycles_since_score_move = 2` (divergence fires at 3),
+`consecutive_kills = 1`, `cycles_since_literature_scan = 1`, and the queue holds well over three
+viable science items. **H73** is the top-priority `proposed` **science** item on the unblocked
+axis, exactly as cycle 19's handoff (c) named it.
+
+**M13 was applied before scheduling, as cycle 19 instructed.** H73's `prior_evidence` is not a
+gain measured on a superseded base - it is P09's relabelling **dispersion** (sigma = 0.019124 pp),
+a nuisance measurement, and cycle 17 replicated that same constant on a *different* pair that
+included the sitting champion H64. So there is no expired-base defect of the kind that killed
+H66. M13 does not bind here.
+
+### Rung 1 - NOVELTY: **PASS**, on scope, and the objection is named rather than waved past
+
+H73 shares an axis with **M5-no-ties** and its kill **H09** (*"free-edge / tie recovery"*),
+whose `revival_if` is the hardest in the file: *"Never on these datasets."* That is not
+discharged by argument, so it is discharged by measurement.
+
+M5 reads *"the continuous optimizer leaves 0 exact position **ties** and negligible near-ties
+... nothing is recoverable from tie-breaking"*, and its evidence (findings.md #2, the H09 kill)
+is **anti-tie jitter on near-equal CONTINUOUS POSITIONS**. The object H73 names is a different
+one: exact ties in the **argmax of the DISCRETE insertion profile**, which is piecewise-constant
+with at most `deg(u)` breakpoints over 136,648 gaps and therefore has wide optimal plateaus *by
+construction*. M5 cannot bind on an object it did not measure - but rung 2 measures that object
+first, at zero GPU cost, so if M5's spirit had been right the item would have died for free and
+M5 would have been *strengthened*. It was not: see below. **M5 stays scoped to continuous
+positions; it does not generalise to the discrete profile.**
+
+M2-dynamics-null is scoped to the continuous optimizer and does not reach a discrete update
+rule (the campaign's own counterexample is H35 at +0.098 pp). M9/M10 do not apply: 1x cost, no
+best-of-R, no RNG.
+
+### Rung 2 - PROTOTYPE: **PASS**, and the premise is not merely true, it is pervasive
+
+`experiments/proto_H73_tiebreak.py`, CPU only, zero GPU, 94.4 s ->
+`experiments/outputs/proto_H73_connectome.json`.
+
+The measurement had to be trustworthy before it was worth anything, so `profile_plateaus` - which
+materialises each node's *entire* maximizing gap set as a union of intervals - was validated
+three ways before a single arm ran (`experiments/check_H73_profile.py`, ALL CHECKS PASS): `gap_first`
+is **bit-identical** to the production `jacobi_best_gaps`, the mover set is identical,
+`max|dgain| = 2.2e-15` (the two implementations sum the current-gap value in a different order),
+and the plateau widths and nearest-maximizer gaps match an **O(n^2) brute-force enumeration** of
+the profile on mouse. The trajectory is advanced by the *production* kernel, not by the
+reimplementation, so the orders profiled are exactly the ones stage 3 would visit.
+
+Along a real under-relaxed stage-3 trajectory from the greedy-FAS warm start (connectome):
+
+| sweep | pct | movers | frac. on a plateau of width > 1 | median plateau width | mean transport, current rule | mean transport, min-disp | destinations changed |
+|---|---|---|---|---|---|---|---|
+| 0 | 68.913428 | 97183 | 0.9605 | 1646 | 37790 | 32829 | 0.7490 |
+| 5 | 78.706862 | 83430 | 0.9553 | 715 | 12169 | 10881 | 0.4396 |
+| 6 | 79.208619 | 80192 | 0.9490 | 574 | 11738 | 10084 | 0.4884 |
+| 10 | 81.853187 | 55410 | 0.9971 | 731 | 4484 | 3582 | 0.4705 |
+| 11 | 82.160649 | 48331 | 0.9974 | 623 | 4014 | 3214 | 0.4660 |
+
+The item's **free pre-gate was 1%**. The measured floor across the whole trajectory is
+**94.9%**, rising to **99.8%** in the under-relaxed phase - two orders of magnitude clear.
+Median plateau width runs **574-1,646 ranks**; the mean reaches 4,846. The current rule sends
+every one of those movers to the **leftmost** gap of the plateau, and the min-displacement rule
+redirects **44.0-74.9%** of them, cutting mean transport by **800-4,961 ranks per mover** - for
+the *same exact gain*, since both rules return a point of the same argmax set.
+
+On the two stored converged orders: the **H64 champion order** (84.258180%) still has 67 movers, 28.4%
+of them on a plateau, 16.4% redirected; the **H35 order** (83.913518%) has 295 movers, 98.3% on a
+plateau, median width 468, 38.0% redirected.
+
+So the premise is true, large, and the intervention is real. **Prototype passes.** The item was
+promoted to a screen on that basis, which is exactly what this rung is for.
+
+### The variant, committed BEFORE the screen
+
+`5536619` - `tie_break` keyword on `jacobi_best_gaps` / `sift_underrelaxed` /
+`alternate_scc_sift` (default `"first"`, i.e. every champion through H64 is unchanged), plus
+`src/mfas/experiments/H73.py`. H73 **imports** H64's stages 1-2 (`_rocket_asym` and every
+constant) rather than copying them, so the shared pipeline is identical *by construction* and
+not by inspection.
+
+Identity is pinned twice. `tests/test_H73_tiebreak.py` (5 tests) pins the default kernel and a
+whole stage-3 sift as bit-identical, checks that `mindisp` has *identical gain* and is never
+farther from the current rank, and brute-forces the profile to confirm the returned gap is **the
+nearest maximizer**. And end-to-end, on the full six-stage pipeline
+(`experiments/outputs/proto_H73_mouse_fullpipe.json`): `H73(tie_break="first")` reproduces H64's
+mouse result **bit-identically, same position vector**.
+
+This is the third cycle running that the module was committed before its first run, so the
+H36/H42 provenance defect does not recur: the screen JSONs cite `5536619ac34bf01042940f2fd8bca8445f93d40f+dirty`,
+which contains `src/mfas/experiments/H73.py`. (`+dirty` is `state.json`'s `current_item_note`,
+which is written before every launch by design.)
+
+### Rung 3 - SCREEN: **FAIL on connectome**, and the failure is informative
+
+`bash autoresearch/sweep.sh --exp H73 --role implement --auto-seeds`, launched 04:44:25, done
+05:47:55, **6/6 runs clean**. `seed_plan.py` classified H73 `class=rng` -> 3 seeds
+(`UNRESOLVED: _ALT_CYCLES.get()`); the classifier is fail-safe toward stochastic and H64 is
+classified the same way for the same kind of reason. Seeds were **not** hand-picked. In the
+event all three connectome runs came back **bit-identical**, so the variant is deterministic in
+fact, as the champion pipelines are.
+
+| dataset | seeds | H73 | champion | delta | bar | verdict |
+|---|---|---|---|---|---|---|
+| connectome | 42/123/999, bit-identical | **84.25590809116623** | H64 84.25817950936937 | **-0.002271 pp** | > +0.012 | **FAIL** |
+| mouse | 42/123/999, bit-identical | 93.18415504034846 | H63 93.17538325903584 | +0.008772 pp | non-inferior | pass (positive) |
+
+Connectome score 35,313,455 on total weight 41,912,141. **|delta| = 0.002271 pp is 19% of the
+bar and on the wrong side of zero**, so the item's own primary kill condition - *"changes the
+final connectome score by less than 0.012 pp in absolute value"* - is met, and it is met on the
+two-sided reading the item asked for.
+
+### Why the null happened - this is the part worth keeping
+
+The run records carry per-stage attribution, so the null is not a black box. Comparing H73
+seed 42 with the H64 champion's own confirm run, stage by stage:
+
+| stage | H64 (champion) | H73 (mindisp) | delta |
+|---|---|---|---|
+| 2 - Rocket, ASYM surrogate (`pure_best_pct`) | 83.23791666953974 | 83.23791666953974 | **exactly 0** (the change is confined to stages 3-4, as designed) |
+| 3 - under-relaxed sift, 40 sweeps (`sift_best_pct`) | 84.11761164861514 | 84.09910627090132 | **-0.018505 pp** |
+| 4 - alternation increment, 77 cycles (`alt_increment_pp`) | 0.14056786075423 | 0.15680182026492 | **+0.016234 pp** |
+| final | 84.25817950936937 | 84.25590809116623 | -0.002271 pp |
+
+Two facts, and they are the result of this cycle:
+
+1. **The leftward bias is load-bearing FOR THE SIFT, in the direction opposite to the
+   hypothesis.** Removing it makes stage 3 **worse** by 0.018505 pp - which is *above* the
+   0.012 pp bar in magnitude. The item predicted min-displacement would help; sending movers to
+   the far end of their plateau is, at stage 3, the better rule. Over-transport is apparently
+   doing some of the work under-relaxation is credited with damping.
+2. **The alternation absorbs 87.7% of that difference.** Stage 4's increment grows by
+   +0.016234 pp under H73, giving back nearly everything stage 3 lost, and the two nearly
+   cancel to -0.002271 pp. Stage 4 re-optimises to essentially the same place regardless of
+   where inside the optimal plateau stage 3 left each node.
+
+**It is also not free.** H73 costs **1253.3 s vs 1184.0 s** (+5.8%): the sift stage
++9.7% and the alternation +9.0%, for the one extra segmented min. The item predicted
+"runtime-neutral, which matters under P19"; that prediction is **falsified**, and on microns -
+which has 32 s of margin on the champion and 1,125 s on H70 - a 9% surcharge on the
+sift-bearing stages is not something to wave through.
+
+### New meta-rule - M14-plateau-transport-is-absorbed
+
+> **Where inside the exact-optimal plateau a mover is sent is not load-bearing for the final
+> score, because the stage-4 alternation absorbs it.** MEASURED on the largest available
+> intervention of this kind: a rule change that redirects 44-75% of movers and cuts transport by
+> 800-4,961 ranks per mover moves stage 3 by -0.018505 pp and the **final** score by
+> -0.002271 pp, because stage 4's increment grows by +0.016234 pp - **87.7% absorption**.
+> Consequence for the queue: any item whose mechanism changes a move's DESTINATION without
+> changing its exact GAIN (same argmax set, different point of it) must show it survives stage 4,
+> and the cheap diagnostic is one run of each arm reading `sift_best_pct` and `alt_increment_pp`
+> side by side - no new code. M14 is the sibling of **M8** (a move class's own stage credit is
+> not its contribution) with the competitor being the *same* class at a later stage rather than a
+> different one, and of **M12**: both say a difference measured before the absorber is not the
+> difference that ships.
+
+### The mouse observation, recorded and NOT promoted
+
+H73 on mouse is **93.18415504034846**, 3/3 bit-identical, **+0.008772 pp** over the H63 champion.
+It is not promoted, and the reason is stated so a later cycle does not read this as an oversight:
+mouse is a **supporting** dataset that does not advance the Phase-1 mission target, the
+connectome leg of the *same* variant **regresses**, and promoting it would make the mouse
+champion carry a knob measured to hurt connectome - which every future variant built on "the
+mouse champion" would then inherit. The screen gate is failed as a whole, so there is no confirm
+and no critic behind this number, and a mouse championship needs both (H63 took it with 20 confirm
+seeds). Filed as **H76** with the exact cost to settle it, at low priority.
+
+### What is kept, and what this cost
+
+The `tie_break` keyword stays in the tree. It defaults to `"first"`, five tests pin the champions'
+bit-reproducibility on that default, and it is what makes this kill reproducible by checkout. It
+is the artifact of a measurement, not dead configuration surface.
+
+Cost: 94 s CPU (rung 1), ~2 s CPU (rung 2), 63 min GPU (screen), 3 min of test suite. No champion
+moved; `sota.json` is untouched.
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+# rung 1 - the premise (CPU, 94 s)
+PYTHONPATH=src $PY experiments/proto_H73_tiebreak.py --rung 1 --dataset connectome --sweeps 12 \
+  --order champion_H64=results/20260827T024801Z-H64-connectome-s42-confirm-a7490c_positions.npy \
+  --order H35_order=results/20260809T175722Z-H35-connectome-s42-verify-8f52fb_positions.npy
+# the validation that makes rung 1 admissible
+PYTHONPATH=src $PY experiments/check_H73_profile.py
+# the identity pins
+PYTHONPATH=src $PY -m pytest tests/test_H73_tiebreak.py -q
+# the screen (63 min GPU)
+bash autoresearch/sweep.sh --exp H73 --role implement --auto-seeds
+```
+
+**Artifacts.** `experiments/outputs/proto_H73_connectome.json`,
+`experiments/outputs/proto_H73_mouse_fullpipe.json`,
+`results/20260828T014426Z-H73-connectome-s42-implement-4ea4ce.json` (+ s123, s999),
+`results/20260828T024748Z-H73-mouse-s42-implement-355f5c.json` (+ s123, s999).
+
+---

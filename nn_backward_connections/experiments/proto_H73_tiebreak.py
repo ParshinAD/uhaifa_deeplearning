@@ -296,7 +296,7 @@ def rung1(dataset: str, sweeps: int, k_full: int, alpha: float,
         # reimplementation, so the orders profiled are exactly the ones the champion's
         # stage 3 would visit from the same start. profile_plateaus is used for statistics
         # only. (Its gain agrees with production to ~1e-17 and its mover set exactly;
-        # see dr_tmp/check_H73_profile.py.)
+        # see experiments/check_H73_profile.py.)
         bg_prod, gain_prod = jacobi_best_gaps(work, src, tgt, w, n)
         row = _summarise(work, prof, "sift_sweep_%d" % s)
         row["alpha"] = a

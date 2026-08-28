@@ -1,8 +1,8 @@
 # Campaign dashboard
 
-*Generated 2026-08-28 04:26 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-28 05:54 by `autoresearch/dashboard.py` — do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 19 · **mode:** `incremental` · **consecutive kills:** 1
+**Phase:** `quality` · **cycle:** 20 · **mode:** `incremental` · **consecutive kills:** 2
 
 ## Progress — connectome (Phase 1 target)
 
@@ -21,11 +21,11 @@
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H63** | 93.1754 ± 0.0 | 20 | ~1s | findings.md #10 (H63, 2026-08-27) |
 
-## Queue — 25 proposed / 61 total
+## Queue — 26 proposed / 63 total
 
 | # | id | title | status |
 |---|---|---|---|
-| 0 | `P01` | HARDWARE RE-BASELINE Р Р†Р вЂљРІР‚Сњ re-measure the champions on this machine  | done |
+| 0 | `P01` | HARDWARE RE-BASELINE Р В Р вЂ Р В РІР‚С™Р Р†Р вЂљРЎСљ re-measure the champions | done |
 | 0 | `P05` | BLOCKING: stage 4 has no wall-clock guard and microns now runs 3398-3418 s aga | done |
 | 0 | `P07` | BLOCKING: the champion's microns configuration does not fit 3600 s on a loaded | superseded-by-P19 |
 | 0 | `H43` | Re-allocate the microns budget: cut Rocket epochs 80,000 -> 20,000 and spend t | killed |
@@ -34,7 +34,7 @@
 | 0 | `H48` | Ratio greedy init ((out_w+1)/(in_w+1)) instead of greedy-FAS - a +6.3 pp bette | killed |
 | 0 | `P09` | The campaign's two significance criteria disagree for the first time - decide  | awaiting-operator |
 | 0 | `P13` | Make arc reclamation cheap enough to run on microns (it is worth +0.018759 pp  | proposed |
-| 0 | `H64` | Compose the ASYMMETRIC surrogate with the CHAMPION stack on CUDA вЂ” H38 was n | iterate |
+| 0 | `H64` | Compose the ASYMMETRIC surrogate with the CHAMPION stack on CUDA РІР‚вЂќ H38 w | iterate |
 | 0 | `P15` | OPERATOR DECISION: is a microns-only championship available while the connecto | done |
 | 0 | `P18` | Buy the connectome relabelling study for H64 - the ONLY gate left on the large | done |
 
@@ -42,6 +42,7 @@
 
 | cycle | item | verdict | note |
 |---|---|---|---|
+| 20 | `H73` | **kill** | H73 killed at the SCREEN (sift argmax tie-break, min-displacement inside the opt |
 | 19 | `H66` | **kill** | H66 killed at the prototype rung (ASYM gradient kick as a terminal stage). 0 of  |
 | 18 | `P19` | **iterate** | P19 executed as variant H70 (microns compute re-allocation: epochs 80,000->50,00 |
 | 17 | `P18` | **keep-partial** | NEW CONNECTOME CHAMPION H64 84.25817950936937 (+0.104084 pp over H42), the large |
@@ -53,12 +54,11 @@
 | 11 | `H57` | **kill** | H57 killed at the prototype rung (prefix-shared tail multi-start; anchored gain  |
 | 10 | `H56` | **kill** | H56 killed at the prototype rung (relabelling multi-start; M9 effect size). New  |
 | 9 | `P09` | **iterate** | P09 iterate: the relabelling-robustness gate for degenerate primary pools is IN  |
-| 8 | `H52` | **keep-partial** | H52 keep-partial: mouse champion 93.1028; connectome refused. See log.md. |
 
 ## Evidence
 
-- `results/*.json`: **577** run records across **35** variants
-- killed mechanisms on record: **22** (+7 deferred, 13 meta-rules)
+- `results/*.json`: **583** run records across **36** variants
+- killed mechanisms on record: **23** (+7 deferred, 14 meta-rules)
 - literature notes: **9** (latest: `vahidi-2025.md`)
 
 ## Control
