@@ -64,7 +64,7 @@ from pathlib import Path
 import numpy as np
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import connected_components
-from scipy.stats import kendalltau, spearmanr
+from scipy.stats import kendalltau
 
 from mfas.baseline.ratio_greedy import ratio_greedy_rank
 from mfas.experiments.H02 import greedy_fas_order
@@ -258,11 +258,9 @@ def main() -> None:
 
     names = list(ranks)
     tau = {}
-    rho = {}
     for i, a in enumerate(names):
         for b in names[i + 1:]:
             tau[f"{a}|{b}"] = float(kendalltau(ranks[a], ranks[b])[0])
-            rho[f"{a}|{b}"] = float(spearmanr(ranks[a], ranks[b])[0])
             print(f"[H79.1] tau {a} | {b} = {tau[f'{a}|{b}']:.6f}", flush=True)
 
     ball = ["greedy_fas"] + [f"ball_r{i}" for i in range(1, args.relabellings + 1)]
@@ -299,7 +297,11 @@ def main() -> None:
         "init_pct": scores,
         "wall_clock_s": timings,
         "kendall_tau": tau,
-        "spearman_rho": rho,
+        "spearman_rho": None,
+        "spearman_note": ("NOT RECORDED: scipy.stats.spearmanr aborts this interpreter with "
+                          "Windows fatal exception 0xc06d007f inside numpy.corrcoef -> np.dot "
+                          "(broken BLAS in the `allen` env), at every n including n=10. Kendall "
+                          "tau, the pre-registered statistic, is unaffected. Filed as P26."),
         "ball_tau_min": ball_tau_min,
         "ball_tau_max": ball_tau_max,
         "ball_pairs": ball_pairs,

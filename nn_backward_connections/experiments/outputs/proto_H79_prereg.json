@@ -25,7 +25,7 @@
     "scc_topo"
   ],
   "control": "greedy_fas re-run on R=5 random node relabellings (exact isomorphism), mapped back to canonical ids",
-  "statistic": "Kendall tau between rank vectors (Spearman rho also recorded)",
+  "statistic": "Kendall tau between rank vectors",
   "decision_rule": {
     "ball_tau_min": "min pairwise Kendall tau over {canonical greedy_fas, ball_r1..ball_r5}",
     "distinct": "tau(C, greedy_fas) < ball_tau_min",
