@@ -8882,3 +8882,179 @@ $PY experiments/proto_H80_anneal.py --stage S2r                  # n=4000, 15 ar
 $PY experiments/proto_H80_verdict.py                             # K1-K5, mechanically
 $PY experiments/proto_H80_rung2.py --dataset connectome --budget-s 600 --seed 42
 ```
+
+---
+
+## 2026-08-28 — Cycle 24 (Phase 7, DIVERGENT): H71 — the GRaSP subset-bipartition "tuck". **KILL at the prototype rung.** (The subset freedom is REAL, EXACT and essentially NON-REDUNDANT — and it still loses, on allocation, by 98x.)
+
+**Machine:** Windows 10 laptop, RTX 4060 (CUDA), torch 2.8.0+cu128, python 3.9.25, Git Bash.
+**GPU used: ZERO.** ~1 h CPU. Preflight: tree clean, branch `auto/campaign-v3` = `campaign.yaml`'s
+`campaign.branch`, `pytest tests/ -q` **611 passed in 191.60 s**.
+
+**Mode: DIVERGENT, on both triggers** — `consecutive_kills` = 4 and `cycles_since_score_move` = 6.
+`cycles_since_literature_scan` = 5 also forced the scheduled scan, so the cycle ran **L02 first**
+(scout subagent, output `autoresearch/lit/scan_cycle24.md`, 585 lines) and then one science item.
+
+**P23 checked FIRST, for the ninth cycle running.** Still `awaiting-operator`; no operator commit.
+
+### The scan (L02) — done, and it is the cycle's second product
+
+`autoresearch/lit/scan_cycle24.md`. Scoped by M15's measured barrier depth and filtered by M17: a
+mechanism whose cost per barrier crossing is `O(rounds)` is already dead here. The one thing that
+survives that filter is **partition crossover / iterative partial transcription** — Chicano, Whitley,
+Ochoa, Tinos, arXiv:2407.06742 (PPSN 2024, FULL TEXT retrieved) and Mobius et al.,
+cond-mat/9902034 (Phys. Rev. E 59, 1999, FULL TEXT): cut two orders at every position where they hold
+the same node set in the same position range, and the exact score decomposes as `C + sum_i f_i(c_i)`,
+so the per-block argmax realises the **best of `2^k`** offspring in one `O(n)` scan plus one `O(m)`
+edge pass. M17's two mandatory pre-scheduling questions answer **"1 round"** and **"zero uphill
+moves"**. Filed as **H82** (priority 1) with a free `k = 1` pre-gate over the campaign's own stored
+orders, and **H83** (priority 4, conditional on H82's near-cut profile). Path relinking,
+LNS-with-large-destroy, tabu, basin hopping and order-MCMC are all declined *with reasons* —
+round-priced, disposed of by M17 without new measurement. The scan also re-prioritised the standing
+queue: **H72 strengthened** (a consensus cut is computable by the same `O(n)` scan), **H61 weakened**
+and moved below H72.
+
+### Hypothesis (H71, as filed)
+
+For a backward edge `u -> v` write the order as `<d1, v, d2, u, d3>`. For ANY subset `gamma` of `d2`
+the reordering `<d1, gamma, u, v, gamma_c, d3>` — each group keeping its internal relative order — is
+exact by the contiguous-block lemma. A **prefix** `gamma` zeroes the coupling term and reproduces
+H45/H52's pair move exactly, so *the campaign's confirmed pair class is the prefix special case of this
+one*. THE CLAIM: sweeping subset-bipartition repairs over the champion's connectome order realises
+**more than +0.012 pp incremental** over what the sift + SCC refiner + sequential pair relocation
+already take.
+
+### Rung 1 — NOVELTY: **PASS**
+
+Shares the axis `discrete refinement / move class` with two dead entries, and clears both by name.
+**H41** (rigid contiguous-block relocation, killed at 91.9 % redundancy) `revival_if`: *"revive only if
+(a) the class is run where the others cannot reach ... or (b) an interleaving is found that stops the
+classes competing for the same ground, **with the redundancy fraction reported**."* The tuck is not
+H41's move — H41 *relocates* a rigid block, the tuck **holds the interval fixed and re-permutes its
+interior by a non-positional predicate**, which is the one thing no class in this campaign can do —
+and the redundancy fraction is reported below, as required. **H45** was killed *as filed* with
+`revival_if` *"it falsifies the placement, not the mechanism"*, and H51/H52 then confirmed the
+mechanism sequentially. So the item enters legitimately.
+
+**M15's operative directive applies and is answered honestly, up front:** this is a new monotone move
+class on the existing basin, and M15 says the reference is not reachable that way. H71 never claimed
+it was. It claimed +0.012 pp — 3.4 % of M15's +0.356498 pp residual — and the scan's own verdict on
+this item was *"its value is the 'is the optimal gamma ever a strict non-prefix?' diagnostic, not the
+pp."* That is exactly how it turned out.
+
+### Pre-registration
+
+Committed **before the connectome stage-2 run** at `0b8eef3`, together with the stage-1 artifacts:
+`experiments/proto_H71_tuck.py`. The three `gamma` rules, the free kill, the three kill conditions and
+the oracle cross-check requirement are the ones filed in `queue.json` at cycle 18 and were not edited
+this cycle. Identity anchor: the champion order is resolved **through `sota.json`** (never a bare name
+glob — H46's prototype silently measured a killed variant that way) and its exact score is asserted
+equal to `sota.json`'s `84.25817950936937` before anything is measured.
+
+### Rung 2 — STAGE 1: the free kill, exactness, and the cost constants
+
+`experiments/outputs/proto_H71_stage1_connectome.json`, `experiments/outputs/proto_H71_stage1_mouse.json`.
+Champion orders: `results/20260827T024801Z-H64-connectome-s42-confirm-a7490c_positions.npy`
+(84.25817950936937) and `results/20260826T153929Z-H63-mouse-s42-confirm-9a9819_positions.npy`
+(93.17538325903583).
+
+| | connectome (top 2,000 of 1,173,245 backward edges) | mouse (all 124) |
+|---|---|---|
+| candidates where a subset beats the **best prefix** | 84 (4.20 %) | 17 (13.71 %) |
+| ...of those, `gamma` a **strict NON-prefix** | **84 / 84 (100 %)** | **17 / 17 (100 %)** |
+| positive-gain candidates: prefix / best-of-rules | 6 / 8 | **0** / 2 |
+| capacity (M11 — NOT achievable): prefix / best / increment | +0.001355 / +0.001861 / **+0.000506** pp | +0.000000 / +0.017259 / **+0.017259** pp |
+| exactness vs the frozen scorer | **8 / 8** | **2 / 2** |
+| cost | 20.23 ms per candidate, **65,575 coupling edge visits each** | 0.18 ms, 289 visits |
+
+**The pre-registered FREE KILL does not fire, decisively.** It would have fired if rule (b)'s `gamma`
+were a prefix for >95 % of candidates; **not one** of the 101 strictly-better candidates across both
+datasets has a prefix `gamma`. The subset freedom is real and it is used.
+
+**The mouse prefix control is exactly 0.000000 pp over 0 applied moves.** That is the positive control
+that matters: the mouse champion H63 *already contains* H52's pair-relocation stage, so its order is a
+fixed point of the k<=2 class — and the tuck still finds two strictly improving moves on it. The class
+is not reachable by what the campaign already has.
+
+**But the two subset rules split sharply, and the reason is the coupling term.** Rule (b) — the
+preference sign `{z : a_z > b_z}`, which maximises the *separable* part exactly — is **catastrophic on
+connectome**: it wins 1 of the 8 positive candidates and posts gains like -8,692 and -47,213 against
+prefix gains of +320 and +32 on the same candidates. Moving ~29 scattered nodes to the front of a
+112,808-position interval reverses an enormous number of interior edges, and the coupling term it
+ignores dominates. The rule that ever wins is (c), forward reachability, restricted to spans < 5,000
+(attempted on 607 of 2,000). This is the mechanism behind the cost as well: the coupling term is
+`O(sum_{z in gamma} deg(z))` — **65,575 edge visits per candidate, 9.4x the item's own ~7,000
+estimate**.
+
+### Rung 3 — STAGE 2: realised gain, sequential, **matched pop budget**
+
+`experiments/outputs/proto_H71_stage2_connectome.json` — 100,000 pops x 2 passes per arm, from the
+champion order. The tuck arm evaluates the prefix kernel **and** both subset rules and applies
+whichever is better, so it is a superset of the control by construction and the difference is exactly
+what the subset freedom buys. Every arm is **exact**: `predicted == realised` on all three.
+
+| arm | applied (of which subset) | realised | end pct | wall | pp/s |
+|---|---|---|---|---|---|
+| prefix (H52's class, the CONTROL) | 216 (0) | +0.00565468607294483 pp | 84.26383419544231 | 45.0 s | 1.2560e-4 |
+| tuck (prefix + both subset rules) | 420 (**188**) | +0.01087035854360196 pp | 84.26904986791297 | **1527.9 s** | 7.1147e-6 |
+| composed (prefix, **then** tuck) | 249 (178) | +0.005626054751056502 pp *on top of prefix* | 84.26946025019338 | 1478.0 s | 3.8066e-6 |
+
+Mouse (`experiments/outputs/proto_H71_stage2_mouse.json`, 20,000 pops x 3 passes): prefix
+**+0.0 pp / 0 moves**, tuck **+0.01725854656641423 pp / 2 moves**, composed identical,
+93.17538325903583 -> **93.19264180560224**.
+
+### The three pre-registered kill conditions
+
+| # | condition | measured | fires? |
+|---|---|---|---|
+| 1 | incremental gain over k<=2 < **0.012 pp** on connectome | **+0.005215672470657131 pp** — 2.30x below | **YES** |
+| 2 | redundancy fraction > 80 % (H41 died at 91.9 %) | **-7.87 %** | no |
+| 3 | realised pp/s below stage 4's **3.45e-4 pp/s** | **3.5173e-6 pp/s** — **98.1x below** | **YES** |
+
+Two of three fire, and either is sufficient. **Condition 2 not firing is the scientifically interesting
+part, and it is why this kill is not H41's kill:** composing the tuck *after* the prefix class has taken
+its ground yields +0.005626 pp, marginally **more** than the tuck's solo increment of +0.005216 pp — a
+redundancy fraction of -7.9 %, i.e. essentially zero. H41's ground was 91.9 % already reachable; the
+tuck's ground is its own. It is a genuinely new, genuinely non-empty, exactly-scored move class, and it
+is *still* not worth running.
+
+**The budget arithmetic is the kill that does not depend on the 100,000-pop choice.** The control has
+not converged at 100,000 pops either — H52's converged connectome figure is +0.02233 pp at
+**2,400,000** pops. Running the tuck to that same budget costs **36,669 s = 10.2 h**, against
+`runtime.max_wall_clock_s_per_run` = **3,600 s**. There is no configuration inside the campaign's own
+budget in which this class converges. And the best composed number measured, prefix + tuck =
+**+0.011281 pp**, is *still* below the 0.012 pp bar and 2.08x below the 0.02343 pp PROTOCOL CI floor
+that already refused H52's fully converged connectome leg.
+
+### Decision: **KILL**
+
+`gates_run`: `["novelty", "prototype"]`. The prototype rung settled it, which is what the rung is for —
+zero GPU seconds were spent, and `sota.json` is **UNTOUCHED**.
+
+**The mouse leg is a real number and it is filed, not promoted.** +0.01725854656641423 pp over the H63
+champion, exact, deterministic, two moves, clearing mouse's 0.01 pp `min_promotion_delta_pp`. It is NOT
+a championship claim from this cycle: H71 as filed is a connectome hypothesis and its connectome leg
+failed; a mouse-only variant is a *different* variant (dataset-keyed budgets, the `_PAIR_MAX_POPS`
+convention); and n = 148 with two applied moves is exactly the SMALL-GRAPH ARTIFACT shape CAMPAIGN.md
+warns about. Filed as **H84** with the measurement attached and the ladder it would have to run.
+
+### New meta-rule — M18
+
+**M8's mirror image.** M8 says a class's own credit is not its advantage, because classes compete for
+the same ground. M18 says a class can own its ground outright and still lose, because *exact-gain
+evaluation is priced in the moved set's degrees*: enriching an interval move from a positional cut
+(`O(d(u)+d(v))`) to an arbitrary subset (`O(sum_{z in gamma} deg z)`) multiplied per-candidate cost by
+**34.0x** at equal pops while multiplying realised gain by only **1.92x**. Richness buys gain
+sub-linearly in its own evaluation cost. Stated in full in `killed.json`, with its direct consequence
+for **H61**, whose DP is `O(sum deg * 2^k * k)` — the same cost law with an extra `2^k` —
+independently corroborating the scan's recommendation to move H61 below H72.
+
+### Re-runnable
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+PYTHONPATH=src $PY experiments/proto_H71_tuck.py --stage 1 --dataset connectome --topk 2000
+PYTHONPATH=src $PY experiments/proto_H71_tuck.py --stage 1 --dataset mouse --topk 400
+PYTHONPATH=src $PY experiments/proto_H71_tuck.py --stage 2 --dataset connectome --max-pops 100000 --passes 2
+PYTHONPATH=src $PY experiments/proto_H71_tuck.py --stage 2 --dataset mouse --max-pops 20000 --passes 3
+```

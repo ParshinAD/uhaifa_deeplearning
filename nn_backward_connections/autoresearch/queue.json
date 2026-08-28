@@ -698,7 +698,7 @@
       "id": "H61",
       "title": "k-node joint optimal re-insertion (k=3..6) by breakpoint-compressed subset DP - the insert-distance-r neighbourhood",
       "status": "proposed",
-      "priority": 3,
+      "priority": 4,
       "axis": "discrete refinement / move class",
       "hypothesis": "Our ladder has k=1 (single-node exact-gain sift) and k=2 (H45/H52 pair relocation) and nothing above. Extracting k nodes and re-inserting them JOINTLY optimally - internal order and interleaving together - is exact by a DP over (subset placed, gap): f[g][T u {j}] = f[g][T] + prof_j(g) + sum_{i in T} (w_ij - w_ji). Because each node's insertion profile is piecewise constant and changes only at its own neighbours' positions, the candidate gap set is O(sum_{j in S} deg(j)) rather than O(n), so the DP is O((sum deg) * 2^k * k) ~ 2e5 operations at k=6 and mean total degree 83 - NOT O(n^2). The claim: a sweep of k=3 joint re-insertions over structure-selected triples gains more than 0.012 pp INCREMENTALLY over what k<=2 already takes.",
       "rationale": "The neighbourhood has a name and a complexity in the literature - 'insert distance r', n^{O(r)} poly by enumerate-then-DP (Gruttemeier, Komusiewicz, Morawietz, AAAI 2021 / arXiv:2204.02902, ar5iv HTML retrieved) - and their framework needs a per-variable-decomposable objective where ours decomposes per PAIR, which is stronger. H45's prototype established the k=2 rung is real and non-redundant with the sift: 3,498 strictly improving pairs on the champion order, 989 of them (28.3%) invisible because neither endpoint profits alone, best move spanning 92,958 positions. Their own honest note transfers too: the bottleneck was the insert operation, not the combinatorics - which is exactly what H51 rediscovered here.",
@@ -712,7 +712,8 @@
       "est_cost": "prototype: tens of minutes of CPU, ZERO GPU. Implementation if it clears: a new module; it ADDS seconds, which microns (~190 s of slack) cannot afford - so plan for a connectome-only result and read H52's refusal before building.",
       "expected_pp": "connectome 0 to +0.05, midpoint +0.01. I expect this to die on redundancy; it is queued because the redundancy number is needed before anyone proposes k=4.",
       "kind": "science",
-      "source": "autoresearch/lit/scan-cycle12.md (cycle 12 divergent-mode scan)"
+      "source": "autoresearch/lit/scan-cycle12.md (cycle 12 divergent-mode scan)",
+      "note_2026_08_28": "RE-PRIORITISED DOWN (below H72) by scan_cycle24.md and, independently, by M18. Its DP costs O(sum deg * 2^k * k) - M18's cost law with an extra 2^k - and H71 measured that law killing a class that was exact, non-empty and non-redundant. Before this item is scheduled it must state its per-candidate evaluation cost as a function of the MOVED SET's degrees and show that cost times the pop count needed for convergence fits 3,600 s."
     },
     {
       "id": "P12",
@@ -1059,7 +1060,7 @@
     {
       "id": "H71",
       "title": "Subset-bipartition interval repair (the GRaSP 'tuck') - H45/H52's pair relocation is only its PREFIX special case",
-      "status": "proposed",
+      "status": "killed",
       "priority": 2,
       "kind": "science",
       "axis": "discrete refinement / move class",
@@ -1079,7 +1080,8 @@
       "est_cost": "prototype ~30-60 min CPU, ZERO GPU. Implementation if it clears: one module (a subset-gamma variant of the pair kernel) + src/mfas/experiments/H71.py. It ADDS seconds, which microns cannot afford under P19 - plan for a connectome-only result.",
       "predicted_effect_pp": "connectome 0 to +0.04, midpoint +0.008 - BELOW the 0.012 bar in the median case, stated up front. Against it: the champion is a joint fixed point of insertion + SCC + pair relocation, and H45 already measured that only 0.30% of backward edges admit ANY improving pair move on such an order; the subset freedom widens the per-candidate optimum but not obviously the candidate SET. For it: it is the only unexplored degree of freedom in a move class the campaign has already confirmed, the prototype costs no GPU, and the 'is the optimal gamma ever a non-prefix?' number is a diagnosis the campaign does not have either way.",
       "expected_pp": "connectome 0 to +0.04, midpoint +0.008",
-      "source": "autoresearch/lit/scan_cycle18.md (cycle 18 scheduled scan)"
+      "source": "autoresearch/lit/scan_cycle18.md (cycle 18 scheduled scan)",
+      "outcome": "PROTOTYPE GATE 2026-08-28 (cycle 24) -> KILLED on pre-registered conditions 1 and 3. The premise and the free kill both PASSED: 84/84 connectome and 17/17 mouse strictly-better candidates have a STRICT NON-PREFIX gamma, the kernel is exact (8/8, 2/2, and predicted == realised on all six sequential arms), and on the mouse champion the prefix control applies 0 moves for 0.000000 pp while the tuck finds 2. It is also NOT redundant: M8 redundancy fraction -7.87%. It dies on ALLOCATION: connectome incremental over k<=2 = +0.005216 pp vs a 0.012 pp bar (2.30x below) at 3.5173e-06 pp/s vs stage 4's 3.45e-04 pp/s (98.1x below), and converging it at H52's 2,400,000-pop budget would cost 36,669 s = 10.2 h against a 3,600 s cap. Mouse leg +0.017259 pp -> filed as H84. New meta-rule M18-richness-is-priced-in-degree."
     },
     {
       "id": "H72",
@@ -1350,7 +1352,7 @@
       "id": "L02",
       "priority": 3,
       "kind": "science",
-      "status": "proposed",
+      "status": "done",
       "axis": "literature scan (TARGETED, not a broad refresh)",
       "title": "Targeted scan: large-neighbourhood / crossover / path-relinking for linear ordering, read against a barrier of KNOWN depth",
       "hypothesis": "Not a hypothesis - a scoped scan. M15 gives the campaign a number it never had: the prize sits behind a 0.786 pp valley and no partial adoption of the destination is profitable. That makes one literature question answerable that was not before: which linear-ordering / FAS methods are designed to cross barriers rather than descend, and what do they use - population crossover, path-relinking with an intermediate acceptance rule, LNS with large destroy fractions, tabu with long-term memory?",
@@ -1365,7 +1367,8 @@
       ],
       "est_cost": "one scout run",
       "predicted_effect_pp": "n/a",
-      "source": "cycle 21 (H78 / M15)"
+      "source": "cycle 21 (H78 / M15)",
+      "outcome": "RUN 2026-08-28 (cycle 24) as the scheduled scan (cycles_since_literature_scan had reached 5). Output autoresearch/lit/scan_cycle24.md, 585 lines. Product: partition crossover / iterative partial transcription (arXiv:2407.06742 PPSN 2024 and cond-mat/9902034 PRE 1999, both FULL TEXT) - the only mechanism found whose cost per barrier crossing is O(1) passes rather than O(rounds), so the only one that survives M17. Filed as H82 (priority 1) and H83 (priority 4, conditional). Path relinking declined with a reason (no retrievable primary source AND dominated on the M17 filter); LNS-with-large-destroy, tabu, basin hopping and order-MCMC all round-priced and disposed of by M17 without new measurement. Re-prioritised H72 up (consensus cut) and H61 down."
     },
     {
       "id": "P26",
@@ -1428,6 +1431,71 @@
       "est_cost": "minutes",
       "predicted_effect_pp": "n/a",
       "source": "cycle 23 (H80)"
+    },
+    {
+      "id": "H82",
+      "priority": 1,
+      "kind": "science",
+      "status": "proposed",
+      "axis": "recombination / solution merging (a move class the campaign has never had)",
+      "title": "Exact block-partition crossover (PX / IPT) between two independently produced orders - best of 2^k in one O(n + m) pass",
+      "hypothesis": "For two orders A, B over the same node set, scan positions left to right and cut at every p where max(rank_B[A_order[0:p]]) == p-1; the cuts define k COMMON BLOCKS holding the same node set in the same position interval in both orders. Because block membership and block order are shared, every cross-block edge is oriented identically in every offspring, so the exact score decomposes as C + sum_i f_i(c_i) with c_i in {A, B}, and the per-block argmax realises the BEST OF 2^k offspring - which is >= max(score(A), score(B)) by construction - in one O(n) scan plus one O(m) edge pass. THE CLAIM: over the connectome orders already stored in results/*_positions.npy, the best offspring beats the H64 champion by more than +0.012 pp, and that advantage survives a terminal repair sift.",
+      "rationale": "Corollary 1 of Chicano, Whitley, Ochoa, Tinos, arXiv:2407.06742 (PPSN 2024, FULL TEXT retrieved twice): the procedure 'necessarily finds the best solution from the set of 2^m solutions'. Same operator as Mobius et al.'s Iterative Partial Transcription (cond-mat/9902034, Phys. Rev. E 59, 1999, FULL TEXT), which LKH ships as tour merging - two independent literatures converging, not a one-paper idea. Whitley et al. describe its purpose as tunnelling from two local optima to a new one 'without searching intermediate solutions', and THAT is why this item exists: H78's rank-blend and teleport probes and H80's Metropolis schedule all pay for the interior of M15's 0.786097 pp valley; PX never enters it. The quadratic cost Mobius et al. report comes from the TSP's rotational symmetry, which an ORDERING does not have - our decomposition is found by a single running-max scan.",
+      "method": "PROTOTYPE, CPU ONLY, ZERO GPU, three rungs. Rung 0 (free, minutes): for every pair among the stored connectome position vectors - H64 (champion), H79A/H79B/H79C (Kendall tau 0.0899/0.3706/0.4329 from the champion's construction), plus older H42/H36/H35 - compute k, the block-size distribution and the exact f_i(A), f_i(B) per block, and report the realised best-of-2^k gain over max(parents). IF k = 1 FOR EVERY PAIR THE ITEM IS DEAD FOR ONE SCAN. Rung 0b (DIAGNOSTIC ONLY, may never enter a scored variant, must be labelled in the artifact): the same census with data/best_solution as one parent, read solely through mfas.analysis.gap - this measures how much of M15's +0.356498 pp residual is BLOCK-DECOMPOSABLE, a fourth geometric family of partial adoption and the only one that is monotone-safe by construction. Rung 1: cross-check >= 25 offspring against the frozen scorer with ZERO mismatches before quoting any total; repeat the census on mouse and microns as scale controls. Rung 2: apply the champion's stage-4 short repair sift to the best offspring as a terminal append; report the composed score, the M8 redundancy fraction and pp/s.",
+      "kill_condition": "ANY of four. (1) Rung 0: the best pair over the whole stored archive has k = 1, or its realised best-of-2^k gain over max(parents) is < 0.012 pp on connectome. (2) Rung 1: any mismatch against the frozen scorer. (3) Rung 2: composed connectome delta over the H64 champion < 0.012 pp. (4) M8/M18: realised pp/s below 3.45e-4 pp/s once the second parent's wall clock is charged. Report k, the block-size distribution, the per-block win split and the redundancy fraction WHATEVER the verdict - the campaign has never looked at the common-block structure of its own solutions.",
+      "novelty": "Distinct from the whole multi-start family (M3/M9/M10/M16, H01/H56/H57/H79), which prices a design as mean + sigma*a_R, i.e. harvests max OVER the parents. PX produces a point OUTSIDE the parent set: its gain is sum_i max(f_i(A), f_i(B)) - max(sum_i f_i(A), sum_i f_i(B)), which is >= 0 always, is INDEPENDENT of the parents' score spread, and grows with k. M16's finding that four constructions contract to a 0.005879 pp final SPREAD is not a statement that the four final PERMUTATIONS are the same, and only the latter bounds PX. Distinct from H41 (relocates a rigid block; PX moves nothing - each block stays in its own position interval and its INTERIOR is re-permuted wholesale by another solution's global opinion) and from H46 (permutes coarse blocks relative to each other; PX holds block order fixed). Answers M17's two mandatory questions: one round, zero uphill moves. M18 does not bite: PX pays one O(n) scan plus one O(m) edge pass for the whole permutation, not a per-candidate degree sum.",
+      "prior_evidence": [
+        "autoresearch/lit/scan_cycle24.md section 3.1-3.3 (the derivation, re-derived for our objective)",
+        "arXiv:2407.06742 Corollary 1 (FULL TEXT, HTML, retrieved twice)",
+        "arXiv:cond-mat/9902034 sections II.1-II.2 (FULL TEXT)",
+        "arXiv:2605.31051 (2026-05-29, FULL TEXT) - number of global optima grows exponentially with sparsity; our density is 3e-4",
+        "experiments/outputs/proto_H79_rung1.json (Kendall tau of the four constructions) and the 22 stored H79 connectome position vectors",
+        "autoresearch/killed.json M9, M10, M15, M16, M17, M18, H41, H46, H47"
+      ],
+      "est_cost": "rungs 0/0b/1: minutes to ~1 h CPU, ZERO GPU. Rung 2: one ~1,185 s connectome pipeline run for a cheap second parent plus seconds of PX. Deterministic, no RNG -> 1-seed screen on the primaries. It ADDS the second parent's seconds, which microns cannot afford under P19 -> plan for a connectome-only result.",
+      "predicted_effect_pp": "connectome 0 to +0.10, midpoint +0.006 - BELOW the 0.012 bar in the median case and well below the 0.02343 pp PROTOCOL CI floor, stated up front. Strongly right-skewed: gain is roughly linear in k, and k is unmeasured in the literature at ANY n, so rung 0 would be the first such measurement. Against it: two orders with median node displacement in the thousands may share no proper cut at all. For it: it costs almost nothing to find out and it CANNOT regress.",
+      "source": "autoresearch/lit/scan_cycle24.md (cycle 24 scheduled scan L02)"
+    },
+    {
+      "id": "H83",
+      "priority": 4,
+      "kind": "science",
+      "status": "proposed-conditional-on-H82",
+      "axis": "recombination / solution merging",
+      "title": "Forced-cut partition crossover: buy extra blocks by paying a bounded, exactly-scored repair",
+      "hypothesis": "If H82's census finds too few natural cuts, manufacture them: at positions p where the symmetric difference D(p) = |prefix_A(p) delta prefix_B(p)| is small, relocate those few nodes to force a cut, paying an exactly-scored cost. Because parent A remains a member of the offspring set, the operator stays monotone-safe.",
+      "rationale": "scan_cycle24.md section 4.2; conditional on H82's measured near-cut profile.",
+      "method": "FREE PRE-GATE FIRST: compute the D(p) profile from H82's rung 0. If fewer than 50 positions have D(p) <= 32, the item is dead without further work.",
+      "kill_condition": "fewer than 50 positions with D(p) <= 32; or the forced-cut gain net of the relocation cost is < 0.012 pp on connectome.",
+      "novelty": "Distinct from H82 (natural cuts only) and from H41 (which relocates blocks to improve, not to cut).",
+      "prior_evidence": [
+        "autoresearch/lit/scan_cycle24.md section 4.2"
+      ],
+      "est_cost": "minutes of CPU on top of H82's rung 0",
+      "predicted_effect_pp": "unknown - gated entirely by H82's near-cut profile",
+      "source": "autoresearch/lit/scan_cycle24.md (cycle 24 scheduled scan L02)"
+    },
+    {
+      "id": "H84",
+      "priority": 3,
+      "kind": "science",
+      "status": "proposed",
+      "axis": "discrete refinement / move class / mouse only",
+      "title": "The H71 tuck as a MOUSE-ONLY terminal stage - the one dataset where M18's cost law is affordable",
+      "hypothesis": "The subset-bipartition repair H71 built is worth a mouse championship when shipped as a dataset-keyed terminal stage on H63, even though its connectome leg is dead on allocation.",
+      "rationale": "MEASURED, cycle 24, from the H63 mouse champion itself (not a proxy pipeline): 93.17538325903583 -> 93.19264180560224, i.e. +0.01725854656641423 pp, clearing mouse's 0.01 pp min_promotion_delta_pp. Exact (predicted == realised), deterministic, 2 applied moves, ~0.07 s. AND IT IS EXACTLY WHAT M18 PREDICTS: the cost law that kills this class on the connectome is a degree sum over the moved set, and at n = 148 that sum is 289 edge visits per candidate against the connectome's 65,575. The PREFIX CONTROL ON THE SAME BASE IS EXACTLY 0.000000 pp over 0 applied moves, because H63 already contains H52's pair stage - so the entire gain is attributable to the subset freedom, with nothing to disentangle.",
+      "method": "Isolated module src/mfas/experiments/H84.py, COMMITTED BEFORE THE SCREEN, adding the tuck as a terminal stage with the _PAIR_MAX_POPS convention (connectome: 0, microns: 0, mouse: 20,000) so both primary legs stay BYTE-IDENTICAL to their champions by construction and the screen's primary legs are a pure no-regression check. Promote the production kernel out of experiments/proto_H71_tuck.py into src/mfas/refine/ with its own unit test, including a brute-force check over every subset on a small instance (the shape tests/test_refine_pair_relocate.py already uses for every split).",
+      "kill_condition": "mouse delta < +0.01 pp at the confirm seed count; or either primary leg is not bit-identical to its champion; or the brute-force subset test finds any mismatch.",
+      "novelty": "Distinct from H71, which is KILLED as a connectome hypothesis on allocation - what is carried forward is only the operator, on the one dataset where M18's cost law is affordable, and H71's revival_if clause (b) names this item explicitly. Distinct from H52 (the prefix special case), whose control measures exactly 0.000000 pp on this same base.",
+      "prior_evidence": [
+        "experiments/outputs/proto_H71_stage2_mouse.json (prefix 0.0 pp / 0 moves; tuck +0.01725854656641423 pp / 2 moves)",
+        "experiments/outputs/proto_H71_stage1_mouse.json (17/17 strictly-better candidates have a strict non-prefix gamma; exact 2/2)",
+        "autoresearch/killed.json H71 revival_if clause (b), M18"
+      ],
+      "prior_evidence_base": "MEASURED FROM THE H63 MOUSE CHAMPION ITSELF, so P14/M13 do NOT apply - this is already a like-for-like comparison, unlike H81.",
+      "est_cost": "cheap - mouse runs in ~1 s plus ~0.07 s of tuck; the connectome and microns legs are no-ops by construction",
+      "predicted_effect_pp": "mouse +0.017259 pp (measured on the champion base, not predicted); connectome and microns exactly 0.000000 pp by construction",
+      "source": "cycle 24 (H71)"
     }
   ]
 }
