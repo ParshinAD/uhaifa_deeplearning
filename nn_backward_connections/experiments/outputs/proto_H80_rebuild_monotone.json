@@ -1,0 +1,32 @@
+{
+  "_doc": "EVIDENCE for the H80 pre-registration amendment: the rebuild the pre-registration named (mfas.refine.lns.apply_victim_reinsertions) is MONOTONE BY CONSTRUCTION, so a Metropolis acceptance placed on top of it has nothing to accept.",
+  "probe": "24 structure-aware destroy -> apply_victim_reinsertions -> 2-sweep sift proposals from the sift fixed point, per seed, on the hard synthetic",
+  "rows": [
+    {
+      "seed": 42,
+      "n": 400,
+      "n_proposals": 24,
+      "n_downhill": 0,
+      "n_uphill": 24,
+      "n_flat": 0
+    },
+    {
+      "seed": 123,
+      "n": 400,
+      "n_proposals": 24,
+      "n_downhill": 0,
+      "n_uphill": 24,
+      "n_flat": 0
+    },
+    {
+      "seed": 999,
+      "n": 400,
+      "n_proposals": 24,
+      "n_downhill": 0,
+      "n_uphill": 24,
+      "n_flat": 0
+    }
+  ],
+  "total_downhill": 0,
+  "conclusion": "0 downhill proposals out of 72. The rebuild named in the pre-registration cannot generate the worse states the acceptance schedule exists to accept, so the amendment replaces it with a TRUE ruin-and-recreate (remove the victims from the sequence, then re-insert each at its exact-gain-optimal slot given only the nodes already placed)."
+}

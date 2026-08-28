@@ -1,0 +1,40 @@
+{
+  "_doc": "AMENDMENT to experiments/outputs/proto_H80_prereg.json, SEALED AND COMMITTED BEFORE THE AMENDED PROBE RAN. Cycle 23, 2026-08-28. It changes the rebuild and the primary statistic. Both changes are forced by MEASUREMENTS taken from a smoke run of the ORIGINAL design, and both measurements are on disk. The original pre-registration is not edited; it stands as written and this file records what changed and why.",
+  "item": "H80",
+  "cycle": 23,
+  "amendment_1_the_rebuild": {
+    "original": "design.rebuild: 'Exact-gain sequential (Gauss-Seidel) re-insertion of every victim via mfas.refine.lns.apply_victim_reinsertions, then a SHORT 2-sweep production sift.'",
+    "why_it_had_to_change": "THAT REBUILD IS MONOTONE BY CONSTRUCTION, so the acceptance schedule has nothing to accept. apply_victim_reinsertions moves victim i to its optimal gap with every other victim STILL IN PLACE, and applies the move only when the exact gain is strictly positive - so each step improves and the composition can never return a worse state. MEASURED, not asserted: 0 downhill proposals out of 72 (24 per seed, seeds 42/123/999) in experiments/outputs/proto_H80_rebuild_monotone.json, run by experiments/proto_H80_rebuild_check.py. Under the original design every Metropolis arm therefore reduced to greedy-plus-noise: the calibration found no downhill sample, delta_med fell back to its 1e-6 floor, T0 collapsed, and the only moves the schedule 'accepted' were exact-zero-delta sideways ones. All five T0 values returned the SAME score, which is the signature of a temperature that is not doing anything.",
+    "replacement": "A TRUE ruin-and-recreate, experiments/proto_H80_anneal.py:ruin_and_recreate. REMOVE the k victims from the sequence, then re-insert them one at a time in a random order, each at the slot maximising its exact gain GIVEN ONLY THE NODES ALREADY PLACED. The per-victim placement is still exact - the insertion profile f(p) = sum(w(u,v): pos(v) >= p) + sum(w(x,u): pos(x) < p) satisfies f(p+1)-f(p) = in_w_at[p] - out_w_at[p], so the whole profile is one cumulative sum and its maximiser is exact, not sampled - and ties take the leftmost maximiser, matching the production sift (M14). What changes is what a victim can SEE: the early placements are blind to the later ones, so the recreated order genuinely can be worse. killed.json H31's revival condition ('the rebuild is exact-gain') is still satisfied, and arguably better than before.",
+    "measured_effect_of_the_replacement_smoke_seed42_3s": {
+      "n_proposed_downhill_per_arm": "86-153 of ~500 rounds (was 0)",
+      "n_uphill_accepted": "0 at T0=0.5x, rising to 25 at T0=8x (was 0 everywhere)",
+      "delta_med_pp": 0.00473,
+      "note": "K1 (the void condition) is therefore satisfiable under the amended design and was NOT satisfiable under the original. This is the whole reason for the amendment."
+    }
+  },
+  "amendment_2_the_primary_statistic": {
+    "original": "primary_statistic: delta_A3 = mean over seeds of [best A3 over the T0 grid] - max(A0, A1, A2).",
+    "why_it_had_to_change": "TWO independent reasons, both visible in the same smoke run and both recorded here BEFORE the full probe. (1) SELECTION BIAS: a per-seed max over a grid, with 3 seeds, capitalises on chance. (2) THE FACTORIAL DISAGREES WITH THE ITEM'S PACKAGING: at the smoke budget, acceptance WITHOUT structure was worth +0.2554 pp while structure-aware destroy was worth -0.1797 pp, i.e. the two ingredients H80 bundles pull in OPPOSITE directions. H80's load-bearing claim is the ACCEPTANCE SCHEDULE ('a search that accepts temporary loss ... escapes the fixed point'); the structure-aware destroy is H40's claim, which the original pre-registration already adjudicates separately. Testing H80 only in the cell where its own claim is yoked to a second, separately-owned claim that the data suggests is harmful would be a rigged test - in either direction.",
+    "replacement": "delta_ACCEPT = the mean-over-seeds delta of the BEST Metropolis CELL, where the cell (destroy x T0, 10 of them) is selected by its mean over seeds and not per seed. Reported as summary.best_cell / summary.best_cell_mean_delta. The original delta_A3 is still computed and reported unchanged, so the pre-registered statistic is never lost.",
+    "kill_conditions_as_amended": {
+      "K1": "UNCHANGED: no uphill move accepted at any T0 on S1 -> the arm is VOID, not negative.",
+      "K2": "delta_ACCEPT < +0.05 pp on S1 (was: delta_A3).",
+      "K3": "fewer than 2 ADJACENT T0 grid points inside the WINNING destroy family have a positive mean delta (summary.n_adjacent_T0_pairs_positive_in_best_family < 1). A single lucky grid point is not a mechanism.",
+      "K4": "UNCHANGED: delta_ACCEPT <= 0 on S2 (n=4000). A gain that exists at n=400 and is gone at n=4000 is a small-instance artefact - H31's own history."
+    }
+  },
+  "amendment_3_a_finding_that_arrived_early_and_is_recorded_before_it_is_measured_properly": {
+    "what": "In the same smoke run, A1 (top-k ruin-and-recreate + GREEDY acceptance, no temperature at all) scored 74.5057 against production mfas.refine.ils_lns at 73.9239 on the same instance, the same start and the same 3 s wall budget - +0.5818 pp, from the DESTROY OPERATOR alone.",
+    "why_it_matters": "H31 is on record as 'generic random ruin-and-recreate finds nothing the full-range sift has not already taken'. If this survives the full probe, that kill rests on a move class that was not a ruin-and-recreate: ils_lns re-inserts victims that are still in the ordering and only when their exact gain is positive, so it cannot destroy anything. The two candidate explanations are (a) the destroy is genuinely stronger and (b) it is simply ~10x cheaper per round (578 rounds vs 60 at the same wall). BOTH are legitimate at matched wall-clock, which is the campaign's binding constraint, but they are different claims and the round counts are reported per arm so they can be told apart.",
+    "status": "NOT a result yet. Recorded here so it cannot be presented afterwards as though it had been predicted, and so that a full-probe null on it is equally on the record."
+  },
+  "unchanged": [
+    "the arms, the instances (S1 n=400, S2 n=4000, S3 mouse), the seeds (42/123/999), the budgets (30/120/30 s), the T0 grid {0.5,1,2,4,8} x the instance's OWN measured delta_med, the cooling schedule, matched-wall framing",
+    "the leakage rules - destroy and acceptance still read input edge weights + current ranks only; the frozen oracle is still called only for best-by-oracle tracking and reporting; data/best_solution is never read; the synthetic reference_order is read only by the barrier diagnostic",
+    "rung 1 is NECESSARY, NOT SUFFICIENT - a pass buys one connectome run, a fail is decisive",
+    "the rung-2 design and its 0.012 pp kill condition",
+    "H40's separate adjudication"
+  ],
+  "sealed_at_commit": "the commit that adds this file; see experiments/log.md cycle 23"
+}

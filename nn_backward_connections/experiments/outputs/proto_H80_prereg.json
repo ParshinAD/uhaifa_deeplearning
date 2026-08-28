@@ -1,0 +1,77 @@
+{
+  "_doc": "PRE-REGISTRATION for H80 rung 1, SEALED AND COMMITTED BEFORE THE PROBE RAN. Cycle 23, 2026-08-28. Any deviation from this file must be logged as a deviation in experiments/log.md, not silently absorbed.",
+  "item": "H80",
+  "cycle": 23,
+  "mode": "divergent",
+  "title": "Barrier-crossing search: structure-aware destroy + exact-gain rebuild + an acceptance schedule that lets the search STAY worse",
+  "novelty": {
+    "verdict": "PASS",
+    "admitted_under": "killed.json H31 revival_if, verbatim: 'The destroy operator is STRUCTURE-AWARE (SCC-, block- or cycle-guided) rather than random, and the rebuild is exact-gain. Distinct mechanism.' This is queue item H40, filed 2026-08-16 and never built; H80 supersedes it by adding the acceptance schedule and by sizing it.",
+    "standing_counter_evidence_named_before_running": [
+      "H17 is deferred-not-falsified on the BASIN-HOPPING axis with the note 'reachability, not stability, is the barrier'. M16 (cycle 22) has since MEASURED that reachability barrier as a 409x contraction of the starting basin, so H17's deferral is STRONGER now than when it was written. H80 is distinct from H17 in being a discrete acceptance schedule on the champion's own refiner rather than a continuous re-optimization from a perturbed init - but the headwind is real and is recorded here before any number exists.",
+      "M15: no partial adoption of the reference is profitable and the blend path runs through a 0.786 pp valley.",
+      "M13/H66: the H64 champion order has EXACTLY 0.000000 pp of repair headroom under the champion's own stage-4 move classes, so a perturb-and-repair that lands back inside that image gains nothing by construction. H80's answer is that it does not repair-and-keep-if-better; it accepts worse states and travels.",
+      "M8: a new move class must clear the marginal rate of the stage it is inserted into (connectome stage 4 = 3.45e-4 pp/s) and must report its redundancy fraction.",
+      "M12: a from-champion prototype OVERSTATES an inner-stage change. Rung 1 is therefore run on a PROXY, not from the champion order."
+    ]
+  },
+  "correction_to_the_queue_item_made_before_running": {
+    "what": "H80's method says rung 1 should 'measure whether an acceptance schedule recovers gap that the monotone sift cannot' on gap.make_hard_synthetic_graph, citing a '+0.80 pp verified gap'.",
+    "why_it_is_wrong": "That +0.80 pp is the H21-era gap measured at the ROCKET level (experiments/log.md:1057). At the SIFT level the synthetic has NO gap left: proto_h31_lns.json records gap_sift_to_ref = -0.4493 / -0.5764 / -0.0313 pp on seeds 42/123/999, i.e. the sift is ALREADY ABOVE the synthetic's reference order. 'Recovered fraction of the gap' is therefore an undefined statistic on this proxy and must not be the primary.",
+    "what_replaces_it": "ARM-VS-ARM deltas at matched refinement wall-clock. There IS genuine ground above the sift on this proxy - H31 took +0.1987 / +0.2840 / +0.2623 pp of it - so the proxy discriminates. The synthetic reference is retained for ONE diagnostic only (the blend-path barrier depth), never as a target."
+  },
+  "design": {
+    "framing": "A 2x2 factorial that separates the two ingredients H80 conflates - DESTROY STRUCTURE x ACCEPTANCE RULE - plus a baseline and a harness positive control. Every arm starts from the SAME sift fixed point and gets the SAME refinement wall budget.",
+    "arms": {
+      "A0_sift_only": "H02 greedy-FAS -> Rocket -> sift to fixed point. The monotone baseline every other arm is measured against.",
+      "A1p_ils_lns_production": "POSITIVE CONTROL for the harness: mfas.refine.ils_lns(mode='ruin'), the production H31 refiner, at H31's own settings. Its job is to reproduce proto_h31_lns.json to within noise; if it does not, the harness is broken and every other number in this file is void.",
+      "A1_topk_greedy": "my loop, destroy = k victims sampled without replacement with probability proportional to current back-edge weight, acceptance = keep iff strictly better. H31 re-implemented inside the common harness.",
+      "A2_struct_greedy": "my loop, destroy = STRUCTURE-AWARE (seed sampled prop. to back-edge weight, then BFS over the BACK-EDGE subgraph until k nodes are collected - a cycle-dense, feedback-connected victim set), acceptance = keep iff strictly better. This is H40 exactly: structure alone.",
+      "A3_struct_anneal": "my loop, destroy = structure-aware, acceptance = Metropolis with geometric cooling T0 -> T0/100 over the budget. THIS IS H80.",
+      "A4_topk_anneal": "my loop, destroy = top-k back-weight sampling, acceptance = Metropolis. Acceptance alone, without structure - the fourth cell."
+    },
+    "rebuild": "Exact-gain sequential (Gauss-Seidel) re-insertion of every victim via mfas.refine.lns.apply_victim_reinsertions, then a SHORT 2-sweep production sift. Identical for every arm, so the arms differ ONLY in destroy and acceptance.",
+    "leakage": "Every destroy choice and every acceptance decision is computed from input edge weights + current ranks only. The Metropolis delta uses a self-contained numpy feedforward-weight function of (src, tgt, w, rank) - a pure function of the INPUT, carrying no privileged information - and the FROZEN oracle (mfas.metrics.score_from_order) is called only to score whole candidate vectors for best-by-oracle tracking and for reporting, exactly as ils_lns already does. data/best_solution is never read. The synthetic reference_order is read ONLY by the barrier diagnostic, never by any arm.",
+    "temperature_sizing_is_target_blind": "T0 is NOT taken from M15's 0.786 pp. Each arm calibrates on its OWN instance: from the sift fixed point, n_cal proposals are generated and rejected, and delta_med = median |cand_pct - cur_pct| over downhill proposals is recorded. The grid is T0 in {0.5, 1, 2, 4, 8} x delta_med. Calibration time is charged to the arm's own wall budget. M15's number is used ONLY to interpret the result afterwards.",
+    "matched_work": "All arms share one refinement wall budget per instance (30 s at n=400 and on mouse, 120 s at n=4000), and the round count and accepted-move count of every arm are reported alongside, so a wall-matched result can also be read as work-matched."
+  },
+  "instances": {
+    "S1_hard_synthetic_n400": {"gen": "gap.make_hard_synthetic_graph(seed=s)", "seeds": [42, 123, 999], "budget_s": 30, "arms": "all six"},
+    "S2_hard_synthetic_n4000": {"gen": "gap.make_hard_synthetic_graph(n=4000, seed=s)", "seeds": [42, 123, 999], "budget_s": 120, "arms": "A0, A1, A2, A3 grid", "why": "SCALE CHECK. H31 won on the n=400 synthetic (+0.25 pp) and LOST on the connectome (-0.0008 pp). A synthetic win at one size is therefore known NOT to transfer; a 10x scale-up is the cheapest available test of whether the advantage is a small-instance artefact before any GPU is spent."},
+    "S3_mouse": {"gen": "io.load_dataset('mouse')", "seeds": [42, 123, 999], "budget_s": 30, "arms": "A0, A1, A2, A3 grid", "why": "a real graph, n=148. H31 found EXACTLY 0.0000 pp here."}
+  },
+  "primary_statistic": "delta_A3 = mean over the 3 seeds of [ best A3 over the T0 grid ] - max(A0, A1, A2) per seed, in pp, on S1 and on S2.",
+  "attribution_statistics": [
+    "structure alone: A2 - A1",
+    "acceptance alone: A4 - A1 (S1 only)",
+    "acceptance given structure: A3 - A2",
+    "interaction: (A3 - A2) - (A4 - A1) (S1 only)"
+  ],
+  "diagnostics_reported_regardless_of_verdict": [
+    "n_uphill_accepted per arm and per T0 - the schedule's own liveness check",
+    "max_excursion_pp = max over the trajectory of (best_ever_pct - current_pct): HOW DEEP THE SEARCH ACTUALLY WENT. This is the number that makes a null quantitative rather than merely negative - it says how far short of the barrier a feasible schedule falls.",
+    "barrier_depth_pp on S1/S2: the minimum over t of the blend path (1-t)*rank(A0 order) + t*rank(synthetic reference), the same instrument H78 used on connectome. DIAGNOSTIC ONLY.",
+    "delta_med (the calibration scale) per instance, and the ratio max_excursion_pp / barrier_depth_pp"
+  ],
+  "kill_condition": {
+    "_note": "Rung 1 is NECESSARY, NOT SUFFICIENT: H31 passed a synthetic rung of this exact shape and then failed the connectome screen, so a PASS here buys only the right to spend one connectome run, while a FAIL is decisive.",
+    "H80_dies_at_rung_1_if_any_of": [
+      "K1. n_uphill_accepted == 0 at EVERY T0 in the grid on S1 - the schedule never crosses anything, so it is mis-sized and the arm is VOID rather than negative (this is the item's own stated void condition).",
+      "K2. delta_A3 < +0.05 pp on S1 (mean over 3 seeds).",
+      "K3. the T0 that wins on S1 is a SINGLETON - fewer than 2 adjacent grid points individually beat max(A0,A1,A2) in the 3-seed mean. A single lucky grid point is not a mechanism.",
+      "K4. delta_A3 <= 0 on S2. A gain that exists at n=400 and is gone at n=4000 is a small-instance artefact and will not survive n=136,648 (H31's own history)."
+    ],
+    "H40_is_separately_adjudicated": "If A2 - A1 >= +0.05 pp on BOTH S1 and S2 while A3 fails, then STRUCTURE-AWARE DESTROY passes on its own and H40 - not H80 - becomes the item that proceeds to rung 2. Recorded here so a partial result cannot be re-narrated afterwards as whichever arm happened to win."
+  },
+  "rung_2_if_rung_1_passes": {
+    "what": "ONE connectome screen of the winning configuration composed onto the H64 champion stack as a terminal stage, at --role implement, inside the 3600 s runtime invariant, with the raw sift score reported separately (CLAUDE.md) and the M8 redundancy fraction reported.",
+    "kill_condition": "|connectome delta| < 0.012 pp (screen_delta_pp), or any run exceeds 3600 s at a setting that shows signal.",
+    "note": "microns is in_screen: false (campaign.yaml, operator decision 2026-08-26), so the screen is connectome + mouse."
+  },
+  "predicted_effect_before_running": {
+    "S1_delta_A3_pp": "0.00 to +0.10, midpoint +0.02",
+    "connectome_delta_pp": "-0.01 to +0.05, midpoint +0.005 - inherited verbatim from the queue item, which said BEFORE this cycle that the median case is below the bar",
+    "most_likely_outcome_stated_in_advance": "K2 or K4. The arithmetic is written down here so it cannot be produced after the fact: if a round costs ~30 ms at n=400 and the median downhill proposal costs delta_med, then crossing a barrier D deep requires roughly D/delta_med consecutive accepted uphill moves, whose probability at T = c*delta_med is about exp(-D/(c*delta_med)). For the connectome's measured D = 0.786 pp that is negligible at any c small enough to still descend. The experiment's job is to MEASURE max_excursion_pp and turn that argument into a number, not to assume it."
+  },
+  "sealed_at_commit": "the commit that adds this file; see experiments/log.md cycle 23"
+}
