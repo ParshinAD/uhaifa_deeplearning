@@ -1,0 +1,260 @@
+{
+  "_doc": "H78b: is the reference order reachable from the champion incrementally? Blend (path-relinking) and subset-adoption curves. DIAGNOSTIC ONLY.",
+  "dataset": "connectome",
+  "base_variant": "H64",
+  "base_positions_file": "20260827T024801Z-H64-connectome-s42-confirm-a7490c_positions.npy",
+  "champion_pct": 84.25817950936937,
+  "sota_champion_pct": 84.25817950936937,
+  "base_matches_sota": true,
+  "best_solution_pct": 84.61467764197491,
+  "residual_gap_pp": 0.3564981326055374,
+  "probeA_blend_curve": [
+    {
+      "t": 0.0,
+      "pct": 84.25817950936937,
+      "delta_vs_champion_pp": 0.0
+    },
+    {
+      "t": 0.005,
+      "pct": 84.01973547473989,
+      "delta_vs_champion_pp": -0.23844403462948094
+    },
+    {
+      "t": 0.01,
+      "pct": 83.95952857669572,
+      "delta_vs_champion_pp": -0.2986509326736524
+    },
+    {
+      "t": 0.02,
+      "pct": 83.90103478607786,
+      "delta_vs_champion_pp": -0.3571447232915119
+    },
+    {
+      "t": 0.03,
+      "pct": 83.86614036252645,
+      "delta_vs_champion_pp": -0.39203914684291874
+    },
+    {
+      "t": 0.05,
+      "pct": 83.80835758306883,
+      "delta_vs_champion_pp": -0.44982192630054385
+    },
+    {
+      "t": 0.075,
+      "pct": 83.75686415065267,
+      "delta_vs_champion_pp": -0.5013153587166954
+    },
+    {
+      "t": 0.1,
+      "pct": 83.71388137866782,
+      "delta_vs_champion_pp": -0.5442981307015486
+    },
+    {
+      "t": 0.15,
+      "pct": 83.64879999807216,
+      "delta_vs_champion_pp": -0.609379511297206
+    },
+    {
+      "t": 0.2,
+      "pct": 83.60139607279905,
+      "delta_vs_champion_pp": -0.656783436570322
+    },
+    {
+      "t": 0.25,
+      "pct": 83.56005005804882,
+      "delta_vs_champion_pp": -0.698129451320554
+    },
+    {
+      "t": 0.3,
+      "pct": 83.53335135038795,
+      "delta_vs_champion_pp": -0.724828158981424
+    },
+    {
+      "t": 0.35,
+      "pct": 83.51139589838658,
+      "delta_vs_champion_pp": -0.7467836109827886
+    },
+    {
+      "t": 0.4,
+      "pct": 83.49016100131941,
+      "delta_vs_champion_pp": -0.7680185080499626
+    },
+    {
+      "t": 0.45,
+      "pct": 83.48162170956621,
+      "delta_vs_champion_pp": -0.7765577998031574
+    },
+    {
+      "t": 0.5,
+      "pct": 83.4746738421213,
+      "delta_vs_champion_pp": -0.7835056672480647
+    },
+    {
+      "t": 0.55,
+      "pct": 83.47219484683448,
+      "delta_vs_champion_pp": -0.7859846625348865
+    },
+    {
+      "t": 0.6,
+      "pct": 83.47208270749042,
+      "delta_vs_champion_pp": -0.7860968018789549
+    },
+    {
+      "t": 0.65,
+      "pct": 83.47950537768996,
+      "delta_vs_champion_pp": -0.7786741316794092
+    },
+    {
+      "t": 0.7,
+      "pct": 83.49317444794815,
+      "delta_vs_champion_pp": -0.7650050614212205
+    },
+    {
+      "t": 0.75,
+      "pct": 83.52164113973562,
+      "delta_vs_champion_pp": -0.7365383696337489
+    },
+    {
+      "t": 0.8,
+      "pct": 83.55662145725269,
+      "delta_vs_champion_pp": -0.7015580521166811
+    },
+    {
+      "t": 0.85,
+      "pct": 83.61288677665023,
+      "delta_vs_champion_pp": -0.6452927327191418
+    },
+    {
+      "t": 0.9,
+      "pct": 83.7020399411235,
+      "delta_vs_champion_pp": -0.5561395682458681
+    },
+    {
+      "t": 0.925,
+      "pct": 83.76715472492803,
+      "delta_vs_champion_pp": -0.49102478444133624
+    },
+    {
+      "t": 0.95,
+      "pct": 83.8716924530293,
+      "delta_vs_champion_pp": -0.38648705634007285
+    },
+    {
+      "t": 0.97,
+      "pct": 83.9891452932457,
+      "delta_vs_champion_pp": -0.2690342161236714
+    },
+    {
+      "t": 0.98,
+      "pct": 84.07090441884131,
+      "delta_vs_champion_pp": -0.18727509052806113
+    },
+    {
+      "t": 0.99,
+      "pct": 84.19821597756125,
+      "delta_vs_champion_pp": -0.05996353180812264
+    },
+    {
+      "t": 0.995,
+      "pct": 84.29632597389859,
+      "delta_vs_champion_pp": 0.03814646452921977
+    },
+    {
+      "t": 1.0,
+      "pct": 84.61467764197491,
+      "delta_vs_champion_pp": 0.3564981326055374
+    }
+  ],
+  "probeB_subset_adoption_curve": [
+    {
+      "k": 1,
+      "pct": 84.24642635173421,
+      "delta_vs_champion_pp": -0.011753157635155276,
+      "stake_covered_frac": 0.0049665287158942965
+    },
+    {
+      "k": 3,
+      "pct": 84.22794721939879,
+      "delta_vs_champion_pp": -0.030232289970584247,
+      "stake_covered_frac": 0.00921237665174819
+    },
+    {
+      "k": 10,
+      "pct": 84.19463229043824,
+      "delta_vs_champion_pp": -0.06354721893113435,
+      "stake_covered_frac": 0.019518563172158953
+    },
+    {
+      "k": 30,
+      "pct": 84.12594574922812,
+      "delta_vs_champion_pp": -0.1322337601412471,
+      "stake_covered_frac": 0.041630975331352675
+    },
+    {
+      "k": 100,
+      "pct": 83.77596840018266,
+      "delta_vs_champion_pp": -0.4822111091867072,
+      "stake_covered_frac": 0.08380459269750264
+    },
+    {
+      "k": 300,
+      "pct": 83.31901966067541,
+      "delta_vs_champion_pp": -0.9391598486939614,
+      "stake_covered_frac": 0.14950088969220862
+    },
+    {
+      "k": 1000,
+      "pct": 82.38614200119245,
+      "delta_vs_champion_pp": -1.8720375081769163,
+      "stake_covered_frac": 0.27215253356657243
+    },
+    {
+      "k": 3000,
+      "pct": 81.1222122964322,
+      "delta_vs_champion_pp": -3.1359672129371745,
+      "stake_covered_frac": 0.44071510390441476
+    },
+    {
+      "k": 10000,
+      "pct": 79.82343111510338,
+      "delta_vs_champion_pp": -4.434748394265995,
+      "stake_covered_frac": 0.6716674657513636
+    },
+    {
+      "k": 30000,
+      "pct": 79.52027790706278,
+      "delta_vs_champion_pp": -4.737901602306593,
+      "stake_covered_frac": 0.8864584231885686
+    },
+    {
+      "k": 73262,
+      "pct": 81.16045181275754,
+      "delta_vs_champion_pp": -3.097727696611827,
+      "stake_covered_frac": 1.0
+    },
+    {
+      "k": 136648,
+      "pct": 84.61467764197491,
+      "delta_vs_champion_pp": 0.3564981326055374,
+      "stake_covered_frac": 1.0
+    }
+  ],
+  "probeA_best_interior": {
+    "t": 0.995,
+    "pct": 84.29632597389859,
+    "delta_vs_champion_pp": 0.03814646452921977
+  },
+  "probeA_worst": {
+    "t": 0.6,
+    "pct": 83.47208270749042,
+    "delta_vs_champion_pp": -0.7860968018789549
+  },
+  "probeB_best_proper_subset": {
+    "k": 1,
+    "pct": 84.24642635173421,
+    "delta_vs_champion_pp": -0.011753157635155276,
+    "stake_covered_frac": 0.0049665287158942965
+  },
+  "interpretation_rule": "If probeA's interior maximum is <= the champion and probeB's best proper subset is <= the champion, then EVERY partial adoption of the reference loses: the two orders are separated by a barrier and the residual 0.357 pp is not reachable by any monotone/hill-climbing process from this basin. That is a formulation-level result, not a move-class result.",
+  "barrier_confirmed": false
+}

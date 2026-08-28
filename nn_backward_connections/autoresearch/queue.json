@@ -1,7 +1,7 @@
 {
   "_doc": "Live hypothesis queue for the autonomous campaign. Owned by the planner/ideator; statuses flipped by the cycle. Seeded 2026-08-09 from experiments/roadmap.md (prior-evidence column), findings.md, diagnosis.md Q01/Q02 and Vahidi 2025 (arXiv:2506.13799). Ranked by expected value / cost. The ideator extends this file; it must dedup against autoresearch/killed.json first.",
   "updated": "2026-08-28",
-  "next_free_id": "H75",
+  "next_free_id": "H81",
   "next_free_protocol_id": "P25",
   "items": [
     {
@@ -1268,6 +1268,97 @@
       "est_cost": "rung 1 minutes of CPU, zero GPU; rung 2 one ~1,250 s connectome run",
       "predicted_effect_pp": "connectome -0.005 to +0.015, midpoint +0.002 - below the bar in the median case, and said so before running",
       "source": "cycle 20 (H73 kill, the opposite-sign branch its kill_condition reserved)"
+    },
+    {
+      "id": "H78",
+      "priority": 0,
+      "kind": "science",
+      "status": "done",
+      "axis": "problem formulation / reachability of the reference from the champion's basin",
+      "title": "The campaign's map of the connectome gap was drawn from a base it has left behind by 1.34 pp - redraw it from the CHAMPION",
+      "hypothesis": "M4, the H22 kill and findings.md #3's p25=8,290 / p50=22,580 / p90=87,497 rank-distance percentiles all come from experiments/outputs/localsearch_sizing.json, measured on H02's 82.9161% order. The champion is H64 at 84.2582%. PREDICTION: the pipeline harvested the long-range component preferentially (that is what a full-range sift plus SCC-recursive block refinement do), so the residual flips are shifted substantially SHORTER than p50 = 22,580.",
+      "method": "CPU, minutes, no GPU. experiments/diagnostics/h78_residual_gap_structure.py imports _reachable_pool and _gap_flip_distance VERBATIM from experiments/size_localsearch.py so champion-era and H02-era numbers differ only in the base order, plus two new measures (node displacement, concentration). Then h78_path_to_reference.py (blend + teleport curves) and h78_slot_adoption.py (slot-preserving adoption under three subset rules). Privileged: reads data/best_solution only via mfas.analysis.gap.",
+      "kill_condition": "PRE-REGISTERED: if the champion-era gain-distance p50 is within +/-25% of the H02-era 22,580 (ratio in [0.75, 1.25]), the pipeline harvested uniformly across scales, no short-range family is revived, M4 stands unamended and the attack must move to decomposition or formulation.",
+      "novelty": "Not a variant of the current design - divergent mode forbids that. Attacks the FORMULATION level: what is left and what could possibly reach it. Distinct from H22 (which asked the same question of a different base and was declined at the sizing gate) and from Q02 (same degeneracy question, but seed-to-seed on plain Rocket, never on the champion-vs-reference pair).",
+      "prior_evidence": [
+        "experiments/outputs/localsearch_sizing.json (the H02-era map)",
+        "autoresearch/killed.json M4-local-is-empty (amended 2026-08-16), H22",
+        "experiments/diagnosis.md Q02 (flat degenerate near-optimal set)",
+        "autoresearch/killed.json M14 (87.7% absorption), M13/H66 (0.000000 pp repair headroom)"
+      ],
+      "prior_evidence_base": "H64 connectome champion 84.25817950936937 (the SITTING champion) - M13/P25 compliant",
+      "est_cost": "~4 min CPU total, zero GPU",
+      "predicted_effect_pp": "n/a - a diagnostic; it changes what the next variant should be, not the score",
+      "source": "cycle 21 (divergent mode, cycles_since_score_move = 3)",
+      "outcome": "PREDICTION CONFIRMED, and it found something bigger. p50 22,580 -> 10,430, ratio 0.4619, far outside the kill band - the residual IS shifted shorter, but p50 = 10,430 is still 7.6% of n and W=1000 holds only 18.23% of gain, so M4 survives NARROWED, not overturned. THE REAL RESULT: gain +2.3787 pp / lose +2.0222 pp / net +0.3565 pp - the champion and the reference disagree over 4.40 pp of weight and 85% cancels (6.7:1, up from 2.7:1 at the H02 era). And the reference is NOT DECOMPOSABLE: a 0.786 pp valley on the blend path (2.2x the prize), teleport loses at k=1, and slot-preserving adoption with ZERO collateral displacement has best proper subset exactly +0.000000 pp over three selection rules. New meta-rule M15-the-reference-is-not-decomposable. Filed H79, H80, L02. Artifacts: experiments/outputs/proto_H78_connectome.json, proto_H78b_path_connectome.json, proto_H78c_slot_adoption.json; reasoning in autoresearch/lit/divergence-cycle21.md."
+    },
+    {
+      "id": "H79",
+      "priority": 1,
+      "kind": "science",
+      "status": "proposed",
+      "axis": "decomposition / a structurally different starting basin (NOT a better one)",
+      "title": "A structurally DIFFERENT basin, not a better one - the champion's basin is capped by M15 and nobody has tested a different one against the current stack",
+      "hypothesis": "M15 says the reference's +0.3565 pp is not reachable from the champion's basin by any monotone process. The champion's basin is whatever greedy-FAS + Rocket puts us in, and it has never varied: H02's warm-start is deterministic, so every variant since has refined the SAME basin. PREDICTION: running the UNCHANGED champion stack from a structurally different (not better) construction lands in a different basin whose refined score is dispersed by materially more than the 0.019124 pp relabelling nuisance sigma - i.e. the basin is a real degree of freedom the campaign has never used.",
+      "rationale": "H48 is the trap and must be read carefully: it measured an init +5.70387 pp better (74.61730 vs 68.91343) that still LOST after refinement, and M7 generalised that to 'expensive warm-starts lose'. But H48 tested a BETTER start, not a DIFFERENT one, and M7's evidence is entirely about start quality. M15 changes the question: if the destination is unreachable from here, the value of a different start is not that it is better but that it is ELSEWHERE. H56/H57 are the near misses - they sought dispersion via relabelling and prefix-sharing and found it too small (M9, M10: the dispersion is in the prefix, sigma 0.019124 pp) - but relabelling perturbs the tie-breaking of one construction; it does not change the construction.",
+      "method": "Rung 1 (CPU, cheap, and it is a real pre-gate): build 3-5 structurally distinct constructions that are NOT quality-ranked against each other - e.g. ratio-greedy (H48's, already implemented), SCC-topological seeding, in/out-degree-imbalance sort, a reversed-sweep greedy - and measure pairwise Kendall-tau BETWEEN them and against the champion. If they all sit inside the champion's own relabelling ball (tau within the 0.019124 pp nuisance neighbourhood) they are the same basin wearing different hats and the item dies for free. Rung 2 ONLY IF they are genuinely apart: run the unchanged champion stack from each and report the SPREAD of refined scores, not the max - the max is a multi-start claim and M3/M9 already govern that.",
+      "kill_condition": "Rung 1: the constructions are not structurally distinct (pairwise Kendall-tau above the champion's own relabelling tau). Rung 2: the refined-score spread is <= 0.019124 pp, the measured nuisance sigma - that would say the stack erases the basin, which is M2/M6's shape and would close this axis for good.",
+      "novelty": "Distinct from H48 (better start, killed on quality, M7), from H56/H57 (dispersion from RELABELLING one construction, killed on effect size, M9/M10) and from H32/H33 (expensive global warm-starts, M7). The claim here is about basin IDENTITY, licensed by M15, and no item has made it.",
+      "prior_evidence": [
+        "autoresearch/killed.json M15-the-reference-is-not-decomposable (cycle 21)",
+        "autoresearch/killed.json H48 (+5.70387 pp better init that lost), M7",
+        "autoresearch/killed.json H56/H57, M9, M10 (relabelling sigma 0.019124 pp)",
+        "experiments/diagnosis.md Q02 (flat degenerate near-optimal set, Spearman 0.958)",
+        "experiments/outputs/proto_H78c_slot_adoption.json"
+      ],
+      "prior_evidence_base": "H64 connectome champion 84.25817950936937 (the SITTING champion) - M13/P25 compliant",
+      "est_cost": "rung 1 ~20 min CPU; rung 2 3-5 connectome runs at ~1,250 s each",
+      "predicted_effect_pp": "unknown by construction - the deliverable is a SPREAD, not a delta. Rung 2 is worth running iff rung 1 shows real structural distance.",
+      "source": "cycle 21 (H78 / M15)"
+    },
+    {
+      "id": "H80",
+      "priority": 2,
+      "kind": "science",
+      "status": "proposed",
+      "axis": "metaheuristic / acceptance criterion (revives H31 under its stated condition, now with a sizing number)",
+      "title": "Barrier-crossing search: an acceptance schedule sized to the 0.786 pp valley M15 measured, with a structure-aware destroy operator",
+      "hypothesis": "Every search this campaign has run is monotone or near-monotone, and M15 shows the prize sits behind a valley 0.786 pp deep - 2.2x the prize itself and 66x the 0.012 pp promotion bar. PREDICTION: a search that accepts temporary loss at that scale, with a STRUCTURE-AWARE destroy operator (SCC- or cycle-guided) and an exact-gain rebuild, escapes the fixed point that M14 (87.7% absorption) and H66 (0.000000 pp repair headroom) both describe.",
+      "rationale": "H31 killed generic ILS/LNS at ~1.9x wall for -0.0008 pp, and its revival condition is explicitly 'the destroy operator is STRUCTURE-AWARE (SCC-, block- or cycle-guided) rather than random, and the rebuild is exact-gain' - which is queue item H40, filed and never run. What H40 lacked was a SIZING number: nobody knew how much uphill the schedule had to admit, so a timid temperature was the default and a timid temperature cannot work. M15 supplies it. THE HONEST DIFFICULTY, stated before building: 0.786 pp is the depth of ONE path (linear rank blend) between two specific orders; it is an order-of-magnitude guide, not the barrier height of the landscape, and a schedule admitting 0.8 pp of loss on a 1,250 s budget may simply random-walk. The runtime invariant (3600 s) is the binding constraint and it should be sized first.",
+      "method": "Rung 1 (CPU / hard synthetic, which is where H31 DID win at +0.25 pp): on gap.make_hard_synthetic_graph, which carries a verified +0.80 pp optimization gap, measure whether an acceptance schedule sized to the graph's own measured barrier recovers gap that the monotone sift cannot. Report the recovered fraction and the number of accepted uphill moves - if zero uphill moves are ever accepted the schedule is mis-sized and the arm is void. Rung 2 ONLY IF rung 1 recovers materially: one connectome run inside the 3600 s budget, matched on total refinement work per M8, reporting the raw sift score separately.",
+      "kill_condition": "Rung 1: no recovery on the hard synthetic beyond the monotone sift, OR no uphill moves accepted at any temperature that fits the budget. Rung 2: |connectome delta| < 0.012 pp, or the run exceeds 3600 s at any setting that shows signal - a variant that cannot answer in an hour is not a usable algorithm.",
+      "novelty": "Revives H31 under its OWN stated revival condition (structure-aware destroy + exact-gain rebuild) and supersedes H40 by supplying the sizing number H40 never had. Distinct from H56/H57 (multi-start, which restarts rather than crosses) and from H66 (a gradient KICK, which is a perturbation the refiner immediately repairs - M13 - rather than an acceptance criterion that lets the search STAY worse).",
+      "prior_evidence": [
+        "experiments/outputs/proto_H78b_path_connectome.json (the 0.786 pp valley at t=0.60)",
+        "autoresearch/killed.json H31 (and its revival condition), H40 in queue.json",
+        "autoresearch/killed.json M14 (87.7% absorption), M13/H66 (0.000000 pp repair headroom)",
+        "src/mfas/analysis/gap.py make_hard_synthetic_graph (+0.80 pp verified gap)"
+      ],
+      "prior_evidence_base": "H64 connectome champion 84.25817950936937 (the SITTING champion) - M13/P25 compliant",
+      "est_cost": "rung 1 ~1 h CPU on synthetic; rung 2 one ~1,250 s connectome run",
+      "predicted_effect_pp": "connectome -0.01 to +0.05, midpoint +0.005 - below the bar in the median case, and said so before running. The value is the axis, not the point estimate.",
+      "source": "cycle 21 (H78 / M15)"
+    },
+    {
+      "id": "L02",
+      "priority": 3,
+      "kind": "science",
+      "status": "proposed",
+      "axis": "literature scan (TARGETED, not a broad refresh)",
+      "title": "Targeted scan: large-neighbourhood / crossover / path-relinking for linear ordering, read against a barrier of KNOWN depth",
+      "hypothesis": "Not a hypothesis - a scoped scan. M15 gives the campaign a number it never had: the prize sits behind a 0.786 pp valley and no partial adoption of the destination is profitable. That makes one literature question answerable that was not before: which linear-ordering / FAS methods are designed to cross barriers rather than descend, and what do they use - population crossover, path-relinking with an intermediate acceptance rule, LNS with large destroy fractions, tabu with long-term memory?",
+      "rationale": "cycles_since_literature_scan is only 2 and scan_cycle18.md (2026-08-27, 30 KB) is not exhausted - H71 and H72 from it are still queued. A broad refresh now would re-till that ground. This is the targeted alternative, and it is filed rather than run this cycle because the barrier number that makes it answerable was produced at the END of this cycle.",
+      "method": "scout subagent, scoped to the question above; output to autoresearch/lit/. Dedupe against killed.json (M1 closes the continuous axis; LP/SDP rounding for linear ordering is a dead axis and must never be searched again).",
+      "kill_condition": "n/a - a scan. It fails usefully if it yields no mechanism that is not already in killed.json.",
+      "novelty": "Distinct from L01 and scan_cycle18 in being scoped by a measured barrier depth rather than by a general 'what is new in FAS' brief.",
+      "prior_evidence": [
+        "autoresearch/lit/divergence-cycle21.md",
+        "experiments/outputs/proto_H78b_path_connectome.json",
+        "autoresearch/lit/scan_cycle18.md (the un-exhausted prior scan)"
+      ],
+      "est_cost": "one scout run",
+      "predicted_effect_pp": "n/a",
+      "source": "cycle 21 (H78 / M15)"
     }
   ]
 }

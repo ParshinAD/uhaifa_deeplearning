@@ -1,0 +1,217 @@
+{
+  "_doc": "H78 divergent diagnostic: residual connectome gap structure measured from the CHAMPION order, not H02's. Measures 1 and 2 are imported verbatim from experiments/size_localsearch.py.",
+  "dataset": "connectome",
+  "base_variant": "H64",
+  "base_positions_file": "20260827T024801Z-H64-connectome-s42-confirm-a7490c_positions.npy",
+  "n_nodes": 136648,
+  "n_edges": 5657719,
+  "total_weight": 41912141.0,
+  "base_pos_pct": 84.25817950936937,
+  "base_rank_pct": 84.25817950936937,
+  "rank_faithful": true,
+  "sota_champion_pct": 84.25817950936937,
+  "base_matches_sota": true,
+  "best_pct": 84.61467764197491,
+  "residual_gap_pp": 0.3564981326055374,
+  "measure1_reachable_pool": {
+    "feedback_total_pp": 15.741820490630626,
+    "feedback_total_weight": 6597734.0,
+    "reachable_pool": {
+      "1": {
+        "pool_pp": 0.22636638867959524,
+        "pool_frac_of_feedback": 0.014379937111741698
+      },
+      "2": {
+        "pool_pp": 0.3236675501735881,
+        "pool_frac_of_feedback": 0.020560998670149478
+      },
+      "5": {
+        "pool_pp": 0.4852508011938593,
+        "pool_frac_of_feedback": 0.030825583450317943
+      },
+      "10": {
+        "pool_pp": 0.6265893216955918,
+        "pool_frac_of_feedback": 0.03980412062686977
+      },
+      "20": {
+        "pool_pp": 0.7724396613382265,
+        "pool_frac_of_feedback": 0.04906927135892414
+      },
+      "50": {
+        "pool_pp": 0.9662546229742833,
+        "pool_frac_of_feedback": 0.06138137730317712
+      },
+      "100": {
+        "pool_pp": 1.1180912948350694,
+        "pool_frac_of_feedback": 0.07102681011389668
+      },
+      "200": {
+        "pool_pp": 1.3194601535626633,
+        "pool_frac_of_feedback": 0.08381877778037126
+      },
+      "500": {
+        "pool_pp": 1.7515998526536738,
+        "pool_frac_of_feedback": 0.11127047559055882
+      },
+      "1000": {
+        "pool_pp": 2.267340625715112,
+        "pool_frac_of_feedback": 0.14403293615656526
+      },
+      "5000": {
+        "pool_pp": 4.237125466818791,
+        "pool_frac_of_feedback": 0.2691636249657837
+      }
+    }
+  },
+  "measure2_gap_flip_distance": {
+    "gain_total_pp": 2.378723625691181,
+    "lose_total_pp": 2.022225493085643,
+    "net_total_pp": 0.35649813260553787,
+    "n_gain_edges": 147617,
+    "n_lose_edges": 130858,
+    "gain_distance_percentiles": {
+      "p25": 2120,
+      "p50": 10430,
+      "p75": 31277,
+      "p90": 69532,
+      "p95": 97352,
+      "p99": 114466
+    },
+    "cumulative_within_window": {
+      "1": {
+        "gain_pp": 0.036049220200895966,
+        "lose_pp": 0.11179576819995905,
+        "net_pp": -0.0757465479990631,
+        "gain_frac_of_total_gain": 0.015154858602130046
+      },
+      "2": {
+        "gain_pp": 0.05559725522015208,
+        "lose_pp": 0.16654362753742405,
+        "net_pp": -0.11094637231727197,
+        "gain_frac_of_total_gain": 0.023372725868478016
+      },
+      "5": {
+        "gain_pp": 0.086437960780863,
+        "lose_pp": 0.2431061682103045,
+        "net_pp": -0.15666820742944151,
+        "gain_frac_of_total_gain": 0.03633795866291398
+      },
+      "10": {
+        "gain_pp": 0.1098989431248573,
+        "lose_pp": 0.30202704271299335,
+        "net_pp": -0.19212809958813604,
+        "gain_frac_of_total_gain": 0.04620080363178979
+      },
+      "20": {
+        "gain_pp": 0.13569337820275038,
+        "lose_pp": 0.3648727942578739,
+        "net_pp": -0.2291794160551235,
+        "gain_frac_of_total_gain": 0.057044617011075514
+      },
+      "50": {
+        "gain_pp": 0.17330300544656022,
+        "lose_pp": 0.4534103853105476,
+        "net_pp": -0.28010737986398737,
+        "gain_frac_of_total_gain": 0.07285546062384776
+      },
+      "100": {
+        "gain_pp": 0.20303186134060772,
+        "lose_pp": 0.5266588504748541,
+        "net_pp": -0.3236269891342463,
+        "gain_frac_of_total_gain": 0.08535327902232155
+      },
+      "200": {
+        "gain_pp": 0.23686215409515826,
+        "lose_pp": 0.6105963424774697,
+        "net_pp": -0.3737341883823115,
+        "gain_frac_of_total_gain": 0.09957531490289616
+      },
+      "500": {
+        "gain_pp": 0.3259294246027661,
+        "lose_pp": 0.7528629949970821,
+        "net_pp": -0.42693357039431606,
+        "gain_frac_of_total_gain": 0.1370186183390941
+      },
+      "1000": {
+        "gain_pp": 0.43363807160316625,
+        "lose_pp": 0.8997583778886409,
+        "net_pp": -0.46612030628547463,
+        "gain_frac_of_total_gain": 0.1822986356715421
+      },
+      "5000": {
+        "gain_pp": 0.8685740964652701,
+        "lose_pp": 1.3156832050168947,
+        "net_pp": -0.44710910855162467,
+        "gain_frac_of_total_gain": 0.3651429224834349
+      }
+    }
+  },
+  "measure3_node_displacement": {
+    "n_nodes": 136648,
+    "n_nodes_with_gain_stake": 73262,
+    "frac_nodes_with_gain_stake": 0.5361366430536854,
+    "displacement_unweighted": {
+      "p25": 2510,
+      "p50": 6051,
+      "p75": 12938,
+      "p90": 26090,
+      "p95": 49662,
+      "p99": 94517
+    },
+    "displacement_gain_weighted": {
+      "p25": 3315,
+      "p50": 8673,
+      "p75": 22478,
+      "p90": 54951,
+      "p95": 84247,
+      "p99": 109213
+    },
+    "mean_displacement_unweighted": 12010.141999882911,
+    "n_nodes_displaced_0": 8
+  },
+  "measure4_concentration": {
+    "n_gain_edges": 147617,
+    "gain_total_pp": 2.378723625691181,
+    "frac_of_gain_in_top_k_edges": {
+      "10": 0.004173629402572184,
+      "100": 0.02114598775895861,
+      "1000": 0.0945621450509241,
+      "10000": 0.33537985945470994,
+      "100000": 0.9034538513541978
+    },
+    "n_edges_carrying": {
+      "q50": 23190,
+      "q90": 98853,
+      "q99": 142633
+    },
+    "n_edges_in_top_decile": 1097,
+    "n_distinct_nodes_in_top_decile": 1378,
+    "max_gain_edge_weight": 498.0
+  },
+  "h02_era_comparison": {
+    "source": "experiments\\outputs\\localsearch_sizing.json",
+    "h02_base_pct": 82.92732647563865,
+    "h02_net_gap_pp": 1.6873511663362653,
+    "champion_net_gap_pp": 0.35649813260553787,
+    "gap_harvested_pp": 1.3308530337307274,
+    "frac_of_h02_gap_harvested": 0.7887232132125763,
+    "gain_distance_percentiles_h02": {
+      "p25": 8290,
+      "p50": 22580,
+      "p75": 54432,
+      "p90": 87497,
+      "p95": 100530,
+      "p99": 114981
+    },
+    "gain_distance_percentiles_champion": {
+      "p25": 2120,
+      "p50": 10430,
+      "p75": 31277,
+      "p90": 69532,
+      "p95": 97352,
+      "p99": 114466
+    },
+    "p50_shift_ratio": 0.46191319751992915,
+    "verdict_rule": "H78 kill condition: |p50_champion/p50_h02 - 1| <= 0.25 means the pipeline harvested uniformly across scales -> no short-range family revived -> M4 stands and the attack must move to the decomposition or the formulation."
+  }
+}

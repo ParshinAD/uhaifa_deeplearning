@@ -1,0 +1,158 @@
+{
+  "_doc": "H78c: slot-preserving partial adoption of the reference order. Nodes outside the subset keep their champion rank EXACTLY; only the subset's internal order is replaced by the reference's. DIAGNOSTIC ONLY.",
+  "dataset": "connectome",
+  "base_variant": "H64",
+  "base_positions_file": "20260827T024801Z-H64-connectome-s42-confirm-a7490c_positions.npy",
+  "champion_pct": 84.25817950936937,
+  "sota_champion_pct": 84.25817950936937,
+  "base_matches_sota": true,
+  "best_solution_pct": 84.61467764197491,
+  "residual_gap_pp": 0.3564981326055374,
+  "seed": 42,
+  "k_grid": [
+    2,
+    10,
+    100,
+    1000,
+    10000,
+    30000,
+    73262,
+    136648
+  ],
+  "curves": {
+    "stake": [
+      {
+        "k": 2,
+        "pct": 84.25817950936937,
+        "delta_vs_champion_pp": 0.0
+      },
+      {
+        "k": 10,
+        "pct": 84.2161224834589,
+        "delta_vs_champion_pp": -0.04205702591046645
+      },
+      {
+        "k": 100,
+        "pct": 83.29485721094515,
+        "delta_vs_champion_pp": -0.9633222984242167
+      },
+      {
+        "k": 1000,
+        "pct": 80.93713227391557,
+        "delta_vs_champion_pp": -3.321047235453804
+      },
+      {
+        "k": 10000,
+        "pct": 77.61645008781585,
+        "delta_vs_champion_pp": -6.641729421553521
+      },
+      {
+        "k": 30000,
+        "pct": 78.21230607140781,
+        "delta_vs_champion_pp": -6.045873437961561
+      },
+      {
+        "k": 73262,
+        "pct": 80.79751401867063,
+        "delta_vs_champion_pp": -3.4606654906987444
+      },
+      {
+        "k": 136648,
+        "pct": 84.61467764197491,
+        "delta_vs_champion_pp": 0.3564981326055374
+      }
+    ],
+    "disp": [
+      {
+        "k": 2,
+        "pct": 84.25817950936937,
+        "delta_vs_champion_pp": 0.0
+      },
+      {
+        "k": 10,
+        "pct": 84.25817950936937,
+        "delta_vs_champion_pp": 0.0
+      },
+      {
+        "k": 100,
+        "pct": 84.25817950936937,
+        "delta_vs_champion_pp": 0.0
+      },
+      {
+        "k": 1000,
+        "pct": 84.03003320684572,
+        "delta_vs_champion_pp": -0.22814630252365475
+      },
+      {
+        "k": 10000,
+        "pct": 82.53503203284222,
+        "delta_vs_champion_pp": -1.7231474765271457
+      },
+      {
+        "k": 30000,
+        "pct": 80.06376243103401,
+        "delta_vs_champion_pp": -4.194417078335363
+      },
+      {
+        "k": 73262,
+        "pct": 81.5588662006076,
+        "delta_vs_champion_pp": -2.6993133087617736
+      },
+      {
+        "k": 136648,
+        "pct": 84.61467764197491,
+        "delta_vs_champion_pp": 0.3564981326055374
+      }
+    ],
+    "random": [
+      {
+        "k": 2,
+        "pct": 84.25811270295164,
+        "delta_vs_champion_pp": -6.680641773471052e-05
+      },
+      {
+        "k": 10,
+        "pct": 84.25786933671559,
+        "delta_vs_champion_pp": -0.00031017265378352477
+      },
+      {
+        "k": 100,
+        "pct": 84.24112955718488,
+        "delta_vs_champion_pp": -0.017049952184493122
+      },
+      {
+        "k": 1000,
+        "pct": 84.09214885968245,
+        "delta_vs_champion_pp": -0.16603064968691683
+      },
+      {
+        "k": 10000,
+        "pct": 82.78099178946741,
+        "delta_vs_champion_pp": -1.4771877199019627
+      },
+      {
+        "k": 30000,
+        "pct": 80.51388737215787,
+        "delta_vs_champion_pp": -3.7442921372115023
+      },
+      {
+        "k": 73262,
+        "pct": 78.94866072339278,
+        "delta_vs_champion_pp": -5.309518785976593
+      },
+      {
+        "k": 136648,
+        "pct": 84.61467764197491,
+        "delta_vs_champion_pp": 0.3564981326055374
+      }
+    ]
+  },
+  "best_proper_subset": {
+    "rule": "stake",
+    "k": 2,
+    "pct": 84.25817950936937,
+    "delta_vs_champion_pp": 0.0
+  },
+  "no_profitable_partial_adoption": true,
+  "interpretation": "If no_profitable_partial_adoption is true, the reference's advantage is not decomposable: importing its opinion about ANY tested subset - even with zero collateral displacement of other nodes - loses score. The 0.357 pp lives in the whole permutation, not in any part of it."
+}

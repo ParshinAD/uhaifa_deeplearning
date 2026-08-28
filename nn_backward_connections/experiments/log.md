@@ -8283,3 +8283,176 @@ bash autoresearch/sweep.sh --exp H73 --role implement --auto-seeds
 `results/20260828T024748Z-H73-mouse-s42-implement-355f5c.json` (+ s123, s999).
 
 ---
+
+## 2026-08-28 - Cycle 21 - H78: where the RESIDUAL connectome gap lives, measured from the CHAMPION - **DONE at the prototype rung** (prediction confirmed, and the bigger result is that the reference solution is NOT DECOMPOSABLE: no partial adoption of it is profitable and the natural path to it runs through a valley 2.2x the prize)
+
+**Mode: DIVERGENT.** Trigger `cycles_since_score_move = 3` = `campaign.yaml`
+`escalation.divergent_after_k_cycles_without_score_move`. **P23 was checked first, for the fifth
+cycle running, and is still `awaiting-operator`** - HEAD was `4dc75ff`, no ruling on the branch - so
+H70/H63/H74 stay blocked and this cycle took the divergent axis exactly as cycle 20's handoff
+instructed. Cycle 20 also named two items NOT to take (H77, the opposite-sign branch of the variant
+it had just killed; H76, mouse-only) and this cycle took neither.
+
+Preflight: tree clean, branch `auto/campaign-v3` = `campaign.yaml` `campaign.branch`, full suite
+**611 passed** in 164.47 s, frozen manifest untouched. Machine: Windows 10 laptop, RTX 4060, CUDA,
+torch 2.8.0+cu128 - though **this cycle used zero GPU**.
+
+Reasoning written to `autoresearch/lit/divergence-cycle21.md` BEFORE anything was proposed, as
+divergent mode requires.
+
+### The observation that made the cycle worth spending
+
+**Every structural statement this campaign makes about the connectome gap was measured from a base
+it has since left behind by 1.34 pp.** `experiments/outputs/localsearch_sizing.json` (2026-06-22) is
+the sole source of meta-rule **M4**, the **H22** kill, and the rank-distance percentiles
+`findings.md` #3 quotes as *the* description of where the gap lives. All of it was computed on
+**H02's converged order, 82.9161%**. The champion is **H64 at 84.2582%**. Of the +1.6874 pp net gap
+those numbers describe, **78.9% has since been harvested** - by precisely the global/structural move
+classes M4 recommended. Nobody had ever looked at the **+0.356498 pp** that is left.
+
+That is not a variant of the current design; it is the question of what the current design is
+standing on.
+
+### Novelty rung
+
+Shares an axis with **H22** (`discrete local search`) and with **M4**. H22's amended revival
+condition (2026-08-16) reads: *"it is simply run, because the original evidentiary basis for
+declining it does not support the conclusion... any revival must beat the CURRENT champion, not the
+H30-era baseline this was filed against."* H78 is not a revival of H22 as a *variant* - it re-derives
+the **evidence H22 was declined on**, from the current champion, which is the precondition that
+revival condition states. It is also distinct from **Q02**: Q02 measured the degeneracy of the
+near-optimal set seed-to-seed on plain Rocket, never on the champion-vs-reference pair. Passed.
+
+### Prototype rung - three probes, all CPU, ~4 minutes total, zero GPU
+
+Privileged: `data/best_solution` read ONLY through `mfas.analysis.gap.load_best_solution`, the sole
+sanctioned reader (CAMPAIGN.md rule 4). Nothing written to `results/`. No optimization path consumes
+any number below. All three scripts assert the base order re-scores to the champion recorded in
+`sota.json` before measuring; all three passed that check (`base_matches_sota: true`).
+
+Measures 1-2 are **imported verbatim** from `experiments/size_localsearch.py`, so the champion-era
+and H02-era numbers are produced by identical code and differ only in the base order.
+
+**(a) H78's stated prediction - CONFIRMED, and it was pre-registered.**
+
+| gain-weight rank-distance | p25 | p50 | p75 | p90 |
+|---|---|---|---|---|
+| H02 era (82.9161%) | 8,290 | 22,580 | 54,432 | 87,497 |
+| **champion (84.2582%)** | **2,120** | **10,430** | **31,277** | **69,532** |
+
+p50 ratio **0.4619**, far outside the pre-registered kill band [0.75, 1.25]. The pipeline harvested
+the long-range component preferentially, as a full-range sift plus SCC-recursive block refinement
+should.
+
+**But shorter is not short, and M4 survives narrowed rather than overturned.** p50 = 10,430 is still
+7.6% of n = 136,648; a W=1000 window holds only **18.23%** of total gain and W=5000 only **36.51%**.
+Bounded-window local search is still not the answer. M4's directive is amended in place with this
+re-measurement.
+
+**(b) The real finding - the disagreement is 6.7x the prize.**
+
+    gain +2.3787 pp    lose +2.0222 pp    NET +0.356498 pp
+
+The champion and the reference disagree about the orientation of edges carrying **4.40 pp** of weight
+and **85% of it cancels**. At the H02 era the same ratio was 4.60/1.69 = 2.7:1; it is now **6.7:1**,
+i.e. the cancellation has become *more* severe as the score rose. 147,617 gain edges, 130,858 lose
+edges. **53.6%** of nodes (73,262 of 136,648) carry residual gain stake, and median node displacement
+is 6,051 ranks. This is Q02's flat degenerate near-optimal set, measured for the first time on the
+pair that actually matters.
+
+**(c) There is no incremental path - three probes, one answer.**
+
+| probe | operator | result |
+|---|---|---|
+| blend / path-relinking | `(1-t)*rank_champ + t*rank_best` | **valley -0.786097 pp** at t = 0.60 (83.4721%) |
+| teleport | top-k by gain stake -> reference rank | loses at **k = 1** (-0.011753 pp), monotone to -4.737902 pp at k = 30,000 |
+| slot-preserving adoption | subset re-ordered internally to the reference's opinion, **zero collateral displacement** | best proper subset **exactly +0.000000 pp** (a no-op), over three selection rules |
+
+The valley is **2.2x the +0.356498 pp prize and 66x the 0.012 pp promotion bar**. The slot-preserving
+probe is the load-bearing one: it removes the confound that a teleport also shifts non-selected
+nodes, and it was run under three independent subset rules - descending gain stake, descending
+displacement, and a seeded random control. Its best proper subset over *all* rules is a no-op;
+**everything that changes anything, loses**.
+
+> **Honest correction to our own instrument, stated because nothing else would catch it.**
+> `proto_H78b_path_connectome.json` records `barrier_confirmed: false`. **That flag is wrong, and the
+> rule behind it was mis-specified by this cycle, not by the data.** It counted t = 0.995
+> (84.2963%, +0.038146 pp over the champion) as an "interior" point. At t = 0.995 the blend is the
+> *reference order locally re-sorted within ~200-rank windows*: it scores **0.318 pp below the
+> reference**, sits on the reference's side of the valley, and cannot be constructed without the
+> reference. It is not a reachable point and it is not a win. The barrier is real. Probe (c) has no
+> such ambiguity and is what the conclusion rests on. The flag is left as written in the artifact and
+> corrected here and in M15's `instrument_caveat` rather than silently rewritten.
+
+### What this licenses, and what it does not
+
+**Licensed.** The reference solution's remaining advantage is **a property of the whole permutation
+and of no part of it**. From the champion's basin no monotone process reaches it - not a better move
+class, not a longer ladder, not a cleverer tie-break. This is **one mechanism for four separate nulls
+the campaign already had**: M14's 87.7% stage-4 absorption (cycle 20), H66's 0.000000 pp repair
+headroom on the champion (cycle 19), H31's ILS/LNS null, and the ceiling on every move class since
+H42.
+
+**Not licensed.** Two geometric families of partial adoption were tested, not all of them; a valley
+along the blend path does not *prove* no path exists. The claim is evidential, not a proof.
+Connectome-only - no reference solution exists for microns or mouse, the standing scope limit on all
+gap work (`findings.md` #3).
+
+### New meta-rule
+
+**M15-the-reference-is-not-decomposable**, added to `autoresearch/killed.json` with its scope limit
+and the instrument caveat above. Operative directive: *an item whose mechanism is a new or extended
+monotone move class on the existing basin must now argue against M15 before it is scheduled.* **M4
+amended in place** with the champion-era re-measurement.
+
+M15 should be read next to cycle 20's M14 and cycle 19's M13: three cycles, three independent
+measurements, one conclusion.
+
+### Decision
+
+**DONE.** `sota.json` untouched - nothing was promoted and nothing could be; H78 produces no variant.
+No screen, confirm or critic rung was run, and none was applicable: there is no variant to screen.
+`gates_run: ["novelty", "prototype"]`, which is the ladder's requirement for this verdict and is the
+precedent of cycles 10-13, 19 and 20.
+
+`cycles_since_score_move` goes 3 -> 4, so **divergent mode stays armed** for cycle 22, correctly.
+`consecutive_kills` is deliberately left at 2: H78 was not killed - its pre-registered prediction was
+confirmed - and the primary divergence trigger is already firing on its own, so inflating the
+secondary one would buy nothing and would misreport the record.
+
+### Filed
+
+- **H79** (pri 1) - a structurally **different** basin, not a better one. M15 says the destination is
+  unreachable from here, which changes what a different start is *for*; H48/M7 killed *better* starts
+  and H56/H57/M9/M10 killed *relabelling* dispersion, but no item has tested basin **identity**. Rung
+  1 is a free CPU pre-gate (are the constructions even structurally apart?).
+- **H80** (pri 2) - barrier-crossing search with an acceptance schedule **sized to the 0.786 pp
+  valley**. Revives H31 under its own stated revival condition (structure-aware destroy + exact-gain
+  rebuild) and supersedes H40 by supplying the sizing number H40 never had. Its honest difficulty is
+  stated in the item: 0.786 pp is the depth of one path, an order-of-magnitude guide, and a schedule
+  that admits it may simply random-walk inside 3600 s.
+- **L02** (pri 3) - a **targeted** scan (barrier-crossing methods for linear ordering), not a broad
+  refresh: `cycles_since_literature_scan` is only 2 and `scan_cycle18.md`'s yield is not exhausted
+  (H71, H72 still queued). Filed rather than run because the barrier number that makes it answerable
+  was produced at the end of this cycle.
+
+### Reproduce
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+
+# rung 1 - the residual gap's structure, from the CHAMPION (CPU, ~45 s)
+PYTHONPATH=src $PY experiments/diagnostics/h78_residual_gap_structure.py
+#   -> experiments/outputs/proto_H78_connectome.json
+
+# rung 2 - is there an incremental path? blend + teleport curves (CPU, ~70 s)
+PYTHONPATH=src $PY experiments/diagnostics/h78_path_to_reference.py
+#   -> experiments/outputs/proto_H78b_path_connectome.json
+
+# rung 3 - slot-preserving adoption, zero collateral displacement (CPU, ~70 s)
+PYTHONPATH=src $PY experiments/diagnostics/h78_slot_adoption.py
+#   -> experiments/outputs/proto_H78c_slot_adoption.json
+
+# the H02-era comparator these are read against
+cat experiments/outputs/localsearch_sizing.json
+```
