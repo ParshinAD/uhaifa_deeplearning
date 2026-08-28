@@ -1,8 +1,8 @@
 # Campaign dashboard
 
-*Generated 2026-08-28 03:51 by `autoresearch/dashboard.py` — do not hand-edit.*
+*Generated 2026-08-28 04:26 by `autoresearch/dashboard.py` — do not hand-edit.*
 
-**Phase:** `quality` · **cycle:** 18 · **mode:** `incremental` · **consecutive kills:** 0
+**Phase:** `quality` · **cycle:** 19 · **mode:** `incremental` · **consecutive kills:** 1
 
 ## Progress — connectome (Phase 1 target)
 
@@ -21,7 +21,7 @@
 | microns | **H42** | 83.2409 ± 0.0 | 5 | ~3418s | findings.md #7 (H42, 2026-08-10) |
 | mouse | **H63** | 93.1754 ± 0.0 | 20 | ~1s | findings.md #10 (H63, 2026-08-27) |
 
-## Queue — 24 proposed / 59 total
+## Queue — 25 proposed / 61 total
 
 | # | id | title | status |
 |---|---|---|---|
@@ -42,6 +42,7 @@
 
 | cycle | item | verdict | note |
 |---|---|---|---|
+| 19 | `H66` | **kill** | H66 killed at the prototype rung (ASYM gradient kick as a terminal stage). 0 of  |
 | 18 | `P19` | **iterate** | P19 executed as variant H70 (microns compute re-allocation: epochs 80,000->50,00 |
 | 17 | `P18` | **keep-partial** | NEW CONNECTOME CHAMPION H64 84.25817950936937 (+0.104084 pp over H42), the large |
 | 16 | `H64` | **iterate** | ASYMMETRIC surrogate composed with the champion stack. connectome +0.104084 pp ( |
@@ -53,12 +54,11 @@
 | 10 | `H56` | **kill** | H56 killed at the prototype rung (relabelling multi-start; M9 effect size). New  |
 | 9 | `P09` | **iterate** | P09 iterate: the relabelling-robustness gate for degenerate primary pools is IN  |
 | 8 | `H52` | **keep-partial** | H52 keep-partial: mouse champion 93.1028; connectome refused. See log.md. |
-| 7 | `H44` | **keep** | H50 killed. See log.md. |
 
 ## Evidence
 
 - `results/*.json`: **577** run records across **35** variants
-- killed mechanisms on record: **21** (+7 deferred, 12 meta-rules)
+- killed mechanisms on record: **22** (+7 deferred, 13 meta-rules)
 - literature notes: **9** (latest: `vahidi-2025.md`)
 
 ## Control

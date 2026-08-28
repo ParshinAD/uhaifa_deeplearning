@@ -7844,3 +7844,226 @@ cycles that was the right section — the shadowing needs an earlier sub-heading
 it is not guaranteed for any of them, and this cycle is the first whose numbers are known to have
 been mechanically traced. Filed as **P24** to re-verify the back catalogue, which is cheap now that
 the extractor is right.
+
+---
+
+## 2026-08-28 — Cycle 19 · H66: the ASYM gradient KICK as a terminal stage — **KILL at the prototype rung** (the mechanism is real, reproduced at +0.018620 pp on a 83.9135 base, and it has EXPIRED: 0 of 18 arms clear zero on the 84.2582 champion)
+
+**Verdict: KILL.** `gates_run: ["novelty", "prototype"]`. No screen was run, and that is not a
+shortcut — see "Why no screen" below, where M12's own amendment says the screen result is
+*predicted* by this prototype to be exactly +0.000000 pp.
+
+**Device / environment.** Windows 10 laptop, NVIDIA RTX 4060 Laptop GPU (CUDA 12.8), torch
+2.8.0+cu128, python 3.9.25, conda env `allen`. Preflight: branch `auto/campaign-v3` (matches
+`campaign.yaml`), tree clean, `pytest tests/ -q` gives **606 passed** in 163.64 s.
+
+### Why this item, and what happened to P23
+
+`state.json` (cycle 18) instructed this cycle to check **P23** first. P23 is still
+`awaiting-operator`: `HEAD` is `3d79b71`, the cycle-18 commit, and no ruling exists on the
+branch. Its option (B) — measure H42's microns relabelling dispersion with 5 unguarded runs —
+remains the number that decides H70, H63 and every future microns variant at once, and it is not
+the campaign's to self-authorise. So every microns item (**H74**, and H70's held score leg) stays
+blocked, and this cycle took the **connectome** axis instead, which is the mission dataset and is
+not blocked.
+
+Mode is **incremental**: `cycles_since_score_move = 1` (divergence fires at 3),
+`consecutive_kills = 0`, `cycles_since_literature_scan = 0`, and the queue holds well over three
+viable science items. **H66** was chosen over the nominally-higher-priority **P13** (priority 0,
+infrastructure) deliberately, and the reason is recorded here rather than left implicit: P13's
+entire stated purpose is to make arc reclamation affordable *on microns*, and no microns
+promotion can happen while P23 is unanswered, so P13 cannot convert into a champion move this
+cycle. H66 is the top-priority **science** item on the unblocked dataset.
+
+### Rung 1 — NOVELTY: **PASS**, with all three revival conditions named
+
+H66 shares an axis with three dead items. Each revival clause is quoted and discharged:
+
+| dead item | axis | its literal `revival_if` | how H66 meets it |
+|---|---|---|---|
+| **H04** | in-loop refinement | *"The in-loop move is the EXACT-GAIN sift (not barycenter) AND the gradient phase is prevented from drifting (frozen scale / alternation)"* | the repair move is `sift_underrelaxed` at the champion's own stage-4 constants; `beta` and the position scale are **frozen constants** for the whole kick (`BETA_KICK = 1.0`), never a schedule |
+| **H31** | metaheuristic wrapper | *"The destroy operator is STRUCTURE-AWARE ... and the rebuild is exact-gain"* | the perturbation is the ASYM gradient, 100% of whose mass sits on violated edges (Q05); the rebuild is the exact-gain sift |
+| **H39** | alternating discrete/continuous | *"Only for a continuous phase that is NOT a member of the family sum_e w_e g(Delta_e) ... Q05's one-sided asymmetric surrogate IS such a non-member"* | the kick uses exactly that surrogate |
+
+**M1**'s three burdens for any asymmetric proposal — (a) `surrogate_gate.py`, (b) no crossover in
+`beta*std`, (c) measured composed with the champion stack — are already discharged for this
+shape by H38/Q05 and by H64 (`proto_H64_rung01.json`). This item does not re-litigate them; it
+asks the one remaining question about the shape, which is whether it is worth anything **at the
+end** of the pipeline rather than at the start.
+
+### Rung 2 — PROTOTYPE: **FAIL**, four grids, 39 arms
+
+`experiments/proto_H66_kick.py`. From the stored champion order: embed ranks as positions at a
+scale that makes the surrogate's live gradient band exactly `R` ranks wide, take K frozen-beta
+Adam steps, re-rank, repair with the under-relaxed exact-gain sift, keep only if the frozen
+oracle improves.
+
+**The reach parameterisation.** `_asym_surrogate`'s derivative is `sech^2((z-M)/T)/T` below the
+margin and exactly 0 above it, so an edge is dead once `(z-M)/T < -4`. For a backward edge of
+span `r` ranks at spacing `s`, `z = -beta*r*s`, so it is live iff `beta*r*s < M + 4T = 5.25`.
+Hence **reach `R = 5.25/(beta*s)`**, and a target reach fixes `s = 5.25/(beta*R)`. This is the
+same `Z_SAT = 4` threshold `H64.py` uses for its 13.10% / 15.66% live-support figures.
+
+**The M12 control, and it is the headline of this cycle.** Champion order, then the *same* repair
+sift, no kick:
+
+| base | control (repair sift, no kick) | headroom |
+|---|---|---|
+| H64 champion, 84.25817950936937 | **84.25817950936937** | **+0.000000 pp** |
+| H35, 83.91351804242117 | 83.91503550248125 | +0.001517 pp |
+
+The champion's stage 4 has **exactly nothing left** for this move class. Every arm below is
+measured against that.
+
+**Rungs 1-2 (`proto_H66_connectome.json`, `proto_H66_connectome_rung2.json`) — 18 arms, all
++0.000000 pp.** Grids: reach in {500, 2000, 20000, 60000} x kick length in {50, 200, 800} at the
+champion's `lr = 0.05`; then reach in {500, 2000, 20000} x per-step displacement in {0.25, 1, 4}
+**ranks** x 100 steps, logged **every step**. The second grid exists because the first had a
+confound: Adam's update is `m/(sqrt(v)+eps)`, whose magnitude is about `lr` for any node with a
+consistent gradient however small, so at `lr = 0.05` all 136,648 nodes translate ~19 ranks per
+step whether or not the surrogate has anything to say about them. Pinning the displacement in
+rank units removes it.
+
+What the per-step logs show is sharper than the verdict: **the champion order is a strict local
+maximum of the discrete score along the ASYM gradient direction.** At 0.25 ranks/step the first
+step is a no-op on ranks and step 2 is already -0.008332 pp; at 1 and 4 ranks/step the *first*
+step loses -0.041754 to -0.159932 pp. The trajectory is monotone downward, to -1.189355 pp at
+100 steps / reach 20000. Not one of ~900 logged (arm, step) points is above the champion.
+
+**The flaw those two rungs contained, and the fix.** Reading the item's own prior evidence
+(`experiments/backlog.md:2090-2130`) showed the mechanism is **perturb-and-repair**: there the
+kick *lowers* the score and the re-sift repairs *past* the input. Rungs 1-2 ran the repair sift
+from the **best-by-oracle** rank — which, since the kick never improves on its own, is the
+unperturbed champion order — so they reproduced the control by construction and never tested
+repair at all. Fixed: the repair now starts from the **final perturbed** order, and
+keep-if-improves is applied once, at the end.
+
+**Rung 3, the real test (`proto_H66_connectome_rung3.json`) — 18 arms: reach {414, 2000, 20000}
+x displacement {0.25, 1, 4} ranks x repair {2, 8} sweeps, 150 steps. 0 of 18 above zero.**
+Reach 414 is not arbitrary: the backlog's winning arm was position std 500 at beta = 1, which
+maps to a live band of `5.25/(500/39447) = 414` ranks. The best raw repair anywhere in the grid
+is **84.23740032750892** (reach 414, 4 ranks/step, 8 sweeps) — **0.020779 pp short of its own
+input**. Perturb-and-repair on the champion does not get back to where it started.
+
+### Rung 3b — the POSITIVE CONTROL, which is why this kill is trustworthy
+
+The same code and the same grid, pointed at H35's connectome order
+(**83.91351804242117**, the closest available analogue to the backlog's 83.9035 base):
+
+| base | best arm | vs base | no-kick control | **attributable to the kick** |
+|---|---|---|---|---|
+| H35, 83.91351804242117 | reach 2000, 4 ranks/step, 8 sweeps, giving **83.93365540548263** | +0.020137 pp | 83.91503550248125 | **+0.018620 pp** |
+| H64 champion, 84.25817950936937 | best of 18, giving 84.25817950936937 | +0.000000 pp | 84.25817950936937 | **+0.000000 pp** (best raw repair 0.020779 pp short) |
+
+`backlog.md:2119` independently recorded **+0.0179 pp** attributable to this mechanism on the
+83.9035 order. This harness reproduces it at **+0.018620 pp** — agreement to 0.0007 pp, on a
+different base, a different machine and an independent implementation. **7 of 12 weak-base arms
+are positive.** So the null result on the champion is not a broken kick; it is the kick.
+
+### What actually killed it: the gain is BASE-DEPENDENT and it has already expired
+
+The item's `kill_condition` is met literally — *"over a grid of reach targets and kick lengths,
+if no arm's post-kick + sift oracle score exceeds [the champion] by 0.012 pp, the hybrid
+direction is closed in the only form its revival conditions allow"*. 0 of 18 arms; the best is
+0.020779 pp **below** its input against a +0.012 pp bar.
+
+But the informative statement is the pair. Over the **0.344661 pp** of base improvement the
+campaign bought between H35 and H64 (H36 + H42 + H64), this move class went from **+0.018620 pp**
+to **at best -0.020779 pp**. It is not that the kick is weak on the champion; it is that the
+ground it harvests has already been taken, and what remains is damage the repair cannot undo.
+The live-support numbers say the same thing from the other side: at reach 414 the champion order
+has **10.43%** of its backward weight in the live band against the weak base's **2.15%** — the
+champion has *more* short backward edges available to the kick, and still gains nothing from
+them, so this is not a reach problem either.
+
+**M8 redundancy fraction, requested by the item's kill_condition and reported as required:** it
+is **undefined here, because both terms are zero.** The new class's own credit is 0.000000 pp and
+the incumbent classes' credit at this point in the pipeline is also 0.000000 pp (the control has
+no headroom). There is no ground for the two classes to compete over. That is a stronger
+statement than a large redundancy fraction would have been, and it is why no screen can rescue
+this.
+
+### Why no screen was run
+
+H66 is a **pure terminal append**: stages 1-4 are byte-identical to the champion and this stage
+runs after them. **M12** as amended 2026-08-26 is explicit that its overstatement bias needs the
+variant to diverge *upstream*, and therefore *"a from-champion prototype is a biased SCREENING
+number for any change other than the last stage, and a genuine PREDICTION for a pure append"* —
+measured on H59 at 0.35% relative error. So this prototype does not merely suggest a screen would
+fail; it **predicts the screen at +0.000000 pp**. Spending ~1.2 h of connectome GPU to confirm a
+prediction the campaign's own meta-rule says is exact would be waste. The prediction is recorded
+here so that if anyone ever does run it and gets something else, M12's amendment is falsified,
+and that is worth more than the screen.
+
+### New meta-rule **M13-perturb-repair-gains-expire**
+
+Filed to `killed.json`. A perturb-and-repair gain measured on an older, weaker base does **not**
+transfer to the current champion and must be re-measured there before it can motivate an item.
+Measured on this exact mechanism: **+0.018620 pp at base 83.91351804242117, then -0.020779 pp at
+base 84.25817950936937** — a sign reversal across 0.344661 pp of base improvement. This is the
+sibling of M12 for *inherited* numbers rather than mis-sited ones: M12 says a from-champion
+prototype overstates an inner-stage change; M13 says a logged number from an older base
+overstates everything, because the repair's headroom is consumed by the very improvements that
+made the base better. Practical form: **an item whose `prior_evidence` is a delta on a superseded
+base has no evidence until that delta is re-measured on the sitting champion.**
+
+### Decision — **KILL**
+
+- `queue.json`: H66 to `killed`.
+- `killed.json`: H66 added, axis *hybrid / continuous-discrete interface*, with its revival
+  condition; meta-rule M13 added.
+- `sota.json`: **untouched.** No champion changed.
+- `consecutive_kills`: 0 to 1. `cycles_since_score_move`: 1 to 2 (divergent mode fires at 3, i.e.
+  next cycle if nothing moves).
+
+### Re-runnable commands
+
+```bash
+PY=/c/ProgramData/anaconda3/envs/allen/python.exe
+# rung 1 - champion lr, reach x kick length
+PYTHONPATH=src $PY experiments/proto_H66_kick.py --dataset connectome
+# rung 2 - displacement pinned in RANKS, logged every step
+PYTHONPATH=src $PY experiments/proto_H66_kick.py --dataset connectome \
+    --reach 500 2000 20000 --lr-ranks 0.25 1 4 --steps 100 --log-every 1 \
+    --out experiments/outputs/proto_H66_connectome_rung2.json
+# rung 3 - PERTURB-AND-REPAIR (repair from the perturbed order), the real test
+PYTHONPATH=src $PY experiments/proto_H66_kick.py --dataset connectome \
+    --reach 414 2000 20000 --lr-ranks 0.25 1 4 --sift-sweeps 2 8 --steps 150 \
+    --log-every 10 --out experiments/outputs/proto_H66_connectome_rung3.json
+# rung 3b - POSITIVE CONTROL on the weak base
+PYTHONPATH=src $PY experiments/proto_H66_kick.py --dataset connectome \
+    --base-positions results/20260809T142912Z-H35-connectome-s42-implement-8f52fb_positions.npy \
+    --base-label H35_83.9135 --reach 414 2000 --lr-ranks 0.25 1 4 --sift-sweeps 2 8 \
+    --steps 150 --log-every 10 \
+    --out experiments/outputs/proto_H66_connectome_weakbase.json
+```
+
+Total prototype cost: **591 s** across the two rung-3 grids (353 s + 238 s) plus ~180 s for
+rungs 1-2. No sweep, no confirm, no champion run.
+
+### What this cycle did NOT establish, stated so it is not over-read
+
+1. **It does not touch the ASYM surrogate in stage 2.** H64 is the connectome champion because
+   that shape works *at the start* of the pipeline (+0.104084 pp). H66 tested it at the *end*.
+   Those are different questions and only the second is now closed.
+2. **It does not close perturb-and-repair in general** — only the gradient-guided form, at the
+   champion order, with the exact-gain sift as the repair. A repair strictly stronger than an
+   8-sweep under-relaxed sift was not tried; the revival condition names it.
+3. **Single base pair.** The base-dependence claim rests on two points (83.9135 and 84.2582), not
+   a curve. A third point would turn M13 from a sign observation into a rate.
+4. **The +0.0179 pp figure quoted from `backlog.md` is a foreign historical number** from the MPS
+   era, declared in `known_figures.json`. It is used only as the thing this cycle reproduced,
+   never as evidence for a verdict.
+5. **The critic rung was not run**, because the ladder does not call for it on a prototype kill
+   (cycles 10, 11 and 12 are the precedent). The adversarial work that a critic would have
+   demanded was done inside the rung instead, and it is the positive control: the single most
+   likely way this kill could be wrong is "the kick was implemented wrongly", and 3b rules that
+   out by reproducing an independently logged +0.0179 pp to 0.0007 pp.
+
+### New queue items
+
+- **H75** (science, priority 3) — re-measure the inherited `prior_evidence` deltas of the
+  remaining queue items against the *sitting* champion before those items are scheduled, now that
+  M13 exists.
+- **P25** (infrastructure, priority 3) — `queue.json` items carry `prior_evidence` deltas with no
+  field recording which BASE they were measured against. M13 makes that field load-bearing.
