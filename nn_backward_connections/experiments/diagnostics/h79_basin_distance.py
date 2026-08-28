@@ -62,19 +62,21 @@ import time
 from pathlib import Path
 
 import numpy as np
-from scipy.sparse import csr_matrix
-from scipy.sparse.csgraph import connected_components
 from scipy.stats import kendalltau
 
-from mfas.baseline.ratio_greedy import ratio_greedy_rank
 from mfas.experiments.H02 import greedy_fas_order
+from mfas.experiments.H79 import BLOCKED_AS_ARM, CONSTRUCTIONS
 from mfas.io import GraphData, load_dataset
 from mfas.metrics import pct, score_from_order
 
-# ── constructions ────────────────────────────────────────────────────────────────────
+# ── the control: the champion's own construction ball ────────────────────────────────
+#
+# The CONSTRUCTIONS themselves live in src/mfas/experiments/H79.py and are imported, not
+# copied, so this measurement and the rung-2 variant arms are guaranteed to be measuring
+# the same functions. (Cycle 21's H78 used the same discipline for size_localsearch.py.)
 
 
-def _relabelled(g: GraphData, seed: int) -> tuple[GraphData, np.ndarray]:
+def _relabelled(g: GraphData, seed: int) -> "tuple[GraphData, np.ndarray]":
     """Return an isomorphic copy of ``g`` under a random node relabelling, plus the map.
 
     ``perm[u]`` is the NEW index of canonical node ``u``. The returned graph is the same
@@ -87,121 +89,6 @@ def _relabelled(g: GraphData, seed: int) -> tuple[GraphData, np.ndarray]:
                    tgt=perm[np.asarray(g.tgt, dtype=np.int64)].astype(np.int32),
                    weight=g.weight, node_ids=g.node_ids, name=g.name)
     return gg, perm
-
-
-def c_greedy_fas(g: GraphData) -> np.ndarray:
-    """The CHAMPION's construction (H02, Eades-Lin-Smyth / GreedyAbs peel)."""
-    return greedy_fas_order(g)
-
-
-def c_ratio_greedy(g: GraphData) -> np.ndarray:
-    """H48's construction, (out_w+1)/(in_w+1) peel. REFERENCE POINT ONLY - see module doc."""
-    return ratio_greedy_rank(g)
-
-
-def c_reverse_greedy_fas(g: GraphData) -> np.ndarray:
-    """Greedy-FAS on the TRANSPOSED graph, rank reversed.
-
-    ELS is not symmetric: it peels sinks to the back, sources to the front, and otherwise
-    sends max ``out_w - in_w`` to the FRONT, so the front is built greedily and the back
-    only by sink detection. Transposing swaps those roles, which makes this a genuinely
-    different rule and not a re-parameterisation of the same one.
-    """
-    gt = GraphData(src=g.tgt, tgt=g.src, weight=g.weight, node_ids=g.node_ids, name=g.name)
-    return (g.n_nodes - 1) - greedy_fas_order(gt)
-
-
-def c_imbalance_sort(g: GraphData) -> np.ndarray:
-    """Static descending sort by ``out_w - in_w`` on the FULL graph - no peeling at all.
-
-    The peeling family's defining feature is that a placement changes its neighbours' keys.
-    This construction removes exactly that, keeping only the key. It is the cheapest
-    possible structural contrast to greedy-FAS and it is deliberately a WORSE start.
-    """
-    n = g.n_nodes
-    w = np.asarray(g.weight, dtype=np.float64)
-    out_w = np.zeros(n, dtype=np.float64)
-    in_w = np.zeros(n, dtype=np.float64)
-    np.add.at(out_w, np.asarray(g.src, dtype=np.int64), w)
-    np.add.at(in_w, np.asarray(g.tgt, dtype=np.int64), w)
-    seq = np.lexsort((np.arange(n), -(out_w - in_w)))   # ties -> lowest node id first
-    rank = np.empty(n, dtype=np.int64)
-    rank[seq] = np.arange(n, dtype=np.int64)
-    return rank
-
-
-def c_scc_topo(g: GraphData) -> np.ndarray:
-    """SCC-condensation topological seeding.
-
-    The condensation of a digraph is a DAG, so its topological order is FORCED - every
-    edge between distinct SCCs is feedforward in any order that respects it, which is the
-    one part of the problem that has an exact answer. Within an SCC nodes are ordered by
-    descending ``out_w - in_w`` computed on the INDUCED subgraph only.
-
-    scipy's ``connected_components(connection='strong')`` already returns labels in
-    reverse topological order of the condensation, but that is a documented implementation
-    detail rather than a guarantee, so the topological order is recomputed here from the
-    condensation's own edges (Kahn, lowest label first for determinism).
-    """
-    n = g.n_nodes
-    src = np.asarray(g.src, dtype=np.int64)
-    tgt = np.asarray(g.tgt, dtype=np.int64)
-    w = np.asarray(g.weight, dtype=np.float64)
-
-    adj = csr_matrix((np.ones(src.shape[0], dtype=np.int8), (src, tgt)), shape=(n, n))
-    n_comp, lab = connected_components(adj, directed=True, connection="strong")
-    lab = lab.astype(np.int64)
-
-    # Condensation edges (deduplicated), then Kahn with a lowest-label tie-break.
-    ls, lt = lab[src], lab[tgt]
-    keep = ls != lt
-    ce = np.unique(np.stack([ls[keep], lt[keep]], axis=1), axis=0)
-    indeg = np.zeros(n_comp, dtype=np.int64)
-    np.add.at(indeg, ce[:, 1], 1)
-    order_c = np.argsort(ce[:, 0], kind="stable")
-    cstart = np.searchsorted(ce[order_c, 0], np.arange(n_comp + 1))
-    cnbr = ce[order_c, 1]
-
-    import heapq
-    heap = [int(c) for c in np.nonzero(indeg == 0)[0]]
-    heapq.heapify(heap)
-    topo = np.empty(n_comp, dtype=np.int64)
-    k = 0
-    while heap:
-        c = heapq.heappop(heap)
-        topo[k] = c
-        k += 1
-        for j in range(cstart[c], cstart[c + 1]):
-            d = int(cnbr[j])
-            indeg[d] -= 1
-            if indeg[d] == 0:
-                heapq.heappush(heap, d)
-    if k != n_comp:                                    # cannot happen: a condensation is a DAG
-        raise RuntimeError(f"condensation is cyclic: {k} of {n_comp} components ordered")
-    comp_rank = np.empty(n_comp, dtype=np.int64)
-    comp_rank[topo] = np.arange(n_comp, dtype=np.int64)
-
-    # Intra-SCC key: imbalance on the induced subgraph (both endpoints in the same SCC).
-    intra = ls == lt
-    out_w = np.zeros(n, dtype=np.float64)
-    in_w = np.zeros(n, dtype=np.float64)
-    np.add.at(out_w, src[intra], w[intra])
-    np.add.at(in_w, tgt[intra], w[intra])
-    key = -(out_w - in_w)
-    seq = np.lexsort((np.arange(n), key, comp_rank[lab]))
-    rank = np.empty(n, dtype=np.int64)
-    rank[seq] = np.arange(n, dtype=np.int64)
-    return rank
-
-
-CONSTRUCTIONS = {
-    "greedy_fas": c_greedy_fas,               # the champion's - the anchor, not an arm
-    "ratio_greedy": c_ratio_greedy,           # H48 - REFERENCE POINT ONLY, blocked as an arm
-    "reverse_greedy_fas": c_reverse_greedy_fas,
-    "imbalance_sort": c_imbalance_sort,
-    "scc_topo": c_scc_topo,
-}
-BLOCKED_AS_ARM = {"ratio_greedy": "H48 revival condition: never again as a drop-in warm start"}
 
 
 # ── driver ───────────────────────────────────────────────────────────────────────────
