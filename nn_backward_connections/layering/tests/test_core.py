@@ -87,6 +87,19 @@ def test_mutual_edge_mask():
     assert core.mutual_edge_mask(src, tgt).tolist() == [True, True, False, False]
 
 
+def test_ff_path_exists_mask():
+    # FF chain 0 -> 1 -> 2, plus an FB edge 2 -> 0 excluded by the mask
+    src = np.array([0, 1, 2])
+    tgt = np.array([1, 2, 0])
+    ff = np.array([True, True, False])
+    res = core.ff_path_exists_mask(src, tgt, ff,
+                                   np.array([0, 2, 1, 1]),
+                                   np.array([2, 0, 1, 0]))
+    # 0->2 via the chain; 2->0 impossible (FB edge masked out); 1->1 trivial;
+    # 1->0 impossible (edges point away)
+    assert res.tolist() == [True, False, True, False]
+
+
 # --- crossing counter and barycenter ---------------------------------------
 
 def two_layer_fixture(crossed: bool):

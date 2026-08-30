@@ -164,7 +164,11 @@ cells.append(md("""
     Edge classes on the drawing are **by layers**, not by `pi`. Method A can move
     an FF-incomparable node into an early layer, turning a `pi`-feedback edge
     into a forward-by-layer edge ("reclaimed"). Method B cannot, by construction.
-    Here we measure how much that freedom is actually worth on the mouse graph.
+    Here we measure how much that freedom is actually worth on the mouse graph —
+    and certify each feedback edge as reclaimable-or-not via FF-path
+    reachability: an FF path `target -> source` forces `layer[target] <
+    layer[source]` in EVERY hard layering, so such an edge is unreclaimable in
+    principle, not just unreclaimed by longest-path.
 """))
 cells.append(code("""
     rows = []
@@ -185,6 +189,18 @@ cells.append(code("""
                 print(f"  {name}: reclaimed edge {int(g.src[e])} -> {int(g.tgt[e])} "
                       f"(layers {int(layer[g.src[e]])} -> {int(layer[g.tgt[e]])}, "
                       f"w={float(w[e]):.6f})")
+
+    # certification: which FB edges could ANY hard layering reclaim?
+    fb_idx = np.where(~ff)[0]
+    blocked = core.ff_path_exists_mask(g.src, g.tgt, ff,
+                                       g.tgt[fb_idx], g.src[fb_idx])
+    n_blocked, n_fb = int(blocked.sum()), len(fb_idx)
+    n_mutual_fb = int(mutual[fb_idx].sum())
+    print(f"FB edges with an FF path target->source "
+          f"(unreclaimable in ANY hard layering): {n_blocked} of {n_fb}")
+    print(f"  of which direct mutual-pair reverses: {n_mutual_fb}; "
+          f"longer FF paths: {n_blocked - n_mutual_fb}")
+    print(f"FB edges reclaimable in principle (no FF path back): {n_fb - n_blocked}")
     pd.DataFrame(rows).set_index("method").T
 """))
 
@@ -292,13 +308,14 @@ cells.append(md("""
       for method **B**, at the price of reordering FF-incomparable nodes
       relative to `pi`. Layer 0 under A is wide (43 neurons): every neuron with
       no FF in-edge slides to the front.
-    - **Reclamation is exactly zero on the mouse graph** — method A's extra
-      freedom recovered 0 of the 124 feedback edges, and produced 0 intra-layer
-      edges, so both methods show the identical 93.1754% / 6.8246% split as the
-      line `pi`. The floor from Step 0 explains 83 of those 124 (mutual pairs,
-      unreclaimable in principle); the remaining 41 all have an FF path from
-      target to source. Whether reclamation stays zero on the fly connectome is
-      an open question for the scale-up.
+    - **Reclamation is exactly zero on the mouse graph, and certifiably so** —
+      the reclamation cell shows all 124 feedback edges have an FF path
+      `target -> source` (83 direct mutual-pair reverses + 41 longer paths), so
+      NO hard layering of this order can reclaim ANY of them: the
+      93.1754% / 6.8246% split is a ceiling for layered drawings of the H63
+      order, and both methods sit exactly on it (0 reclaimed, 0 intra-layer).
+      Whether reclamation stays zero on the fly connectome is an open question
+      for the scale-up.
     - The barycenter pass removes **~36%** of crossings under A
       (16,205 → 10,435) and **~38%** under B (18,517 → 11,444). The residual is
       dominated by long skip edges (mean span 8.2 layers under A, 16.6 under B;

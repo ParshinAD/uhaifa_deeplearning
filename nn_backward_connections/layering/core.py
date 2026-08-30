@@ -30,6 +30,7 @@ Design notes for future work / agents:
 """
 from __future__ import annotations
 
+from collections import deque
 from typing import List, Tuple
 
 import numpy as np
@@ -37,6 +38,7 @@ import numpy as np
 __all__ = [
     "FORWARD", "INTRA", "BACKWARD",
     "rank_from_order", "ff_mask_by_order", "mutual_edge_mask",
+    "ff_path_exists_mask",
     "layers_longest_path", "layers_pi_slices", "classify_by_layers",
     "initial_slots_from_order", "y_coords", "count_crossings",
     "barycenter_order", "layout_stats",
@@ -73,12 +75,51 @@ def mutual_edge_mask(src: np.ndarray, tgt: np.ndarray) -> np.ndarray:
 
     For a mutual pair exactly one direction is FF under any order, so the other
     half is feedback that NO order and NO valid layering can reclaim.
+    A self-loop would count as its own reverse; both v1 datasets are
+    self-loop-free (validated at load).
     """
     src_l = np.asarray(src).tolist()
     tgt_l = np.asarray(tgt).tolist()
     pairs = set(zip(src_l, tgt_l))
     return np.fromiter(((b, a) in pairs for a, b in zip(src_l, tgt_l)),
                        dtype=bool, count=len(src_l))
+
+
+def ff_path_exists_mask(src, tgt, ff_mask, query_from, query_to) -> np.ndarray:
+    """For each query pair i, whether a directed path made ONLY of FF edges
+    runs from ``query_from[i]`` to ``query_to[i]`` (BFS per query, early exit;
+    a trivial query with from == to returns True).
+
+    Used to CERTIFY feedback edges as unreclaimable: a pi-feedback edge (u, v)
+    can become forward in SOME hard layering iff there is NO FF path v -> u,
+    because an FF path forces layer[v] < layer[u] in every valid layering.
+    O(n_queries * E) - mouse-scale only.
+    """
+    adj: dict = {}
+    for a, b in zip(np.asarray(src)[np.asarray(ff_mask)].tolist(),
+                    np.asarray(tgt)[np.asarray(ff_mask)].tolist()):
+        adj.setdefault(a, []).append(b)
+    q_from = np.asarray(query_from).tolist()
+    q_to = np.asarray(query_to).tolist()
+    out = np.zeros(len(q_from), dtype=bool)
+    for i, (a, b) in enumerate(zip(q_from, q_to)):
+        if a == b:
+            out[i] = True
+            continue
+        seen = {a}
+        frontier = deque([a])
+        found = False
+        while frontier and not found:
+            u = frontier.popleft()
+            for v in adj.get(u, ()):
+                if v == b:
+                    found = True
+                    break
+                if v not in seen:
+                    seen.add(v)
+                    frontier.append(v)
+        out[i] = found
+    return out
 
 
 # ---------------------------------------------------------------------------

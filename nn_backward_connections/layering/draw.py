@@ -26,13 +26,22 @@ COL_BACK = "#c23b3b"    # red: the feedback we study
 COL_INTRA = "#e08a2e"   # orange
 COL_NODE = "#1f2a44"
 
+# Presentation defaults (draw-only; no effect on any reported number).
+FIG_W_RANGE = (8.0, 34.0)       # inches, min/max figure width
+FIG_H_RANGE = (5.0, 18.0)       # inches, min/max figure height
+FIG_BASE = 1.5                  # inches added before per-layer/per-slot scaling
+FIG_PER_LAYER = 0.55            # inches of width per layer
+FIG_PER_SLOT = 0.30             # inches of height per node in the widest layer
+NODE_SIZE = 30                  # scatter marker area
+ARROW_SCALE = 7                 # FancyArrowPatch mutation_scale for arcs
+
 
 def auto_figsize(layer: np.ndarray) -> tuple:
     """Figure size scaled to layer count (width) and max layer width (height)."""
     n_layers = int(layer.max()) + 1
     max_width = int(np.bincount(layer).max())
-    return (min(34.0, max(8.0, 1.5 + 0.55 * n_layers)),
-            min(18.0, max(5.0, 1.5 + 0.30 * max_width)))
+    return (min(FIG_W_RANGE[1], max(FIG_W_RANGE[0], FIG_BASE + FIG_PER_LAYER * n_layers)),
+            min(FIG_H_RANGE[1], max(FIG_H_RANGE[0], FIG_BASE + FIG_PER_SLOT * max_width)))
 
 
 def edge_linewidths(weight, lw_range=(0.4, 2.8)) -> np.ndarray:
@@ -78,10 +87,10 @@ def draw_layered(src, tgt, weight, layer, slot, title=None, ax=None,
             ax.add_patch(FancyArrowPatch(
                 (x[u], y[u]), (x[v], y[v]),
                 connectionstyle=f"arc3,rad={rad}", arrowstyle="-|>",
-                mutation_scale=7, color=col, lw=float(lw[e]), alpha=0.75,
+                mutation_scale=ARROW_SCALE, color=col, lw=float(lw[e]), alpha=0.75,
                 zorder=2, shrinkA=3, shrinkB=3))
 
-    ax.scatter(x, y, s=30, c=COL_NODE, edgecolors="white",
+    ax.scatter(x, y, s=NODE_SIZE, c=COL_NODE, edgecolors="white",
                linewidths=0.6, zorder=3)
     if annotate:
         for v in range(x.shape[0]):

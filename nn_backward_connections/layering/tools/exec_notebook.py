@@ -27,13 +27,18 @@ import nbformat
 
 def run(path: str) -> int:
     nb = nbformat.read(path, as_version=4)
+    # clear ALL previous outputs up front, so a mid-run failure cannot leave
+    # stale outputs from an earlier execution after the failing cell
+    for cell in nb.cells:
+        if cell.cell_type == "code":
+            cell.outputs = []
+            cell.execution_count = None
     ns: dict = {"__name__": "__main__"}
     ec = 0
     for cell in nb.cells:
         if cell.cell_type != "code":
             continue
         ec += 1
-        cell.outputs = []
         cell.execution_count = ec
         tree = ast.parse(cell.source or "")
         last_expr = None
@@ -45,10 +50,16 @@ def run(path: str) -> int:
             exec(compile(tree, f"<cell {ec}>", "exec"), ns)
             result = (eval(compile(last_expr, f"<cell {ec}>", "eval"), ns)
                       if last_expr is not None else None)
-        except Exception:
+        except Exception as exc:
             sys.stdout = old_stdout
             err = traceback.format_exc()
-            cell.outputs.append(nbformat.v4.new_output("stream", name="stderr", text=err))
+            partial = buf.getvalue()          # keep what the cell printed before dying
+            if partial:
+                cell.outputs.append(nbformat.v4.new_output(
+                    "stream", name="stdout", text=partial))
+            cell.outputs.append(nbformat.v4.new_output(
+                "error", ename=type(exc).__name__, evalue=str(exc),
+                traceback=err.splitlines()))
             nbformat.write(nb, path)
             print(err, file=sys.stderr)
             print(f"FAILED at code cell {ec} of {path}", file=sys.stderr)
