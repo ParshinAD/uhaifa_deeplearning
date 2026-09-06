@@ -77,6 +77,8 @@ layering/
 ├── GALLERY_REVIEW.md       ← 2026-09-06 gallery of 10 representations, three reviews, ranking
 ├── tools/gallery.py        ← builds the gallery (V1..V7 PNG, layer matrix CSV, layout.json)
 ├── tools/build_html.py     ← builds outputs/gallery/explorer.html (interactive, d3)
+├── tools/gallery_fly.py    ← the scalable subset at fly scale (grid DP + exact refinement,
+│                             V2/V4/V5, span spectrum, trophic control) -> outputs/gallery_fly/
 ├── tests/test_core.py      ← unit + integration tests
 └── outputs/                ← saved figures (PNG, dpi 120)
 ```

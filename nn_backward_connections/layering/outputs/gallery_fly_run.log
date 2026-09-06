@@ -1,0 +1,49 @@
+loaded 136648 nodes 5657719 edges, FF 84.2582%  (13s)
+structure: {
+ "hub": {
+  "node_index": 78384,
+  "degree": 16784,
+  "pi_rank": 59048
+ },
+ "fb_weight_share_top_k_nodes_by_fb_touch": {
+  "1": 0.8392123720052975,
+  "10": 2.1597415112521965,
+  "100": 7.0481547149369765,
+  "1000": 20.085623336739552
+ },
+ "scc": {
+  "count": 9626,
+  "giant_nodes": 126840,
+  "fb_edges_inside_giant": 1173079,
+  "fb_edges": 1173245,
+  "giant_rank_span": [
+   7264,
+   134103
+  ]
+ },
+ "fb_span_over_n_quantiles": {
+  "10": 0.006425267841461273,
+  "25": 0.04923599320882852,
+  "50": 0.13286692816579826,
+  "75": 0.26113810666822784,
+  "90": 0.44650488847257186
+ }
+}
+L= 8 equal_count  intra=33.824%  ff_by_layer=55.678%  max_width=17081  (0.2s)
+L= 8 equal_weight intra=30.155%  ff_by_layer=58.796%  max_width=29935  (0.2s)
+   dp_grid L=8: grid intra 28.989% -> refined 28.923% (7 cut moves)
+L= 8 dp_grid      intra=28.923%  ff_by_layer=59.722%  max_width=29992  (1.4s)
+L=10 equal_count  intra=30.307%  ff_by_layer=58.782%  max_width=13665  (0.2s)
+L=10 equal_weight intra=28.608%  ff_by_layer=60.170%  max_width=24790  (0.2s)
+   dp_grid L=10: grid intra 25.328% -> refined 25.269% (9 cut moves)
+L=10 dp_grid      intra=25.269%  ff_by_layer=62.907%  max_width=29992  (1.5s)
+curve L= 3: 55.252%
+curve L= 5: 41.353%
+curve L= 8: 28.923%
+curve L=10: 25.269%
+curve L=15: 19.038%
+curve L=20: 15.707%
+curve L=30: 12.396%
+curve L=50: 9.635%
+trophic: {'spearman_vs_pi': 0.7602040263922919, 'ff_pct_under_trophic_order': 77.77735811682825, 'F0': 0.3596232131939354, 'max_level': 6.701323769770545, 'cg_info': 0, 'seconds': 3.3148202896118164}
+done in 45s -> D:\1\bot\UHaifa\deep_learning\mfas_autoresearch\nn_backward_connections\layering\outputs\gallery_fly

@@ -24,6 +24,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 # Pinned champion orderings (int32 ranks; see tools/pin_champion.py).
 CHAMPION_ORDER_NPZ = {
     "mouse": "results/champions/H63_mouse_s42_cuda.npz",
+    "connectome": "results/champions/H64_connectome_s42_cuda.npz",
 }
 
 __all__ = ["REPO_ROOT", "CHAMPION_ORDER_NPZ", "load_graph_and_champion_order"]

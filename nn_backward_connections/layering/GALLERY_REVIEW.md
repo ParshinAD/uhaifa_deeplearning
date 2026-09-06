@@ -146,3 +146,84 @@ distribution under degree-preserving rewiring (Track C).
 Blocking item for every seat: **node id → region name mapping**, plus the provenance of
 node 92. Everything above is built so that names drop in as a label column without
 touching the algorithms.
+
+## 5. The fly connectome (added 2026-09-06, `tools/gallery_fly.py`)
+
+The pinned H64 order (84.2582 %, parity-gated) was put through the scalable subset of the
+gallery: binned adjacency (V2), bundled blocks (V4), layer matrix (V5), a span spectrum in
+place of the arc diagram (V1'), the soft-layering curve, and the trophic control. Per-node
+drawings and the crossing oracle do not exist at this size. Files:
+`outputs/gallery_fly/`, numbers: `outputs/gallery_fly/report.json` and
+`method_comparison.csv`. Runtime 45 s in the base Anaconda python.
+
+### 5.1 Which slicing method is best on the fly
+
+| L | equal count | equal weight | grid DP + exact refinement |
+|---|---|---|---|
+| 8 | 33.82 % intra | 30.16 % | **28.92 %** |
+| 10 | 30.31 % | 28.61 % | **25.27 %** |
+
+The DP wins by 3–5 pp; refining its grid cuts exactly (coordinate descent, cuts moved by
+≤ 8 ranks) gains only 0.06 pp, so a 100-rank grid is fine at this scale. That is the
+answer to "which method": **min-intra DP on a grid**, and the method choice is not the
+story.
+
+### 5.2 The story: the fly is not slice-layered, the mouse is
+
+| | mouse | fly |
+|---|---|---|
+| intra-layer weight at L = 10 (best cut) | 3.4 % | 25.3 % |
+| at L = 50 | 0.0 % | 9.6 % |
+| feedback span in pi, median / n | 0.25 | 0.13 |
+| share of FB weight on the top node | 40.5 % | 0.84 % |
+| share of FB weight on the top 1000 nodes | — | 20.1 % |
+| trophic Spearman vs pi / coherence F0 / depth | 0.74 / 0.71 / 2.7 | 0.76 / 0.36 / 6.7 |
+| dominant V5 cells | L0→L8, L3→L8 (long skips) | L_k→L_{k+1} (a chain) |
+
+Reading:
+- **Locality.** The span spectrum shows 16 % of all fly weight sitting within 1.7 % of n
+  in the order, on both sides of zero. Any contiguous slicing has to cut through that, so
+  a quarter of the weight stays inside layers no matter where the cuts go. The mouse has no
+  such short-range mass.
+- **No hub.** Feedback in the fly is spread over thousands of neurons (top node 0.8 %,
+  top 1000 = 20 %); the mouse story ("one node takes 40 % of the feedback") does not
+  transfer at all.
+- **A chain, not a fan.** The fly's layer matrix is banded: each layer projects mostly to
+  the next one or two, and the thickest feedback bundles are also adjacent-layer (V4:
+  L1→L0, L2→L1, ..., all 0.3–0.6 %). The mouse's matrix was dominated by the source layer
+  projecting to the sink layer.
+- **The trophic control agrees with pi about as well as in the mouse (ρ 0.76 vs 0.74) but
+  says the fly hierarchy is deep (6.7 levels) and incoherent (F0 0.36)** — edges do not jump
+  one level at a time. Consistent with the local-mass reading.
+- **V2 shows block structure the layering ignores**: stripes and blocks across the whole
+  order (cell-type-like groups that all project to the same targets), and one dense block
+  near ranks 105k–134k with heavy near-diagonal feedback. 7,264 pure sources open the
+  order, ~2,500 sinks close it (giant SCC spans ranks 7,264–134,103, and holds 1,173,079 of
+  1,173,245 feedback edges).
+
+### 5.3 What this means for the representation question
+
+- For the **mouse**, layers = slices of pi is a good model (3 % loss at L = 10) and V5/V4
+  are the figure.
+- For the **fly**, slices of pi are the wrong axis: "layers" cut this way are thick local
+  communities, and V4/V5 describe the chain between them but hide the 25 % inside. The
+  representation the fly asks for is **two-dimensional: (group, depth)** — nodes grouped by
+  community or cell type, groups placed by their pi position, and the layer matrix computed
+  between groups (README roadmap item 4). The public FlyWire annotations (cell type,
+  neuropil, hemilineage) are exactly such a grouping and, unlike the mouse region names,
+  they are obtainable without asking anyone.
+- V2 (binned adjacency) and V1' (span spectrum) need no layering and are the two fly
+  figures that stand on their own today.
+
+### 5.4 Honesty items
+
+- The soft-layering curve for the fly is an upper bound on the true optimum (cuts on a
+  100-rank grid, then exact local refinement); the refinement moved every cut by < 100
+  ranks and changed the value by 0.06 pp, so the bound is tight in practice, not proven.
+- The trophic solve first ran to the CG iteration cap; with a Jacobi preconditioner it
+  converges (info = 0) to the same numbers, which is what is reported.
+- `fb_weight_share_top_k_nodes` in `report.json` counts each FB edge at both endpoints and
+  halves the sum for k > 1; it is a share-of-touch estimate, not an exact set cover.
+- The H64 connectome order was pinned in this session
+  (`results/champions/H64_connectome_s42_cuda.npz`, re-scored to 35,314,407 exactly by the
+  pin tool) and registered in `io_utils.CHAMPION_ORDER_NPZ`. The earlier H42 pin stays.
