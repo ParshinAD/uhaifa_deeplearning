@@ -74,6 +74,9 @@ layering/
 ├── tools/diagnostics.py    ← structural diagnostics (hub, SCCs, FB span, soft-layering
 │                             curve, trophic levels) behind RESEARCH_NOTES.md
 ├── RESEARCH_NOTES.md       ← 2026-09-06 review: what v1 shows, representation options, audiences
+├── GALLERY_REVIEW.md       ← 2026-09-06 gallery of 10 representations, three reviews, ranking
+├── tools/gallery.py        ← builds the gallery (V1..V7 PNG, layer matrix CSV, layout.json)
+├── tools/build_html.py     ← builds outputs/gallery/explorer.html (interactive, d3)
 ├── tests/test_core.py      ← unit + integration tests
 └── outputs/                ← saved figures (PNG, dpi 120)
 ```
