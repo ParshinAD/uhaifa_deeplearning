@@ -1,0 +1,20 @@
+dataset=mouse n=148 m=583 champion FF=93.175383%
+[hub] node id=92 degree=151 pi-rank=55
+      FB edges touching hub: 58 of 124 = 40.5% of FB weight
+      FF edges touching hub: 93 of 459 = 17.2% of FF weight
+      top FB receivers (id, FB w_in, pi-rank): [(92, 0.253, 55), (104, 0.118, 118), (146, 0.062, 65), (102, 0.041, 119), (142, 0.032, 63), (55, 0.017, 117), (61, 0.012, 113), (15, 0.01, 40)]
+      top FB senders   (id, FB w_out, pi-rank): [(102, 0.079, 119), (103, 0.076, 126), (129, 0.053, 127), (135, 0.035, 128), (53, 0.026, 133), (146, 0.018, 65), (83, 0.017, 129), (51, 0.014, 77)]
+[scc] count=46 sizes>1=[102, 2]
+      giant SCC: 102 nodes, pi-rank range [1, 142]; FB edges inside it: 123 of 124
+[span] FB edge span in pi, quantiles (10, 25, 50, 75, 90): [ 7.  16.  37.5 63.2 85.7] (n=148)
+[soft] min intra-slice weight when pi is cut into L slices:
+       L= 3:  20.21% of total weight
+       L= 5:   9.77% of total weight
+       L= 8:   4.99% of total weight
+       L=10:   3.35% of total weight
+       L=15:   1.38% of total weight
+       L=20:   0.77% of total weight
+       L=26:   0.44% of total weight
+       L=49:  -0.00% of total weight
+[trophic] FF weight under the trophic order: 89.977% (champion pi: 93.175%)
+          trophic coherence F0=0.714, max level=2.71, spearman(pi, trophic)=0.736

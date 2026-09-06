@@ -71,6 +71,9 @@ layering/
 ├── layering_mouse.ipynb    ← BUILD ARTIFACT — regenerate, don't hand-edit
 ├── tools/exec_notebook.py  ← in-process notebook executor (no jupyter kernel
 │                             in the `allen` env; the env is not mutated)
+├── tools/diagnostics.py    ← structural diagnostics (hub, SCCs, FB span, soft-layering
+│                             curve, trophic levels) behind RESEARCH_NOTES.md
+├── RESEARCH_NOTES.md       ← 2026-09-06 review: what v1 shows, representation options, audiences
 ├── tests/test_core.py      ← unit + integration tests
 └── outputs/                ← saved figures (PNG, dpi 120)
 ```
