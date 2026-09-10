@@ -50,8 +50,11 @@ svg{display:block;position:relative}
 .cell{cursor:pointer;stroke-linejoin:round}
 .cell.dim,.bnd.dim{opacity:.08}
 .cell.pin{stroke:var(--ink) !important;stroke-width:2.4 !important}
-#legend{position:absolute;right:12px;top:8px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:7px 10px;font-size:11.5px;color:var(--muted);line-height:1.55;max-width:290px;opacity:.94}
-#legend b{color:var(--ink);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+#legend{position:absolute;right:12px;top:8px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:5px 10px 7px;font-size:11.5px;color:var(--muted);line-height:1.55;max-width:290px;opacity:.94}
+#legend-toggle{display:flex;align-items:center;gap:6px;width:100%;background:none;border:none;padding:2px 0;cursor:pointer;color:var(--ink);font:600 11px "IBM Plex Sans",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em}
+#legend-toggle .arr{color:var(--muted);font-size:10px;transition:transform .12s}
+#legend.collapsed #legend-body{display:none}
+#legend.collapsed .arr{transform:rotate(-90deg)}
 #legend .fbword{color:var(--fb)}
 .cell-lab{font:9px "IBM Plex Mono",ui-monospace,monospace;pointer-events:none;text-anchor:middle;dominant-baseline:central}
 .bnd{fill:none;pointer-events:stroke}
@@ -145,11 +148,14 @@ svg{display:block;position:relative}
   </aside>
   <div id="stage">
     <div id="scroller"><div id="wrap"><canvas id="cloud"></canvas><svg id="svg" role="img" aria-label="The fly connectome drawn as biological streams by MFAS depth"></svg></div></div>
-    <div id="legend"><b>how to read</b><br>
+    <div id="legend">
+      <button type="button" id="legend-toggle" aria-expanded="true" aria-controls="legend-body">how to read <span class="arr">▾</span></button>
+      <div id="legend-body">
       bundle colour = source stream (feedforward) · <span class="fbword">crimson = feedback</span>, drawn on top<br>
       same-lane bundles bow over (FF) / under (FB) their lane · cell area ~ neurons (sides √-scaled, floored)<br>
       cell border = intra-cell weight · hatched = most members have no outputs in this graph<br>
       numbers in cells = neurons; on the card = % of total weight</div>
+    </div>
   </div>
 </main>
 
@@ -771,6 +777,21 @@ svg.addEventListener("click", e=>{
   else showCellCard(id);
   applyIso(); markPin();
 });
+
+// collapsible legend (state remembered per browser; fails safe to expanded)
+(function(){
+  const leg = document.getElementById("legend");
+  const btn = document.getElementById("legend-toggle");
+  let collapsed = false;
+  try{ collapsed = localStorage.getItem("fly-legend-collapsed")==="1"; }catch(e){}
+  const apply = ()=>{ leg.classList.toggle("collapsed", collapsed);
+                      btn.setAttribute("aria-expanded", String(!collapsed)); };
+  apply();
+  btn.addEventListener("click", ()=>{
+    collapsed = !collapsed; apply();
+    try{ localStorage.setItem("fly-legend-collapsed", collapsed?"1":"0"); }catch(e){}
+  });
+})();
 
 // methods modal
 const modal = document.getElementById("methods");
