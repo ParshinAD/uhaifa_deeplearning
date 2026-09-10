@@ -1,0 +1,180 @@
+{
+ "champion_ff_pct": 84.25817950936937,
+ "config": {
+  "ann_npz": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/fly_ann/node_ann.npz",
+  "ann_meta": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/fly_ann/node_ann_meta.json",
+  "out_dir": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/fly_streams",
+  "n_bins_list": [
+   8,
+   16,
+   32
+  ],
+  "min_bundle_frac": 0.0002,
+  "export_bundle_frac": 5e-05,
+  "label_top_bundles": 10,
+  "sink_hatch_frac": 0.5,
+  "perm_test_n": 2000,
+  "perm_seed": 42,
+  "dpi": 110
+ },
+ "lane_sizes": {
+  "photoreceptors": 9944,
+  "ascending (VNC)": 1989,
+  "sensory (other)": 4883,
+  "lamina": 8337,
+  "visual centrifugal": 524,
+  "medulla": 24025,
+  "olfaction: AL\u00b7LH": 1708,
+  "medulla\u2192lobula": 34543,
+  "lobula (plate)": 10399,
+  "optic (other)": 205,
+  "mushroom body": 5597,
+  "visual projection": 8038,
+  "central complex": 2998,
+  "central (other)": 22004,
+  "descending": 1276,
+  "endocrine": 69,
+  "motor": 109
+ },
+ "lane_order_check": {
+  "identical": false,
+  "position_changes": {
+   "medulla\u2192lobula": {
+    "median_pos": 7,
+    "mean_pos": 8,
+    "median_rank": 69620.0,
+    "mean_rank": 69614.62073357844
+   },
+   "lobula (plate)": {
+    "median_pos": 8,
+    "mean_pos": 9,
+    "median_rank": 76499.0,
+    "mean_rank": 81056.6605442831
+   },
+   "optic (other)": {
+    "median_pos": 9,
+    "mean_pos": 7,
+    "median_rank": 81594.0,
+    "mean_rank": 64080.94146341463
+   },
+   "visual projection": {
+    "median_pos": 11,
+    "mean_pos": 12,
+    "median_rank": 110567.5,
+    "mean_rank": 103877.09604379199
+   },
+   "central complex": {
+    "median_pos": 12,
+    "mean_pos": 13,
+    "median_rank": 113094.5,
+    "mean_rank": 104050.97398265511
+   },
+   "central (other)": {
+    "median_pos": 13,
+    "mean_pos": 11,
+    "median_rank": 119173.5,
+    "mean_rank": 97812.48718414834
+   }
+  },
+  "defense": "median is used because several lanes are heavily skewed (optic (other): 205 nodes with a long late tail; central (other): a 22k grab-bag) \u2014 the mean follows the tail, the median follows the mass"
+ },
+ "variants": {
+  "bio17_B8": {
+   "cells_nonempty": 123,
+   "intra_cell_pct": 18.879197796170804,
+   "intra_cell_ff_pct": 15.602855983902135,
+   "intra_cell_fb_pct": 3.276341812268669,
+   "inter_ff_pct_of_total": 68.65532352546724,
+   "inter_fb_pct_of_total": 12.465478678361958,
+   "same_bin_vertical_pct_of_inter": 18.42257223753374,
+   "same_lane_pct_of_inter_ff": 29.467231111986564,
+   "bundles_total": 5078,
+   "bundles_inked_ff": 397,
+   "bundles_inked_fb": 137,
+   "inked_ff_pct_of_inter_ff": 91.7929908118585,
+   "inked_fb_pct_of_inter_fb": 73.02739432628539
+  },
+  "bio17_B16": {
+   "cells_nonempty": 220,
+   "intra_cell_pct": 14.38044646776694,
+   "intra_cell_ff_pct": 11.891549515449473,
+   "intra_cell_fb_pct": 2.488896952317468,
+   "inter_ff_pct_of_total": 72.3666299939199,
+   "inter_fb_pct_of_total": 13.252923538313159,
+   "same_bin_vertical_pct_of_inter": 10.84783698408928,
+   "same_lane_pct_of_inter_ff": 33.08448842290396,
+   "bundles_total": 12703,
+   "bundles_inked_ff": 638,
+   "bundles_inked_fb": 155,
+   "inked_ff_pct_of_inter_ff": 84.65212003110805,
+   "inked_fb_pct_of_inter_fb": 52.90639226988016
+  },
+  "bio17_B32": {
+   "cells_nonempty": 396,
+   "intra_cell_pct": 10.897023848053957,
+   "intra_cell_ff_pct": 8.967294226272049,
+   "intra_cell_fb_pct": 1.929729621781908,
+   "inter_ff_pct_of_total": 75.29088528309732,
+   "inter_fb_pct_of_total": 13.812090868848719,
+   "same_bin_vertical_pct_of_inter": 7.375310165640803,
+   "same_lane_pct_of_inter_ff": 35.68344894676522,
+   "bundles_total": 31098,
+   "bundles_inked_ff": 859,
+   "bundles_inked_fb": 96,
+   "inked_ff_pct_of_inter_ff": 70.53785169753019,
+   "inked_fb_pct_of_inter_fb": 28.075488046781597
+  }
+ },
+ "flow_hierarchy_test": {
+  "spearman_rho": 0.26336276753680166,
+  "n": 136635,
+  "perms": 2000,
+  "exceedances": 0,
+  "p_two_sided_leq": 0.0005,
+  "note": "rho of flow ordinal (aff<intr<eff) vs champion rank; label permutation null; p is a <= bound at the 1/perms floor"
+ },
+ "nt_direction": {
+  "NA": {
+   "pct_of_ff": 0.000996760330705822,
+   "pct_of_fb": 0.003637612550005805,
+   "fb_share_within_nt": 40.54054054054054
+  },
+  "acetylcholine": {
+   "pct_of_ff": 59.765503070743904,
+   "pct_of_fb": 40.99713628952001,
+   "fb_share_within_nt": 11.359936062398798
+  },
+  "dopamine": {
+   "pct_of_ff": 1.26266313915451,
+   "pct_of_fb": 1.7008718447879227,
+   "fb_share_within_nt": 20.106571872407596
+  },
+  "gaba": {
+   "pct_of_ff": 22.838058699385776,
+   "pct_of_fb": 32.29213242000966,
+   "fb_share_within_nt": 20.896597910054794
+  },
+  "glutamate": {
+   "pct_of_ff": 15.367490101136344,
+   "pct_of_fb": 23.53802078107423,
+   "fb_share_within_nt": 22.249213958796627
+  },
+  "octopamine": {
+   "pct_of_ff": 0.17455198950388717,
+   "pct_of_fb": 0.18762502398550776,
+   "fb_share_within_nt": 16.723632482673835
+  },
+  "serotonin": {
+   "pct_of_ff": 0.5907362397448724,
+   "pct_of_fb": 1.2805760280726686,
+   "fb_share_within_nt": 28.82560456356788
+  },
+  "_note": "top_nt is a PREDICTION (Eckstein et al. 2024) joined from the annotation table, not ground truth"
+ },
+ "sink_audit": {
+  "pure_sinks_zero_out_weight": 2447,
+  "pure_sources_zero_in_weight": 6651,
+  "note": "cells with >50% zero-out-weight members are hatched grey. In sensory/optic lanes these are truncated fragments the optimizer necessarily places late (an artifact, not biology); for motor/endocrine they are genuine terminals whose outputs leave the brain and hence the graph"
+ },
+ "seconds": 25.66283893585205
+}

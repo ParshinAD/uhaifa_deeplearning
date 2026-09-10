@@ -227,3 +227,14 @@ Reading:
 - The H64 connectome order was pinned in this session
   (`results/champions/H64_connectome_s42_cuda.npz`, re-scored to 35,314,407 exactly by the
   pin tool) and registered in `io_utils.CHAMPION_ORDER_NPZ`. The earlier H42 pin stays.
+
+## 6. The fly, resolved (added 2026-09-10)
+
+The (group, depth) representation §5.3 asked for was built with the public
+FlyWire annotations as the grouping (99.99 % join): 17 biological streams ×
+equal-count depth bins, 14.4 % intra-cell at B=16 (vs 25.3 % for pi-slices and
+83 % for Leiden). Four review rounds, a verification pass, and a final
+evaluation (ACCEPT, 23/25) are recorded in **`FLY_STREAMS_REVIEW.md`**, together
+with the findings (the MFAS order recapitulates sensory→motor; feedback is
+disproportionately GABA/glutamatergic) and the interactive artifact
+"Fly Connectome Streams".
