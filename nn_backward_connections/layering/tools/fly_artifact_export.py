@@ -73,9 +73,13 @@ def main():
     opener = gzip.open if str(CONFIG["ann_tsv"]).endswith(".gz") else open
     with opener(CONFIG["ann_tsv"], "rt", encoding="utf-8") as f:
         for row in csv.DictReader(f, delimiter="\t"):
-            t = row["cell_type"].strip() or row["cell_class"].strip() or \
-                row["super_class"].strip()
-            ctype[int(row["root_id"])] = t
+            t = row["cell_type"].strip()
+            if not t:
+                # fallback labels are marked so the type search cannot pass a
+                # class-level bucket off as the full class population
+                c = row["cell_class"].strip() or row["super_class"].strip()
+                t = f"{c} (class)" if c else ""
+            ctype[int(row["root_id"])] = t or "unannotated"
     types_by_node = [ctype.get(int(i), "unannotated") for i in node_ids]
 
     layouts = {}
@@ -101,6 +105,13 @@ def main():
         "cloud_xy.npz is stale: its lane list disagrees with assign_lanes"
     y = cl["y"].astype(np.float64)
     y01 = (y - y.min()) / (y.max() - y.min())
+    # per-neuron cell-type codes for the artifact's type-highlight search
+    type_names = sorted(set(types_by_node))
+    type_idx = {t: i for i, t in enumerate(type_names)}
+    assert len(type_names) < 65536
+    type_u16 = np.array([type_idx[t] for t in types_by_node], dtype=np.uint16)
+    type_counts = np.bincount(type_u16, minlength=len(type_names))
+
     side_codes = d["side"]
     sidev = meta["side_values"]
     side_map = np.zeros(len(sidev), dtype=np.uint8)          # 0 = other/center
@@ -115,6 +126,7 @@ def main():
         "lane_u8": b64(cl["lane"].astype(np.uint8)),
         "sink_u8": b64((out_w == 0).astype(np.uint8)),
         "side_u8": b64(side_map[side_codes]),                # 0 other, 1 L, 2 R
+        "type_u16": b64(type_u16),
     }
 
     report = json.loads((CONFIG["streams_dir"] / "report_streams.json")
@@ -129,6 +141,8 @@ def main():
         "lane_list": lane_list,
         "layouts": layouts,
         "cloud": cloud,
+        "type_names": type_names,
+        "type_counts": type_counts.tolist(),
         "lane_matrix": lane_matrix,
         "flow_hierarchy_test": report["flow_hierarchy_test"],
         "nt_direction": report["nt_direction"],

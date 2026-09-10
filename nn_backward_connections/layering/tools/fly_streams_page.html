@@ -31,7 +31,7 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(
 .ctl label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px}
 .ctl input[type=range]{width:100%}
 .sw{width:18px;height:3px;border-radius:2px;display:inline-block;flex-shrink:0}
-select{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%}
+select,input[type=text]{font:inherit;font-size:12.5px;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%}
 select:focus,input:focus,button:focus{outline:2px solid var(--accent);outline-offset:1px}
 .hint{color:var(--muted);font-size:12px}
 .card{border-top:1px solid var(--line);padding-top:10px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;font-variant-numeric:tabular-nums}
@@ -94,8 +94,9 @@ svg{display:block;position:relative}
     <div class="ctl">
       <h2>View</h2>
       <div class="seg" id="viewseg">
-        <button data-v="streams" class="on">Streams grid</button>
-        <button data-v="matrix">Lane matrix</button>
+        <button data-v="streams" class="on">Streams</button>
+        <button data-v="matrix">Matrix</button>
+        <button data-v="chem">Chemistry</button>
       </div>
       <button type="button" id="methods-btn" class="linkbtn">How it is computed →</button>
     </div>
@@ -109,7 +110,8 @@ svg{display:block;position:relative}
       <span class="hint">Equal-count contiguous slices of the champion order.</span>
     </div>
     <div class="ctl" id="ctl-classes">
-      <h2>Edge classes</h2>
+      <h2>Grid layers</h2>
+      <label><input type="checkbox" id="show-grid" checked><span class="sw" style="background:var(--muted)"></span>cells &amp; bundles (off = pure neuron cloud)</label>
       <label><input type="checkbox" id="show-ff" checked><span class="sw" style="background:linear-gradient(90deg,#1f8a8d,#e08a2e,#3f6ab5)"></span>feedforward (source-lane colour)</label>
       <label><input type="checkbox" id="show-fb" checked><span class="sw" style="background:var(--fb)"></span>feedback (crimson)</label>
     </div>
@@ -127,6 +129,9 @@ svg{display:block;position:relative}
         <button data-c="side">hemisphere</button>
       </div>
       <span class="hint" id="cloud-hint">y within a lane = rank of the spectral affinity coordinate (ordinal).</span>
+      <input type="text" list="typelist" id="type-find" placeholder="highlight a cell type… e.g. KCg-m, Mi1, R1-6" autocomplete="off">
+      <datalist id="typelist"></datalist>
+      <span class="hint" id="type-hint"></span>
     </div>
     <div class="ctl" id="ctl-mx" hidden>
       <h2>Matrix metric</h2>
@@ -213,6 +218,10 @@ svg{display:block;position:relative}
          view, not by a per-lane statistic) — switch the layer to "hemisphere" to see it.
          The dense terminal stripe at the far right of several lanes is the
          zero-out-weight sink pile made per-neuron-visible.</p>
+      <p class="note">The type-highlight search matches the annotation's
+         <code>cell_type</code>; the 1,233 neurons without one appear under their
+         cell class instead, labelled "… (class)" — picking such an entry
+         highlights only the untyped members of that class, not the whole class.</p>
     </section>
 
     <section>
@@ -270,6 +279,11 @@ const CY = b64f(DATA.cloud.y_u16, Uint16Array);
 const CL = b64f(DATA.cloud.lane_u8, Uint8Array);
 const CS = b64f(DATA.cloud.side_u8, Uint8Array);
 const CSINK = b64f(DATA.cloud.sink_u8, Uint8Array);
+const CT = b64f(DATA.cloud.type_u16, Uint16Array);
+state.grid = true; state.typeSel = null;
+const NT_COLORS = {acetylcholine:"#4a7ab5", gaba:"#c96fae", glutamate:"#3f9b6e",
+                   dopamine:"#e08a2e", serotonin:"#7a4fa3", octopamine:"#9c9a30",
+                   NA:"#8a94a6"};
 
 const svg = document.getElementById("svg"), wrap = document.getElementById("wrap");
 const canvas = document.getElementById("cloud"), card = document.getElementById("card");
@@ -351,6 +365,7 @@ function drawStreams(){
   }
   svg.innerHTML = s + `<g id="g-ff"></g><g id="g-fb"></g><g id="g-cells">${cellsSvg}</g>`;
   drawBundles();
+  applyGrid();
   drawCloud();
   if(state.pinned!=null){ showCellCard(state.pinned); markPin(); } else updateCardDefault();
 }
@@ -440,14 +455,26 @@ function drawCloud(){
   const yMin = DATA.cloud.y_min, yMax = DATA.cloud.y_max;
   const laneCols = lay().lanes.map((l,i)=>laneCol(i));
   const cL = css('--hemiL'), cR = css('--hemiR'), cO = css('--dim');
-  ctx.globalAlpha = 0.38;
+  const sel = state.typeSel;
+  const pxy = i => [G.mL + (CX[i]/N)*G.plotW,
+                    G.mT + ((yMin + (CY[i]/65535)*(yMax-yMin))+0.5)*G.laneS];
+  ctx.globalAlpha = sel==null ? 0.38 : 0.10;
   for(let i=0;i<N;i++){
-    const yv = yMin + (CY[i]/65535)*(yMax-yMin);
-    const px = G.mL + (CX[i]/N)*G.plotW;
-    const py = G.mT + (yv+0.5)*G.laneS;
-    if(hemi) ctx.fillStyle = CS[i]===1?cL:(CS[i]===2?cR:cO);
+    if(sel!=null && CT[i]===sel) continue;
+    const [px,py] = pxy(i);
+    if(sel!=null) ctx.fillStyle = cO;
+    else if(hemi) ctx.fillStyle = CS[i]===1?cL:(CS[i]===2?cR:cO);
     else ctx.fillStyle = CSINK[i]?cO:laneCols[CL[i]];
     ctx.fillRect(px, py, 1.3, 1.3);
+  }
+  if(sel!=null){                       // highlighted type drawn on top, larger
+    ctx.globalAlpha = 0.95;
+    for(let i=0;i<N;i++){
+      if(CT[i]!==sel) continue;
+      const [px,py] = pxy(i);
+      ctx.fillStyle = hemi ? (CS[i]===1?cL:(CS[i]===2?cR:cO)) : laneCols[CL[i]];
+      ctx.fillRect(px-1, py-1, 2.6, 2.6);
+    }
   }
   ctx.globalAlpha = 1;
 }
@@ -477,7 +504,9 @@ function updateCardDefault(){
   const st = lay().stats;
   const hint = state.view==="streams"
     ? "Hover a cell to isolate its flows; click to pin. Hover a lane name to isolate its stream."
-    : "Hover a matrix cell for the pair's exact weights. Nothing here is thresholded away.";
+    : state.view==="matrix"
+    ? "Hover a matrix cell for the pair's exact weights. Nothing here is thresholded away."
+    : "Static summary of transmitter chemistry — details and caveats in “How it is computed”.";
   card.innerHTML = `<div class="h">No cell selected</div>
     <div class="row"><span class="k">hidden intra-cell</span><span>${st.intra_cell_ff_pct.toFixed(1)}% FF + ${st.intra_cell_fb_pct.toFixed(1)}% FB</span></div>
     <div class="row"><span class="k">inter-cell FF / FB</span><span>${st.inter_ff_pct_of_total.toFixed(1)} / ${st.inter_fb_pct_of_total.toFixed(1)} % of total</span></div>
@@ -554,6 +583,66 @@ function drawMatrix(){
     : "Blue = feedforward-dominated pair, crimson = feedback-dominated (diverging at 50 %).";
 }
 
+// ---- chemistry view ----------------------------------------------------
+function drawChem(){
+  canvas.width = 0; canvas.height = 0; canvas.style.width = "0px";
+  const order = ["acetylcholine","gaba","glutamate","dopamine","serotonin","octopamine"];
+  const nt = order.filter(k=>DATA.nt_direction[k]).map(k=>[k, DATA.nt_direction[k]]);
+  const fbOverall = 100 - DATA.champion_ff_pct;
+  const mL = 150, W_ = 880, barMax = 560;
+  let y = 46, s = "";
+  const ink = css('--ink'), muted = css('--muted');
+
+  s += `<text x="${mL}" y="24" font-size="14" font-weight="600" fill="${ink}">How much of each transmitter's weight flows backward</text>`;
+  const byShare = [...nt].sort((a,b)=>b[1].fb_share_within_nt-a[1].fb_share_within_nt);
+  const shMax = Math.max(...byShare.map(x=>x[1].fb_share_within_nt))*1.15;
+  for(const [k,v] of byShare){
+    const w = barMax*v.fb_share_within_nt/shMax;
+    s += `<rect x="${mL-24}" y="${y+4}" width="10" height="10" rx="2" fill="${NT_COLORS[k]}"/>`;
+    s += `<text x="${mL-30}" y="${y+13}" text-anchor="end" font-size="12.5" fill="${ink}" font-weight="600">${k}</text>`;
+    s += `<rect x="${mL}" y="${y}" width="${w.toFixed(1)}" height="18" rx="3" fill="${NT_COLORS[k]}" opacity="0.85"/>`;
+    s += `<text x="${mL+w+8}" y="${y+13}" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${v.fb_share_within_nt.toFixed(1)} %</text>`;
+    y += 27;
+  }
+  const rx = mL + barMax*fbOverall/shMax;
+  s += `<line x1="${rx}" y1="40" x2="${rx}" y2="${y}" stroke="${muted}" stroke-dasharray="4 3"/>`;
+  s += `<text x="${rx+6}" y="${y+4}" font-size="11" fill="${muted}">all edges: ${fbOverall.toFixed(1)} % backward</text>`;
+  s += `<text x="${mL}" y="${y+24}" font-size="12" fill="${muted}">Right of the dashed line = over-represented in feedback. GABA and glutamate are inhibitory in the fly;</text>`;
+  s += `<text x="${mL}" y="${y+40}" font-size="12" fill="${muted}">dopamine and serotonin are neuromodulators. Excitatory acetylcholine flows backward markedly less than</text>`;
+  s += `<text x="${mL}" y="${y+56}" font-size="12" fill="${muted}">average (11.4 % vs 15.7 %) — about half as often as the inhibitory transmitters.</text>`;
+
+  y += 100;
+  s += `<text x="${mL}" y="${y}" font-size="14" font-weight="600" fill="${ink}">What feedforward vs feedback weight is made of</text>`;
+  y += 16;
+  for(const [rowName, key] of [["feedforward","pct_of_ff"],["feedback","pct_of_fb"]]){
+    s += `<text x="${mL-10}" y="${y+14}" text-anchor="end" font-size="12.5" fill="${ink}">${rowName}</text>`;
+    let x = mL;
+    for(const [k,v] of nt){
+      const w = barMax*v[key]/100;
+      if(w < 1){ x += w; continue; }
+      s += `<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(w-2,1).toFixed(1)}" height="20" rx="2" fill="${NT_COLORS[k]}" opacity="0.9"/>`;
+      if(v[key] >= 5)
+        s += `<text x="${(x+w/2).toFixed(1)}" y="${y+14}" text-anchor="middle" font-size="10.5" fill="${lum(NT_COLORS[k])>0.45?'#141413':'#f7f6f3'}" font-family="IBM Plex Mono,monospace">${v[key].toFixed(0)}%</text>`;
+      x += w;
+    }
+    y += 30;
+  }
+  y += 6;
+  let lx = mL;
+  for(const [k] of nt){
+    s += `<rect x="${lx}" y="${y}" width="10" height="10" rx="2" fill="${NT_COLORS[k]}"/>`;
+    s += `<text x="${lx+14}" y="${y+9}" font-size="11.5" fill="${muted}">${k}</text>`;
+    lx += 14 + 8 + k.length*6.4;
+  }
+  y += 34;
+  s += `<text x="${mL}" y="${y}" font-size="12" fill="${muted}">The forward pass is mostly excitatory drive (ACh 60 %); the backward pass is majority inhibition + modulation (GABA+Glu 56 %).</text>`;
+  s += `<text x="${mL}" y="${y+17}" font-size="11" fill="${muted}">Transmitter labels are per-neuron predictions (Eckstein et al. 2024) joined from the FlyWire annotation table — not ground truth.</text>`;
+
+  svg.setAttribute("width", W_+40); svg.setAttribute("height", y+40);
+  svg.setAttribute("viewBox", `0 0 ${W_+40} ${y+40}`);
+  svg.innerHTML = s;
+}
+
 // ---- tooltip for matrix ------------------------------------------------
 const tip = document.createElement("div"); tip.id = "tip"; tip.hidden = true;
 document.body.appendChild(tip);
@@ -563,12 +652,22 @@ function render(){
   const streams = state.view==="streams";
   document.getElementById("ctl-bins").hidden = !streams;
   document.getElementById("ctl-classes").hidden = !streams;
-  document.getElementById("ctl-thr").hidden = !streams;
+  document.getElementById("ctl-thr").hidden = !streams || !state.grid;
   document.getElementById("ctl-cloud").hidden = !streams;
-  document.getElementById("ctl-mx").hidden = streams;
-  document.getElementById("legend").hidden = !streams;
+  document.getElementById("ctl-mx").hidden = state.view!=="matrix";
+  document.getElementById("legend").hidden = !streams || !state.grid;
   state.pinned = state.hover = state.hoverLane = null;
-  if(streams) drawStreams(); else { drawMatrix(); updateCardDefault(); }
+  if(streams) drawStreams();
+  else if(state.view==="matrix"){ drawMatrix(); updateCardDefault(); }
+  else { drawChem(); updateCardDefault(); }
+}
+function applyGrid(){
+  for(const id of ["g-cells","g-ff","g-fb"]){
+    const g = document.getElementById(id);
+    if(g) g.style.display = state.grid ? "" : "none";
+  }
+  document.getElementById("legend").hidden = state.view!=="streams" || !state.grid;
+  document.getElementById("ctl-thr").hidden = state.view!=="streams" || !state.grid;
 }
 function seg(id, attr, cb){
   const el = document.getElementById(id);
@@ -580,10 +679,53 @@ function seg(id, attr, cb){
 }
 seg("viewseg","v", v=>{ state.view=v; render(); });
 seg("binseg","b", b=>{ state.B=+b; state.thrFrac=lay().ink_threshold_frac; syncThr(); render(); });
-seg("cloudseg","c", c=>{ state.cloud=c; drawCloud(); });
+seg("cloudseg","c", c=>{
+  if(c==="off" && !state.grid){        // never leave both layers off
+    state.grid = true;
+    document.getElementById("show-grid").checked = true;
+    applyGrid();
+  }
+  state.cloud=c; drawCloud();
+});
 seg("mxseg","m", m=>{ state.mx=m; drawMatrix(); });
 document.getElementById("show-ff").addEventListener("change", e=>{ state.ff=e.target.checked; drawBundles(); });
 document.getElementById("show-fb").addEventListener("change", e=>{ state.fb=e.target.checked; drawBundles(); });
+document.getElementById("show-grid").addEventListener("change", e=>{
+  state.grid = e.target.checked;
+  if(!state.grid && state.cloud==="off"){        // pure-cloud mode needs dots
+    state.cloud = "lane";
+    document.querySelectorAll("#cloudseg button").forEach(b=>
+      b.classList.toggle("on", b.dataset.c==="lane"));
+    drawCloud();
+  }
+  applyGrid();
+});
+
+// cell-type highlight: exact match against the annotation's cell_type
+(function(){
+  const dl = document.getElementById("typelist");
+  const rows = DATA.type_names.map((t,i)=>[t,DATA.type_counts[i],i])
+                 .filter(r=>r[1]>=20 && r[0]!=="unannotated")
+                 .sort((a,b)=>b[1]-a[1]);
+  dl.innerHTML = rows.map(r=>`<option value="${esc(r[0])}" label="${r[1].toLocaleString()} neurons"></option>`).join("");
+  const inp = document.getElementById("type-find"), hint = document.getElementById("type-hint");
+  inp.addEventListener("input", ()=>{
+    const q = inp.value.trim();
+    if(!q){ state.typeSel = null; hint.textContent = ""; drawCloud(); return; }
+    const i = DATA.type_names.indexOf(q);
+    if(i < 0){ hint.textContent = "keep typing — pick a type from the list";
+               if(state.typeSel!=null){ state.typeSel=null; drawCloud(); } return; }
+    state.typeSel = i;
+    if(state.cloud==="off"){
+      state.cloud = "lane";
+      document.querySelectorAll("#cloudseg button").forEach(b=>
+        b.classList.toggle("on", b.dataset.c==="lane"));
+    }
+    hint.textContent = `${DATA.type_counts[i].toLocaleString()} neurons highlighted` +
+      (state.grid ? " — untick “cells & bundles” to see them clearly" : "");
+    drawCloud();
+  });
+})();
 
 // threshold slider: log scale from export floor to 2e-3
 const thrEl = document.getElementById("thr");
