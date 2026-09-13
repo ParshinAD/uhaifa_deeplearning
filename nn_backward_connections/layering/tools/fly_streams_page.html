@@ -67,7 +67,7 @@ svg{display:block;position:relative}
 .seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
 .seg button{flex:1;border:none;background:var(--bg);color:var(--muted);font:12px "IBM Plex Sans",system-ui,sans-serif;padding:5px 2px;cursor:pointer}
 .seg button.on{background:var(--accent);color:var(--panel)}
-#methods{position:fixed;inset:0;background:rgba(12,15,22,.45);display:flex;align-items:center;justify-content:center;padding:26px;z-index:10}
+#methods,#regions{position:fixed;inset:0;background:rgba(12,15,22,.45);display:flex;align-items:center;justify-content:center;padding:26px;z-index:10}
 .mpanel{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:6px;max-width:720px;width:100%;max-height:88vh;overflow:auto;padding:20px 26px 26px}
 .mpanel h2{font-size:15px;font-weight:600;margin:0 0 10px;color:var(--ink)}
 .mpanel h3{font-size:13px;font-weight:600;margin:0 0 6px;color:var(--ink)}
@@ -82,6 +82,15 @@ svg{display:block;position:relative}
 .mpanel th{font-family:"IBM Plex Sans",system-ui,sans-serif;font-weight:600}
 .mclose{position:absolute;top:8px;right:10px;background:none;border:none;font:18px/1 "IBM Plex Sans",sans-serif;color:var(--muted);cursor:pointer;padding:4px 8px}
 .mclose:hover{color:var(--ink)}
+.mx-lab{cursor:pointer}
+.rg{border-top:1px solid var(--line);padding:12px 0 4px;margin-top:12px;scroll-margin-top:14px}
+.rg h3{font-size:13.5px;font-weight:600;margin:0 0 2px}
+.rg .sub{font:11px "IBM Plex Mono",ui-monospace,monospace;color:var(--muted);margin:0 0 6px}
+.rg p{font-size:13px;line-height:1.5;margin:4px 0;max-width:64ch}
+.rg .hm{color:var(--muted)}
+.rg.flash{animation:rgflash 1.6s ease-out 1}
+@keyframes rgflash{0%{background:var(--shade)}100%{background:transparent}}
+@media (prefers-reduced-motion: reduce){.rg.flash{animation:none}}
 #tip{position:fixed;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:6px 9px;font:11.5px "IBM Plex Mono",ui-monospace,monospace;pointer-events:none;z-index:20;max-width:280px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 </style>
 
@@ -101,6 +110,7 @@ svg{display:block;position:relative}
         <button data-v="matrix">Matrix</button>
         <button data-v="chem">Chemistry</button>
       </div>
+      <button type="button" id="regions-btn" class="linkbtn">What is each region? →</button>
       <button type="button" id="methods-btn" class="linkbtn">How it is computed →</button>
     </div>
     <div class="ctl" id="ctl-bins">
@@ -158,6 +168,20 @@ svg{display:block;position:relative}
     </div>
   </div>
 </main>
+
+<div id="regions" hidden>
+  <div class="mpanel" role="dialog" aria-modal="true" aria-labelledby="rg-title">
+    <button type="button" class="mclose" id="regions-close" aria-label="Close">×</button>
+    <h2 id="rg-title">What each region is</h2>
+    <p>The 17 streams, top-to-bottom exactly as in the drawing — ordered by their
+       median position in the optimized order, which happens to be the path a
+       signal takes from the senses to the muscles. Click any lane name in the
+       drawing to jump straight to its entry. A caveat for the analogies: they
+       are <em>functional</em> ("plays a similar role"), not evolutionary —
+       insect and human brains diverged ~600 million years ago.</p>
+    <div id="regions-body"></div>
+  </div>
+</div>
 
 <div id="methods" hidden>
   <div class="mpanel" role="dialog" aria-modal="true" aria-labelledby="mt">
@@ -509,9 +533,9 @@ function applyIso(){
 function updateCardDefault(){
   const st = lay().stats;
   const hint = state.view==="streams"
-    ? "Hover a cell to isolate its flows; click to pin. Hover a lane name to isolate its stream."
+    ? "Hover a cell to isolate its flows; click to pin. Hover a lane name to isolate its stream; click it to read what that region is."
     : state.view==="matrix"
-    ? "Hover a matrix cell for the pair's exact weights. Nothing here is thresholded away."
+    ? "Hover a matrix cell for the pair's exact weights; click a lane name to read what that region is. Nothing here is thresholded away."
     : "Static summary of transmitter chemistry — details and caveats in “How it is computed”.";
   card.innerHTML = `<div class="h">No cell selected</div>
     <div class="row"><span class="k">hidden intra-cell</span><span>${st.intra_cell_ff_pct.toFixed(1)}% FF + ${st.intra_cell_fb_pct.toFixed(1)}% FB</span></div>
@@ -556,8 +580,8 @@ function drawMatrix(){
   const maxP = Math.max(...W.flat());
   let s = "";
   for(let i=0;i<K;i++){
-    s += `<text class="mx-lab" x="${mL-8}" y="${mT+i*cs+cs/2+4}" text-anchor="end" fill="${laneCol(i)}">${esc(DATA.lane_list[i])}</text>`;
-    s += `<text class="mx-lab" x="${mL+i*cs+cs/2}" y="${mT-8}" text-anchor="start" transform="rotate(-55 ${mL+i*cs+cs/2} ${mT-8})" fill="${laneCol(i)}">${esc(DATA.lane_list[i])}</text>`;
+    s += `<text class="mx-lab" data-lane="${i}" x="${mL-8}" y="${mT+i*cs+cs/2+4}" text-anchor="end" fill="${laneCol(i)}">${esc(DATA.lane_list[i])}</text>`;
+    s += `<text class="mx-lab" data-lane="${i}" x="${mL+i*cs+cs/2}" y="${mT-8}" text-anchor="start" transform="rotate(-55 ${mL+i*cs+cs/2} ${mT-8})" fill="${laneCol(i)}">${esc(DATA.lane_list[i])}</text>`;
   }
   const dark = isDark();
   const base = dark ? "#1c2230" : "#ffffff";
@@ -663,6 +687,7 @@ function render(){
   document.getElementById("ctl-mx").hidden = state.view!=="matrix";
   document.getElementById("legend").hidden = !streams || !state.grid;
   state.pinned = state.hover = state.hoverLane = null;
+  buildRegions();                    // heading colors follow the theme
   if(streams) drawStreams();
   else if(state.view==="matrix"){ drawMatrix(); updateCardDefault(); }
   else { drawChem(); updateCardDefault(); }
@@ -765,6 +790,8 @@ svg.addEventListener("pointerout", e=>{
   if(e.target.closest(".lane-lab")){ state.hoverLane = null; applyIso(); }
 });
 svg.addEventListener("click", e=>{
+  const lab = e.target.closest(".lane-lab, .mx-lab");
+  if(lab && lab.dataset.lane!=null){ openRegions(+lab.dataset.lane); return; }
   const cell = e.target.closest(".cell");
   if(!cell){
     if(state.pinned!=null){ state.pinned=state.hover=state.hoverLane=null;
@@ -777,6 +804,72 @@ svg.addEventListener("click", e=>{
   else showCellCard(id);
   applyIso(); markPin();
 });
+
+// ---- regions guide -----------------------------------------------------
+const LANE_INFO = {
+  "photoreceptors": ["The light sensors of the compound eye: R1-6 for motion and dim light, R7/R8 for color. Everything visual starts here.",
+    "the rods and cones of your retina."],
+  "ascending (VNC)": ["Neurons climbing into the brain from the ventral nerve cord — the fly's spinal cord. They report touch, leg position and body state.",
+    "ascending spinal tracts."],
+  "sensory (other)": ["All non-visual senses that enter the head directly: smell (olfactory receptors), hearing and wind (Johnston's organ in the antenna), taste, temperature, humidity.",
+    "cranial-nerve inputs — olfactory nerve, inner ear, taste fibers."],
+  "lamina": ["The first relay behind the eye. Its L1–L5 cells adapt to brightness and extract contrast, so later stages see changes rather than raw light.",
+    "the outer layers of the retina."],
+  "visual centrifugal": ["The brain talking back to the eye: these cells carry state and attention signals from the central brain into the optic lobe. Anatomically a feedback pathway — yet the optimizer placed them early, treating their broadcasts as input-like (the cost of their loop sits on their inputs).",
+    "cortical feedback to the visual thalamus — attention and gain control."],
+  "medulla": ["The biggest visual stage. It splits the image into parallel channels: ON/OFF, color, timing.",
+    "the inner retina plus the first steps of primary visual cortex (V1)."],
+  "olfaction: AL·LH": ["The smell pathway's middle stage: the antennal lobe sorts odors into ~50 channels (glomeruli), projection neurons carry them onward, and the lateral horn assigns innate meaning — yeast good, predator bad.",
+    "olfactory bulb plus piriform cortex / amygdala."],
+  "medulla→lobula": ["Projection neurons spanning two stages: input in the medulla, output in the lobula (plate). Includes T4 — the textbook elementary motion detector.",
+    "the V1 → MT motion projection."],
+  "lobula (plate)": ["Two structures drawn as one lane: the lobula detects object-like features (small targets, looming), the lobula plate integrates wide-field motion to stabilize flight and gaze.",
+    "motion areas MT/MST plus the superior colliculus."],
+  "optic (other)": ["An honest catch-all: 205 optic-lobe cells (bilateral, ocellar) that fit no specific stage — kept apart so no stage-named lane has to absorb them.",
+    "—"],
+  "mushroom body": ["The fly's memory machine: Kenyon cells hold sparse odor codes, dopamine neurons deliver reward and punishment, output neurons (MBONs) read out what was learned.",
+    "a mix of hippocampus (sparse codes) and dopamine-driven learning circuits."],
+  "visual projection": ["The optic lobe's output cables into the central brain. Each cell type is a labeled line: “something is looming”, “small target moving”.",
+    "pathways from visual cortex to parietal and temporal areas."],
+  "central complex": ["The navigation computer: a literal ring of neurons tracks which way the fly is heading; neighboring circuits handle path integration, steering and sleep.",
+    "the brain's head-direction system — your inner compass."],
+  "central (other)": ["The 22-thousand-neuron “everything else” of the central brain — multimodal neurons where vision, smell and memory converge.",
+    "association cortex; the closest thing a fly has to “prefrontal”."],
+  "descending": ["About 1,300 neurons that funnel all the brain's decisions down to the body — a single one can command escape or landing.",
+    "the corticospinal (pyramidal) tract."],
+  "endocrine": ["Hormone-releasing cells: insulin-like peptides, metabolism, development.",
+    "the hypothalamus–pituitary axis."],
+  "motor": ["The motor neurons that live inside this dataset (neck, proboscis, antennae; leg and wing motor neurons sit in the VNC, outside the graph). The very last neuron of the whole order is one of them — a neck motor neuron.",
+    "cranial and spinal motor neurons."],
+};
+function buildRegions(){
+  const body = document.getElementById("regions-body");
+  const lanes = DATA.layouts.B16.lanes;      // lane order is identical for all B
+  body.innerHTML = lanes.map((l,i)=>{
+    const info = LANE_INFO[l.name] || ["",""];
+    return `<div class="rg" id="rg-${i}">
+      <h3 style="color:${laneCol(i)}">${esc(l.name)}</h3>
+      <p class="sub">${l.n.toLocaleString()} neurons · median position ${(l.med_rank/1000).toFixed(1)}k of 136.6k</p>
+      <p>${info[0]}</p>
+      ${info[1]==="—" ? "" : `<p class="hm"><b>Human analogy (functional):</b> ${info[1]}</p>`}
+    </div>`;
+  }).join("");
+}
+buildRegions();
+const regions = document.getElementById("regions");
+function openRegions(laneIdx){
+  regions.hidden = false;
+  if(laneIdx!=null){
+    const el = document.getElementById("rg-"+laneIdx);
+    if(el){ el.scrollIntoView({block:"start"});
+            el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+  } else {
+    regions.querySelector(".mpanel").scrollTop = 0;
+  }
+}
+document.getElementById("regions-btn").addEventListener("click", ()=>openRegions(null));
+document.getElementById("regions-close").addEventListener("click", ()=>{ regions.hidden=true; });
+regions.addEventListener("click", e=>{ if(e.target===regions) regions.hidden=true; });
 
 // collapsible legend (state remembered per browser; fails safe to expanded)
 (function(){
@@ -798,7 +891,7 @@ const modal = document.getElementById("methods");
 document.getElementById("methods-btn").addEventListener("click", ()=>{ modal.hidden=false; });
 document.getElementById("methods-close").addEventListener("click", ()=>{ modal.hidden=true; });
 modal.addEventListener("click", e=>{ if(e.target===modal) modal.hidden=true; });
-addEventListener("keydown", e=>{ if(e.key==="Escape") modal.hidden=true; });
+addEventListener("keydown", e=>{ if(e.key==="Escape"){ modal.hidden=true; regions.hidden=true; } });
 
 // NT table
 (function(){
