@@ -6,7 +6,8 @@ For every finding: exactly where to look on the page, what you will see, what
 it means, and the honest caveat. The static PNGs in `outputs/fly_streams/` and
 `outputs/fly_cloud/` are the print versions of the same views; every number
 below lives in `outputs/fly_streams/report_streams.json` (re-runnable) and in
-the page's Methods panel.*
+the page's Methods panel. Sections 1–9 are the findings; §10–§11 step back
+and say what they add up to.*
 
 **The one-sentence summary:** the fly brain's wiring alone — no labels, no
 anatomy — already encodes which way information flows; and the ~16 % of
@@ -75,7 +76,7 @@ nothing is thresholded away there.
 
 **Where to look.** Open the **Chemistry** view. Top panel: each transmitter's
 bar is its share of weight flowing backward, against the dashed line at the
-brain-wide average (15.7 %). Serotonin (28.8 %), glutamate (22.3 %), GABA
+brain-wide average (15.7 %). Serotonin (28.8 %), glutamate (22.2 %), GABA
 (20.9 %) and dopamine (20.1 %) all sit right of the line; excitatory
 acetylcholine (11.4 %) sits far left of it. Bottom panel: the two stacked
 bars show composition — acetylcholine is 60 % of feedforward weight but only
@@ -207,8 +208,176 @@ of these structures survive in a random graph with the same statistics.
 
 ---
 
+## 10. What we re-discovered that biologists already knew — and why that is the point
+
+These last two sections step back from single views and read the results as
+a whole. This one lists what our method *re-derived* from wiring alone. When
+a brand-new instrument reproduces the textbook, that is not a failure of
+novelty — it is the calibration that makes everything else believable. Our
+"instrument" is one sentence long: *line up all 136,648 neurons so that as
+much synaptic weight as possible points forward.* No cell types, no anatomy,
+no development — just the connection matrix. Here is what that one sentence
+got right, and what re-deriving each fact adds.
+
+**The brain runs sensors → processing → muscles.** The oldest claim in
+neuroscience, drawn as arrows since Cajal. We see the full staircase at
+neuron resolution, ending on a neck motor neuron as the literal last node
+(ρ = 0.263, p ≤ 5·10⁻⁴ against the annotation's input/output labels).
+*What re-deriving adds:* the hierarchy turns out to be a property of the
+wiring itself — recoverable in one ~20-minute optimization run (the pipeline
+behind that run took a long algorithm campaign to build) instead of a century
+of experiments, and therefore portable to brains that have no textbook yet
+(new species, new datasets, developmental stages).
+
+**The visual conveyor lamina → medulla → lobula.** Classic optic-lobe anatomy,
+including the transmedullary/T4 stage in between. We see not just the order
+but the *spacing*: median depths lamina 24.9k → medulla 46.2k → the
+in-between (T4) stage 69.6k → lobula 76.5k. *Adds:* depth becomes a measured
+coordinate — every one of ~77,000 optic neurons gets its own number, where
+anatomy assigns a stage to a whole region.
+
+**Senses run in parallel and meet in the middle; smell is shallow, vision is
+deep.** We see it as lane chains: olfaction reaches the mushroom body in
+about two hops while vision crawls through five stages; two-fifths of all
+forward weight (42.5 %) never leaves its own stream. *Adds:* all modalities
+on one quantitative canvas — textbook figures usually draw one pathway at a
+time.
+
+**Two mirror half-brains, integrated in the center.** We see a coordinate
+computed from wiring alone — never told about hemispheres (§4) — split every
+optic lane into left/right halves while the central lanes stay mixed.
+*Adds:* bilateral organization becomes something the wiring demonstrates by
+itself — and, next, something scoreable (§11).
+
+**Feedback modulates rather than drives.** Physiology dogma in cortex, and
+known circuit-by-circuit in the fly (inhibitory centrifugal cells,
+dopaminergic teachers). We see the brain-wide budget: GABA+glutamate carry
+55.8 % of backward weight versus 38.2 % of forward; serotonin is the most
+backward-leaning transmitter of all. *Adds:* dogma becomes a decomposition —
+one table covering every connection in the graph.
+
+**Cell types are real computational units.** Decades of typing by morphology,
+genetics and connectivity clustering. The annotation's 8,000+ types appear
+as fine stripes in an ordering that was never told types exist, and every
+type we spot-checked (KCg-m, Mi1, T4c, R1-6 — among the largest) forms one
+contiguous block; no across-all-types contiguity statistic has been computed
+yet. *Adds:* an independent, embarrassingly simple corroboration — if types
+were bookkeeping conveniences, the optimizer would have no reason to keep
+each one together.
+
+Why this matters, in two sentences. *Independence*: the textbook hierarchy
+was pieced together from lesions, tracers and physiology — getting the same
+answer from one mathematical rule means the hierarchy lives in the brain
+itself, not in the methods that found it. *Transfer*: the same pipeline runs
+unchanged on any future wiring map — brains that have a connectome but no
+century of anatomy to lean on.
+
+## 11. What our angle adds that the textbook could not — and where it can lead
+
+Our lens differs from the classical ones in one word: **optimality**.
+FlyWire's own rankings ask "how many steps from the senses is this neuron?";
+"trophic" rankings (a method borrowed from food webs) give each neuron its
+average level. We ask: *what is the best possible one-line arrangement of
+the whole brain — and what does it refuse to do?* The refusals are where the
+new information lives.
+
+Honest framing first: ordering a connectome by feedforwardness is an old
+idea — Durbin did it for the worm's ~280 neurons in 1987, Winding et al.
+(2023) sorted the 3,016-neuron larva (66 % forward under their approximate
+method), Borst (2024) lined up a 65-neuron optic column (~13–16 % recurrent —
+close to our whole-brain number, though a 65-neuron column under a different
+method is a coincidence to test, not a corroboration), and the algorithmic
+problem on this very dataset is an open public challenge. What appears
+genuinely unpublished is the *biological reading* of a near-optimal order at
+adult whole-brain scale — the items below.
+
+**1. A brain has an irreducible feedback number — and for the fly we now
+have a tight ceiling on it.** Our arrangement proves that **at most 15.74 %**
+of synaptic weight has to point backward; the public contest's best solution
+(84.61 %, re-scored by our own oracle) tightens that ceiling to 15.39 %, and
+no method has pushed it below ~15 %. Anatomy can say "there is feedback";
+optimization puts a hard ceiling on how much of it is truly unavoidable. It
+also reconciles two claims that sound contradictory: FlyWire's network paper
+(Lin et al. 2024) called the fly "not predominantly feedforward" — and
+indeed, on our copy of the graph 92.8 % of neurons (126,840 of 136,648) sit
+in one giant loop in which every neuron can reach every other — while we
+find that 84 % of the weight can still be pointed forward. Both are true at
+once: *the brain is one giant loop that is ~84 % one-way by weight.*
+→ Opens: the best-found one-way share as a comparable fingerprint (same
+pipeline on all three: fly 84.3 %, mouse region-level map 93.2 %, mouse
+cortex at synapse level 83.2 %), and the thesis's random-graph question: is
+the fly's ~15.7 % more or less than what the same optimizer leaves
+unavoidable in a random network where every neuron keeps its number of
+connections but loses its identity — did evolution minimize feedback, or
+protect it?
+
+**2. Feedback has a shape, and shapes differ between brains.** Fly: hubless
+(the busiest neuron touches 0.8 % of feedback), short chains between
+adjacent stages, plus targeted retro-projections — the visual-projection →
+medulla traffic is only 38 % forward (§9). Mouse region-level map: one node
+absorbs 40 % of all feedback (pending a provenance check — that node may be
+a summary region rather than real anatomy). → Opens: "what structure
+explains unavoidable feedback" as a comparative program, with the lane
+matrix as the statistic to compare against randomly rewired copies of each
+brain.
+
+**3. "Feedback pathway" splits into two different things.** The optimizer
+must place every loop's cost somewhere, and it puts it on the lighter side —
+which is exactly why its choice is informative. Visual centrifugal cells —
+anatomically feedback, brain → eye — were placed *early*: their broadcasts
+count as forward and the cost moved onto their inputs, meaning the eye-bound
+direction of that loop carries more weight than the return. So anatomical
+feedback may come in (at least) two computational kinds — on the evidence of
+this one pathway so far: broadcast-like (behaves as input: context and state
+delivered into early processing) and truly recurrent (the cost stays on the
+output side). → Opens: a computable classifier of feedback pathways,
+testable against what those pathways do in behavior.
+
+**4. Forward excitation, backward inhibition — as one measured budget.**
+Hints existed at smaller scales, in FlyWire's own papers and the larva
+study. Our angle turns hints into numbers that cover every connection in the
+graph: the backward share within each transmitter is 11.4 % (acetylcholine)
+vs 20.9 / 22.2 % (GABA / glutamate) and 28.8 % (serotonin). → Opens: a
+quantitative signature of predictive-coding-like organization, checkable
+next in the MICrONS mouse-cortex dataset, where excitatory/inhibitory labels
+come from anatomy rather than prediction.
+
+**5. Depth at single-neuron resolution finds what region-level views cannot.**
+Two uses already demonstrated: *quality control* — the optimizer swept the
+2,447 zero-output neurons to the end of the order; most are truncated
+reconstruction fragments, and once the genuine motor/endocrine terminals
+among them are set aside (§8), the rest is an automatic proofreading
+worklist; and *within-type structure* — a neuron ranked far from its type's
+block is either an error or a subtype. → Opens: connectome-QC-by-ordering,
+and a per-type depth atlas as a community resource.
+
+**6. The right ANN metaphor for this brain — measured, not assumed.** The
+naive "brain = a stack of layers" fails numerically: the best slicing into
+10 global layers leaves 25.3 % of weight hidden inside layers. Our 17
+streams × 16 depth bins leave 14.4 % — part of that drop is simply the finer
+grid, but only the streams version has nameable parts, and the deeper point
+stands (§5.2 of the gallery review): for the fly, slices of the order alone
+are the wrong axis; streams × depth is the representation that fits. And the
+layering *is* an architecture spec: 17 named streams, measured skip
+connections, a measured 15.7 % backward budget under the pinned order.
+→ Opens: build it — train neural networks with exactly this shape and ask
+what the backward 15.7 % buys them. This is the bridge between the two
+halves of the thesis.
+
+**7. Symmetry as a score, not a description (proposed, not yet run).**
+Because the whole arrangement is judged by a single number, mirror-swapping
+paired left/right neurons turns "the hemispheres look similar" into a
+measurement: the score drop indexes how far the wiring is from mirror
+symmetry (given a left–right pairing, which exists for only part of the
+brain), and it can be localized lane by lane.
+
+---
+
 *Provenance: order = pinned H64 champion (84.2582 %, oracle-verified);
 annotations = Schlegel et al. 2024 / Dorkenwald et al. 2024 (FlyWire, CC-BY),
-99.99 % join. Full build-and-review history: `FLY_STREAMS_REVIEW.md`; print
-versions of every view: `outputs/fly_streams/S1_*.png`,
-`outputs/fly_cloud/C1_*.png`.*
+99.99 % join. Nearest published relatives of the approach: Durbin 1987
+(C. elegans); Winding et al. 2023, Science (larval Drosophila); Borst 2024,
+PLoS Comp Biol (optic-lobe column); Harris et al. 2019, Nature (mouse area
+hierarchy); Lin et al. 2024, Nature (FlyWire network statistics). Full
+build-and-review history: `FLY_STREAMS_REVIEW.md`; print versions of every
+view: `outputs/fly_streams/S1_*.png`, `outputs/fly_cloud/C1_*.png`.*
