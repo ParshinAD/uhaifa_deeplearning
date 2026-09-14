@@ -112,6 +112,33 @@ def main():
     type_u16 = np.array([type_idx[t] for t in types_by_node], dtype=np.uint16)
     type_counts = np.bincount(type_u16, minlength=len(type_names))
 
+    # transmitter stats in ABSOLUTE synapse weight, for the Chemistry view's
+    # visible reconciliation (percentages elsewhere must re-derive from these)
+    nt_codes = d["top_nt"].astype(np.int64)
+    ntv = meta["top_nt_values"]
+    NNT = len(ntv)
+    tgt = g.tgt.astype(np.int64)
+    ff_edge = rank[src] < rank[tgt]
+    nt_src = nt_codes[src]
+    w_ff_nt = np.bincount(nt_src[ff_edge], weights=w[ff_edge], minlength=NNT)
+    w_fb_nt = np.bincount(nt_src[~ff_edge], weights=w[~ff_edge], minlength=NNT)
+    lane_nt = lane[src] * NNT + nt_src
+    lane_ff = np.bincount(lane_nt[ff_edge], weights=w[ff_edge],
+                          minlength=K * NNT).reshape(K, NNT)
+    lane_fb = np.bincount(lane_nt[~ff_edge], weights=w[~ff_edge],
+                          minlength=K * NNT).reshape(K, NNT)
+    nt_stats = {
+        "values": ntv,
+        "n_neurons": np.bincount(nt_codes, minlength=NNT).tolist(),
+        "w_ff": w_ff_nt.tolist(),
+        "w_fb": w_fb_nt.tolist(),
+        "lane_out_ff": lane_ff.tolist(),
+        "lane_out_fb": lane_fb.tolist(),
+        "note": "absolute synapse weight by SOURCE neuron's predicted "
+                "transmitter (Eckstein et al. 2024); ff by the node-level "
+                "champion order",
+    }
+
     side_codes = d["side"]
     sidev = meta["side_values"]
     side_map = np.zeros(len(sidev), dtype=np.uint8)          # 0 = other/center
@@ -127,6 +154,7 @@ def main():
         "sink_u8": b64((out_w == 0).astype(np.uint8)),
         "side_u8": b64(side_map[side_codes]),                # 0 other, 1 L, 2 R
         "type_u16": b64(type_u16),
+        "nt_u8": b64(nt_codes.astype(np.uint8)),
     }
 
     report = json.loads((CONFIG["streams_dir"] / "report_streams.json")
@@ -146,6 +174,7 @@ def main():
         "lane_matrix": lane_matrix,
         "flow_hierarchy_test": report["flow_hierarchy_test"],
         "nt_direction": report["nt_direction"],
+        "nt_stats": nt_stats,
         "sink_audit": report["sink_audit"],
         "lane_order_check": report["lane_order_check"],
         "spectral": meta["spectral"],

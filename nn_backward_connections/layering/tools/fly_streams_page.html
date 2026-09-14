@@ -140,6 +140,7 @@ svg{display:block;position:relative}
         <button data-c="off" class="on">off</button>
         <button data-c="lane">streams</button>
         <button data-c="side">hemisphere</button>
+        <button data-c="nt">transmitter</button>
       </div>
       <span class="hint" id="cloud-hint">y within a lane = rank of the spectral affinity coordinate (ordinal).</span>
       <input type="text" list="typelist" id="type-find" placeholder="highlight a cell type… e.g. KCg-m, Mi1, R1-6" autocomplete="off">
@@ -310,10 +311,10 @@ const CL = b64f(DATA.cloud.lane_u8, Uint8Array);
 const CS = b64f(DATA.cloud.side_u8, Uint8Array);
 const CSINK = b64f(DATA.cloud.sink_u8, Uint8Array);
 const CT = b64f(DATA.cloud.type_u16, Uint16Array);
-state.grid = true; state.typeSel = null;
+const CNT = b64f(DATA.cloud.nt_u8, Uint8Array);
+state.grid = true; state.typeSel = null; state.ntSel = null;
 const NT_COLORS = {acetylcholine:"#4a7ab5", gaba:"#c96fae", glutamate:"#3f9b6e",
-                   dopamine:"#e08a2e", serotonin:"#7a4fa3", octopamine:"#9c9a30",
-                   NA:"#8a94a6"};
+                   dopamine:"#e08a2e", serotonin:"#7a4fa3", octopamine:"#9c9a30"};
 
 const svg = document.getElementById("svg"), wrap = document.getElementById("wrap");
 const canvas = document.getElementById("cloud"), card = document.getElementById("card");
@@ -476,15 +477,24 @@ function drawCloud(){
   const ctx = canvas.getContext("2d");
   ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.clearRect(0,0,G.W,G.H);
-  const hemi = state.cloud==="side";
   document.getElementById("cloud-hint").textContent =
-    state.cloud==="off" ? "Adds every neuron as a dot under the grid." : (hemi
+    state.cloud==="off" ? "Adds every neuron as a dot under the grid."
+    : state.cloud==="side"
     ? "left / right hemisphere; grey = midline or n/a. Splits with no supervision."
-    : "y within a lane = rank of the spectral affinity coordinate (ordinal); grey dots = no outputs in graph.");
+    : state.cloud==="nt"
+    ? "each dot = its neuron's predicted transmitter (colors as in the Chemistry view)."
+    : "y within a lane = rank of the spectral affinity coordinate (ordinal); grey dots = no outputs in graph.";
   if(state.cloud==="off" || state.view!=="streams") return;
   const yMin = DATA.cloud.y_min, yMax = DATA.cloud.y_max;
   const laneCols = lay().lanes.map((l,i)=>laneCol(i));
   const cL = css('--hemiL'), cR = css('--hemiR'), cO = css('--dim');
+  const ntv = DATA.nt_stats.values;
+  const ntCols = ntv.map(v=>NT_COLORS[v] || cO);
+  const mode = state.cloud;
+  const colorOf = i =>
+    mode==="side" ? (CS[i]===1?cL:(CS[i]===2?cR:cO)) :
+    mode==="nt"   ? (ntv[CNT[i]]==="NA" ? cO : ntCols[CNT[i]]) :
+    (CSINK[i]?cO:laneCols[CL[i]]);
   const sel = state.typeSel;
   const pxy = i => [G.mL + (CX[i]/N)*G.plotW,
                     G.mT + ((yMin + (CY[i]/65535)*(yMax-yMin))+0.5)*G.laneS];
@@ -492,9 +502,7 @@ function drawCloud(){
   for(let i=0;i<N;i++){
     if(sel!=null && CT[i]===sel) continue;
     const [px,py] = pxy(i);
-    if(sel!=null) ctx.fillStyle = cO;
-    else if(hemi) ctx.fillStyle = CS[i]===1?cL:(CS[i]===2?cR:cO);
-    else ctx.fillStyle = CSINK[i]?cO:laneCols[CL[i]];
+    ctx.fillStyle = sel!=null ? cO : colorOf(i);
     ctx.fillRect(px, py, 1.3, 1.3);
   }
   if(sel!=null){                       // highlighted type drawn on top, larger
@@ -502,7 +510,7 @@ function drawCloud(){
     for(let i=0;i<N;i++){
       if(CT[i]!==sel) continue;
       const [px,py] = pxy(i);
-      ctx.fillStyle = hemi ? (CS[i]===1?cL:(CS[i]===2?cR:cO)) : laneCols[CL[i]];
+      ctx.fillStyle = colorOf(i);
       ctx.fillRect(px-1, py-1, 2.6, 2.6);
     }
   }
@@ -531,12 +539,20 @@ function applyIso(){
 }
 
 function updateCardDefault(){
+  if(state.view==="chem"){
+    const S = DATA.nt_stats;
+    const sumFF = S.w_ff.reduce((a,b)=>a+b,0), sumFB = S.w_fb.reduce((a,b)=>a+b,0);
+    card.innerHTML = `<div class="h">Transmitter chemistry</div>
+      <div class="row"><span class="k">feedforward weight</span><span>${(sumFF/1e6).toFixed(2)}M syn = ${(100*sumFF/WTOT).toFixed(2)}%</span></div>
+      <div class="row"><span class="k">feedback weight</span><span>${(sumFB/1e6).toFixed(2)}M syn = ${(100*sumFB/WTOT).toFixed(2)}%</span></div>
+      <div class="row"><span class="k">inhibitory share of FB</span><span>${(100*(S.w_fb[S.values.indexOf("gaba")]+S.w_fb[S.values.indexOf("glutamate")])/sumFB).toFixed(1)}%</span></div>
+      <span class="hint">Hover any bar for exact numbers; click a transmitter to follow it through all three panels. The accounting line at the bottom re-checks every sum live.</span>`;
+    return;
+  }
   const st = lay().stats;
   const hint = state.view==="streams"
     ? "Hover a cell to isolate its flows; click to pin. Hover a lane name to isolate its stream; click it to read what that region is."
-    : state.view==="matrix"
-    ? "Hover a matrix cell for the pair's exact weights; click a lane name to read what that region is. Nothing here is thresholded away."
-    : "Static summary of transmitter chemistry — details and caveats in “How it is computed”.";
+    : "Hover a matrix cell for the pair's exact weights; click a lane name to read what that region is. Nothing here is thresholded away.";
   card.innerHTML = `<div class="h">No cell selected</div>
     <div class="row"><span class="k">hidden intra-cell</span><span>${st.intra_cell_ff_pct.toFixed(1)}% FF + ${st.intra_cell_fb_pct.toFixed(1)}% FB</span></div>
     <div class="row"><span class="k">inter-cell FF / FB</span><span>${st.inter_ff_pct_of_total.toFixed(1)} / ${st.inter_fb_pct_of_total.toFixed(1)} % of total</span></div>
@@ -616,61 +632,149 @@ function drawMatrix(){
 // ---- chemistry view ----------------------------------------------------
 function drawChem(){
   canvas.width = 0; canvas.height = 0; canvas.style.width = "0px";
+  const S = DATA.nt_stats, ntv = S.values;
   const order = ["acetylcholine","gaba","glutamate","dopamine","serotonin","octopamine"];
-  const nt = order.filter(k=>DATA.nt_direction[k]).map(k=>[k, DATA.nt_direction[k]]);
-  const fbOverall = 100 - DATA.champion_ff_pct;
-  const mL = 150, W_ = 880, barMax = 560;
-  let y = 46, s = "";
-  const ink = css('--ink'), muted = css('--muted');
+  const idx = Object.fromEntries(ntv.map((v,i)=>[v,i]));
+  const sumFF = S.w_ff.reduce((a,b)=>a+b,0), sumFB = S.w_fb.reduce((a,b)=>a+b,0);
+  const ink = css('--ink'), muted = css('--muted'), lineC = css('--line');
+  const sel = state.ntSel;                      // transmitter name or null
+  const dimA = k => (sel!=null && k!==sel) ? 0.18 : 1;
+  const fmtM = x => x>=1e6 ? (x/1e6).toFixed(2)+"M" : Math.round(x).toLocaleString();
+  const tipOf = (k,i) => {
+    const of=S.w_ff[i], ob=S.w_fb[i], tot=of+ob;
+    return `${k} — ${S.n_neurons[i].toLocaleString()} neurons|` +
+      `feedforward ${fmtM(of)} syn = ${(100*of/sumFF).toFixed(1)}% of all feedforward|` +
+      `feedback ${fmtM(ob)} syn = ${(100*ob/sumFB).toFixed(1)}% of all feedback|` +
+      `${(100*ob/tot).toFixed(1)}% of its own weight goes backward (avg ${(100*sumFB/WTOT).toFixed(1)}%)`;
+  };
 
+  const mL = 165, barMax = 620;
+  let y = 46, s = "";
+
+  // Panel A — backward share within each transmitter
   s += `<text x="${mL}" y="24" font-size="14" font-weight="600" fill="${ink}">How much of each transmitter's weight flows backward</text>`;
-  const byShare = [...nt].sort((a,b)=>b[1].fb_share_within_nt-a[1].fb_share_within_nt);
-  const shMax = Math.max(...byShare.map(x=>x[1].fb_share_within_nt))*1.15;
-  for(const [k,v] of byShare){
-    const w = barMax*v.fb_share_within_nt/shMax;
+  const rows = order.map(k=>[k, idx[k]]).sort((a,b)=>
+    (S.w_fb[b[1]]/(S.w_ff[b[1]]+S.w_fb[b[1]])) - (S.w_fb[a[1]]/(S.w_ff[a[1]]+S.w_fb[a[1]])));
+  const shMax = Math.max(...rows.map(r=>100*S.w_fb[r[1]]/(S.w_ff[r[1]]+S.w_fb[r[1]])))*1.15;
+  for(const [k,i] of rows){
+    const share = 100*S.w_fb[i]/(S.w_ff[i]+S.w_fb[i]);
+    const w = barMax*share/shMax;
+    s += `<g data-nt="${k}" data-tip="${tipOf(k,i)}" opacity="${dimA(k)}" style="cursor:pointer">`;
     s += `<rect x="${mL-24}" y="${y+4}" width="10" height="10" rx="2" fill="${NT_COLORS[k]}"/>`;
     s += `<text x="${mL-30}" y="${y+13}" text-anchor="end" font-size="12.5" fill="${ink}" font-weight="600">${k}</text>`;
     s += `<rect x="${mL}" y="${y}" width="${w.toFixed(1)}" height="18" rx="3" fill="${NT_COLORS[k]}" opacity="0.85"/>`;
-    s += `<text x="${mL+w+8}" y="${y+13}" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${v.fb_share_within_nt.toFixed(1)} %</text>`;
+    s += `<text x="${mL+w+8}" y="${y+13}" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${share.toFixed(1)} %</text>`;
+    s += `<text x="${mL+barMax+72}" y="${y+13}" text-anchor="end" font-size="10.5" fill="${muted}" font-family="IBM Plex Mono,monospace">${S.n_neurons[i].toLocaleString()} n</text>`;
+    s += `</g>`;
     y += 27;
   }
-  const rx = mL + barMax*fbOverall/shMax;
+  const avg = 100*sumFB/WTOT;
+  const rx = mL + barMax*avg/shMax;
   s += `<line x1="${rx}" y1="40" x2="${rx}" y2="${y}" stroke="${muted}" stroke-dasharray="4 3"/>`;
-  s += `<text x="${rx+6}" y="${y+4}" font-size="11" fill="${muted}">all edges: ${fbOverall.toFixed(1)} % backward</text>`;
+  s += `<text x="${rx+6}" y="${y+4}" font-size="11" fill="${muted}">all edges: ${avg.toFixed(1)} % backward</text>`;
   s += `<text x="${mL}" y="${y+24}" font-size="12" fill="${muted}">Right of the dashed line = over-represented in feedback. GABA and glutamate are inhibitory in the fly;</text>`;
-  s += `<text x="${mL}" y="${y+40}" font-size="12" fill="${muted}">dopamine and serotonin are neuromodulators. Excitatory acetylcholine flows backward markedly less than</text>`;
-  s += `<text x="${mL}" y="${y+56}" font-size="12" fill="${muted}">average (11.4 % vs 15.7 %) — about half as often as the inhibitory transmitters.</text>`;
+  s += `<text x="${mL}" y="${y+40}" font-size="12" fill="${muted}">dopamine and serotonin are neuromodulators. Click any bar to follow one transmitter through every panel.</text>`;
 
-  y += 100;
+  // Panel B — composition of forward vs backward weight
+  y += 78;
   s += `<text x="${mL}" y="${y}" font-size="14" font-weight="600" fill="${ink}">What feedforward vs feedback weight is made of</text>`;
   y += 16;
-  for(const [rowName, key] of [["feedforward","pct_of_ff"],["feedback","pct_of_fb"]]){
+  for(const [rowName, arr, tot] of [["feedforward", S.w_ff, sumFF], ["feedback", S.w_fb, sumFB]]){
     s += `<text x="${mL-10}" y="${y+14}" text-anchor="end" font-size="12.5" fill="${ink}">${rowName}</text>`;
     let x = mL;
-    for(const [k,v] of nt){
-      const w = barMax*v[key]/100;
+    for(const k of order){
+      const i = idx[k], v = arr[i], pct = 100*v/tot;
+      const w = barMax*v/tot;
       if(w < 1){ x += w; continue; }
+      s += `<g data-nt="${k}" data-tip="${tipOf(k,i)}" opacity="${dimA(k)}" style="cursor:pointer">`;
       s += `<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(w-2,1).toFixed(1)}" height="20" rx="2" fill="${NT_COLORS[k]}" opacity="0.9"/>`;
-      if(v[key] >= 5)
-        s += `<text x="${(x+w/2).toFixed(1)}" y="${y+14}" text-anchor="middle" font-size="10.5" fill="${lum(NT_COLORS[k])>0.45?'#141413':'#f7f6f3'}" font-family="IBM Plex Mono,monospace">${v[key].toFixed(0)}%</text>`;
+      if(pct >= 5)
+        s += `<text x="${(x+w/2).toFixed(1)}" y="${y+14}" text-anchor="middle" font-size="10.5" fill="${lum(NT_COLORS[k])>0.45?'#141413':'#f7f6f3'}" font-family="IBM Plex Mono,monospace">${pct.toFixed(0)}%</text>`;
+      s += `</g>`;
       x += w;
     }
+    s += `<text x="${mL+barMax+8}" y="${y+14}" font-size="10.5" fill="${muted}" font-family="IBM Plex Mono,monospace">${fmtM(tot)} syn</text>`;
     y += 30;
   }
-  y += 6;
-  let lx = mL;
-  for(const [k] of nt){
-    s += `<rect x="${lx}" y="${y}" width="10" height="10" rx="2" fill="${NT_COLORS[k]}"/>`;
-    s += `<text x="${lx+14}" y="${y+9}" font-size="11.5" fill="${muted}">${k}</text>`;
-    lx += 14 + 8 + k.length*6.4;
-  }
-  y += 34;
-  s += `<text x="${mL}" y="${y}" font-size="12" fill="${muted}">The forward pass is mostly excitatory drive (ACh 60 %); the backward pass is majority inhibition + modulation (GABA+Glu 56 %).</text>`;
-  s += `<text x="${mL}" y="${y+17}" font-size="11" fill="${muted}">Transmitter labels are per-neuron predictions (Eckstein et al. 2024) joined from the FlyWire annotation table — not ground truth.</text>`;
+  const iA = idx["acetylcholine"], iG = idx["gaba"], iGl = idx["glutamate"];
+  s += `<text x="${mL}" y="${y+6}" font-size="12" fill="${muted}">The feedforward pass is mostly excitatory drive (ACh ${(100*S.w_ff[iA]/sumFF).toFixed(0)} %); the feedback pass is majority inhibition + modulation (GABA+Glu ${(100*(S.w_fb[iG]+S.w_fb[iGl])/sumFB).toFixed(0)} %).</text>`;
+  y += 14;
 
-  svg.setAttribute("width", W_+40); svg.setAttribute("height", y+40);
-  svg.setAttribute("viewBox", `0 0 ${W_+40} ${y+40}`);
+  // Panel C — which streams speak which transmitter (output composition)
+  y += 30;
+  s += `<text x="${mL}" y="${y}" font-size="14" font-weight="600" fill="${ink}">Which streams speak which transmitter</text>`;
+  s += `<text x="${mL}" y="${y+16}" font-size="11.5" fill="${muted}">each row = one stream's OUTPUT weight, split by its neurons' transmitters; right = that output as % of all weight</text>`;
+  y += 32;
+  const lanes = DATA.layouts.B16.lanes;
+  const laneTots = lanes.map((_,li)=>S.lane_out_ff[li].reduce((a,b)=>a+b,0)
+                                   + S.lane_out_fb[li].reduce((a,b)=>a+b,0));
+  const ltMax = Math.log10(Math.max(...laneTots));
+  for(let li=0; li<K; li++){
+    const outFF = S.lane_out_ff[li], outFB = S.lane_out_fb[li];
+    const laneTot = laneTots[li];
+    s += `<text class="lane-lab" data-lane="${li}" x="${mL-10}" y="${y+12}" text-anchor="end" font-size="11.5" font-weight="600" fill="${laneCol(li)}">${esc(lanes[li].name)}</text>`;
+    if(laneTot < 1){
+      s += `<text x="${mL}" y="${y+12}" font-size="10.5" fill="${muted}">no outputs in this graph</text>`;
+      y += 22; continue;
+    }
+    // row opacity ~ log output weight, so a 237-syn row cannot read like a 10M one
+    const rowOp = (0.30 + 0.70*Math.max(0, Math.log10(laneTot)-2)/(ltMax-2)).toFixed(2);
+    s += `<g opacity="${rowOp}">`;
+    let x = mL;
+    for(const k of order){
+      const i = idx[k], v = outFF[i]+outFB[i];
+      const w = barMax*v/laneTot;
+      if(w < 0.8){ x += w; continue; }
+      const t = `${esc(lanes[li].name)} · ${k}|${fmtM(v)} syn = ${(100*v/laneTot).toFixed(1)}% of this stream's output|of which backward: ${(100*outFB[i]/Math.max(v,1e-9)).toFixed(1)}%`;
+      s += `<g data-nt="${k}" data-tip="${t}" opacity="${dimA(k)}" style="cursor:pointer">`;
+      s += `<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(w-1.5,0.8).toFixed(1)}" height="15" rx="1.5" fill="${NT_COLORS[k]}" opacity="0.9"/>`;
+      s += `</g>`;
+      x += w;
+    }
+    s += `</g>`;
+    s += `<text x="${mL+barMax+8}" y="${y+11}" font-size="10" fill="${muted}" font-family="IBM Plex Mono,monospace">${(100*laneTot/WTOT).toFixed(1)}%</text>`;
+    y += 22;
+  }
+  s += `<text x="${mL}" y="${y+4}" font-size="10.5" fill="${muted}">row brightness ~ how much output the stream actually has (right label = exact share)</text>`;
+  y += 14;
+
+  // live accounting check — every displayed number re-derives from these sums
+  y += 20;
+  const okTot = Math.abs(sumFF+sumFB - WTOT) < 0.5;
+  const okFF = Math.abs(100*sumFF/WTOT - DATA.champion_ff_pct) < 0.005;
+  const laneSum = S.lane_out_ff.flat().reduce((a,b)=>a+b,0) + S.lane_out_fb.flat().reduce((a,b)=>a+b,0);
+  const okLane = Math.abs(laneSum - WTOT) < 0.5;
+  s += `<line x1="${mL}" y1="${y-12}" x2="${mL+barMax}" y2="${y-12}" stroke="${lineC}"/>`;
+  s += `<text x="${mL}" y="${y+4}" font-size="11.5" fill="${muted}" font-family="IBM Plex Mono,monospace">accounting, computed live from this page's data:</text>`;
+  s += `<text x="${mL}" y="${y+21}" font-size="11.5" fill="${muted}" font-family="IBM Plex Mono,monospace">forward ${fmtM(sumFF)} + backward ${fmtM(sumFB)} = ${fmtM(sumFF+sumFB)} of ${fmtM(WTOT)} total syn ${okTot?"✓":"✗"} · forward share ${(100*sumFF/WTOT).toFixed(2)}% = champion ${DATA.champion_ff_pct.toFixed(2)}% ${okFF?"✓":"✗"}</text>`;
+  s += `<text x="${mL}" y="${y+38}" font-size="11.5" fill="${muted}" font-family="IBM Plex Mono,monospace">stream rows re-sum to the same total ${okLane?"✓":"✗"} · the Methods table and the Streams caption derive from these same sums</text>`;
+  const iNA = idx["NA"];
+  s += `<text x="${mL}" y="${y+58}" font-size="11" fill="${muted}">Transmitter labels are per-neuron predictions (Eckstein et al. 2024); the ${S.n_neurons[iNA]} unlabeled neurons carry ${fmtM(S.w_ff[iNA]+S.w_fb[iNA])} syn (&lt;0.01 %) — folded out of the bars, included in the sums.</text>`;
+
+  y += 76;
+  svg.setAttribute("width", mL+barMax+90); svg.setAttribute("height", y);
+  svg.setAttribute("viewBox", `0 0 ${mL+barMax+90} ${y}`);
   svg.innerHTML = s;
+}
+
+function showNtCard(k){
+  const S = DATA.nt_stats, i = S.values.indexOf(k);
+  if(i<0) return;
+  const of=S.w_ff[i], ob=S.w_fb[i], tot=of+ob;
+  const sumFF = S.w_ff.reduce((a,b)=>a+b,0), sumFB = S.w_fb.reduce((a,b)=>a+b,0);
+  const lanes = DATA.layouts.B16.lanes;
+  const byLane = lanes.map((l,li)=>[l.name, S.lane_out_ff[li][i]+S.lane_out_fb[li][i]])
+                      .sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const fm = x => x>=1e6 ? (x/1e6).toFixed(2)+"M" : Math.round(x).toLocaleString();
+  card.innerHTML = `<div class="h" style="color:${NT_COLORS[k]}">${esc(k)}</div>
+    <div class="row"><span class="k">neurons</span><span>${S.n_neurons[i].toLocaleString()}</span></div>
+    <div class="row"><span class="k">output weight</span><span>${fm(tot)} syn = ${(100*tot/WTOT).toFixed(1)}% of all</span></div>
+    <div class="row"><span class="k">of all forward</span><span>${(100*of/sumFF).toFixed(1)}%</span></div>
+    <div class="row"><span class="k">of all backward</span><span>${(100*ob/sumFB).toFixed(1)}%</span></div>
+    <div class="row"><span class="k">own backward share</span><span>${(100*ob/tot).toFixed(1)}% (avg ${(100*sumFB/WTOT).toFixed(1)}%)</span></div>
+    <div class="row"><span class="k">top streams</span><span></span></div>
+    <ul>${byLane.map(p=>`<li>${esc(p[0])} <span class="k">${fm(p[1])} syn</span></li>`).join("")}</ul>
+    <span class="hint">click the bar again (or empty space) to release</span>`;
 }
 
 // ---- tooltip for matrix ------------------------------------------------
@@ -687,6 +791,7 @@ function render(){
   document.getElementById("ctl-mx").hidden = state.view!=="matrix";
   document.getElementById("legend").hidden = !streams || !state.grid;
   state.pinned = state.hover = state.hoverLane = null;
+  state.ntSel = null;
   buildRegions();                    // heading colors follow the theme
   if(streams) drawStreams();
   else if(state.view==="matrix"){ drawMatrix(); updateCardDefault(); }
@@ -770,9 +875,19 @@ svg.addEventListener("pointerover", e=>{
   const cell = e.target.closest(".cell");
   const lab = e.target.closest(".lane-lab");
   const mx = e.target.closest(".mxcell");
+  const dt = e.target.closest("[data-tip]");
   if(cell){ state.hover = +cell.dataset.cell; state.hoverLane = null;
             if(state.pinned==null) showCellCard(state.hover); applyIso(); }
-  else if(lab){ state.hoverLane = +lab.dataset.lane; state.hover = null; applyIso(); }
+  else if(lab && state.view==="streams"){ state.hoverLane = +lab.dataset.lane; state.hover = null; applyIso(); }
+  else if(dt){
+    tip.innerHTML = dt.dataset.tip.split("|").map(esc).join("<br>");
+    tip.hidden = false;
+    tip.style.left = Math.min(e.clientX+14, innerWidth-300)+"px";
+    tip.style.top = (e.clientY+12)+"px";
+    const tr = tip.getBoundingClientRect();
+    if(e.clientY+12+tr.height > innerHeight)
+      tip.style.top = (e.clientY-tr.height-10)+"px";
+  }
   else if(mx){
     const i = +mx.dataset.i, j = +mx.dataset.j, M = DATA.lane_matrix;
     tip.innerHTML = `${esc(DATA.lane_list[i])} → ${esc(DATA.lane_list[j])}<br>` +
@@ -784,7 +899,7 @@ svg.addEventListener("pointerover", e=>{
   }
 });
 svg.addEventListener("pointerout", e=>{
-  if(e.target.closest(".mxcell")) tip.hidden = true;
+  if(e.target.closest(".mxcell") || e.target.closest("[data-tip]")) tip.hidden = true;
   if(state.pinned!=null) return;
   if(e.target.closest(".cell")){ state.hover = null; applyIso(); updateCardDefault(); }
   if(e.target.closest(".lane-lab")){ state.hoverLane = null; applyIso(); }
@@ -792,6 +907,18 @@ svg.addEventListener("pointerout", e=>{
 svg.addEventListener("click", e=>{
   const lab = e.target.closest(".lane-lab, .mx-lab");
   if(lab && lab.dataset.lane!=null){ openRegions(+lab.dataset.lane); return; }
+  const ntEl = e.target.closest("[data-nt]");
+  if(ntEl){
+    const k = ntEl.dataset.nt;
+    state.ntSel = (state.ntSel===k) ? null : k;
+    drawChem();
+    if(state.ntSel!=null) showNtCard(state.ntSel); else updateCardDefault();
+    return;
+  }
+  if(state.view==="chem"){
+    if(state.ntSel!=null){ state.ntSel=null; drawChem(); updateCardDefault(); }
+    return;
+  }
   const cell = e.target.closest(".cell");
   if(!cell){
     if(state.pinned!=null){ state.pinned=state.hover=state.hoverLane=null;
