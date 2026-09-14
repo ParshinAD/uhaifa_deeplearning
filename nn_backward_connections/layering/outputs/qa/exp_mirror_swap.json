@@ -1,0 +1,97 @@
+{
+ "champion_ff_pct": 84.25817950936937,
+ "mirror_swap": {
+  "n_pairs": 65452,
+  "ff_pct": 82.04530520165983,
+  "delta_pp": -2.2128743077095407,
+  "mean_abs_rank_displacement": 6565.313466357025
+ },
+ "control_same_side_same_type_random": {
+  "n_pairs": 62137,
+  "ff_pct": 81.24689693136888,
+  "delta_pp": -3.0112825780004897,
+  "mean_abs_rank_displacement": 10992.053172827784
+ },
+ "control_same_side_same_type_rank_matched": {
+  "n_pairs": 62137,
+  "ff_pct": 82.72064412075727,
+  "delta_pp": -1.537535388612099,
+  "mean_abs_rank_displacement": 3218.330028807313
+ },
+ "control_random_pairs": {
+  "n_pairs": 65452,
+  "ff_pct": 50.84518349945425,
+  "delta_pp": -33.41299600991512,
+  "mean_abs_rank_displacement": 45442.178665281426
+ },
+ "mirror_swap_lane_delta_top10": [
+  {
+   "src": "central (other)",
+   "tgt": "central (other)",
+   "net_ff_weight_change": -233045.0,
+   "pp_of_total": -0.5560322007887881
+  },
+  {
+   "src": "medulla",
+   "tgt": "medulla",
+   "net_ff_weight_change": -83658.0,
+   "pp_of_total": -0.1996032605444804
+  },
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "medulla\u2192lobula",
+   "net_ff_weight_change": -45158.0,
+   "pp_of_total": -0.10774443615276061
+  },
+  {
+   "src": "medulla",
+   "tgt": "medulla\u2192lobula",
+   "net_ff_weight_change": -41698.0,
+   "pp_of_total": -0.0994890716749593
+  },
+  {
+   "src": "lamina",
+   "tgt": "medulla",
+   "net_ff_weight_change": -41384.0,
+   "pp_of_total": -0.09873988541888137
+  },
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "medulla",
+   "net_ff_weight_change": -36896.0,
+   "pp_of_total": -0.0880317710326466
+  },
+  {
+   "src": "lobula (plate)",
+   "tgt": "lobula (plate)",
+   "net_ff_weight_change": -30944.0,
+   "pp_of_total": -0.07383063537603579
+  },
+  {
+   "src": "central complex",
+   "tgt": "central complex",
+   "net_ff_weight_change": -28819.0,
+   "pp_of_total": -0.068760505458311
+  },
+  {
+   "src": "medulla",
+   "tgt": "lamina",
+   "net_ff_weight_change": -28409.0,
+   "pp_of_total": -0.06778226862712644
+  },
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "lobula (plate)",
+   "net_ff_weight_change": -21789.0,
+   "pp_of_total": -0.05198732271873203
+  }
+ ],
+ "pairing": {
+  "method": "within cell_type, rank-sorted left[i]<->right[i]",
+  "n_pairs": 65452,
+  "n_types": 8644,
+  "coverage_pct": 95.7964990340144,
+  "seed": 42
+ },
+ "seconds": 28.987746953964233
+}

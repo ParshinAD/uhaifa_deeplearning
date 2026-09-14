@@ -1,0 +1,87 @@
+{
+ "config": {
+  "seed": 42,
+  "targets_ff_pct": [
+   80.0,
+   70.0
+  ],
+  "window": 2000,
+  "batch": 40,
+  "max_batches": 400,
+  "staircase": [
+   "photoreceptors",
+   "lamina",
+   "medulla",
+   "medulla\u2192lobula",
+   "lobula (plate)",
+   "visual projection",
+   "central (other)",
+   "descending",
+   "motor"
+  ],
+  "nts": [
+   "acetylcholine",
+   "gaba",
+   "glutamate",
+   "serotonin"
+  ],
+  "type_min_n": 100
+ },
+ "champion": {
+  "lane_median_spearman_vs_champion": 1.0,
+  "staircase_adjacent_inversions": 0,
+  "flow_rho": 0.26336276753680166,
+  "nt_backward_share": {
+   "acetylcholine": 11.359936062398798,
+   "gaba": 20.896597910054794,
+   "glutamate": 22.249213958796627,
+   "serotonin": 28.82560456356788
+  },
+  "type_iqr_over_n_median": 0.04912805163632106,
+  "ff_pct": 84.25817950936937,
+  "shuffle_batches": 0
+ },
+ "degraded_80": {
+  "lane_median_spearman_vs_champion": 1.0,
+  "staircase_adjacent_inversions": 0,
+  "flow_rho": 0.26298694242940257,
+  "nt_backward_share": {
+   "acetylcholine": 15.56735276534115,
+   "gaba": 25.233760906831662,
+   "glutamate": 28.17152188408052,
+   "serotonin": 32.72558545772149
+  },
+  "type_iqr_over_n_median": 0.05234251507522979,
+  "ff_pct": 79.65206072388428,
+  "shuffle_batches": 4
+ },
+ "degraded_70": {
+  "lane_median_spearman_vs_champion": 0.9950980392156863,
+  "staircase_adjacent_inversions": 0,
+  "flow_rho": 0.2470833802069094,
+  "nt_backward_share": {
+   "acetylcholine": 26.16147394145871,
+   "gaba": 33.27566181500114,
+   "glutamate": 37.63954684828495,
+   "serotonin": 39.78894863256728
+  },
+  "type_iqr_over_n_median": 0.13101545576956852,
+  "ff_pct": 69.98993442019581,
+  "shuffle_batches": 345
+ },
+ "random": {
+  "lane_median_spearman_vs_champion": 0.375,
+  "staircase_adjacent_inversions": 3,
+  "flow_rho": 0.0035759589892013985,
+  "nt_backward_share": {
+   "acetylcholine": 50.13803239423932,
+   "gaba": 49.246768776639975,
+   "glutamate": 50.0141262485469,
+   "serotonin": 50.96484524264425
+  },
+  "type_iqr_over_n_median": 0.49732890345998476,
+  "ff_pct": 49.98122858958696,
+  "shuffle_batches": 0
+ },
+ "seconds": 19.71166491508484
+}
