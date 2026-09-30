@@ -1,0 +1,8 @@
+# Per-run null-graph order vectors (43 MB): reproducible from the logged
+# gen_seed in results/nullmodels/runs/*.json (verified by the 2026-09-30
+# independent review: 13/13 exact oracle re-scores after regeneration).
+# The JSON run records stay in git; the REAL-graph protocol vectors stay too.
+results/nullmodels/orders/*
+!results/nullmodels/orders/connectome__real__*
+# Runner logs (runtime state, not record)
+results/nullmodels/logs/
