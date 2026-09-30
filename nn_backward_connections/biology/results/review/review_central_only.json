@@ -1,0 +1,689 @@
+{
+ "reviewed": "biology/studies/central_only.md",
+ "review_date": "2026-09-30",
+ "n_checks": 85,
+ "n_failed": 0,
+ "cx_median_rank_frac_full_brain_line": 0.8280203736635272,
+ "checks": [
+  {
+   "name": "node_ann.rank == pinned champion rank",
+   "claimed": true,
+   "got": true,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "nodes",
+   "claimed": 32294,
+   "got": 32294,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "nodes % of full",
+   "claimed": 23.63,
+   "got": 23.632984017329196,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "edges",
+   "claimed": 849937,
+   "got": 849937,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "edges % of full",
+   "claimed": 15.02,
+   "got": 15.02260893480217,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "subgraph weight",
+   "claimed": 12523698,
+   "got": 12523698,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "weight % of full",
+   "claimed": 29.88,
+   "got": 29.88083572251773,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "full weight",
+   "claimed": 41912141,
+   "got": 41912141,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "central mean edge weight / full mean ('~2x heavier')",
+   "claimed": 2.0,
+   "got": 1.98905768313613,
+   "tol": 0.02,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "saved npz src == rebuilt",
+   "claimed": true,
+   "got": true,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "saved npz tgt == rebuilt",
+   "claimed": true,
+   "got": true,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "saved npz weight == rebuilt",
+   "claimed": true,
+   "got": true,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "saved npz node_ids == g.node_ids[central]",
+   "claimed": true,
+   "got": true,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "champ_restricted is a permutation of 0..32293",
+   "claimed": true,
+   "got": true,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 is a permutation of 0..32293",
+   "claimed": true,
+   "got": true,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run2 is a permutation of 0..32293",
+   "claimed": true,
+   "got": true,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "champ_restricted == my compression of champion|central",
+   "claimed": true,
+   "got": true,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "champ_restricted score",
+   "claimed": 10356669,
+   "got": 10356669.0,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 score",
+   "claimed": 10449116,
+   "got": 10449116.0,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run2 score",
+   "claimed": 10449826,
+   "got": 10449826.0,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "champ_restricted FF%",
+   "claimed": 82.6966,
+   "got": 82.69657252993485,
+   "tol": 5e-05,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 FF%",
+   "claimed": 83.4347,
+   "got": 83.43474906533199,
+   "tol": 5e-05,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run2 FF%",
+   "claimed": 83.4404,
+   "got": 83.44041831733726,
+   "tol": 5e-05,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "gap run1 (pp)",
+   "claimed": 0.7382,
+   "got": 0.7381765353971304,
+   "tol": 5e-05,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "gap run2 (pp)",
+   "claimed": 0.7438,
+   "got": 0.7438457874024067,
+   "tol": 5e-05,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs champ Spearman",
+   "claimed": 0.744,
+   "got": 0.7439855173383486,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs champ Kendall",
+   "claimed": 0.601,
+   "got": 0.6009999488507746,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs champ median disp",
+   "claimed": 0.067,
+   "got": 0.06704239308828538,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs champ IQR lo",
+   "claimed": 0.025,
+   "got": 0.025423466385904064,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs champ IQR hi",
+   "claimed": 0.177,
+   "got": 0.17736041866658409,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs champ frac >5%",
+   "claimed": 0.578,
+   "got": 0.5777853471233046,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run2 vs champ Spearman",
+   "claimed": 0.7405,
+   "got": 0.7405338618154731,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run2 vs champ Kendall",
+   "claimed": 0.5969,
+   "got": 0.5968682666532801,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run2 vs champ median disp",
+   "claimed": 0.07,
+   "got": 0.06995324064038647,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run2 vs champ IQR lo",
+   "claimed": 0.027,
+   "got": 0.02709565540519617,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run2 vs champ IQR hi",
+   "claimed": 0.175,
+   "got": 0.17502245068590716,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run2 vs champ frac >5%",
+   "claimed": 0.616,
+   "got": 0.6161206416052517,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs run2 (noise) Spearman",
+   "claimed": 0.9602,
+   "got": 0.9602307728930098,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs run2 (noise) Kendall",
+   "claimed": 0.8867,
+   "got": 0.886697034231516,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs run2 (noise) median disp",
+   "claimed": 0.0141,
+   "got": 0.014089740810702009,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs run2 (noise) IQR lo",
+   "claimed": 0.004,
+   "got": 0.004180472548230267,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs run2 (noise) IQR hi",
+   "claimed": 0.032,
+   "got": 0.031554826123308455,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "run1 vs run2 (noise) frac >5%",
+   "claimed": 0.154,
+   "got": 0.15371276398092526,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "unmatched graph nodes in TSV join",
+   "claimed": 13,
+   "got": 13,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "TSV central set == node_ann central set",
+   "claimed": true,
+   "got": true,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "CX n (central, graph-joined)",
+   "claimed": 2848,
+   "got": 2848,
+   "tol": 0.0,
+   "ok": true,
+   "note": "raw TSV has 2875 CX rows; 27 are not graph nodes"
+  },
+  {
+   "name": "CX median |disp| run1-vs-champ",
+   "claimed": 0.276,
+   "got": 0.2759266714148577,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "CX median |disp| noise (run1-vs-run2)",
+   "claimed": 0.0201,
+   "got": 0.02006626823150528,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "CX signal/noise ratio",
+   "claimed": 13.8,
+   "got": 13.750771604938272,
+   "tol": 0.06,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "CX median champ rank frac",
+   "claimed": 0.51,
+   "got": 0.5115195243551234,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "CX median run1 rank frac",
+   "claimed": 0.79,
+   "got": 0.7881429411946862,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "CX median run2 rank frac (direction reproduced)",
+   "claimed": 0.81,
+   "got": 0.8140309045303936,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "CX out-weight frac to central",
+   "claimed": 0.9932,
+   "got": 0.993211661292323,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "CX out-weight frac to descending",
+   "claimed": 0.0048,
+   "got": 0.004795245256108149,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "CX in-weight frac from central",
+   "claimed": 0.9961,
+   "got": 0.9961137898217016,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "CX out total weight",
+   "claimed": 1032064,
+   "got": 1032064.0,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "CX in total weight",
+   "claimed": 1108535,
+   "got": 1108535.0,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "TuBu n",
+   "claimed": 150,
+   "got": 150,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "TuBu in-weight frac from visual_projection",
+   "claimed": 0.6534,
+   "got": 0.6533928643256506,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "TuBu in-weight frac from central",
+   "claimed": 0.3466,
+   "got": 0.34660713567434936,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "TuBu out-weight frac to central",
+   "claimed": 1.0,
+   "got": 1.0,
+   "tol": 1e-06,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "TuBu median |disp| run1-vs-champ",
+   "claimed": 0.145,
+   "got": 0.14518626327687115,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "TuBu signal/noise ratio",
+   "claimed": 1.6,
+   "got": 1.6023581681476418,
+   "tol": 0.05,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "DAN n",
+   "claimed": 320,
+   "got": 320,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "DAN median |disp|",
+   "claimed": 0.005,
+   "got": 0.00464496949803363,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "DAN frac moved >5% ('~36% minority')",
+   "claimed": 0.356,
+   "got": 0.35625,
+   "tol": 0.005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "ALPN median |disp|",
+   "claimed": 0.018,
+   "got": 0.017588951165887344,
+   "tol": 0.001,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "ALLN median |disp|",
+   "claimed": 0.016,
+   "got": 0.016257393243117705,
+   "tol": 0.001,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "ALIN median |disp|",
+   "claimed": 0.021,
+   "got": 0.02065463103458954,
+   "tol": 0.001,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "LHLN median |disp|",
+   "claimed": 0.034,
+   "got": 0.0339082773356455,
+   "tol": 0.001,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "Kenyon_Cell median |disp|",
+   "claimed": 0.076,
+   "got": 0.07636329854767288,
+   "tol": 0.001,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "NA median |disp|",
+   "claimed": 0.063,
+   "got": 0.06307868578329669,
+   "tol": 0.001,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "NA n (67.9% of central)",
+   "claimed": 21912,
+   "got": 21912,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "NA signal/noise ratio",
+   "claimed": 4.9,
+   "got": 4.932203389830509,
+   "tol": 0.05,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "non-CX n",
+   "claimed": 29446,
+   "got": 29446,
+   "tol": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "Spearman run1-vs-champ excluding CX",
+   "claimed": 0.778,
+   "got": 0.7780670839829928,
+   "tol": 0.0005,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "median full rank frac ascending",
+   "claimed": 0.06,
+   "got": 0.06284806838057184,
+   "tol": 0.006,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "median full rank frac sensory",
+   "claimed": 0.07,
+   "got": 0.07350326022525193,
+   "tol": 0.006,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "median full rank frac visual_centrifugal",
+   "claimed": 0.32,
+   "got": 0.3179762453621375,
+   "tol": 0.006,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "median full rank frac optic",
+   "claimed": 0.46,
+   "got": 0.455619223254078,
+   "tol": 0.006,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "median full rank frac visual_projection",
+   "claimed": 0.81,
+   "got": 0.8091469260210615,
+   "tol": 0.006,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "median full rank frac central",
+   "claimed": 0.82,
+   "got": 0.8187336714307669,
+   "tol": 0.006,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "median full rank frac descending",
+   "claimed": 0.96,
+   "got": 0.9572731197904089,
+   "tol": 0.006,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "median full rank frac endocrine",
+   "claimed": 0.99,
+   "got": 0.9935454126325496,
+   "tol": 0.006,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "median full rank frac motor",
+   "claimed": 0.999,
+   "got": 0.9991657336055676,
+   "tol": 0.006,
+   "ok": true,
+   "note": ""
+  }
+ ]
+}

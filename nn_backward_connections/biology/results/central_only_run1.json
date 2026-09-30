@@ -1,0 +1,65 @@
+{
+ "run_id": 1,
+ "seed": 42,
+ "device": "Apple MPS",
+ "torch": "2.8.0",
+ "python": "3.9.23",
+ "machine": "macOS-15.6-arm64-arm-64bit",
+ "finished_at": "2026-09-29T22:54:59",
+ "config": {
+  "epochs": 20000,
+  "beta_cycles": 5,
+  "lr": 0.05,
+  "lr_decay_start": 0.5,
+  "lr_end_factor": 0.1,
+  "grad_clip": 1.0,
+  "log_interval": 100,
+  "asym_M": 0.75,
+  "asym_T": 1.5,
+  "sift_max_sweeps": 40,
+  "sift_k_full": 6,
+  "sift_alpha": 0.7,
+  "alt_cycles": 77,
+  "alt_sift_sweeps": 2,
+  "alt_k_full": 2,
+  "alt_alpha": 0.7,
+  "min_block": 32,
+  "split_fracs": [
+   0.5,
+   0.382,
+   0.618,
+   0.25,
+   0.75
+  ]
+ },
+ "stages": {
+  "1_greedy": {
+   "score": 8794686.0,
+   "pct": 70.22435386097621,
+   "wall_s": 1.9687271118164062
+  },
+  "2_rocket_asym": {
+   "score": 10310262.0,
+   "pct": 82.32601904006309,
+   "wall_s": 27.32786798477173,
+   "n_epochs_done": 20000
+  },
+  "3_sift": {
+   "score": 10415377.0,
+   "pct": 83.16534780701355,
+   "wall_s": 15.343265056610107,
+   "n_sweeps": 40
+  },
+  "4_alt_scc": {
+   "score": 10449116.0,
+   "pct": 83.43474906533199,
+   "wall_s": 89.47338604927063,
+   "n_cycles": 77
+  }
+ },
+ "final": {
+  "score": 10449116.0,
+  "pct": 83.43474906533199,
+  "wall_s_total": 134.63694095611572
+ }
+}

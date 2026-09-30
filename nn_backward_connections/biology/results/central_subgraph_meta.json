@@ -1,0 +1,18 @@
+{
+ "built_at": "2026-09-29T22:52:18",
+ "super_class_keep": "central",
+ "central_code": 2,
+ "n_nodes": 32294,
+ "n_nodes_full": 136648,
+ "n_nodes_pct_of_full": 23.632984017329196,
+ "n_edges": 849937,
+ "n_edges_full": 5657719,
+ "n_edges_pct_of_full": 15.02260893480217,
+ "total_weight": 12523698.0,
+ "total_weight_full": 41912141.0,
+ "total_weight_pct_of_full": 29.88083572251773,
+ "champion_ff_pct_full": 84.25817950936937,
+ "champ_restricted_score": 10356669.0,
+ "champ_restricted_ff_pct": 82.69657252993485,
+ "ann_unmatched_note": "13 of 136,648 nodes have no annotation row (coded NA) and are excluded from 'central' by construction"
+}

@@ -1,0 +1,699 @@
+{
+ "study": "central_only",
+ "created_at": "2026-09-29T23:02:38",
+ "question": "Is the central brain's internal MFAS order self-determined by its own wiring, or dictated by its periphery interfaces?",
+ "config": {
+  "dataset": "connectome",
+  "super_class_keep": "central",
+  "seed": 42,
+  "device_prefer": "auto",
+  "n_runs": 2,
+  "epochs": 20000,
+  "beta_cycles": 5,
+  "lr": 0.05,
+  "lr_decay_start": 0.5,
+  "lr_end_factor": 0.1,
+  "grad_clip": 1.0,
+  "log_interval": 100,
+  "asym_M": 0.75,
+  "asym_T": 1.5,
+  "sift_max_sweeps": 40,
+  "sift_k_full": 6,
+  "sift_alpha": 0.7,
+  "alt_cycles": 77,
+  "alt_sift_sweeps": 2,
+  "alt_k_full": 2,
+  "alt_alpha": 0.7,
+  "min_block": 32,
+  "split_fracs": [
+   0.5,
+   0.382,
+   0.618,
+   0.25,
+   0.75
+  ],
+  "smoke_epochs": 200,
+  "smoke_sift_max_sweeps": 4,
+  "smoke_alt_cycles": 2,
+  "move_threshold_frac": 0.05,
+  "min_class_n": 20,
+  "top_movers": 12,
+  "ann_npz": "layering/outputs/fly_ann/node_ann.npz",
+  "ann_meta": "layering/outputs/fly_ann/node_ann_meta.json",
+  "results_dir": "biology/results",
+  "outputs_dir": "biology/outputs",
+  "subgraph_npz": "biology/results/central_subgraph.npz",
+  "subgraph_meta": "biology/results/central_subgraph_meta.json",
+  "champ_restricted_npy": "biology/results/central_only_champ_restricted_rank.npy",
+  "run_rank_npy": "biology/results/central_only_run{run_id}_rank.npy",
+  "run_json": "biology/results/central_only_run{run_id}.json",
+  "final_json": "biology/results/central_only.json",
+  "fig_scatter": "biology/outputs/central_only_rank_vs_champion_hexbin.png",
+  "fig_classes": "biology/outputs/central_only_class_displacement.png",
+  "fig_dpi": 120,
+  "seq_ramp": [
+   "#cde2fb",
+   "#86b6ef",
+   "#3987e5",
+   "#256abf",
+   "#104281"
+  ],
+  "bar_color": "#2a78d6",
+  "accent_color": "#eb6834"
+ },
+ "subgraph": {
+  "built_at": "2026-09-29T22:52:18",
+  "super_class_keep": "central",
+  "central_code": 2,
+  "n_nodes": 32294,
+  "n_nodes_full": 136648,
+  "n_nodes_pct_of_full": 23.632984017329196,
+  "n_edges": 849937,
+  "n_edges_full": 5657719,
+  "n_edges_pct_of_full": 15.02260893480217,
+  "total_weight": 12523698.0,
+  "total_weight_full": 41912141.0,
+  "total_weight_pct_of_full": 29.88083572251773,
+  "champion_ff_pct_full": 84.25817950936937,
+  "champ_restricted_score": 10356669.0,
+  "champ_restricted_ff_pct": 82.69657252993485,
+  "ann_unmatched_note": "13 of 136,648 nodes have no annotation row (coded NA) and are excluded from 'central' by construction"
+ },
+ "ff_pct_central_subgraph": {
+  "champ_restricted": {
+   "score": 10356669.0,
+   "pct": 82.69657252993485
+  },
+  "run1": {
+   "score": 10449116.0,
+   "pct": 83.43474906533199
+  },
+  "run2": {
+   "score": 10449826.0,
+   "pct": 83.44041831733726
+  }
+ },
+ "gap_central_only_minus_champ_restricted_pp": {
+  "run1": 0.7381765353971304,
+  "run2": 0.7438457874024067
+ },
+ "comparisons": {
+  "run1_vs_champ": {
+   "spearman": 0.7439855173383486,
+   "kendall_tau": 0.6009999488507746,
+   "disp_median": 0.06704239308828538,
+   "disp_iqr": [
+    0.025423466385904064,
+    0.17736041866658409
+   ],
+   "disp_mean": 0.13188301060785382,
+   "frac_moved_gt_threshold": 0.5777853471233046,
+   "move_threshold_frac": 0.05
+  },
+  "run2_vs_champ": {
+   "spearman": 0.7405338618154731,
+   "kendall_tau": 0.5968682666532801,
+   "disp_median": 0.06995324064038647,
+   "disp_iqr": [
+    0.02709565540519617,
+    0.17502245068590716
+   ],
+   "disp_mean": 0.1330283631804275,
+   "frac_moved_gt_threshold": 0.6161206416052517,
+   "move_threshold_frac": 0.05
+  },
+  "run1_vs_run2_noise_floor": {
+   "spearman": 0.9602307728930098,
+   "kendall_tau": 0.886697034231516,
+   "disp_median": 0.014089740810702009,
+   "disp_iqr": [
+    0.004180472548230267,
+    0.031554826123308455
+   ],
+   "disp_mean": 0.03557314617221058,
+   "frac_moved_gt_threshold": 0.15371276398092526,
+   "move_threshold_frac": 0.05
+  },
+  "run1_vs_champ_excluding_CX": {
+   "n": 29446,
+   "spearman": 0.7780670839829928,
+   "kendall_tau": 0.6437172524965962,
+   "disp_median": 0.05948657603815068,
+   "disp_iqr": [
+    0.023348713343449044,
+    0.1402471123772954
+   ],
+   "disp_mean": 0.12010827182128882,
+   "frac_moved_gt_threshold": 0.5497860490389187,
+   "move_threshold_frac": 0.05
+  }
+ },
+ "per_class_run1_vs_champ": [
+  {
+   "cell_class": "CX",
+   "n": 2848,
+   "median_abs_disp": 0.2759266714148577,
+   "iqr_abs_disp": [
+    0.10550274053200384,
+    0.3554020995262131
+   ],
+   "median_signed_shift": 0.27461059672374816,
+   "frac_moved_gt_threshold": 0.8672752808988764,
+   "median_champ_rank_frac": 0.5115195243551234,
+   "median_new_rank_frac": 0.7881429411946862
+  },
+  {
+   "cell_class": "TuBu",
+   "n": 150,
+   "median_abs_disp": 0.14518626327687115,
+   "iqr_abs_disp": [
+    0.10976062923853466,
+    0.23937076146533304
+   ],
+   "median_signed_shift": -0.1451243303502307,
+   "frac_moved_gt_threshold": 0.96,
+   "median_champ_rank_frac": 0.391710277769176,
+   "median_new_rank_frac": 0.2352057721487629
+  },
+  {
+   "cell_class": "Kenyon_Cell",
+   "n": 5177,
+   "median_abs_disp": 0.07636329854767288,
+   "iqr_abs_disp": [
+    0.04273371938190939,
+    0.10897098442386895
+   ],
+   "median_signed_shift": 0.05162109435481373,
+   "frac_moved_gt_threshold": 0.5632605756229476,
+   "median_champ_rank_frac": 0.3724026878890162,
+   "median_new_rank_frac": 0.43579103830551513
+  },
+  {
+   "cell_class": "NA",
+   "n": 21912,
+   "median_abs_disp": 0.06307868578329669,
+   "iqr_abs_disp": [
+    0.020561731644628867,
+    0.18162604898894497
+   ],
+   "median_signed_shift": -0.02952652277583377,
+   "frac_moved_gt_threshold": 0.5718784227820373,
+   "median_champ_rank_frac": 0.6282940575356889,
+   "median_new_rank_frac": 0.5812559997522683
+  },
+  {
+   "cell_class": "MBON",
+   "n": 96,
+   "median_abs_disp": 0.05810856842040071,
+   "iqr_abs_disp": [
+    0.02004304338401511,
+    0.0927213327965813
+   ],
+   "median_signed_shift": 0.036416560864583655,
+   "frac_moved_gt_threshold": 0.59375,
+   "median_champ_rank_frac": 0.49162357167187937,
+   "median_new_rank_frac": 0.5583717833586226
+  },
+  {
+   "cell_class": "LHCENT",
+   "n": 42,
+   "median_abs_disp": 0.05378874678722943,
+   "iqr_abs_disp": [
+    0.013447186696807358,
+    0.08046635493760257
+   ],
+   "median_signed_shift": -0.052348806242839004,
+   "frac_moved_gt_threshold": 0.5476190476190477,
+   "median_champ_rank_frac": 0.6521382342922615,
+   "median_new_rank_frac": 0.5841668473043694
+  },
+  {
+   "cell_class": "mAL",
+   "n": 77,
+   "median_abs_disp": 0.04462267364444307,
+   "iqr_abs_disp": [
+    0.029170408447651192,
+    0.11934474963614405
+   ],
+   "median_signed_shift": -0.02390610968321308,
+   "frac_moved_gt_threshold": 0.4805194805194805,
+   "median_champ_rank_frac": 0.5770910104356981,
+   "median_new_rank_frac": 0.5844610287059115
+  },
+  {
+   "cell_class": "LHLN",
+   "n": 514,
+   "median_abs_disp": 0.0339082773356455,
+   "iqr_abs_disp": [
+    0.008988015978695073,
+    0.10045520701080729
+   ],
+   "median_signed_shift": -0.018641810918774968,
+   "frac_moved_gt_threshold": 0.3832684824902724,
+   "median_champ_rank_frac": 0.2691295327160685,
+   "median_new_rank_frac": 0.26329235438020626
+  },
+  {
+   "cell_class": "ALIN",
+   "n": 24,
+   "median_abs_disp": 0.02065463103458954,
+   "iqr_abs_disp": [
+    0.012974948131173938,
+    0.038437122596228286
+   ],
+   "median_signed_shift": -0.013114297216114948,
+   "frac_moved_gt_threshold": 0.16666666666666666,
+   "median_champ_rank_frac": 0.07653361409593411,
+   "median_new_rank_frac": 0.08048183816926269
+  },
+  {
+   "cell_class": "ALPN",
+   "n": 685,
+   "median_abs_disp": 0.017588951165887344,
+   "iqr_abs_disp": [
+    0.009382838386027931,
+    0.039853838293128545
+   ],
+   "median_signed_shift": 0.006224259127365064,
+   "frac_moved_gt_threshold": 0.1635036496350365,
+   "median_champ_rank_frac": 0.15285046294862664,
+   "median_new_rank_frac": 0.16560864583655902
+  },
+  {
+   "cell_class": "ALLN",
+   "n": 429,
+   "median_abs_disp": 0.016257393243117705,
+   "iqr_abs_disp": [
+    0.009351871922707708,
+    0.033846344409005046
+   ],
+   "median_signed_shift": 0.00427337193819094,
+   "frac_moved_gt_threshold": 0.1048951048951049,
+   "median_champ_rank_frac": 0.12290589291796984,
+   "median_new_rank_frac": 0.0917536308178243
+  },
+  {
+   "cell_class": "DAN",
+   "n": 320,
+   "median_abs_disp": 0.00464496949803363,
+   "iqr_abs_disp": [
+    0.002074753042455021,
+    0.08275013160746911
+   ],
+   "median_signed_shift": 0.0008206112779859413,
+   "frac_moved_gt_threshold": 0.35625,
+   "median_champ_rank_frac": 0.5390641934784628,
+   "median_new_rank_frac": 0.6726844827052303
+  }
+ ],
+ "per_class_run1_vs_run2_noise": [
+  {
+   "cell_class": "TuBu",
+   "n": 150,
+   "median_abs_disp": 0.090607871674976,
+   "iqr_abs_disp": [
+    0.09021304926764315,
+    0.1639364568172669
+   ],
+   "median_signed_shift": 0.09048400582169511,
+   "frac_moved_gt_threshold": 0.88,
+   "median_champ_rank_frac": 0.1452481962035116,
+   "median_new_rank_frac": 0.2352057721487629
+  },
+  {
+   "cell_class": "mAL",
+   "n": 77,
+   "median_abs_disp": 0.02198618895735918,
+   "iqr_abs_disp": [
+    0.007741615830056049,
+    0.06196389310376862
+   ],
+   "median_signed_shift": 3.0966463320224195e-05,
+   "frac_moved_gt_threshold": 0.33766233766233766,
+   "median_champ_rank_frac": 0.5475799708915244,
+   "median_new_rank_frac": 0.5844610287059115
+  },
+  {
+   "cell_class": "CX",
+   "n": 2848,
+   "median_abs_disp": 0.02006626823150528,
+   "iqr_abs_disp": [
+    0.002996005326231691,
+    0.032181897005543
+   ],
+   "median_signed_shift": -0.003158579258662868,
+   "frac_moved_gt_threshold": 0.09304775280898876,
+   "median_champ_rank_frac": 0.8140309045303936,
+   "median_new_rank_frac": 0.7881429411946862
+  },
+  {
+   "cell_class": "Kenyon_Cell",
+   "n": 5177,
+   "median_abs_disp": 0.01879664323537609,
+   "iqr_abs_disp": [
+    0.0075867835134549285,
+    0.03220512185303317
+   ],
+   "median_signed_shift": 0.01857987799213452,
+   "frac_moved_gt_threshold": 0.09252462816302878,
+   "median_champ_rank_frac": 0.4188523828693525,
+   "median_new_rank_frac": 0.43579103830551513
+  },
+  {
+   "cell_class": "LHCENT",
+   "n": 42,
+   "median_abs_disp": 0.015777413061654227,
+   "iqr_abs_disp": [
+    0.005573963397640356,
+    0.028171740005573962
+   ],
+   "median_signed_shift": 0.006115876505744279,
+   "frac_moved_gt_threshold": 0.21428571428571427,
+   "median_champ_rank_frac": 0.5813334159105689,
+   "median_new_rank_frac": 0.5841668473043694
+  },
+  {
+   "cell_class": "NA",
+   "n": 21912,
+   "median_abs_disp": 0.012789149351252593,
+   "iqr_abs_disp": [
+    0.0038708079150280247,
+    0.03217415538971294
+   ],
+   "median_signed_shift": 6.193292664044839e-05,
+   "frac_moved_gt_threshold": 0.17907995618838993,
+   "median_champ_rank_frac": 0.5841358808410492,
+   "median_new_rank_frac": 0.5812559997522683
+  },
+  {
+   "cell_class": "LHLN",
+   "n": 514,
+   "median_abs_disp": 0.012510451181370575,
+   "iqr_abs_disp": [
+    0.004629486266373517,
+    0.025578298702505185
+   ],
+   "median_signed_shift": -0.003158579258662868,
+   "frac_moved_gt_threshold": 0.08560311284046693,
+   "median_champ_rank_frac": 0.2677515250983185,
+   "median_new_rank_frac": 0.26329235438020626
+  },
+  {
+   "cell_class": "ALPN",
+   "n": 685,
+   "median_abs_disp": 0.012386585328089679,
+   "iqr_abs_disp": [
+    0.003932740841668473,
+    0.019756603598303037
+   ],
+   "median_signed_shift": -0.001424457312730313,
+   "frac_moved_gt_threshold": 0.051094890510948905,
+   "median_champ_rank_frac": 0.17777846592140711,
+   "median_new_rank_frac": 0.16560864583655902
+  },
+  {
+   "cell_class": "MBON",
+   "n": 96,
+   "median_abs_disp": 0.007013903942030781,
+   "iqr_abs_disp": [
+    0.0016954138667822746,
+    0.016458675254699164
+   ],
+   "median_signed_shift": 0.003266961880283653,
+   "frac_moved_gt_threshold": 0.07291666666666667,
+   "median_champ_rank_frac": 0.5543616263586536,
+   "median_new_rank_frac": 0.5583717833586226
+  },
+  {
+   "cell_class": "ALIN",
+   "n": 24,
+   "median_abs_disp": 0.00648747406558697,
+   "iqr_abs_disp": [
+    0.004675935961353853,
+    0.009166073142786363
+   ],
+   "median_signed_shift": -0.00464496949803363,
+   "frac_moved_gt_threshold": 0.125,
+   "median_champ_rank_frac": 0.08874988387576255,
+   "median_new_rank_frac": 0.08048183816926269
+  },
+  {
+   "cell_class": "ALLN",
+   "n": 429,
+   "median_abs_disp": 0.004954634131235871,
+   "iqr_abs_disp": [
+    0.0019508871891741244,
+    0.012820115814572817
+   ],
+   "median_signed_shift": -0.0024463506022977116,
+   "frac_moved_gt_threshold": 0.013986013986013986,
+   "median_champ_rank_frac": 0.09339485337379617,
+   "median_new_rank_frac": 0.0917536308178243
+  },
+  {
+   "cell_class": "DAN",
+   "n": 320,
+   "median_abs_disp": 0.00041804725482302667,
+   "iqr_abs_disp": [
+    9.289938996067259e-05,
+    0.00948347939181866
+   ],
+   "median_signed_shift": 6.193292664044839e-05,
+   "frac_moved_gt_threshold": 0.09375,
+   "median_champ_rank_frac": 0.7225250054191311,
+   "median_new_rank_frac": 0.6726844827052303
+  }
+ ],
+ "full_brain_context": {
+  "full_champion_median_rank_frac_by_super_class": {
+   "NA": {
+    "n": 13,
+    "median_rank_frac": 0.7075603562463867
+   },
+   "ascending": {
+    "n": 1629,
+    "median_rank_frac": 0.06284806838057184
+   },
+   "central": {
+    "n": 32294,
+    "median_rank_frac": 0.8187336714307669
+   },
+   "descending": {
+    "n": 1276,
+    "median_rank_frac": 0.9572731197904089
+   },
+   "endocrine": {
+    "n": 69,
+    "median_rank_frac": 0.9935454126325496
+   },
+   "motor": {
+    "n": 109,
+    "median_rank_frac": 0.9991657336055676
+   },
+   "optic": {
+    "n": 77509,
+    "median_rank_frac": 0.455619223254078
+   },
+   "sensory": {
+    "n": 14827,
+    "median_rank_frac": 0.07350326022525193
+   },
+   "sensory_ascending": {
+    "n": 360,
+    "median_rank_frac": 0.06425680768695984
+   },
+   "visual_centrifugal": {
+    "n": 524,
+    "median_rank_frac": 0.3179762453621375
+   },
+   "visual_projection": {
+    "n": 8038,
+    "median_rank_frac": 0.8091469260210615
+   }
+  },
+  "cx_out_weight_by_target_super_class": {
+   "total_weight": 1032064.0,
+   "frac_by_other_super_class": {
+    "central": 0.9932,
+    "descending": 0.0048,
+    "visual_centrifugal": 0.001,
+    "NA": 0.0005,
+    "visual_projection": 0.0004,
+    "motor": 0.0
+   }
+  },
+  "cx_in_weight_by_source_super_class": {
+   "total_weight": 1108535.0,
+   "frac_by_other_super_class": {
+    "central": 0.9961,
+    "visual_projection": 0.0011,
+    "ascending": 0.001,
+    "visual_centrifugal": 0.0008,
+    "descending": 0.0007,
+    "NA": 0.0002
+   }
+  },
+  "tubu_in_weight_by_source_super_class": {
+   "total_weight": 24861.0,
+   "frac_by_other_super_class": {
+    "visual_projection": 0.6534,
+    "central": 0.3466
+   }
+  },
+  "tubu_out_weight_by_target_super_class": {
+   "total_weight": 19591.0,
+   "frac_by_other_super_class": {
+    "central": 1.0
+   }
+  }
+ },
+ "runs": {
+  "1": {
+   "run_id": 1,
+   "seed": 42,
+   "device": "Apple MPS",
+   "torch": "2.8.0",
+   "python": "3.9.23",
+   "machine": "macOS-15.6-arm64-arm-64bit",
+   "finished_at": "2026-09-29T22:54:59",
+   "config": {
+    "epochs": 20000,
+    "beta_cycles": 5,
+    "lr": 0.05,
+    "lr_decay_start": 0.5,
+    "lr_end_factor": 0.1,
+    "grad_clip": 1.0,
+    "log_interval": 100,
+    "asym_M": 0.75,
+    "asym_T": 1.5,
+    "sift_max_sweeps": 40,
+    "sift_k_full": 6,
+    "sift_alpha": 0.7,
+    "alt_cycles": 77,
+    "alt_sift_sweeps": 2,
+    "alt_k_full": 2,
+    "alt_alpha": 0.7,
+    "min_block": 32,
+    "split_fracs": [
+     0.5,
+     0.382,
+     0.618,
+     0.25,
+     0.75
+    ]
+   },
+   "stages": {
+    "1_greedy": {
+     "score": 8794686.0,
+     "pct": 70.22435386097621,
+     "wall_s": 1.9687271118164062
+    },
+    "2_rocket_asym": {
+     "score": 10310262.0,
+     "pct": 82.32601904006309,
+     "wall_s": 27.32786798477173,
+     "n_epochs_done": 20000
+    },
+    "3_sift": {
+     "score": 10415377.0,
+     "pct": 83.16534780701355,
+     "wall_s": 15.343265056610107,
+     "n_sweeps": 40
+    },
+    "4_alt_scc": {
+     "score": 10449116.0,
+     "pct": 83.43474906533199,
+     "wall_s": 89.47338604927063,
+     "n_cycles": 77
+    }
+   },
+   "final": {
+    "score": 10449116.0,
+    "pct": 83.43474906533199,
+    "wall_s_total": 134.63694095611572
+   }
+  },
+  "2": {
+   "run_id": 2,
+   "seed": 42,
+   "device": "Apple MPS",
+   "torch": "2.8.0",
+   "python": "3.9.23",
+   "machine": "macOS-15.6-arm64-arm-64bit",
+   "finished_at": "2026-09-29T22:57:25",
+   "config": {
+    "epochs": 20000,
+    "beta_cycles": 5,
+    "lr": 0.05,
+    "lr_decay_start": 0.5,
+    "lr_end_factor": 0.1,
+    "grad_clip": 1.0,
+    "log_interval": 100,
+    "asym_M": 0.75,
+    "asym_T": 1.5,
+    "sift_max_sweeps": 40,
+    "sift_k_full": 6,
+    "sift_alpha": 0.7,
+    "alt_cycles": 77,
+    "alt_sift_sweeps": 2,
+    "alt_k_full": 2,
+    "alt_alpha": 0.7,
+    "min_block": 32,
+    "split_fracs": [
+     0.5,
+     0.382,
+     0.618,
+     0.25,
+     0.75
+    ]
+   },
+   "stages": {
+    "1_greedy": {
+     "score": 8794686.0,
+     "pct": 70.22435386097621,
+     "wall_s": 2.0433030128479004
+    },
+    "2_rocket_asym": {
+     "score": 10310304.0,
+     "pct": 82.32635440426621,
+     "wall_s": 35.260310888290405,
+     "n_epochs_done": 20000
+    },
+    "3_sift": {
+     "score": 10417213.0,
+     "pct": 83.18000801360748,
+     "wall_s": 16.413176774978638,
+     "n_sweeps": 40
+    },
+    "4_alt_scc": {
+     "score": 10449826.0,
+     "pct": 83.44041831733726,
+     "wall_s": 89.81580328941345,
+     "n_cycles": 77
+    }
+   },
+   "final": {
+    "score": 10449826.0,
+    "pct": 83.44041831733726,
+    "wall_s_total": 144.16032099723816
+   }
+  }
+ },
+ "figures": [
+  "biology/outputs/central_only_rank_vs_champion_hexbin.png",
+  "biology/outputs/central_only_class_displacement.png"
+ ],
+ "rerun_commands": [
+  "PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python",
+  "$PY biology/analysis/exp_central_only.py --stage subgraph",
+  "$PY biology/analysis/exp_central_only.py --stage run --run-id 1 2>&1 | tee biology/results/central_only_run1.log",
+  "$PY biology/analysis/exp_central_only.py --stage run --run-id 2 2>&1 | tee biology/results/central_only_run2.log",
+  "$PY biology/analysis/exp_central_only.py --stage analyze"
+ ],
+ "caveats": [
+  "MPS kernels are non-deterministic: same-seed repeats differ; the run1-vs-run2 block is the noise floor for every order comparison.",
+  "The pipeline is deterministic-greedy-initialized (seed never drawn), so 'seed 42' is one sample of device noise, not of an RNG.",
+  "Full-brain champion was produced on CUDA; central-only runs are MPS. FF%% comparisons here are within-machine (frozen oracle, CPU), but the champion ORDER itself is a CUDA artifact.",
+  "cell_class annotation is NA for many central neurons; per-class rows cover only classes with >= 20 members."
+ ]
+}

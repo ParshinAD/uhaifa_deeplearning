@@ -1,0 +1,12 @@
+[2026-09-29T22:55:01] run_id=2 smoke=False seed=42 device=Apple MPS torch=2.8.0 graph: n=32,294 m=849,937 W=12,523,698
+[2026-09-29T22:55:01] stage 1: greedy-FAS warm start
+  greedy 70.2244%  (2.0s)
+[2026-09-29T22:55:03] stage 2: Rocket + ASYM surrogate (20000 epochs)
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+  pure Rocket 82.3264%  (35.3s)
+[2026-09-29T22:55:39] stage 3: under-relaxed exact-gain sift
+  after sift 83.1800%  (16.4s, 40 sweeps)
+[2026-09-29T22:55:55] stage 4: SCC-block <-> sift alternation (77 cycles)
+  final 83.4404%  (89.8s)
+[2026-09-29T22:57:25] saved /Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/biology/results/central_only_run2.json
