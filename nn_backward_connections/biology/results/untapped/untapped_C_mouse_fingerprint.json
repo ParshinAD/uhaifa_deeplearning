@@ -1,0 +1,260 @@
+{
+ "config": {
+  "dataset": "mouse",
+  "top_k": 10,
+  "hub_id": 92,
+  "out_json": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/biology/results/untapped/untapped_C_mouse_fingerprint.json",
+  "seed": 42
+ },
+ "champion_ff_pct": 93.17538325903583,
+ "fingerprint": {
+  "n_nodes": 148,
+  "n_edges": 583,
+  "id_range": [
+   1,
+   149
+  ],
+  "missing_ids": [
+   37
+  ],
+  "total_weight": "9.159036176272162",
+  "weight_min": "0.000184024804647464",
+  "weight_max": "0.613959345844929",
+  "n_reciprocal_edges": 166,
+  "heaviest_edges_exact": [
+   {
+    "src_id": 51,
+    "tgt_id": 53,
+    "weight": "0.613959345844929"
+   },
+   {
+    "src_id": 105,
+    "tgt_id": 123,
+    "weight": "0.594344938173106"
+   },
+   {
+    "src_id": 133,
+    "tgt_id": 135,
+    "weight": "0.28193253167543"
+   }
+  ],
+  "file_format": "tab-separated, no header, src tgt weight (floats)"
+ },
+ "total_fb_weight": 0.6250691161968357,
+ "fb_pct_of_total": 6.824616740964183,
+ "hub": {
+  "original_id": 92,
+  "pi_rank": 55,
+  "pi_rank_frac": 0.3741496598639456,
+  "in_degree": 95,
+  "out_degree": 56,
+  "fb_w_in": 0.2531371342009914,
+  "fb_w_out": 0.0,
+  "fb_touch_share_pct": 40.49746302315757,
+  "degree_total": 151
+ },
+ "top_fb_senders": [
+  {
+   "original_id": 102,
+   "pi_rank": 119,
+   "pi_rank_frac": 0.8095238095238095,
+   "in_degree": 5,
+   "out_degree": 3,
+   "fb_w_in": 0.041421225432020675,
+   "fb_w_out": 0.0792424957316813,
+   "fb_touch_share_pct": 19.304060628985656
+  },
+  {
+   "original_id": 103,
+   "pi_rank": 126,
+   "pi_rank_frac": 0.8571428571428571,
+   "in_degree": 6,
+   "out_degree": 4,
+   "fb_w_in": 0.0,
+   "fb_w_out": 0.076154149091917,
+   "fb_touch_share_pct": 12.183316551498905
+  },
+  {
+   "original_id": 129,
+   "pi_rank": 127,
+   "pi_rank_frac": 0.8639455782312925,
+   "in_degree": 8,
+   "out_degree": 4,
+   "fb_w_in": 0.0034260896714902803,
+   "fb_w_out": 0.05320898166483366,
+   "fb_touch_share_pct": 9.060609438027239
+  },
+  {
+   "original_id": 135,
+   "pi_rank": 128,
+   "pi_rank_frac": 0.8707482993197279,
+   "in_degree": 24,
+   "out_degree": 13,
+   "fb_w_in": 0.0,
+   "fb_w_out": 0.034814705666429246,
+   "fb_touch_share_pct": 5.569736972169653
+  },
+  {
+   "original_id": 53,
+   "pi_rank": 133,
+   "pi_rank_frac": 0.9047619047619048,
+   "in_degree": 40,
+   "out_degree": 11,
+   "fb_w_in": 0.0,
+   "fb_w_out": 0.025561607763355768,
+   "fb_touch_share_pct": 4.089405011542174
+  },
+  {
+   "original_id": 146,
+   "pi_rank": 65,
+   "pi_rank_frac": 0.4421768707482993,
+   "in_degree": 15,
+   "out_degree": 12,
+   "fb_w_in": 0.06220054467372858,
+   "fb_w_out": 0.018402726342987882,
+   "fb_touch_share_pct": 12.895097346536364
+  },
+  {
+   "original_id": 83,
+   "pi_rank": 129,
+   "pi_rank_frac": 0.8775510204081632,
+   "in_degree": 7,
+   "out_degree": 3,
+   "fb_w_in": 0.0,
+   "fb_w_out": 0.01686457238038546,
+   "fb_touch_share_pct": 2.6980332163899083
+  },
+  {
+   "original_id": 51,
+   "pi_rank": 77,
+   "pi_rank_frac": 0.5238095238095238,
+   "in_degree": 1,
+   "out_degree": 24,
+   "fb_w_in": 0.0,
+   "fb_w_out": 0.01365388333093467,
+   "fb_touch_share_pct": 2.1843797713139663
+  },
+  {
+   "original_id": 100,
+   "pi_rank": 140,
+   "pi_rank_frac": 0.9523809523809523,
+   "in_degree": 1,
+   "out_degree": 1,
+   "fb_w_in": 0.0,
+   "fb_w_out": 0.0128259277868094,
+   "fb_touch_share_pct": 2.051921532269479
+  },
+  {
+   "original_id": 91,
+   "pi_rank": 106,
+   "pi_rank_frac": 0.7210884353741497,
+   "in_degree": 3,
+   "out_degree": 6,
+   "fb_w_in": 0.0,
+   "fb_w_out": 0.0124629964046504,
+   "fb_touch_share_pct": 1.9938589320298101
+  }
+ ],
+ "top_fb_receivers": [
+  {
+   "original_id": 92,
+   "pi_rank": 55,
+   "pi_rank_frac": 0.3741496598639456,
+   "in_degree": 95,
+   "out_degree": 56,
+   "fb_w_in": 0.2531371342009914,
+   "fb_w_out": 0.0,
+   "fb_touch_share_pct": 40.49746302315757
+  },
+  {
+   "original_id": 104,
+   "pi_rank": 118,
+   "pi_rank_frac": 0.8027210884353742,
+   "in_degree": 6,
+   "out_degree": 4,
+   "fb_w_in": 0.1179537863335408,
+   "fb_w_out": 0.00524811937485358,
+   "fb_touch_share_pct": 19.71012525110868
+  },
+  {
+   "original_id": 146,
+   "pi_rank": 65,
+   "pi_rank_frac": 0.4421768707482993,
+   "in_degree": 15,
+   "out_degree": 12,
+   "fb_w_in": 0.06220054467372858,
+   "fb_w_out": 0.018402726342987882,
+   "fb_touch_share_pct": 12.895097346536364
+  },
+  {
+   "original_id": 102,
+   "pi_rank": 119,
+   "pi_rank_frac": 0.8095238095238095,
+   "in_degree": 5,
+   "out_degree": 3,
+   "fb_w_in": 0.041421225432020675,
+   "fb_w_out": 0.0792424957316813,
+   "fb_touch_share_pct": 19.304060628985656
+  },
+  {
+   "original_id": 142,
+   "pi_rank": 63,
+   "pi_rank_frac": 0.42857142857142855,
+   "in_degree": 10,
+   "out_degree": 3,
+   "fb_w_in": 0.03165789184915764,
+   "fb_w_out": 0.00306442796077661,
+   "fb_touch_share_pct": 5.55495686960162
+  },
+  {
+   "original_id": 55,
+   "pi_rank": 117,
+   "pi_rank_frac": 0.7959183673469388,
+   "in_degree": 22,
+   "out_degree": 4,
+   "fb_w_in": 0.01744533094625993,
+   "fb_w_out": 0.00529275484333211,
+   "fb_touch_share_pct": 3.637691448897591
+  },
+  {
+   "original_id": 61,
+   "pi_rank": 113,
+   "pi_rank_frac": 0.7687074829931972,
+   "in_degree": 6,
+   "out_degree": 7,
+   "fb_w_in": 0.011709238316999191,
+   "fb_w_out": 0.00622742647334544,
+   "fb_touch_share_pct": 2.8695490347496766
+  },
+  {
+   "original_id": 15,
+   "pi_rank": 40,
+   "pi_rank_frac": 0.272108843537415,
+   "in_degree": 3,
+   "out_degree": 9,
+   "fb_w_in": 0.00990390832622726,
+   "fb_w_out": 0.0,
+   "fb_touch_share_pct": 1.584450114330796
+  },
+  {
+   "original_id": 148,
+   "pi_rank": 41,
+   "pi_rank_frac": 0.2789115646258503,
+   "in_degree": 4,
+   "out_degree": 6,
+   "fb_w_in": 0.00892415178727265,
+   "fb_w_out": 0.0,
+   "fb_touch_share_pct": 1.4277064017449255
+  },
+  {
+   "original_id": 143,
+   "pi_rank": 114,
+   "pi_rank_frac": 0.7755102040816326,
+   "in_degree": 21,
+   "out_degree": 4,
+   "fb_w_in": 0.00526082418023985,
+   "fb_w_out": 0.01198471934188103,
+   "fb_touch_share_pct": 2.758981859006168
+  }
+ ]
+}

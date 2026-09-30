@@ -1,0 +1,178 @@
+{
+ "config": {
+  "ann_npz": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/microns_ann/node_ann.npz",
+  "microns_npz": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/data/processed/microns.npz",
+  "gallery_json": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/microns_gallery/report_gallery.json",
+  "proofread_json": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/biology/results/untapped/untapped_D_proofread_control.json",
+  "fly_report": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/gallery_fly/report.json",
+  "mouse_diag": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/diagnostics_mouse.txt",
+  "wm_layer_code": 6,
+  "out_json": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/biology/results/untapped/untapped_E_quick_adds.json",
+  "seed": 42
+ },
+ "E1_ei_recurrence": {
+  "source": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/microns_gallery/report_gallery.json",
+  "full_graph": {
+   "E->I": {
+    "weight": 1440225.0,
+    "pct_of_total": 9.351772146942478,
+    "ff_share_pct": 48.40979708031731
+   },
+   "I->E": {
+    "weight": 5224984.0,
+    "pct_of_total": 33.927240423836615,
+    "ff_share_pct": 97.29637449607502
+   },
+   "E->E": {
+    "weight": 5546178.0,
+    "pct_of_total": 36.0128403148016,
+    "ff_share_pct": 80.62507189635818
+   },
+   "I->I": {
+    "weight": 741705.0,
+    "pct_of_total": 4.816092041346296,
+    "ff_share_pct": 78.08899764731261
+   }
+  },
+  "proofread_control": {
+   "E->E": {
+    "weight": 292.0,
+    "pct_of_total": 5.342114892060008,
+    "ff_share_pct": 89.38356164383562
+   },
+   "E->I": {
+    "weight": 503.0,
+    "pct_of_total": 9.20234174899378,
+    "ff_share_pct": 53.08151093439364
+   },
+   "I->E": {
+    "weight": 705.0,
+    "pct_of_total": 12.897914379802415,
+    "ff_share_pct": 88.36879432624113
+   },
+   "I->I": {
+    "weight": 3913.0,
+    "pct_of_total": 71.58799853640689,
+    "ff_share_pct": 75.08305647840531
+   }
+  }
+ },
+ "E2_unclassified_lane": {
+  "unclassified_lane": {
+   "n": 4202,
+   "median_rank": 18076.5,
+   "median_out_deg": 68.0,
+   "median_in_deg": 91.0,
+   "median_out_w": 81.0,
+   "median_in_w": 119.0,
+   "agg_out_over_in_w": 1.1825451243784497,
+   "zero_output_share": 0.03450737743931461,
+   "zero_input_share": 0.11351737267967635,
+   "multi_soma_share": 0.4281294621608758
+  },
+  "inhibitory": {
+   "n": 7201,
+   "median_rank": 26020.0,
+   "median_out_deg": 140.0,
+   "median_in_deg": 186.0,
+   "median_out_w": 178.0,
+   "median_in_w": 249.0,
+   "agg_out_over_in_w": 2.701744188984974,
+   "zero_output_share": 0.02444104985418692,
+   "zero_input_share": 0.0022219136231079015,
+   "multi_soma_share": 0.013470351340091655
+  },
+  "excitatory": {
+   "n": 55355,
+   "median_rank": 35023.0,
+   "median_out_deg": 59.0,
+   "median_in_deg": 124.0,
+   "median_out_w": 67.0,
+   "median_in_w": 166.0,
+   "agg_out_over_in_w": 0.640116287132715,
+   "zero_output_share": 0.014831541866136755,
+   "zero_input_share": 0.001445217234215518,
+   "multi_soma_share": 0.07202601391021587
+  },
+  "white_matter_band": {
+   "n": 776,
+   "median_rank": 47107.0,
+   "median_out_deg": 8.0,
+   "median_in_deg": 17.0,
+   "median_out_w": 10.0,
+   "median_in_w": 20.0,
+   "agg_out_over_in_w": 1.06071922990245,
+   "zero_output_share": 0.08118556701030928,
+   "zero_input_share": 0.1172680412371134,
+   "multi_soma_share": 0.09020618556701031
+  },
+  "all": {
+   "n": 67534,
+   "median_rank": 33766.5,
+   "median_out_deg": 61.0,
+   "median_in_deg": 125.0,
+   "median_out_w": 70.0,
+   "median_in_w": 168.0,
+   "agg_out_over_in_w": 1.0,
+   "zero_output_share": 0.017842864335001627,
+   "zero_input_share": 0.009832084579619154,
+   "multi_soma_share": 0.08814819202179643
+  },
+  "unclassified_decomposition": {
+   "multi_soma": {
+    "n": 1799,
+    "median_rank": 29105.0,
+    "median_out_deg": 167.0,
+    "median_in_deg": 253.0,
+    "median_out_w": 199.0,
+    "median_in_w": 375.0,
+    "agg_out_over_in_w": 1.106359825684018,
+    "zero_output_share": 0.0027793218454697055,
+    "zero_input_share": 0.0022234574763757642,
+    "multi_soma_share": 1.0
+   },
+   "zero_input_single_soma": {
+    "n": 473,
+    "median_rank": 309.0,
+    "median_out_deg": 1.0,
+    "median_in_deg": 0.0,
+    "median_out_w": 2.0,
+    "median_in_w": 0.0,
+    "agg_out_over_in_w": 6353.0,
+    "zero_output_share": 0.0,
+    "zero_input_share": 1.0,
+    "multi_soma_share": 0.0
+   },
+   "remaining_single_soma": {
+    "n": 1930,
+    "median_rank": 12967.0,
+    "median_out_deg": 50.0,
+    "median_in_deg": 23.0,
+    "median_out_w": 60.0,
+    "median_in_w": 28.0,
+    "agg_out_over_in_w": 1.5315317629530685,
+    "zero_output_share": 0.07253886010362694,
+    "zero_input_share": 0.0,
+    "multi_soma_share": 0.0
+   }
+  }
+ },
+ "E3_trophic_gap": {
+  "fly": {
+   "source": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/gallery_fly/report.json",
+   "champion_ff_pct": 84.25817950936937,
+   "trophic_ff_pct": 77.77735811682825,
+   "gap_pp": 6.480821392541117,
+   "spearman": 0.7602040263922919,
+   "F0": 0.3596232131939354,
+   "max_level": 6.701323769770545
+  },
+  "mouse": {
+   "source": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/diagnostics_mouse.txt",
+   "champion_ff_pct": 93.175,
+   "trophic_ff_pct": 89.977,
+   "gap_pp": 3.1979999999999933,
+   "spearman": 0.736
+  }
+ }
+}

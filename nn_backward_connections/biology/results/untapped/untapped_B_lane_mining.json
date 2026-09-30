@@ -1,0 +1,812 @@
+{
+ "config": {
+  "lane_matrix": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/fly_streams/lane_matrix.json",
+  "champion_ff_pct": 84.25817950936937,
+  "min_weight_pct": 0.1,
+  "counter_ff_max": 65.0,
+  "oneway_ff_min": 97.0,
+  "out_json": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/biology/results/untapped/untapped_B_lane_mining.json",
+  "out_png": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/biology/outputs/untapped_B_fb_budget.png",
+  "dpi": 120,
+  "seed": 42
+ },
+ "total_fb_pct_of_total_weight": 15.741820490630626,
+ "counter_hierarchy_pairs": [
+  {
+   "src": "visual projection",
+   "tgt": "visual centrifugal",
+   "intra": false,
+   "weight_pct_of_total": 0.2227158951388334,
+   "ff_share_pct": 24.676201189137075,
+   "fb_pct_of_total": 0.1677580727741873,
+   "fb_share_of_all_fb_pct": 1.0656840666810756,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 0.49944477901999806,
+   "ff_share_pct": 37.809562027058014,
+   "fb_pct_of_total": 0.31060689550552906,
+   "fb_share_of_all_fb_pct": 1.9731319874368987,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "central (other)",
+   "tgt": "ascending (VNC)",
+   "intra": false,
+   "weight_pct_of_total": 0.1422666525196124,
+   "ff_share_pct": 42.25602495513777,
+   "fb_pct_of_total": 0.08215042032808584,
+   "fb_share_of_all_fb_pct": 0.5218609904552077,
+   "category": "involving periphery-motor"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "medulla\u2192lobula",
+   "intra": false,
+   "weight_pct_of_total": 0.3216514279239517,
+   "ff_share_pct": 44.89173732113848,
+   "fb_pct_of_total": 0.17725651381064023,
+   "fb_share_of_all_fb_pct": 1.126022964854297,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "lobula (plate)",
+   "intra": false,
+   "weight_pct_of_total": 0.5015825843876599,
+   "ff_share_pct": 45.914833701194915,
+   "fb_pct_of_total": 0.2712817748919102,
+   "fb_share_of_all_fb_pct": 1.72331894556525,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "lobula (plate)",
+   "tgt": "medulla\u2192lobula",
+   "intra": false,
+   "weight_pct_of_total": 1.6367047438593032,
+   "ff_share_pct": 46.020280533778056,
+   "fb_pct_of_total": 0.8834886292255983,
+   "fb_share_of_all_fb_pct": 5.612366306371248,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "central (other)",
+   "tgt": "visual projection",
+   "intra": false,
+   "weight_pct_of_total": 0.6449467709129916,
+   "ff_share_pct": 52.59275427193122,
+   "fb_pct_of_total": 0.30575150050196676,
+   "fb_share_of_all_fb_pct": 1.9422880643566416,
+   "category": "visual \u2194 central"
+  },
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "lamina",
+   "intra": false,
+   "weight_pct_of_total": 0.20772262624331217,
+   "ff_share_pct": 53.22704770218583,
+   "fb_pct_of_total": 0.09715800488455123,
+   "fb_share_of_all_fb_pct": 0.6171967527032766,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "central (other)",
+   "tgt": "visual centrifugal",
+   "intra": false,
+   "weight_pct_of_total": 0.5075211977359974,
+   "ff_share_pct": 54.13021301001819,
+   "fb_pct_of_total": 0.23279889233050638,
+   "fb_share_of_all_fb_pct": 1.4788562254859021,
+   "category": "visual \u2194 central"
+  },
+  {
+   "src": "descending",
+   "tgt": "central (other)",
+   "intra": false,
+   "weight_pct_of_total": 0.5953167603630652,
+   "ff_share_pct": 57.227766422187486,
+   "fb_pct_of_total": 0.25463027527035664,
+   "fb_share_of_all_fb_pct": 1.617540203954873,
+   "category": "involving periphery-motor"
+  },
+  {
+   "src": "medulla",
+   "tgt": "lamina",
+   "intra": false,
+   "weight_pct_of_total": 1.2267901083841075,
+   "ff_share_pct": 57.838008145102634,
+   "fb_pct_of_total": 0.517239145573594,
+   "fb_share_of_all_fb_pct": 3.285764476106493,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "lobula (plate)",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 0.36161120950609515,
+   "ff_share_pct": 59.69160524944081,
+   "fb_pct_of_total": 0.14575967378998844,
+   "fb_share_of_all_fb_pct": 0.9259391178850193,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "central (other)",
+   "tgt": "olfaction: AL\u00b7LH",
+   "intra": false,
+   "weight_pct_of_total": 0.30905841818006863,
+   "ff_share_pct": 61.981116781051924,
+   "fb_pct_of_total": 0.11750055908620846,
+   "fb_share_of_all_fb_pct": 0.7464229385422328,
+   "category": "between central lanes"
+  }
+ ],
+ "one_way_pairs": [
+  {
+   "src": "lamina",
+   "tgt": "medulla\u2192lobula",
+   "intra": false,
+   "weight_pct_of_total": 2.062555095908844,
+   "ff_share_pct": 99.73521072668403,
+   "fb_pct_of_total": 0.005461424650198499,
+   "fb_share_of_all_fb_pct": 0.03469372969567963,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "photoreceptors",
+   "tgt": "lamina",
+   "intra": false,
+   "weight_pct_of_total": 0.528951742169411,
+   "ff_share_pct": 99.60125397505583,
+   "fb_pct_of_total": 0.0021091740457734875,
+   "fb_share_of_all_fb_pct": 0.013398539559187876,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "olfaction: AL\u00b7LH",
+   "tgt": "mushroom body",
+   "intra": false,
+   "weight_pct_of_total": 0.7875546133517731,
+   "ff_share_pct": 99.45770886539971,
+   "fb_pct_of_total": 0.004270838848342229,
+   "fb_share_of_all_fb_pct": 0.027130526935459524,
+   "category": "between central lanes"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "descending",
+   "intra": false,
+   "weight_pct_of_total": 0.29408185088898225,
+   "ff_share_pct": 99.44992535860324,
+   "fb_pct_of_total": 0.001617669686690526,
+   "fb_share_of_all_fb_pct": 0.01027625545376627,
+   "category": "involving periphery-motor"
+  },
+  {
+   "src": "ascending (VNC)",
+   "tgt": "descending",
+   "intra": false,
+   "weight_pct_of_total": 0.4369640768291937,
+   "ff_share_pct": 99.35896385844788,
+   "fb_pct_of_total": 0.002801097658074736,
+   "fb_share_of_all_fb_pct": 0.017793988057111444,
+   "category": "between periphery-motor lanes"
+  },
+  {
+   "src": "ascending (VNC)",
+   "tgt": "central (other)",
+   "intra": false,
+   "weight_pct_of_total": 1.6761610913649103,
+   "ff_share_pct": 99.1832202871113,
+   "fb_pct_of_total": 0.013690543749602435,
+   "fb_share_of_all_fb_pct": 0.08696925338305636,
+   "category": "involving periphery-motor"
+  },
+  {
+   "src": "central (other)",
+   "tgt": "motor",
+   "intra": false,
+   "weight_pct_of_total": 0.39162637861902594,
+   "ff_share_pct": 98.94845222646659,
+   "fb_pct_of_total": 0.004118138464937915,
+   "fb_share_of_all_fb_pct": 0.0261604969221253,
+   "category": "involving periphery-motor"
+  },
+  {
+   "src": "visual centrifugal",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 0.734538948988552,
+   "ff_share_pct": 98.83583825167852,
+   "fb_pct_of_total": 0.008551221470647352,
+   "fb_share_of_all_fb_pct": 0.05432168074675323,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "visual projection",
+   "intra": false,
+   "weight_pct_of_total": 4.59792306959456,
+   "ff_share_pct": 98.74779978911185,
+   "fb_pct_of_total": 0.057575202373937984,
+   "fb_share_of_all_fb_pct": 0.3657467851841289,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "sensory (other)",
+   "tgt": "descending",
+   "intra": false,
+   "weight_pct_of_total": 0.1336915716140581,
+   "ff_share_pct": 97.8637588563882,
+   "fb_pct_of_total": 0.002855974358360741,
+   "fb_share_of_all_fb_pct": 0.018142592593153938,
+   "category": "between periphery-motor lanes"
+  },
+  {
+   "src": "lobula (plate)",
+   "tgt": "visual projection",
+   "intra": false,
+   "weight_pct_of_total": 2.7926752775526307,
+   "ff_share_pct": 97.84787307662735,
+   "fb_pct_of_total": 0.060101916530582056,
+   "fb_share_of_all_fb_pct": 0.38179775056102383,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "central (other)",
+   "tgt": "descending",
+   "intra": false,
+   "weight_pct_of_total": 2.8780419497061724,
+   "ff_share_pct": 97.03394572762339,
+   "fb_pct_of_total": 0.08536428621005099,
+   "fb_share_of_all_fb_pct": 0.5422770908921173,
+   "category": "involving periphery-motor"
+  }
+ ],
+ "top_fb_pairs": [
+  {
+   "src": "central (other)",
+   "tgt": "central (other)",
+   "intra": true,
+   "weight_pct_of_total": 20.54317626007223,
+   "ff_share_pct": 83.23302267050789,
+   "fb_pct_of_total": 3.4444697062839147,
+   "fb_share_of_all_fb_pct": 21.881012480951796,
+   "category": "within one central lane (recurrence)"
+  },
+  {
+   "src": "medulla",
+   "tgt": "medulla",
+   "intra": true,
+   "weight_pct_of_total": 7.095407032535036,
+   "ff_share_pct": 78.37258733414104,
+   "fb_pct_of_total": 1.53455295924873,
+   "fb_share_of_all_fb_pct": 9.748255992133059,
+   "category": "within one visual lane (recurrence)"
+  },
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 4.757938755741445,
+   "ff_share_pct": 79.0222319840895,
+   "fb_pct_of_total": 0.9981093545185389,
+   "fb_share_of_all_fb_pct": 6.340495085130742,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "medulla",
+   "tgt": "medulla\u2192lobula",
+   "intra": false,
+   "weight_pct_of_total": 6.4576944422858285,
+   "ff_share_pct": 84.82585630900945,
+   "fb_pct_of_total": 0.9798998337975622,
+   "fb_share_of_all_fb_pct": 6.2248190060405575,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "lobula (plate)",
+   "tgt": "medulla\u2192lobula",
+   "intra": false,
+   "weight_pct_of_total": 1.6367047438593032,
+   "ff_share_pct": 46.020280533778056,
+   "fb_pct_of_total": 0.8834886292255983,
+   "fb_share_of_all_fb_pct": 5.612366306371248,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "medulla\u2192lobula",
+   "intra": true,
+   "weight_pct_of_total": 5.068333302276303,
+   "ff_share_pct": 84.64896031393711,
+   "fb_pct_of_total": 0.7780418566543768,
+   "fb_share_of_all_fb_pct": 4.9425151120066415,
+   "category": "within one visual lane (recurrence)"
+  },
+  {
+   "src": "lobula (plate)",
+   "tgt": "lobula (plate)",
+   "intra": true,
+   "weight_pct_of_total": 2.885987141530183,
+   "ff_share_pct": 76.17733112099334,
+   "fb_pct_of_total": 0.6875191606174447,
+   "fb_share_of_all_fb_pct": 4.367469194726551,
+   "category": "within one visual lane (recurrence)"
+  },
+  {
+   "src": "olfaction: AL\u00b7LH",
+   "tgt": "olfaction: AL\u00b7LH",
+   "intra": true,
+   "weight_pct_of_total": 2.2410332127867196,
+   "ff_share_pct": 72.8447243323237,
+   "fb_pct_of_total": 0.6085587467364169,
+   "fb_share_of_all_fb_pct": 3.8658727375186683,
+   "category": "within one central lane (recurrence)"
+  },
+  {
+   "src": "medulla",
+   "tgt": "lamina",
+   "intra": false,
+   "weight_pct_of_total": 1.2267901083841075,
+   "ff_share_pct": 57.838008145102634,
+   "fb_pct_of_total": 0.517239145573594,
+   "fb_share_of_all_fb_pct": 3.285764476106493,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "central complex",
+   "tgt": "central complex",
+   "intra": true,
+   "weight_pct_of_total": 2.3656057083793454,
+   "ff_share_pct": 82.60673985048554,
+   "fb_pct_of_total": 0.41145595497018395,
+   "fb_share_of_all_fb_pct": 2.613776184368754,
+   "category": "within one central lane (recurrence)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 0.49944477901999806,
+   "ff_share_pct": 37.809562027058014,
+   "fb_pct_of_total": 0.31060689550552906,
+   "fb_share_of_all_fb_pct": 1.9731319874368987,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "central (other)",
+   "tgt": "visual projection",
+   "intra": false,
+   "weight_pct_of_total": 0.6449467709129916,
+   "ff_share_pct": 52.59275427193122,
+   "fb_pct_of_total": 0.30575150050196676,
+   "fb_share_of_all_fb_pct": 1.9422880643566416,
+   "category": "visual \u2194 central"
+  },
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "lobula (plate)",
+   "intra": false,
+   "weight_pct_of_total": 5.036018083638343,
+   "ff_share_pct": 94.16388757679313,
+   "fb_pct_of_total": 0.293907677014162,
+   "fb_share_of_all_fb_pct": 1.867050111447357,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "mushroom body",
+   "tgt": "mushroom body",
+   "intra": true,
+   "weight_pct_of_total": 1.3325756849310084,
+   "ff_share_pct": 78.85287845718348,
+   "fb_pct_of_total": 0.28180139974238005,
+   "fb_share_of_all_fb_pct": 1.790144919452648,
+   "category": "within one central lane (recurrence)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "lobula (plate)",
+   "intra": false,
+   "weight_pct_of_total": 0.5015825843876599,
+   "ff_share_pct": 45.914833701194915,
+   "fb_pct_of_total": 0.2712817748919102,
+   "fb_share_of_all_fb_pct": 1.72331894556525,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "descending",
+   "tgt": "central (other)",
+   "intra": false,
+   "weight_pct_of_total": 0.5953167603630652,
+   "ff_share_pct": 57.227766422187486,
+   "fb_pct_of_total": 0.25463027527035664,
+   "fb_share_of_all_fb_pct": 1.617540203954873,
+   "category": "involving periphery-motor"
+  },
+  {
+   "src": "central (other)",
+   "tgt": "visual centrifugal",
+   "intra": false,
+   "weight_pct_of_total": 0.5075211977359974,
+   "ff_share_pct": 54.13021301001819,
+   "fb_pct_of_total": 0.23279889233050638,
+   "fb_share_of_all_fb_pct": 1.4788562254859021,
+   "category": "visual \u2194 central"
+  },
+  {
+   "src": "lamina",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 2.4808634805843015,
+   "ff_share_pct": 91.38406763718969,
+   "fb_pct_of_total": 0.21374951950080545,
+   "fb_share_of_all_fb_pct": 1.3578449813223763,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "central (other)",
+   "intra": false,
+   "weight_pct_of_total": 3.532539652412412,
+   "ff_share_pct": 94.03017635858791,
+   "fb_pct_of_total": 0.21088638731197262,
+   "fb_share_of_all_fb_pct": 1.3396569185723475,
+   "category": "visual \u2194 central"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "medulla\u2192lobula",
+   "intra": false,
+   "weight_pct_of_total": 0.3216514279239517,
+   "ff_share_pct": 44.89173732113848,
+   "fb_pct_of_total": 0.17725651381064023,
+   "fb_share_of_all_fb_pct": 1.126022964854297,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "visual centrifugal",
+   "intra": false,
+   "weight_pct_of_total": 0.2227158951388334,
+   "ff_share_pct": 24.676201189137075,
+   "fb_pct_of_total": 0.1677580727741873,
+   "fb_share_of_all_fb_pct": 1.0656840666810756,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "visual projection",
+   "intra": true,
+   "weight_pct_of_total": 1.150611704613229,
+   "ff_share_pct": 86.29413204049385,
+   "fb_pct_of_total": 0.15770132096091205,
+   "fb_share_of_all_fb_pct": 1.001798496271599,
+   "category": "within one visual lane (recurrence)"
+  },
+  {
+   "src": "lobula (plate)",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 0.36161120950609515,
+   "ff_share_pct": 59.69160524944081,
+   "fb_pct_of_total": 0.14575967378998844,
+   "fb_share_of_all_fb_pct": 0.9259391178850193,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "lamina",
+   "tgt": "lamina",
+   "intra": true,
+   "weight_pct_of_total": 0.5572418741385701,
+   "ff_share_pct": 78.40737822840309,
+   "fb_pct_of_total": 0.12032313023569952,
+   "fb_share_of_all_fb_pct": 0.76435333706997,
+   "category": "within one visual lane (recurrence)"
+  },
+  {
+   "src": "central (other)",
+   "tgt": "olfaction: AL\u00b7LH",
+   "intra": false,
+   "weight_pct_of_total": 0.30905841818006863,
+   "ff_share_pct": 61.981116781051924,
+   "fb_pct_of_total": 0.11750055908620846,
+   "fb_share_of_all_fb_pct": 0.7464229385422328,
+   "category": "between central lanes"
+  }
+ ],
+ "fb_budget_by_category_pct_of_all_fb": {
+  "between visual lanes (retro-pathways)": 36.56034026227794,
+  "within one central lane (recurrence)": 30.150806322291867,
+  "within one visual lane (recurrence)": 20.95023836971906,
+  "visual \u2194 central": 4.923766250655151,
+  "involving periphery-motor": 4.189135239462521,
+  "between central lanes": 2.697138138639721,
+  "within one periphery-motor lane (recurrence)": 0.3851170720129061,
+  "between periphery-motor lanes": 0.14345834494085363
+ },
+ "visual_retro_named_pairs": [
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 4.757938755741445,
+   "ff_share_pct": 79.0222319840895,
+   "fb_pct_of_total": 0.9981093545185389,
+   "fb_share_of_all_fb_pct": 6.340495085130742,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "lobula (plate)",
+   "tgt": "medulla\u2192lobula",
+   "intra": false,
+   "weight_pct_of_total": 1.6367047438593032,
+   "ff_share_pct": 46.020280533778056,
+   "fb_pct_of_total": 0.8834886292255983,
+   "fb_share_of_all_fb_pct": 5.612366306371248,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "medulla",
+   "tgt": "lamina",
+   "intra": false,
+   "weight_pct_of_total": 1.2267901083841075,
+   "ff_share_pct": 57.838008145102634,
+   "fb_pct_of_total": 0.517239145573594,
+   "fb_share_of_all_fb_pct": 3.285764476106493,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 0.49944477901999806,
+   "ff_share_pct": 37.809562027058014,
+   "fb_pct_of_total": 0.31060689550552906,
+   "fb_share_of_all_fb_pct": 1.9731319874368987,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "lobula (plate)",
+   "intra": false,
+   "weight_pct_of_total": 0.5015825843876599,
+   "ff_share_pct": 45.914833701194915,
+   "fb_pct_of_total": 0.2712817748919102,
+   "fb_share_of_all_fb_pct": 1.72331894556525,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "medulla\u2192lobula",
+   "intra": false,
+   "weight_pct_of_total": 0.3216514279239517,
+   "ff_share_pct": 44.89173732113848,
+   "fb_pct_of_total": 0.17725651381064023,
+   "fb_share_of_all_fb_pct": 1.126022964854297,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "visual centrifugal",
+   "intra": false,
+   "weight_pct_of_total": 0.2227158951388334,
+   "ff_share_pct": 24.676201189137075,
+   "fb_pct_of_total": 0.1677580727741873,
+   "fb_share_of_all_fb_pct": 1.0656840666810756,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "lobula (plate)",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 0.36161120950609515,
+   "ff_share_pct": 59.69160524944081,
+   "fb_pct_of_total": 0.14575967378998844,
+   "fb_share_of_all_fb_pct": 0.9259391178850193,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "lamina",
+   "intra": false,
+   "weight_pct_of_total": 0.20772262624331217,
+   "ff_share_pct": 53.22704770218583,
+   "fb_pct_of_total": 0.09715800488455123,
+   "fb_share_of_all_fb_pct": 0.6171967527032766,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "visual centrifugal",
+   "intra": false,
+   "weight_pct_of_total": 0.1239068173587219,
+   "ff_share_pct": 70.58268504968035,
+   "fb_pct_of_total": 0.03645005870733256,
+   "fb_share_of_all_fb_pct": 0.23154919552682784,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "lobula (plate)",
+   "tgt": "visual centrifugal",
+   "intra": false,
+   "weight_pct_of_total": 0.11501440596890529,
+   "ff_share_pct": 68.35390519655637,
+   "fb_pct_of_total": 0.03639756795053729,
+   "fb_share_of_all_fb_pct": 0.23121574770974399,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "optic (other)",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 0.1727112914608681,
+   "ff_share_pct": 82.30483374086506,
+   "fb_pct_of_total": 0.030561550172299723,
+   "fb_share_of_all_fb_pct": 0.19414241313760155,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "optic (other)",
+   "intra": false,
+   "weight_pct_of_total": 0.06703546831453921,
+   "ff_share_pct": 56.71625854214123,
+   "fb_pct_of_total": 0.02901545879032999,
+   "fb_share_of_all_fb_pct": 0.1843208592525858,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "medulla",
+   "tgt": "photoreceptors",
+   "intra": false,
+   "weight_pct_of_total": 0.0719505119053689,
+   "ff_share_pct": 62.52818676217005,
+   "fb_pct_of_total": 0.026961161444842438,
+   "fb_share_of_all_fb_pct": 0.17127092422943999,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "optic (other)",
+   "tgt": "medulla\u2192lobula",
+   "intra": false,
+   "weight_pct_of_total": 0.07044736750623166,
+   "ff_share_pct": 72.41414346677504,
+   "fb_pct_of_total": 0.019433509731702797,
+   "fb_share_of_all_fb_pct": 0.12345147591582198,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "lamina",
+   "tgt": "photoreceptors",
+   "intra": false,
+   "weight_pct_of_total": 0.025353035532114668,
+   "ff_share_pct": 51.72219085262564,
+   "fb_pct_of_total": 0.012239890107260327,
+   "fb_share_of_all_fb_pct": 0.07775396825637408,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual centrifugal",
+   "tgt": "medulla",
+   "intra": false,
+   "weight_pct_of_total": 0.734538948988552,
+   "ff_share_pct": 98.83583825167852,
+   "fb_pct_of_total": 0.008551221470647352,
+   "fb_share_of_all_fb_pct": 0.05432168074675323,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "optic (other)",
+   "tgt": "visual centrifugal",
+   "intra": false,
+   "weight_pct_of_total": 0.009257460743892802,
+   "ff_share_pct": 55.28350515463918,
+   "fb_pct_of_total": 0.004139611956354127,
+   "fb_share_of_all_fb_pct": 0.0262969073927503,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "lamina",
+   "intra": false,
+   "weight_pct_of_total": 0.00035311963662271515,
+   "ff_share_pct": 14.864864864864863,
+   "fb_pct_of_total": 0.0003006288798274467,
+   "fb_share_of_all_fb_pct": 0.0019097465887530478,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "medulla\u2192lobula",
+   "tgt": "photoreceptors",
+   "intra": false,
+   "weight_pct_of_total": 0.00046048709370394606,
+   "ff_share_pct": 57.51295336787564,
+   "fb_pct_of_total": 0.00019564736623690974,
+   "fb_share_of_all_fb_pct": 0.0012428509545853168,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual centrifugal",
+   "tgt": "lamina",
+   "intra": false,
+   "weight_pct_of_total": 0.001600968082255688,
+   "ff_share_pct": 88.82265275707898,
+   "fb_pct_of_total": 0.00017894576180205158,
+   "fb_share_of_all_fb_pct": 0.0011367539218768141,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "optic (other)",
+   "tgt": "lamina",
+   "intra": false,
+   "weight_pct_of_total": 0.0032568128647973388,
+   "ff_share_pct": 97.58241758241758,
+   "fb_pct_of_total": 7.87361351929027e-05,
+   "fb_share_of_all_fb_pct": 0.0005001717256257983,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual centrifugal",
+   "tgt": "photoreceptors",
+   "intra": false,
+   "weight_pct_of_total": 0.0022976635815383424,
+   "ff_share_pct": 97.61163032191068,
+   "fb_pct_of_total": 5.487670028596261e-05,
+   "fb_share_of_all_fb_pct": 0.00034860453604222376,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "visual projection",
+   "tgt": "photoreceptors",
+   "intra": false,
+   "weight_pct_of_total": 0.00017417387482066354,
+   "ff_share_pct": 68.4931506849315,
+   "fb_pct_of_total": 5.4876700285962486e-05,
+   "fb_share_of_all_fb_pct": 0.000348604536042223,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "optic (other)",
+   "tgt": "photoreceptors",
+   "intra": false,
+   "weight_pct_of_total": 0.003967824025024157,
+   "ff_share_pct": 98.9176187612748,
+   "fb_pct_of_total": 4.294698283249278e-05,
+   "fb_share_of_all_fb_pct": 0.0002728209412504379,
+   "category": "between visual lanes (retro-pathways)"
+  },
+  {
+   "src": "lobula (plate)",
+   "tgt": "lamina",
+   "intra": false,
+   "weight_pct_of_total": 9.543773962776084e-06,
+   "ff_share_pct": 0.0,
+   "fb_pct_of_total": 9.543773962776084e-06,
+   "fb_share_of_all_fb_pct": 6.062687583343008e-05,
+   "category": "between visual lanes (retro-pathways)"
+  }
+ ],
+ "visual_retro_named_fb_share_of_all_fb_pct": 23.970063054982212,
+ "family_map": {
+  "photoreceptors": "visual",
+  "lamina": "visual",
+  "medulla": "visual",
+  "medulla\u2192lobula": "visual",
+  "lobula (plate)": "visual",
+  "optic (other)": "visual",
+  "visual projection": "visual",
+  "visual centrifugal": "visual",
+  "olfaction: AL\u00b7LH": "central",
+  "mushroom body": "central",
+  "central complex": "central",
+  "central (other)": "central",
+  "endocrine": "central",
+  "ascending (VNC)": "periphery-motor",
+  "sensory (other)": "periphery-motor",
+  "descending": "periphery-motor",
+  "motor": "periphery-motor"
+ }
+}

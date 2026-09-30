@@ -1,0 +1,1009 @@
+{
+ "config": {
+  "ann_tsv": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/data/external/flywire_neuron_annotations.tsv.gz",
+  "fly_ann_npz": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/fly_ann/node_ann.npz",
+  "fly_ann_meta": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/fly_ann/node_ann_meta.json",
+  "lane_matrix_json": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/fly_streams/lane_matrix.json",
+  "proofread_npz": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/data/processed/microns_proofread.npz",
+  "microns_ann_npz": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/microns_ann/node_ann.npz",
+  "mouse_txt": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/data/table_mouse.txt",
+  "bader_pdf": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/s13278-025-01491-2 (2).pdf",
+  "d_seed": 42,
+  "d_restarts": 16,
+  "own_restarts": 24,
+  "own_seed": 1234,
+  "cg_rtol": 1e-08,
+  "cg_maxiter": 30000,
+  "out_json": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/biology/results/review/review_untapped.json"
+ },
+ "fly_champion_ff": 84.25817950936937,
+ "A": {
+  "total_fb_weight": 6597734,
+  "top_degree": [
+   {
+    "idx": 78384,
+    "root_id": 720575940626979621,
+    "degree": 16784,
+    "rank_frac": 0.4321207198108996,
+    "fb_out": 14180,
+    "fb_in": 28321,
+    "super_class": "optic",
+    "cell_class": "ME>LO",
+    "cell_type": "CT1",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 89593,
+    "root_id": 720575940628908548,
+    "degree": 16581,
+    "rank_frac": 0.4192627719598674,
+    "fb_out": 15194,
+    "fb_in": 26302,
+    "super_class": "optic",
+    "cell_class": "ME>LO",
+    "cell_type": "CT1",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 72989,
+    "root_id": 720575940625952755,
+    "degree": 8711,
+    "rank_frac": 0.7187131806772195,
+    "fb_out": 9395,
+    "fb_in": 6134,
+    "super_class": "optic",
+    "cell_class": "LO",
+    "cell_type": "Li33",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 81640,
+    "root_id": 720575940627497244,
+    "degree": 8483,
+    "rank_frac": 0.6953390853805792,
+    "fb_out": 8742,
+    "fb_in": 7929,
+    "super_class": "optic",
+    "cell_class": "LO",
+    "cell_type": "Li33",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 86212,
+    "root_id": 720575940628307026,
+    "degree": 7041,
+    "rank_frac": 0.6915629322268326,
+    "fb_out": 13109,
+    "fb_in": 1317,
+    "super_class": "optic",
+    "cell_class": "LOP>ME.LO",
+    "cell_type": "Am1",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 92640,
+    "root_id": 720575940629513222,
+    "degree": 6443,
+    "rank_frac": 0.7202938959508808,
+    "fb_out": 10889,
+    "fb_in": 1025,
+    "super_class": "optic",
+    "cell_class": "LOP>ME.LO",
+    "cell_type": "Am1",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 40822,
+    "root_id": 720575940620008758,
+    "degree": 6159,
+    "rank_frac": 0.6692646014914342,
+    "fb_out": 11144,
+    "fb_in": 2017,
+    "super_class": "optic",
+    "cell_class": "LOP",
+    "cell_type": "LPi13",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 17582,
+    "root_id": 720575940613583001,
+    "degree": 5606,
+    "rank_frac": 0.7662663651598645,
+    "fb_out": 34585,
+    "fb_in": 13337,
+    "super_class": "central",
+    "cell_class": "MBIN",
+    "cell_type": "APL",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 65939,
+    "root_id": 720575940624547622,
+    "degree": 5579,
+    "rank_frac": 0.741728687786779,
+    "fb_out": 36283,
+    "fb_in": 19086,
+    "super_class": "central",
+    "cell_class": "MBIN",
+    "cell_type": "APL",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 46739,
+    "root_id": 720575940621116807,
+    "degree": 5466,
+    "rank_frac": 0.532225369016517,
+    "fb_out": 6780,
+    "fb_in": 1947,
+    "super_class": "optic",
+    "cell_class": "LO",
+    "cell_type": "LT33",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 118799,
+    "root_id": 720575940636543668,
+    "degree": 5289,
+    "rank_frac": 0.4358090554494427,
+    "fb_out": 3334,
+    "fb_in": 4510,
+    "super_class": "optic",
+    "cell_class": "bilateral",
+    "cell_type": "MeMe_e13",
+    "top_nt": "acetylcholine",
+    "side": "right"
+   },
+   {
+    "idx": 101893,
+    "root_id": 720575940631306284,
+    "degree": 5220,
+    "rank_frac": 0.5601513388512005,
+    "fb_out": 5603,
+    "fb_in": 2745,
+    "super_class": "optic",
+    "cell_class": "LO",
+    "cell_type": "LT33",
+    "top_nt": "gaba",
+    "side": "right"
+   }
+  ],
+  "top_fb_senders": [
+   {
+    "idx": 65939,
+    "root_id": 720575940624547622,
+    "degree": 5579,
+    "rank_frac": 0.741728687786779,
+    "fb_out": 36283,
+    "fb_in": 19086,
+    "super_class": "central",
+    "cell_class": "MBIN",
+    "cell_type": "APL",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 17582,
+    "root_id": 720575940613583001,
+    "degree": 5606,
+    "rank_frac": 0.7662663651598645,
+    "fb_out": 34585,
+    "fb_in": 13337,
+    "super_class": "central",
+    "cell_class": "MBIN",
+    "cell_type": "APL",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 128189,
+    "root_id": 720575940640834211,
+    "degree": 1305,
+    "rank_frac": 0.8551084180406449,
+    "fb_out": 15375,
+    "fb_in": 1712,
+    "super_class": "central",
+    "cell_class": null,
+    "cell_type": "PVLP011",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 89593,
+    "root_id": 720575940628908548,
+    "degree": 16581,
+    "rank_frac": 0.4192627719598674,
+    "fb_out": 15194,
+    "fb_in": 26302,
+    "super_class": "optic",
+    "cell_class": "ME>LO",
+    "cell_type": "CT1",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 78384,
+    "root_id": 720575940626979621,
+    "degree": 16784,
+    "rank_frac": 0.4321207198108996,
+    "fb_out": 14180,
+    "fb_in": 28321,
+    "super_class": "optic",
+    "cell_class": "ME>LO",
+    "cell_type": "CT1",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 86212,
+    "root_id": 720575940628307026,
+    "degree": 7041,
+    "rank_frac": 0.6915629322268326,
+    "fb_out": 13109,
+    "fb_in": 1317,
+    "super_class": "optic",
+    "cell_class": "LOP>ME.LO",
+    "cell_type": "Am1",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 128003,
+    "root_id": 720575940640736371,
+    "degree": 4502,
+    "rank_frac": 0.7994979765380872,
+    "fb_out": 12590,
+    "fb_in": 631,
+    "super_class": "optic",
+    "cell_class": "LO",
+    "cell_type": "Li30",
+    "top_nt": "acetylcholine",
+    "side": "right"
+   },
+   {
+    "idx": 135004,
+    "root_id": 720575940650935673,
+    "degree": 5136,
+    "rank_frac": 0.7139198079723668,
+    "fb_out": 12579,
+    "fb_in": 3252,
+    "super_class": "optic",
+    "cell_class": "LO",
+    "cell_type": "Li32",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 6027,
+    "root_id": 720575940608545219,
+    "degree": 1498,
+    "rank_frac": 0.9073671577129392,
+    "fb_out": 12073,
+    "fb_in": 1054,
+    "super_class": "central",
+    "cell_class": null,
+    "cell_type": "AVLP080",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 110421,
+    "root_id": 720575940633305681,
+    "degree": 4292,
+    "rank_frac": 0.7911772669725643,
+    "fb_out": 12034,
+    "fb_in": 459,
+    "super_class": "optic",
+    "cell_class": "LO",
+    "cell_type": "Li30",
+    "top_nt": "acetylcholine",
+    "side": "left"
+   },
+   {
+    "idx": 84837,
+    "root_id": 720575940628069501,
+    "degree": 5112,
+    "rank_frac": 0.7729478144415903,
+    "fb_out": 12002,
+    "fb_in": 3162,
+    "super_class": "optic",
+    "cell_class": "LO",
+    "cell_type": "Li32",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 11472,
+    "root_id": 720575940611563310,
+    "degree": 4559,
+    "rank_frac": 0.6504204263540363,
+    "fb_out": 11648,
+    "fb_in": 3151,
+    "super_class": "optic",
+    "cell_class": "ME",
+    "cell_type": "Sm42",
+    "top_nt": "gaba",
+    "side": "right"
+   }
+  ],
+  "top_fb_receivers": [
+   {
+    "idx": 78384,
+    "root_id": 720575940626979621,
+    "degree": 16784,
+    "rank_frac": 0.4321207198108996,
+    "fb_out": 14180,
+    "fb_in": 28321,
+    "super_class": "optic",
+    "cell_class": "ME>LO",
+    "cell_type": "CT1",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 89593,
+    "root_id": 720575940628908548,
+    "degree": 16581,
+    "rank_frac": 0.4192627719598674,
+    "fb_out": 15194,
+    "fb_in": 26302,
+    "super_class": "optic",
+    "cell_class": "ME>LO",
+    "cell_type": "CT1",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 65939,
+    "root_id": 720575940624547622,
+    "degree": 5579,
+    "rank_frac": 0.741728687786779,
+    "fb_out": 36283,
+    "fb_in": 19086,
+    "super_class": "central",
+    "cell_class": "MBIN",
+    "cell_type": "APL",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 124046,
+    "root_id": 720575940638900713,
+    "degree": 1323,
+    "rank_frac": 0.8192203268275191,
+    "fb_out": 3560,
+    "fb_in": 13858,
+    "super_class": "central",
+    "cell_class": null,
+    "cell_type": "PVLP011",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 17582,
+    "root_id": 720575940613583001,
+    "degree": 5606,
+    "rank_frac": 0.7662663651598645,
+    "fb_out": 34585,
+    "fb_in": 13337,
+    "super_class": "central",
+    "cell_class": "MBIN",
+    "cell_type": "APL",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 59909,
+    "root_id": 720575940623444044,
+    "degree": 4214,
+    "rank_frac": 0.3376071190732325,
+    "fb_out": 2415,
+    "fb_in": 12564,
+    "super_class": "optic",
+    "cell_class": "ME",
+    "cell_type": "Sm42",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 91923,
+    "root_id": 720575940629382150,
+    "degree": 4017,
+    "rank_frac": 0.38429676465637735,
+    "fb_out": 183,
+    "fb_in": 12244,
+    "super_class": "optic",
+    "cell_class": "LOP",
+    "cell_type": "LPi12",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 34644,
+    "root_id": 720575940618444473,
+    "degree": 4394,
+    "rank_frac": 0.25194113299230864,
+    "fb_out": 49,
+    "fb_in": 8494,
+    "super_class": "visual_centrifugal",
+    "cell_class": null,
+    "cell_type": "cL21",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 108513,
+    "root_id": 720575940632795532,
+    "degree": 1816,
+    "rank_frac": 0.12347874450225764,
+    "fb_out": 322,
+    "fb_in": 8172,
+    "super_class": "central",
+    "cell_class": "ALLN",
+    "cell_type": "lLN2F_b",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 15987,
+    "root_id": 720575940613065130,
+    "degree": 4491,
+    "rank_frac": 0.3131865317204183,
+    "fb_out": 129,
+    "fb_in": 8122,
+    "super_class": "visual_centrifugal",
+    "cell_class": null,
+    "cell_type": "cL21",
+    "top_nt": "gaba",
+    "side": "right"
+   },
+   {
+    "idx": 57292,
+    "root_id": 720575940623000858,
+    "degree": 1723,
+    "rank_frac": 0.12377146955293566,
+    "fb_out": 401,
+    "fb_in": 8062,
+    "super_class": "central",
+    "cell_class": "ALLN",
+    "cell_type": "lLN2F_b",
+    "top_nt": "gaba",
+    "side": "left"
+   },
+   {
+    "idx": 116833,
+    "root_id": 720575940635684762,
+    "degree": 4314,
+    "rank_frac": 0.31319384984668525,
+    "fb_out": 122,
+    "fb_in": 8013,
+    "super_class": "visual_centrifugal",
+    "cell_class": null,
+    "cell_type": "cL21",
+    "top_nt": "gaba",
+    "side": "right"
+   }
+  ]
+ },
+ "B": {
+  "budget": {
+   "within one periphery-motor lane (recurrence)": 0.385117072012906,
+   "involving periphery-motor": 4.18913523946252,
+   "between periphery-motor lanes": 0.14345834494085363,
+   "within one central lane (recurrence)": 30.15080632229186,
+   "between central lanes": 2.69713813863972,
+   "visual \u2194 central": 4.923766250655151,
+   "within one visual lane (recurrence)": 20.950238369719063,
+   "between visual lanes (retro-pathways)": 36.560340262277926
+  },
+  "budget_vc_central": {
+   "within one periphery-motor lane (recurrence)": 0.385117072012906,
+   "involving periphery-motor": 4.18913523946252,
+   "between periphery-motor lanes": 0.14345834494085363,
+   "within one central lane (recurrence)": 30.230621604326572,
+   "between central lanes": 4.253263317375329,
+   "visual \u2194 central": 5.967730739068899,
+   "within one visual lane (recurrence)": 20.87042308768435,
+   "between visual lanes (retro-pathways)": 33.960250595128564
+  },
+  "never_leaves_optic_pct": 57.51057863199699,
+  "retro_named_pct": 23.970063054982212,
+  "n_counter": 13,
+  "n_oneway": 12,
+  "counter_pairs": [
+   [
+    "visual projection",
+    "visual centrifugal",
+    24.68
+   ],
+   [
+    "visual projection",
+    "medulla",
+    37.81
+   ],
+   [
+    "central (other)",
+    "ascending (VNC)",
+    42.26
+   ],
+   [
+    "visual projection",
+    "medulla\u2192lobula",
+    44.89
+   ],
+   [
+    "visual projection",
+    "lobula (plate)",
+    45.91
+   ],
+   [
+    "lobula (plate)",
+    "medulla\u2192lobula",
+    46.02
+   ],
+   [
+    "central (other)",
+    "visual projection",
+    52.59
+   ],
+   [
+    "medulla\u2192lobula",
+    "lamina",
+    53.23
+   ],
+   [
+    "central (other)",
+    "visual centrifugal",
+    54.13
+   ],
+   [
+    "descending",
+    "central (other)",
+    57.23
+   ],
+   [
+    "medulla",
+    "lamina",
+    57.84
+   ],
+   [
+    "lobula (plate)",
+    "medulla",
+    59.69
+   ],
+   [
+    "central (other)",
+    "olfaction: AL\u00b7LH",
+    61.98
+   ]
+  ],
+  "oneway_pairs": [
+   [
+    "lamina",
+    "medulla\u2192lobula",
+    99.74
+   ],
+   [
+    "photoreceptors",
+    "lamina",
+    99.6
+   ],
+   [
+    "olfaction: AL\u00b7LH",
+    "mushroom body",
+    99.46
+   ],
+   [
+    "visual projection",
+    "descending",
+    99.45
+   ],
+   [
+    "ascending (VNC)",
+    "descending",
+    99.36
+   ],
+   [
+    "ascending (VNC)",
+    "central (other)",
+    99.18
+   ],
+   [
+    "central (other)",
+    "motor",
+    98.95
+   ],
+   [
+    "visual centrifugal",
+    "medulla",
+    98.84
+   ],
+   [
+    "medulla\u2192lobula",
+    "visual projection",
+    98.75
+   ],
+   [
+    "sensory (other)",
+    "descending",
+    97.86
+   ],
+   [
+    "lobula (plate)",
+    "visual projection",
+    97.85
+   ],
+   [
+    "central (other)",
+    "descending",
+    97.03
+   ]
+  ]
+ },
+ "D": {
+  "restr_pct": 67.74606659348701,
+  "repro_pct": 75.57628979143799,
+  "own_pct": 75.79582875960483,
+  "rho_orders": 0.32309443569510976,
+  "bio_reproduced": {
+   "depth_rho_exc": -0.1677336747759283,
+   "depth_p_exc": 0.046013420978183825,
+   "medI": 114.0,
+   "medE": 127.5,
+   "mwu_p": 0.21207044761174243,
+   "pair": {
+    "E->E": {
+     "w_pct": 5.342114892060008,
+     "ff": 89.38356164383562
+    },
+    "E->I": {
+     "w_pct": 9.20234174899378,
+     "ff": 53.08151093439364
+    },
+    "I->E": {
+     "w_pct": 12.897914379802415,
+     "ff": 88.36879432624113
+    },
+    "I->I": {
+     "w_pct": 71.58799853640689,
+     "ff": 75.08305647840531
+    }
+   }
+  },
+  "bio_own": {
+   "depth_rho_exc": -0.026519779291730147,
+   "depth_p_exc": 0.7540667590946439,
+   "medI": 137.0,
+   "medE": 111.5,
+   "mwu_p": 0.9879295348535138,
+   "pair": {
+    "E->E": {
+     "w_pct": 5.342114892060008,
+     "ff": 90.41095890410959
+    },
+    "E->I": {
+     "w_pct": 9.20234174899378,
+     "ff": 51.68986083499006
+    },
+    "I->E": {
+     "w_pct": 12.897914379802415,
+     "ff": 89.50354609929079
+    },
+    "I->I": {
+     "w_pct": 71.58799853640689,
+     "ff": 75.26194735497062
+    }
+   }
+  },
+  "bio_restricted": {
+   "depth_rho_exc": -0.05178848720952407,
+   "depth_p_exc": 0.540479948557274,
+   "medI": 65.0,
+   "medE": 150.5,
+   "mwu_p": 1.1311121657617466e-09,
+   "pair": {
+    "E->E": {
+     "w_pct": 5.342114892060008,
+     "ff": 80.47945205479452
+    },
+    "E->I": {
+     "w_pct": 9.20234174899378,
+     "ff": 40.75546719681908
+    },
+    "I->E": {
+     "w_pct": 12.897914379802415,
+     "ff": 85.95744680851064
+    },
+    "I->I": {
+     "w_pct": 71.58799853640689,
+     "ff": 67.03296703296704
+    }
+   }
+  },
+  "e_depth_iqr_control": [
+   168.47216033935547,
+   365.73765563964844
+  ],
+  "e_depth_iqr_full": [
+   253.82726287841797,
+   577.4494323730469
+  ]
+ },
+ "E": {
+  "e1_pair": {
+   "E->E": 80.62507189635818,
+   "E->I": 48.40979708031731,
+   "I->E": 97.29637449607502,
+   "I->I": 78.08899764731261
+  },
+  "e3_fly": {
+   "ff": 77.77737243248919,
+   "rho": 0.7602047206020656,
+   "gap_pp": 6.480807076880183,
+   "gap_over_fb_budget_pct": 41.16936208704382,
+   "gross_fb2ff": 3820198.0,
+   "gross_ff2fb": 1103953.0
+  },
+  "e3_mouse": {
+   "ff": 89.97676018223167,
+   "rho": 0.7355008754817001
+  }
+ },
+ "C": {
+  "n_fb_edges": 124,
+  "n_with_return_path": 124,
+  "hub_fb_in_share": 40.49746302315757,
+  "pdf_note": "'mouse' absent from all decompressible streams (weak-negative: PDF text can be fragmented)"
+ },
+ "checks": [
+  {
+   "name": "fly champion parity",
+   "ok": true,
+   "detail": "H64 FF 84.258180%"
+  },
+  {
+   "name": "A total FB weight",
+   "ok": true,
+   "detail": "6,597,734 = 15.7418% (study: 6,597,734 = 15.742%)"
+  },
+  {
+   "name": "A #1-2 degree = CT1",
+   "ok": true,
+   "detail": "CT1 deg 16784/16581 nt gaba class ME>LO ranks 43.2/41.9%"
+  },
+  {
+   "name": "A 11 of top-12 GABAergic",
+   "ok": true,
+   "detail": "11/12 gaba; exception MeMe_e13 (acetylcholine)"
+  },
+  {
+   "name": "A #1-2 FB senders = APL",
+   "ok": true,
+   "detail": "APL/APL at 74.2/76.6%, together 1.074% of ALL FB weight (study 1.07%)"
+  },
+  {
+   "name": "A #1-2 FB receivers = CT1",
+   "ok": true,
+   "detail": "CT1/CT1 fb_in 28321/26302"
+  },
+  {
+   "name": "A CT1 FB in/out spot values",
+   "ok": true,
+   "detail": "CT1 (fb_out, fb_in) x2 = (14180, 28321, 15194, 26302) (study 14,180/28,321 & 15,194/26,302)"
+  },
+  {
+   "name": "A APL spot values",
+   "ok": true,
+   "detail": "deg 5579/5606 fb_out 36283/34585 fb_in 19086/13337"
+  },
+  {
+   "name": "A early pure receivers present",
+   "ok": true,
+   "detail": "cL21 x3 at [25.2, 31.3, 31.3]%, lLN2F_b x2 at [12.3, 12.4]% (receiver types: ['CT1', 'CT1', 'APL', 'PVLP011', 'APL', 'Sm42', 'LPi12', 'cL21', 'lLN2F_b', 'cL21', 'lLN2F_b', 'cL21'])"
+  },
+  {
+   "name": "B anchor: lane FF re-sums to champion",
+   "ok": true,
+   "detail": "sum W_ff_pct = 84.2581795094 vs champion 84.2581795094"
+  },
+  {
+   "name": "B lane_matrix.json reproduced from edge list",
+   "ok": true,
+   "detail": "max|dW|=0.00e+00 max|dF|=0.00e+00"
+  },
+  {
+   "name": "B pair VPN\u2192visual centrifugal",
+   "ok": true,
+   "detail": "FF 24.68% (study 24.7) weight 0.223% (study 0.22) FB share 1.07%"
+  },
+  {
+   "name": "B pair LOP\u2192medulla\u2192lobula (Tm)",
+   "ok": true,
+   "detail": "FF 46.02% (study 46.0) weight 1.637% (study 1.64) FB share 5.61%"
+  },
+  {
+   "name": "B pair medulla\u2192lamina",
+   "ok": true,
+   "detail": "FF 57.84% (study 57.8) weight 1.227% (study 1.23) FB share 3.29%"
+  },
+  {
+   "name": "B pair descending\u2192central (other)",
+   "ok": true,
+   "detail": "FF 57.23% (study 57.2) weight 0.595% (study 0.6) FB share 1.62%"
+  },
+  {
+   "name": "B pair photoreceptors\u2192lamina",
+   "ok": true,
+   "detail": "FF 99.60% (study 99.6) weight 0.529% (study None) FB share 0.01%"
+  },
+  {
+   "name": "B pair AL\u00b7LH\u2192mushroom body",
+   "ok": true,
+   "detail": "FF 99.46% (study 99.5) weight 0.788% (study None) FB share 0.03%"
+  },
+  {
+   "name": "B pair medulla\u2192lobula\u2192VPN (Tm\u2192VPN)",
+   "ok": true,
+   "detail": "FF 98.75% (study 98.7) weight 4.598% (study 4.6) FB share 0.37%"
+  },
+  {
+   "name": "B budget families",
+   "ok": true,
+   "detail": "all family shares match study to 0.05pp (periph within+between = 0.53 vs 0.5)"
+  },
+  {
+   "name": "B never-leaves-optic 57.5%",
+   "ok": true,
+   "detail": "57.51% (36.6+21.0 rounds to 57.6; exact sum 36.56+20.95)"
+  },
+  {
+   "name": "B central ~33% / between-central 2.7%",
+   "ok": true,
+   "detail": "central total 32.85%, between-central 2.70%"
+  },
+  {
+   "name": "B 13 counter-hierarchy / 12 one-way pairs",
+   "ok": true,
+   "detail": "counter=13 oneway=12"
+  },
+  {
+   "name": "B descending visual pairs 24.0% of FB",
+   "ok": true,
+   "detail": "23.97%"
+  },
+  {
+   "name": "B VC-regroup sensitivity (caveat honest?)",
+   "ok": true,
+   "detail": "with VC counted central: between-visual 33.96%, never-leaves-optic 54.83% (vs 57.51%)"
+  },
+  {
+   "name": "D subgraph facts",
+   "ok": true,
+   "detail": "n=245 m=2424 W=5466.0"
+  },
+  {
+   "name": "D 60 SCCs, giant 186",
+   "ok": true,
+   "detail": "nscc=60 giant=186"
+  },
+  {
+   "name": "D champion-restricted 67.75%",
+   "ok": true,
+   "detail": "67.7461%"
+  },
+  {
+   "name": "D 249 proofread axons graph-wide",
+   "ok": true,
+   "detail": "axon_pr sum = 249"
+  },
+  {
+   "name": "D composition 142E/97I/6NA, 40% I, depth 247 vs 381",
+   "ok": true,
+   "detail": "E=142 I=97 Ifrac=0.396 depth med 247.1 vs full 381.0"
+  },
+  {
+   "name": "D reproduce direct opt 75.58% / Spearman 0.323",
+   "ok": true,
+   "detail": "greedy 68.917% best 75.5763% rho 0.3231"
+  },
+  {
+   "name": "D independent optimizer confirms optimum plateau",
+   "ok": true,
+   "detail": "own best 75.796% in 1.3s (study 75.576%; delta +0.220pp)"
+  },
+  {
+   "name": "D stats under reproduced order",
+   "ok": true,
+   "detail": "rho_E -0.168 (p 0.046) I 114 vs E 127.5 (p 0.21) I\u2192E 88.4 E\u2192I 53.1 I\u2192I wt 71.6%"
+  },
+  {
+   "name": "D direction-of-effect robust under MY independent order",
+   "ok": true,
+   "detail": "own order: rho_E -0.027 (p 0.754), I 137 vs E 111.5 (p 0.988), I\u2192E 89.5 vs E\u2192I 51.7, E\u2192E 90.4 I\u2192I 75.3"
+  },
+  {
+   "name": "D champion-restricted stats",
+   "ok": true,
+   "detail": "rho_E -0.052 (p 0.540) I 65 vs E 150.5 (p 1.13e-09)"
+  },
+  {
+   "name": "D composition red-team: E depth range in control",
+   "ok": true,
+   "detail": "control E depth IQR 168-366um (median 215) vs full-graph E IQR 254-577um (median 379)"
+  },
+  {
+   "name": "E1 full-graph pair FF shares",
+   "ok": true,
+   "detail": "E\u2192E 80.63 I\u2192I 78.09 I\u2192E 97.30 E\u2192I 48.41 (graph-wide 83.24)"
+  },
+  {
+   "name": "E2 unclassified lane decomposition",
+   "ok": true,
+   "detail": "n=4202 med rank 18076 out/in 1.18 (I 2.70); merge 42.8% @29105; zero-in 473 @309; rest 1930 in_w 28 vs 168 @12967"
+  },
+  {
+   "name": "E3 fly trophic 77.78% / rho 0.76 (own solve)",
+   "ok": true,
+   "detail": "trophic FF 77.7774% (cg info 0, 2s) rho 0.7602 gap 6.481pp"
+  },
+  {
+   "name": "E3 arithmetic 41% of feedback budget",
+   "ok": true,
+   "detail": "6.4808pp / 15.7418% = 41.2% ; 2.7M synapses = 2.72M"
+  },
+  {
+   "name": "E3 net-vs-gross decomposition",
+   "ok": true,
+   "detail": "weight backward-under-trophic but forward-under-champion = 3.82M; reverse = 1.10M; net = 2.72M (the quoted 2.7M is the NET)"
+  },
+  {
+   "name": "E3 mouse trophic 89.98% / rho 0.74 (own solve)",
+   "ok": true,
+   "detail": "trophic FF 89.977% vs champion 93.175% (gap 3.20pp) rho 0.736"
+  },
+  {
+   "name": "C fingerprint (raw file re-parse)",
+   "ok": true,
+   "detail": "n=148 ids 1..149 missing [37] m=583 density 2.68% recip 166; heaviest 51\u219253=0.613959345844929"
+  },
+  {
+   "name": "C data/README wording",
+   "ok": true,
+   "detail": "README provenance line present, names no source"
+  },
+  {
+   "name": "C git provenance: first commit 7a77547 2026-06-21",
+   "ok": true,
+   "detail": "7a77547 2026-06-21 main reproduce rocket algorithm"
+  },
+  {
+   "name": "C Bader PDF fly-only",
+   "ok": true,
+   "detail": "'mouse' absent from all decompressible streams (weak-negative: PDF text can be fragmented)"
+  },
+  {
+   "name": "C hub 92 ledger",
+   "ok": true,
+   "detail": "in-deg 95 out-deg 56 rank 55/148, receives 40.50% of FB, sends 0"
+  },
+  {
+   "name": "C2 124 FB edges all with FF return path",
+   "ok": true,
+   "detail": "124/124 FB edges have a forward path target\u2192source"
+  },
+  {
+   "name": "C sender block 102/103/129/135",
+   "ok": true,
+   "detail": "{102: 12.68, 103: 12.18, 129: 8.51, 135: 5.57} ranks [119, 126, 127, 128]"
+  }
+ ]
+}

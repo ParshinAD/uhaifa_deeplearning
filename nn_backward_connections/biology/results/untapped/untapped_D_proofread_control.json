@@ -1,0 +1,197 @@
+{
+ "config": {
+  "proofread_npz": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/data/processed/microns_proofread.npz",
+  "ann_npz": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/microns_ann/node_ann.npz",
+  "sift": {
+   "k_full": 6,
+   "alpha": 0.7,
+   "max_sweeps": 40
+  },
+  "n_restarts": 16,
+  "seed": 42,
+  "n_perm": 20000,
+  "out_json": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/biology/results/untapped/untapped_D_proofread_control.json"
+ },
+ "graph": {
+  "n": 245,
+  "m": 2424,
+  "total_weight": 5466.0
+ },
+ "greedy_init_pct": 68.91694109037688,
+ "direct_opt": {
+  "best_pct": 75.57628979143799,
+  "runs": [
+   {
+    "init": "greedy_fas",
+    "seed": null,
+    "pct": 75.39334065129894
+   },
+   {
+    "init": "random_perm",
+    "seed": 191664963,
+    "pct": 75.57628979143799
+   },
+   {
+    "init": "random_perm",
+    "seed": 1662057957,
+    "pct": 75.48481522136846
+   },
+   {
+    "init": "random_perm",
+    "seed": 1405681631,
+    "pct": 75.50311013538236
+   },
+   {
+    "init": "random_perm",
+    "seed": 942484272,
+    "pct": 75.57628979143799
+   },
+   {
+    "init": "random_perm",
+    "seed": 929893137,
+    "pct": 75.30186608122942
+   },
+   {
+    "init": "random_perm",
+    "seed": 1843824992,
+    "pct": 75.15550676911819
+   },
+   {
+    "init": "random_perm",
+    "seed": 184566854,
+    "pct": 75.2652762532016
+   },
+   {
+    "init": "random_perm",
+    "seed": 1497586438,
+    "pct": 74.84449323088181
+   },
+   {
+    "init": "random_perm",
+    "seed": 432652533,
+    "pct": 75.46652030735456
+   },
+   {
+    "init": "random_perm",
+    "seed": 202244314,
+    "pct": 75.17380168313208
+   },
+   {
+    "init": "random_perm",
+    "seed": 1130604997,
+    "pct": 75.37504573728503
+   },
+   {
+    "init": "random_perm",
+    "seed": 2095133045,
+    "pct": 75.04573728503476
+   },
+   {
+    "init": "random_perm",
+    "seed": 1580016183,
+    "pct": 75.2286864251738
+   },
+   {
+    "init": "random_perm",
+    "seed": 1634535062,
+    "pct": 75.10062202707647
+   },
+   {
+    "init": "random_perm",
+    "seed": 1540770719,
+    "pct": 75.35675082327113
+   },
+   {
+    "init": "random_perm",
+    "seed": 1688060240,
+    "pct": 75.48481522136846
+   }
+  ],
+  "restart_pct_min": 74.84449323088181,
+  "restart_pct_max": 75.57628979143799,
+  "seconds": 0.30315709114074707
+ },
+ "champion_restricted_pct": 67.74606659348701,
+ "full_graph_champion_pct": 83.24085291200831,
+ "order_spearman": {
+  "rho": 0.32309443569510976,
+  "p": 2.332055543415841e-07
+ },
+ "class_counts": {
+  "E": 142,
+  "I": 97,
+  "NA": 6
+ },
+ "composition": {
+  "median_um": 247.10308837890625,
+  "q25_um": 172.1712188720703,
+  "q75_um": 393.10211181640625,
+  "full_graph_median_um": 381.044921875,
+  "inhibitory_frac": 0.39591836734693875,
+  "full_graph_inhibitory_frac": 0.1068943050907691
+ },
+ "ei_pair_budget_under_direct_opt": {
+  "E->E": {
+   "weight": 292.0,
+   "pct_of_total": 5.342114892060008,
+   "ff_share_pct": 89.38356164383562
+  },
+  "E->I": {
+   "weight": 503.0,
+   "pct_of_total": 9.20234174899378,
+   "ff_share_pct": 53.08151093439364
+  },
+  "I->E": {
+   "weight": 705.0,
+   "pct_of_total": 12.897914379802415,
+   "ff_share_pct": 88.36879432624113
+  },
+  "I->I": {
+   "weight": 3913.0,
+   "pct_of_total": 71.58799853640689,
+   "ff_share_pct": 75.08305647840531
+  }
+ },
+ "effects": {
+  "direct_opt": {
+   "depth_spearman_all": {
+    "rho": -0.15721629715460758,
+    "p_perm": 0.013749312534373281,
+    "n": 245
+   },
+   "depth_spearman_exc": {
+    "rho": -0.1677336747759283,
+    "p_perm": 0.044947752612369385,
+    "n": 142
+   },
+   "i_before_e": {
+    "median_rank_I": 114.0,
+    "median_rank_E": 127.5,
+    "n_I": 97,
+    "n_E": 142,
+    "mannwhitney_U": 6467.0,
+    "p_one_sided_I_earlier": 0.21207044761174243
+   }
+  },
+  "champion_restricted": {
+   "depth_spearman_all": {
+    "rho": -0.20773160123705625,
+    "p_perm": 0.000999950002499875,
+    "n": 245
+   },
+   "depth_spearman_exc": {
+    "rho": -0.05178848720952407,
+    "p_perm": 0.535873206339683,
+    "n": 142
+   },
+   "i_before_e": {
+    "median_rank_I": 65.0,
+    "median_rank_E": 150.5,
+    "n_I": 97,
+    "n_E": 142,
+    "mannwhitney_U": 3749.0,
+    "p_one_sided_I_earlier": 1.1311121657617466e-09
+   }
+  }
+ }
+}
