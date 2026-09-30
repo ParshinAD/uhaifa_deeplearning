@@ -1,0 +1,447 @@
+{
+ "reviewer": "independent review script (biology/analysis/review_mirror_retune.py)",
+ "date": "2026-09-30",
+ "champion_int_score": 35314407,
+ "retuned_int_scores": {
+  "champion": 35316059,
+  "mirror": 35343705,
+  "c1b": 35341493
+ },
+ "retuned_pcts": {
+  "champion": 84.262121088016,
+  "mirror": 84.32808288175973,
+  "c1b": 84.32280517475832
+ },
+ "checks": [
+  {
+   "claim": "total_weight",
+   "claimed": 41912141,
+   "computed": 41912141,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "claim": "champion_pct (io_utils gate)",
+   "claimed": 84.25817950936937,
+   "computed": 84.25817950936937,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "study parenthetical '(34,751,902 ...)' equals champion exact score",
+   "claimed": 34751902,
+   "computed": 35314407,
+   "tol": 0,
+   "ok": false
+  },
+  {
+   "claim": "retuned_champion_rank.npy is a valid permutation of [0,136648)",
+   "claimed": true,
+   "computed": true,
+   "tol": 0,
+   "ok": true
+  },
+  {
+   "claim": "retuned_champion exact int",
+   "claimed": 35316059,
+   "computed": 35316059,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "claim": "retuned_champion pct",
+   "claimed": 84.262121088016,
+   "computed": 84.262121088016,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "retuned_mirror_rank.npy is a valid permutation of [0,136648)",
+   "claimed": true,
+   "computed": true,
+   "tol": 0,
+   "ok": true
+  },
+  {
+   "claim": "retuned_mirror exact int",
+   "claimed": 35343705,
+   "computed": 35343705,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "claim": "retuned_mirror pct",
+   "claimed": 84.32808288175973,
+   "computed": 84.32808288175973,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "retuned_c1b_rank.npy is a valid permutation of [0,136648)",
+   "claimed": true,
+   "computed": true,
+   "tol": 0,
+   "ok": true
+  },
+  {
+   "claim": "retuned_c1b exact int",
+   "claimed": 35341493,
+   "computed": 35341493,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "claim": "retuned_c1b pct",
+   "claimed": 84.32280517475832,
+   "computed": 84.32280517475832,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "mirror_pairs count",
+   "claimed": 65452,
+   "computed": 65452,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "claim": "mirror_pairs disjoint & in-range",
+   "claimed": true,
+   "computed": true,
+   "tol": 0,
+   "ok": true
+  },
+  {
+   "claim": "c1b_pairs count",
+   "claimed": 62137,
+   "computed": 62137,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "claim": "c1b_pairs disjoint & in-range",
+   "claimed": true,
+   "computed": true,
+   "tol": 0,
+   "ok": true
+  },
+  {
+   "claim": "swapped start (mirror) is a permutation",
+   "claimed": true,
+   "computed": true,
+   "tol": 0,
+   "ok": true
+  },
+  {
+   "claim": "swapped start (c1b) is a permutation",
+   "claimed": true,
+   "computed": true,
+   "tol": 0,
+   "ok": true
+  },
+  {
+   "claim": "mirror start pct (from saved pairs)",
+   "claimed": 82.04530520165983,
+   "computed": 82.04530520165983,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "c1b start pct (from saved pairs)",
+   "claimed": 82.72064412075727,
+   "computed": 82.72064412075727,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "mirror start == QA exp_mirror_swap.json (bit)",
+   "claimed": 82.04530520165983,
+   "computed": 82.04530520165983,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "claim": "c1b start == QA exp_mirror_swap.json (bit)",
+   "claimed": 82.72064412075727,
+   "computed": 82.72064412075727,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "claim": "saved mirror_pairs.npy == rebuilt-from-annotations pairing",
+   "claimed": true,
+   "computed": true,
+   "tol": 0,
+   "ok": true
+  },
+  {
+   "claim": "saved c1b_pairs.npy == rebuilt-from-annotations pairing",
+   "claimed": true,
+   "computed": true,
+   "tol": 0,
+   "ok": true
+  },
+  {
+   "claim": "C1 start == QA json (bit)",
+   "claimed": 81.24689693136888,
+   "computed": 81.24689693136888,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "claim": "C2 start == QA json (bit)",
+   "claimed": 50.84518349945425,
+   "computed": 50.84518349945425,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "claim": "gap retuned(a)-retuned(b)",
+   "claimed": -0.06596179374372468,
+   "computed": -0.06596179374372468,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "gap retuned(a)-retuned(c)",
+   "claimed": -0.06068408674231307,
+   "computed": -0.06068408674231307,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "gap retuned(c)-retuned(b)",
+   "claimed": -0.005277707001411613,
+   "computed": -0.005277707001411613,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "mirror recovered pp",
+   "claimed": 2.2827776800998976,
+   "computed": 2.2827776800998976,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "mirror recovered frac of deficit",
+   "claimed": 1.0315894003318746,
+   "computed": 1.0315894003318746,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "c1b recovered pp",
+   "claimed": 1.6021610540010442,
+   "computed": 1.6021610540010442,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "c1b recovered frac of deficit",
+   "claimed": 1.0420319856489817,
+   "computed": 1.0420319856489817,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "mirror frac stayed swapped",
+   "claimed": 0.5667664853633196,
+   "computed": 0.5667664853633196,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "mirror frac reverted",
+   "claimed": 0.4332335146366803,
+   "computed": 0.43323351463668036,
+   "tol": 1e-09,
+   "ok": true
+  },
+  {
+   "claim": "c1b frac stayed swapped",
+   "claimed": 0.4148413988444888,
+   "computed": 0.4148413988444888,
+   "tol": 1e-12,
+   "ok": true
+  },
+  {
+   "claim": "c1b frac reverted",
+   "claimed": 0.5851586011555112,
+   "computed": 0.5851586011555112,
+   "tol": 1e-09,
+   "ok": true
+  },
+  {
+   "claim": "Spearman swapped start vs champion",
+   "claimed": 0.9118962794701951,
+   "computed": 0.9118962794701951,
+   "tol": 1e-09,
+   "ok": true
+  },
+  {
+   "claim": "Spearman retuned mirror vs champion",
+   "claimed": 0.9660137747739485,
+   "computed": 0.9660137747739485,
+   "tol": 1e-09,
+   "ok": true
+  },
+  {
+   "claim": "Spearman retuned mirror vs swapped start",
+   "claimed": 0.9065808111064422,
+   "computed": 0.9065808111064422,
+   "tol": 1e-09,
+   "ok": true
+  },
+  {
+   "claim": "mean |rank shift| retuned mirror vs champion",
+   "claimed": 4695.775510801475,
+   "computed": 4695.775510801475,
+   "tol": 1e-06,
+   "ok": true
+  },
+  {
+   "claim": "mean |rank shift| retuned mirror vs swapped start",
+   "claimed": 6387.479611849423,
+   "computed": 6387.479611849423,
+   "tol": 1e-06,
+   "ok": true
+  },
+  {
+   "claim": "study JSON retuned mirror pct == oracle re-score",
+   "claimed": 84.32808288175973,
+   "computed": 84.32808288175973,
+   "tol": 0.0,
+   "ok": true
+  }
+ ],
+ "n_checks": 43,
+ "n_failed": 1,
+ "redteam_stay_swapped": {
+  "mirror_stay": 0.5667664853633196,
+  "c1b_stay": 0.4148413988444888,
+  "two_proportion_z_independent_pairs": 54.254377632372226,
+  "mean_abs_drank_mirror": 6565.313466357025,
+  "mean_abs_drank_c1b": 3218.330028807313,
+  "stay_by_pooled_drank_decile": [
+   {
+    "bin": 0,
+    "dr_range": [
+     -1.0,
+     13.0
+    ],
+    "mirror_n": 2630,
+    "mirror_stay": 0.42015209125475284,
+    "c1b_n": 10582,
+    "c1b_stay": 0.48506898506898505
+   },
+   {
+    "bin": 1,
+    "dr_range": [
+     13.0,
+     49.0
+    ],
+    "mirror_n": 1721,
+    "mirror_stay": 0.5479372457873329,
+    "c1b_n": 10602,
+    "c1b_stay": 0.527824938690813
+   },
+   {
+    "bin": 2,
+    "dr_range": [
+     49.0,
+     137.0
+    ],
+    "mirror_n": 2327,
+    "mirror_stay": 0.6179630425440481,
+    "c1b_n": 10472,
+    "c1b_stay": 0.502196333078686
+   },
+   {
+    "bin": 3,
+    "dr_range": [
+     137.0,
+     353.0
+    ],
+    "mirror_n": 3785,
+    "mirror_stay": 0.5688243064729194,
+    "c1b_n": 8948,
+    "c1b_stay": 0.4412159141707644
+   },
+   {
+    "bin": 4,
+    "dr_range": [
+     353.0,
+     959.0
+    ],
+    "mirror_n": 5710,
+    "mirror_stay": 0.5380035026269703,
+    "c1b_n": 7018,
+    "c1b_stay": 0.35209461385009977
+   },
+   {
+    "bin": 5,
+    "dr_range": [
+     959.0,
+     1977.0
+    ],
+    "mirror_n": 8597,
+    "mirror_stay": 0.5860183785041293,
+    "c1b_n": 4173,
+    "c1b_stay": 0.31583992331655886
+   },
+   {
+    "bin": 6,
+    "dr_range": [
+     1977.0,
+     3174.0
+    ],
+    "mirror_n": 10464,
+    "mirror_stay": 0.6206039755351682,
+    "c1b_n": 2289,
+    "c1b_stay": 0.2839667977282656
+   },
+   {
+    "bin": 7,
+    "dr_range": [
+     3174.0,
+     4651.0
+    ],
+    "mirror_n": 11180,
+    "mirror_stay": 0.6916815742397138,
+    "c1b_n": 1575,
+    "c1b_stay": 0.2565079365079365
+   },
+   {
+    "bin": 8,
+    "dr_range": [
+     4651.0,
+     8321.199999999997
+    ],
+    "mirror_n": 10424,
+    "mirror_stay": 0.6165579432079816,
+    "c1b_n": 2333,
+    "c1b_stay": 0.23489069867123874
+   },
+   {
+    "bin": 9,
+    "dr_range": [
+     8321.199999999997,
+     Infinity
+    ],
+    "mirror_n": 8614,
+    "mirror_stay": 0.312630601346645,
+    "c1b_n": 4145,
+    "c1b_stay": 0.10856453558504221
+   }
+  ],
+  "displacement_standardised": {
+   "mirror": 0.5667664853633196,
+   "c1b_reweighted_to_mirror_profile": 0.2898510385065565,
+   "adjusted_gap": 0.2769154468567631,
+   "raw_gap": 0.15192508651883085
+  }
+ },
+ "seconds": 29.9332332611084,
+ "rerun_command": "$PY biology/analysis/review_mirror_retune.py"
+}

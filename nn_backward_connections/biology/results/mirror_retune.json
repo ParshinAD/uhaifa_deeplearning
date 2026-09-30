@@ -1,0 +1,100 @@
+{
+ "champion_ff_pct": 84.25817950936937,
+ "config": {
+  "seed": 42,
+  "reference_json": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/qa/exp_mirror_swap.json",
+  "gate_tol": 1e-09,
+  "sift_max_sweeps": 40,
+  "sift_k_full": 6,
+  "sift_alpha": 0.7,
+  "alt_cycles": 77,
+  "alt_sift_sweeps": 2,
+  "alt_k_full": 2,
+  "alt_alpha": 0.7,
+  "min_block": 32,
+  "split_fracs": [
+   0.5,
+   0.382,
+   0.618,
+   0.25,
+   0.75
+  ],
+  "out_json": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/biology/results/mirror_retune.json",
+  "out_fig": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/biology/outputs/mirror_retune_recovery.png",
+  "results_dir": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/biology/results",
+  "dpi": 120
+ },
+ "smoke": false,
+ "regression_gate": "PASSED (all four schemes bit-identical to layering/outputs/qa/exp_mirror_swap.json)",
+ "starts": {
+  "champion": {
+   "start_ff_pct": 84.25817950936937,
+   "retuned_ff_pct": 84.262121088016,
+   "deficit_vs_champion_pp": 0.0,
+   "recovered_pp": 0.003941578646632138,
+   "recovered_frac_of_deficit": null,
+   "residual_vs_champion_pp": -0.003941578646632138,
+   "after_sift_pct": 84.25866624184148,
+   "after_alt_pct": 84.262121088016,
+   "sift_sweeps_run": 40,
+   "alt_cycles_run": 77,
+   "t_sift_s": 186.58929204940796,
+   "t_alt_s": 814.7638840675354,
+   "t_total_s": 1001.3582231998444
+  },
+  "mirror": {
+   "start_ff_pct": 82.04530520165983,
+   "retuned_ff_pct": 84.32808288175973,
+   "deficit_vs_champion_pp": 2.2128743077095407,
+   "recovered_pp": 2.2827776800998976,
+   "recovered_frac_of_deficit": 1.0315894003318746,
+   "residual_vs_champion_pp": -0.06990337239035682,
+   "after_sift_pct": 84.23721899580363,
+   "after_alt_pct": 84.32808288175973,
+   "sift_sweeps_run": 40,
+   "alt_cycles_run": 77,
+   "t_sift_s": 210.49809312820435,
+   "t_alt_s": 1006.218652009964,
+   "t_total_s": 1216.7235491275787
+  },
+  "c1b": {
+   "start_ff_pct": 82.72064412075727,
+   "retuned_ff_pct": 84.32280517475832,
+   "deficit_vs_champion_pp": 1.537535388612099,
+   "recovered_pp": 1.6021610540010442,
+   "recovered_frac_of_deficit": 1.0420319856489817,
+   "residual_vs_champion_pp": -0.06462566538894521,
+   "after_sift_pct": 84.27636755659893,
+   "after_alt_pct": 84.32280517475832,
+   "sift_sweeps_run": 40,
+   "alt_cycles_run": 77,
+   "t_sift_s": 195.29816198349,
+   "t_alt_s": 939.0634949207306,
+   "t_total_s": 1134.365746974945
+  }
+ },
+ "headline": {
+  "irrecoverable_mirror_gap_pp": -0.06596179374372468,
+  "structural_control_gap_pp": -0.06068408674231307,
+  "mirror_specific_residual_pp": -0.005277707001411613
+ },
+ "unswap_analysis": {
+  "mirror_pairs_after_mirror_retune": {
+   "n_pairs": 65452,
+   "frac_reverted_to_champion": 0.4332335146366803,
+   "frac_stayed_swapped": 0.5667664853633196
+  },
+  "c1b_pairs_after_c1b_retune": {
+   "n_pairs": 62137,
+   "frac_reverted_to_champion": 0.5851586011555112,
+   "frac_stayed_swapped": 0.4148413988444888
+  },
+  "spearman_swapped_start_vs_champion": 0.9118962794701951,
+  "spearman_retuned_mirror_vs_champion": 0.9660137747739485,
+  "spearman_retuned_mirror_vs_swapped_start": 0.9065808111064422,
+  "mean_abs_rank_shift_retuned_mirror_vs_champion": 4695.775510801475,
+  "mean_abs_rank_shift_retuned_mirror_vs_swapped_start": 6387.479611849423
+ },
+ "seconds_total": 3396.2803170681,
+ "rerun_command": "$PY biology/analysis/exp_mirror_retune.py"
+}
