@@ -1,0 +1,303 @@
+{
+ "provenance": {
+  "script": "biology/analysis/exp_label_nulls.py",
+  "date": "2026-09-29T23:06:36",
+  "python": "3.9.23",
+  "numpy": "1.23.5",
+  "platform": "macOS-15.6-arm64-arm-64bit",
+  "interpreter": "/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python",
+  "seed": 42
+ },
+ "dataset": "microns",
+ "champion_ff_pct": 83.24085291200831,
+ "n": 67534,
+ "m": 10436569,
+ "t2_ei_shuffle": {
+  "statistics": {
+   "a": "per-layer median-rank lead = median rank(E in L) \u2212 median rank(I in L); positive = inhibitory earlier; plus mean over tested layers",
+   "b": "E-output vs I-output backward weight share (%) and difference E\u2212I (pp)"
+  },
+  "null_definitions": {
+   "global_": "shuffle E/I identity among the E/I-labeled neurons (NA stays NA; #E and #I preserved)",
+   "stratified_layer": "same, but within each cortical-layer band"
+  },
+  "n_perm": 2000,
+  "seed": 42,
+  "rng_streams": {
+   "global_": [
+    42,
+    20
+   ],
+   "stratified": [
+    42,
+    21
+   ]
+  },
+  "tested_layers": [
+   "L1",
+   "L2/3",
+   "L4",
+   "L5",
+   "L6"
+  ],
+  "excluded_layers": {
+   "WM": {
+    "n_exc": 500,
+    "n_inh": 18
+   }
+  },
+  "n_pool": 63074,
+  "n_exc": 55855,
+  "n_inh": 7219,
+  "n_ei_na": 4460,
+  "gates": {
+   "backward_share_exc": {
+    "expected": 26.622206112626177,
+    "got": 26.622206112626177,
+    "ok": true
+   },
+   "backward_share_inh": {
+    "expected": 5.210165896038898,
+    "got": 5.210165896038898,
+    "ok": true
+   },
+   "lead_L1": {
+    "expected": 6640.0,
+    "got": 6640.0,
+    "ok": true
+   },
+   "lead_L2/3": {
+    "expected": 6936.0,
+    "got": 6936.0,
+    "ok": true
+   },
+   "lead_L4": {
+    "expected": 12935.0,
+    "got": 12935.0,
+    "ok": true
+   },
+   "lead_L5": {
+    "expected": 6672.0,
+    "got": 6672.0,
+    "ok": true
+   },
+   "lead_L6": {
+    "expected": 6843.5,
+    "got": 6843.5,
+    "ok": true
+   }
+  },
+  "tables": {
+   "global": {
+    "lead_L1": {
+     "observed": 6640.0,
+     "null_mean": -752.65825,
+     "null_sd": 3947.293347119776,
+     "z": 1.8728423757495007,
+     "p_two_sided": 0.0029985007496251873,
+     "n_le": 1998,
+     "n_ge": 2,
+     "n_perm": 2000,
+     "n_exc": 280,
+     "n_inh": 171
+    },
+    "lead_L2/3": {
+     "observed": 6936.0,
+     "null_mean": -34.1485,
+     "null_sd": 605.7700441346827,
+     "z": 11.50626143944864,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000,
+     "n_exc": 10381,
+     "n_inh": 1435
+    },
+    "lead_L4": {
+     "observed": 12935.0,
+     "null_mean": 8.40525,
+     "null_sd": 490.4397169432908,
+     "z": 26.35715319013344,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000,
+     "n_exc": 18551,
+     "n_inh": 1982
+    },
+    "lead_L5": {
+     "observed": 6672.0,
+     "null_mean": 13.247,
+     "null_sd": 599.3115964887071,
+     "z": 11.11066937301533,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000,
+     "n_exc": 11457,
+     "n_inh": 2640
+    },
+    "lead_L6": {
+     "observed": 6843.5,
+     "null_mean": 135.84925,
+     "null_sd": 555.9349509918446,
+     "z": 12.0655316562358,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000,
+     "n_exc": 14686,
+     "n_inh": 973
+    },
+    "lead_mean_over_layers": {
+     "observed": 8005.3,
+     "null_mean": -125.86104999999999,
+     "null_sd": 817.7736962614083,
+     "z": 9.943045474772529,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000
+    },
+    "backward_share_exc": {
+     "observed": 26.622206112626177,
+     "null_mean": 16.817981041909476,
+     "null_sd": 0.06755390141602764,
+     "z": 145.1318852828029,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000
+    },
+    "backward_share_inh": {
+     "observed": 5.210165896038898,
+     "null_mean": 16.827611065728423,
+     "null_sd": 0.5229000372915961,
+     "z": -22.217334750754738,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 0,
+     "n_ge": 2000,
+     "n_perm": 2000
+    },
+    "backward_share_diff_E_minus_I": {
+     "observed": 21.41204021658728,
+     "null_mean": -0.009630023818945486,
+     "null_sd": 0.590387972510129,
+     "z": 36.284055973106234,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000
+    }
+   },
+   "stratified_layer": {
+    "lead_L1": {
+     "observed": 6640.0,
+     "null_mean": -92.17925,
+     "null_sd": 2092.543605666378,
+     "z": 3.217222920358744,
+     "p_two_sided": 0.00399800099950025,
+     "n_le": 1997,
+     "n_ge": 3,
+     "n_perm": 2000,
+     "n_exc": 280,
+     "n_inh": 171
+    },
+    "lead_L2/3": {
+     "observed": 6936.0,
+     "null_mean": -14.82,
+     "null_sd": 576.6201435910798,
+     "z": 12.054417587133923,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000,
+     "n_exc": 10381,
+     "n_inh": 1435
+    },
+    "lead_L4": {
+     "observed": 12935.0,
+     "null_mean": 4.57875,
+     "null_sd": 529.7836995487793,
+     "z": 24.406982058928833,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000,
+     "n_exc": 18551,
+     "n_inh": 1982
+    },
+    "lead_L5": {
+     "observed": 6672.0,
+     "null_mean": 2.2855,
+     "null_sd": 476.6626909043754,
+     "z": 13.992524750249501,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000,
+     "n_exc": 11457,
+     "n_inh": 2640
+    },
+    "lead_L6": {
+     "observed": 6843.5,
+     "null_mean": 210.0185,
+     "null_sd": 683.6278802807113,
+     "z": 9.703351328029745,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000,
+     "n_exc": 14686,
+     "n_inh": 973
+    },
+    "lead_mean_over_layers": {
+     "observed": 8005.3,
+     "null_mean": 21.9767,
+     "null_sd": 475.8903788305052,
+     "z": 16.77555095696391,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000
+    },
+    "backward_share_exc": {
+     "observed": 26.622206112626177,
+     "null_mean": 16.888974028524643,
+     "null_sd": 0.07002802643375601,
+     "z": 138.99052393413973,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000
+    },
+    "backward_share_inh": {
+     "observed": 5.210165896038898,
+     "null_mean": 16.324510471850342,
+     "null_sd": 0.48097006812045284,
+     "z": -23.108183466061337,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 0,
+     "n_ge": 2000,
+     "n_perm": 2000
+    },
+    "backward_share_diff_E_minus_I": {
+     "observed": 21.41204021658728,
+     "null_mean": 0.5644635566743023,
+     "null_sd": 0.5509312006075712,
+     "z": 37.84061718944599,
+     "p_two_sided": 0.0009995002498750624,
+     "n_le": 2000,
+     "n_ge": 0,
+     "n_perm": 2000
+    }
+   }
+  },
+  "seconds": 10.7,
+  "notes": [
+   "E/I from allen_soma_ei_class_model_v1 (soma-based classifier)",
+   "WM excluded from statistic (a): only 18 inhibitory members (< 20 floor); its observed lead is negative (\u22123927)",
+   "truncation bias: inhibitory axons are locally complete while excitatory axons are heavily truncated \u2014 see study caveats"
+  ]
+ }
+}
