@@ -210,13 +210,15 @@ def make_figure(stats: dict, real_mean: float, real_sd: float,
                     fontsize=8.5, color=C["secondary"])
     ax.axvline(real_mean, color=C["ink"], lw=1.6, zorder=2)
     ax.axvline(champion, color=C["ink"], lw=1.2, ls=(0, (4, 3)), zorder=2)
-    ax.annotate(f"real graph, same protocol\n{real_mean:.3f}%",
-                (real_mean, len(rungs) - 0.45), ha="right", va="top",
+    ax.set_ylim(-0.7, len(rungs) - 0.3)
+    ax.annotate(f"real graph,\nsame protocol\n{real_mean:.3f}%",
+                (real_mean, 1.0), ha="right", va="center",
                 fontsize=8.5, color=C["ink"], xytext=(-6, 0),
                 textcoords="offset points")
     ax.annotate(f"champion (H64)\n{champion:.3f}%",
-                (champion, -0.35), ha="left", va="bottom", fontsize=8.5,
-                color=C["ink"], xytext=(6, 0), textcoords="offset points")
+                (champion, len(rungs) - 2.0), ha="left", va="center",
+                fontsize=8.5, color=C["ink"], xytext=(6, 0),
+                textcoords="offset points")
     ax.set_yticklabels([CONFIG["rung_label"][k] for k in rungs], fontsize=9.5,
                        color=C["ink"])
     ax.set_xlabel("feedforward weight after the identical protocol (% of total)",
@@ -241,7 +243,7 @@ def make_figure(stats: dict, real_mean: float, real_sd: float,
                  xytext=(-6, 0), textcoords="offset points")
     axb.set_xscale("log")
     axb.set_yticklabels([])
-    axb.set_xlabel("2-cycle lower bound on unavoidable FB (% of W, log)",
+    axb.set_xlabel("2-cycle lower bound (% of W, log)",
                    color=C["secondary"], fontsize=10)
     axb.set_title("Forced reciprocal feedback", loc="left", fontsize=12,
                   color=C["ink"], pad=12)
@@ -257,7 +259,7 @@ def make_figure(stats: dict, real_mean: float, real_sd: float,
         mlines.Line2D([], [], color=C["ink"], lw=1.2, ls=(0, (4, 3)),
                       label="champion budget"),
     ]
-    ax.legend(handles=handles, loc="lower right", fontsize=8.5, frameon=False,
+    ax.legend(handles=handles, loc="center left", fontsize=8.5, frameon=False,
               labelcolor=C["ink"])
     fig.tight_layout()
     CONFIG["figure_out"].parent.mkdir(parents=True, exist_ok=True)

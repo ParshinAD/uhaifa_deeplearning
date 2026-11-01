@@ -156,12 +156,12 @@ exactly as G01 §5 did for the old ones.
 
 | stage | content | status |
 |---|---|---|
-| A | this charter; mapping of the operator's steps onto G01; housekeeping (`experiments/randomgraph.md` G01 status sync) | done (review pending) |
-| B | W0 generator + selftest + K=12 fly runs + review | runs in progress |
-| C | L2R generator + selftest + K=12 fly runs + review | generator ready |
-| D | L4 type-dcSBM: labels + selftest + K=12 fly runs + review | pending |
-| E | budget probes (one pinned draw per v2 rung at 5× epochs) | pending |
-| F | critical G01 fit-review (§5) + extended ladder analysis (v1 ∪ v2), 2-cycle bounds, figure, REPORT.md + Russian walkthrough artifact + review | pending |
+| A | this charter; mapping of the operator's steps onto G01; housekeeping (`experiments/randomgraph.md` G01 status sync) | done — review PASS-with-corrections, applied |
+| B | W0 generator + selftest + K=12 fly runs + review | done — review PASS |
+| C | L2R generator + selftest + K=12 fly runs + review | done — review PASS (64 checks) |
+| D | L4 type-dcSBM: labels + selftest + K=12 fly runs + review | done — review PASS (478 checks); INVERSION, probe-confirmed |
+| E | budget probes (one pinned draw per v2 rung at 5× epochs) | done — all three directions survive (see REPORT §2) |
+| F | critical G01 fit-review (§5) + extended ladder analysis (v1 ∪ v2), 2-cycle bounds, figure, REPORT.md + Russian walkthrough artifact + review | REPORT.md + artifact published; final review in progress |
 
 ## 5. Critical re-examination of G01 (operator mandate, 2026-11-01)
 

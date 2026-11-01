@@ -1,0 +1,91 @@
+[bound] L1_gnm gs3000: 0.0074% of W
+[bound] L1_gnm gs3001: 0.0072% of W
+[bound] L1_gnm gs3002: 0.0071% of W
+[bound] L1_gnm gs3003: 0.0076% of W
+[bound] L1_gnm gs3004: 0.0069% of W
+[bound] L1_gnm gs3005: 0.0073% of W
+[bound] L1_gnm gs3006: 0.0066% of W
+[bound] L1_gnm gs3007: 0.0072% of W
+[bound] L1_gnm gs3008: 0.0070% of W
+[bound] L1_gnm gs3009: 0.0076% of W
+[bound] L1_gnm gs3010: 0.0073% of W
+[bound] L1_gnm gs3011: 0.0073% of W
+[bound] L3_dcsbm gs5000: 0.3772% of W
+[bound] L3_dcsbm gs5001: 0.3819% of W
+[bound] L3_dcsbm gs5002: 0.3778% of W
+[bound] L3_dcsbm gs5003: 0.3717% of W
+[bound] L3_dcsbm gs5004: 0.3807% of W
+[bound] L3_dcsbm gs5005: 0.3801% of W
+[bound] L3_dcsbm gs5006: 0.3796% of W
+[bound] L3_dcsbm gs5007: 0.3775% of W
+[bound] L3_dcsbm gs5008: 0.3706% of W
+[bound] L3_dcsbm gs5009: 0.3857% of W
+[bound] L3_dcsbm gs5010: 0.3755% of W
+[bound] L3_dcsbm gs5011: 0.3818% of W
+[bound] L3a_sbm gs4000: 0.0361% of W
+[bound] L3a_sbm gs4001: 0.0364% of W
+[bound] L3a_sbm gs4002: 0.0369% of W
+[bound] L3a_sbm gs4003: 0.0356% of W
+[bound] L3a_sbm gs4004: 0.0357% of W
+[bound] L3a_sbm gs4005: 0.0374% of W
+[bound] L3a_sbm gs4006: 0.0362% of W
+[bound] L3a_sbm gs4007: 0.0375% of W
+[bound] L3a_sbm gs4008: 0.0377% of W
+[bound] L3a_sbm gs4009: 0.0349% of W
+[bound] L3a_sbm gs4010: 0.0365% of W
+[bound] L3a_sbm gs4011: 0.0366% of W
+[bound] w_shuffled gs1000: 0.1033% of W
+[bound] w_shuffled gs1001: 0.1034% of W
+[bound] w_shuffled gs1002: 0.1044% of W
+[bound] w_shuffled gs1003: 0.1040% of W
+[bound] w_shuffled gs1004: 0.1037% of W
+[bound] w_shuffled gs1005: 0.1061% of W
+[bound] w_shuffled gs1006: 0.1047% of W
+[bound] w_shuffled gs1007: 0.1072% of W
+[bound] w_shuffled gs1008: 0.1067% of W
+[bound] w_shuffled gs1009: 0.1069% of W
+[bound] w_shuffled gs1010: 0.1023% of W
+[bound] w_shuffled gs1011: 0.1045% of W
+[bound] w_shuffled gs1012: 0.1051% of W
+[bound] w_shuffled gs1013: 0.1066% of W
+[bound] w_shuffled gs1014: 0.1042% of W
+[bound] w_shuffled gs1015: 0.1053% of W
+[bound] w_shuffled gs1016: 0.1052% of W
+[bound] w_shuffled gs1017: 0.1056% of W
+[bound] w_shuffled gs1018: 0.1037% of W
+[bound] w_shuffled gs1019: 0.1048% of W
+[bound] w_source gs2000: 0.1079% of W
+[bound] w_source gs2001: 0.1103% of W
+[bound] w_source gs2002: 0.1090% of W
+[bound] w_source gs2003: 0.1088% of W
+[bound] w_source gs2004: 0.1088% of W
+[bound] w_source gs2005: 0.1081% of W
+[bound] w_source gs2006: 0.1100% of W
+[bound] w_source gs2007: 0.1124% of W
+[bound] w_source gs2008: 0.1088% of W
+[bound] w_source gs2009: 0.1090% of W
+[bound] w_source gs2010: 0.1105% of W
+[bound] w_source gs2011: 0.1108% of W
+[bound] w_source gs2012: 0.1109% of W
+[bound] w_source gs2013: 0.1087% of W
+[bound] w_source gs2014: 0.1092% of W
+[bound] w_source gs2015: 0.1111% of W
+[bound] w_source gs2016: 0.1079% of W
+[bound] w_source gs2017: 0.1109% of W
+[bound] w_source gs2018: 0.1099% of W
+[bound] w_source gs2019: 0.1087% of W
+[summary] biology/results/nullmodels_v2/summary_v2.json
+
+| rung | K | FF% (protocol) | z of real | beyond | greedy FF% | 2-cycle bound % of W |
+|---|---|---|---|---|---|---|
+| L1  G(n,m) — density only | 12 | 69.823 ± 0.019 | +727.3 | 0/12 | 64.607 | 0.0072 ± 0.0003 |
+| L3a SBM — lane blocks, no degrees | 12 | 75.992 ± 0.025 | +305.8 | 0/12 | 66.970 | 0.0365 ± 0.0008 |
+| L2  config — degrees | 20 | 77.220 ± 0.024 | +265.5 | 0/20 | 69.100 | 0.1049 ± 0.0013 |
+| L2  config — degrees + out-strengths | 20 | 79.981 ± 0.015 | +244.7 | 0/20 | 72.649 | 0.1096 ± 0.0012 |
+| L3  dc-SBM — + 17-lane profiles | 12 | 81.896 ± 0.018 | +100.4 | 0/12 | 70.660 | 0.3783 ± 0.0043 |
+| L2R + REAL reciprocal backbone (v2) | 12 | 77.581 ± 0.012 | +520.3 | 0/12 | 70.296 | 6.7172 ± 0.0000 |
+| L4  dc-SBM — 8.8k cell-type profiles (v2) | 10 | 84.232 ± 0.008 | -75.6 | 10/10 | 69.461 | 2.0189 ± 0.0065 |
+| W0  REAL topology, weights shuffled (v2) | 12 | 82.221 ± 0.033 | +44.1 | 0/12 | 70.249 | 4.4596 ± 0.0028 |
+| **real graph (protocol)** | 3 | **83.658 ± 0.003** | — | — | 68.913 | 6.7172 |
+| real graph (champion budget) | 1 | 84.258 | — | — | — | 6.7172 |
+[figure] biology/outputs/nullmodels2_fly_ladder.png
