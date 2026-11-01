@@ -66,16 +66,31 @@ real-vs-null difference counts only if it exceeds realization noise (report a CI
 ---
 
 ## G01 — Does the fly connectome have more/less unavoidable feedback than matched random graphs?
-- **status:** open
-- **null models:** ER (match n + edges), configuration model (match in/out degree sequence),
-  SBM (match communities), degree-preserving rewiring — the last two are the informative
-  "structure-matched" nulls; ER is the naïve floor.
-- **method:** for the connectome and K realizations of each null, estimate best_feedforward with
-  the Track-C runner (size-scaled budget) **and** the greedy-FAS lower bound; compare
-  `unavoidable_feedback` distributions. Then attribute any gap to a structural feature (degree
-  heterogeneity, reciprocity, block structure).
-- **artifacts:** `results/randomgraph/*.json` + a distribution plot (real vs each null).
-- **finding:** → Findings § (to be written).
+- **status:** **answered (2026-09-30)** — `biology/studies/nullmodels.md` (689 logged runs,
+  independent review 2026-09-30; FINDINGS.md A1). Nested ladder chance → G(n,m) →
+  configuration (two weight variants) → dc-SBM on the 17 lanes → real: the fly is outside all
+  76 null draws at every rung (decomposition: density +19.8 pp, degrees+strengths +10.2,
+  regional diagram +1.9, sub-annotation targeting +1.8), yet carries a reciprocal 2-cycle core
+  (6.72% of W) 18–930× larger than any null's. Mouse meso: the opposite direction — real below
+  98/100 strength-matched nulls, ~80% of its FB forced by bidirectional area pairs.
+- **deviations from the menu below, stated in the study §2:** ER realized as G(n,m)
+  weights-on-slot; "configuration model" and "degree-preserving rewiring" collapse into one rung
+  (a global target-column permutation IS a uniform draw from that ensemble); SBM uses the
+  17 annotation lanes, not inferred communities. Runs live under `biology/results/nullmodels/`
+  (own runner per the estimator contract), not `results/randomgraph/`.
+- **finding:** → Findings § below.
+
+## G03 — Null-ladder v2: which axes G01 left open (weights-on-topology, reciprocity, MICrONS)
+- **status:** in-progress (opened 2026-11-01)
+- **owner doc (charter + pre-registration):** `biology/studies/null_ladder_v2/CHARTER.md`
+- **null models:** W0 `w_topo_shuffle` (real binary topology, weights permuted — the axis G01
+  never varied); L2R `dyad_fixedmut` (real reciprocal subgraph + exact degrees, unidirectional
+  wiring randomized — directly prices the reciprocity G01 showed the L2 ensemble misses);
+  conditional stage E: the L1/L2/W0 ladder on MICrONS to deconfound the fly↑ / meso-mouse↓
+  scale-vs-species flip (G01 review red-team note e).
+- **method:** identical estimator to G01 (`nullmodels_run.run_protocol`), fly K=12 per rung,
+  real comparators reused from G01's runs; 2-cycle bound per draw.
+- **artifacts:** `biology/results/nullmodels_v2/runs/*.json` + `biology/studies/null_ladder_v2/REPORT.md`.
 
 ## G02 — Divide-and-conquer via SBM / spectral communities (cross-links A-CLU)
 - **status:** open
@@ -86,5 +101,11 @@ real-vs-null difference counts only if it exceeds realization noise (report a CI
 ---
 
 ## Findings — Track C
-*(empty — populated only when a G-question is answered under this track's verdict rule; a headline
-result also earns a one-line pointer from `findings.md`.)*
+
+* **G01 (2026-09-30, reviewed):** brains are not generically "more feedforward than chance" —
+  the answer is scale-dependent. Neuron-level fly: MORE feedforward-organized than every matched
+  null at every rung (16.3% unavoidable-FB upper bound vs 18.1–30.2% for the nulls), while
+  carrying a reciprocal core that provably forces 6.72% of W into feedback (18–930× any null's).
+  Region-level mouse: LESS orderable than 98/100 strength-matched nulls (provable against 54/100
+  via the 2-cycle bound), ~80% of its feedback forced by bidirectional area pairs. Full study +
+  independent review: `biology/studies/nullmodels.md`; COSYNE-ready form: `biology/FINDINGS.md` A1.
