@@ -52,7 +52,9 @@ def main():
     t0 = time.time()
 
     from layering import io_utils
-    from layering.tools.fly_streams import assign_lanes
+    from layering.tools.fly_streams import (assign_lanes, build_layout,
+                                            layout_stats, lane_of, LANE_COLORS,
+                                            CONFIG as SCFG)
     g, order, rank, ff_pct = io_utils.load_graph_and_champion_order("connectome")
     n = g.n_nodes
     src = g.src.astype(np.int64)
@@ -82,29 +84,109 @@ def main():
             ctype[int(row["root_id"])] = t or "unannotated"
     types_by_node = [ctype.get(int(i), "unannotated") for i in node_ids]
 
-    layouts = {}
-    for B in CONFIG["bins"]:
-        lay = json.loads((CONFIG["streams_dir"] / f"layout_bio{K}_B{B}.json")
-                         .read_text(encoding="utf-8"))
-        dbin = np.minimum((rank * B) // n, B - 1).astype(np.int64)
-        cellid = lane * B + dbin
-        # top cell_types per cell
-        per_cell: dict[int, Counter] = {}
-        for ci, t in zip(cellid, types_by_node):
-            per_cell.setdefault(int(ci), Counter())[t] += 1
-        for cell in lay["cells"]:
-            cid = cell["lane"] * B + cell["bin"]
-            top = per_cell.get(cid, Counter()).most_common(
-                CONFIG["top_types_per_cell"])
-            cell["top_types"] = [[t, int(c)] for t, c in top]
-        layouts[f"B{B}"] = lay
+    # ---- three Y-axis groupings: our streams, raw cell classes, super classes
+    d_meta = meta
+    scv, ccv = d_meta["super_class_values"], d_meta["cell_class_values"]
 
-    # cloud positions, quantized: x = rank (uint32), y in [0,1] -> uint16
-    cl = np.load(CONFIG["cloud_npz"], allow_pickle=False)
-    assert [str(x) for x in cl["lane_list"]] == lane_list, \
-        "cloud_xy.npz is stale: its lane list disagrees with assign_lanes"
-    y = cl["y"].astype(np.float64)
-    y01 = (y - y.min()) / (y.max() - y.min())
+    def ordered_grouping(codes, names, display=None):
+        """Group values reordered by median champion rank -> (glane, glist)."""
+        present = sorted(set(int(c) for c in codes),
+                         key=lambda i: float(np.median(rank[codes == i])))
+        remap = {old: new for new, old in enumerate(present)}
+        glane = np.array([remap[int(c)] for c in codes], dtype=np.int64)
+        glist = [(display(names[i]) if display else names[i]) for i in present]
+        return glane, glist
+
+    def family_colors(glane, glist):
+        """Each group inherits its members' modal stream colour."""
+        stream_by_node = np.array(
+            [lane_of(scv[s], ccv[c]) for s, c in zip(d["super_class"],
+                                                     d["cell_class"])])
+        cols = []
+        for i in range(len(glist)):
+            vals, cnts = np.unique(stream_by_node[glane == i],
+                                   return_counts=True)
+            cols.append(LANE_COLORS[vals[np.argmax(cnts)]])
+        return cols
+
+    grp_defs = {"streams": (lane, lane_list,
+                            [LANE_COLORS[nm] for nm in lane_list])}
+    cl_lane, cl_list = ordered_grouping(
+        d["cell_class"].astype(np.int64), ccv,
+        display=lambda s: "NA (no fine label)" if s == "NA" else s)
+    grp_defs["cell_class"] = (cl_lane, cl_list, family_colors(cl_lane, cl_list))
+    su_lane, su_list = ordered_grouping(d["super_class"].astype(np.int64), scv)
+    grp_defs["super_class"] = (su_lane, su_list,
+                               family_colors(su_lane, su_list))
+
+    thr_ink = SCFG["min_bundle_frac"]
+    thr_exp = SCFG["export_bundle_frac"]
+    Wtot = float(w.sum())
+    layouts = {}
+    cloud_groups = {}
+    hw = 0.40                                   # band halfwidth, as fly_cloud.py
+    spec = d["spec_y"].astype(np.float64)
+    for gname, (glane, glist, gcols) in grp_defs.items():
+        Kg = len(glist)
+        # per-neuron cloud y for this grouping (ordinal spectral rank in band)
+        ycl = np.zeros(n)
+        for i in range(Kg):
+            m = glane == i
+            r = np.argsort(np.argsort(spec[m], kind="stable"), kind="stable")
+            ycl[m] = i + hw * (2.0 * r / max(int(m.sum()) - 1, 1) - 1.0)
+        y01 = (ycl - ycl.min()) / (ycl.max() - ycl.min())
+        cloud_groups[gname] = {
+            "K": Kg, "y_min": float(ycl.min()), "y_max": float(ycl.max()),
+            "y_u16": b64(np.round(y01 * 65535).astype(np.uint16)),
+            "lane_u8": b64(glane.astype(np.uint8)),
+        }
+        layouts[gname] = {}
+        for B in CONFIG["bins"]:
+            L = build_layout(rank, glane, glist, src, g.tgt.astype(np.int64),
+                             w, B, out_w)
+            stats = layout_stats(L, Wtot, thr_ink * Wtot)
+            dbin = np.minimum((rank * B) // n, B - 1).astype(np.int64)
+            cellid = glane * B + dbin
+            per_cell: dict[int, Counter] = {}
+            for ci, t in zip(cellid, types_by_node):
+                per_cell.setdefault(int(ci), Counter())[t] += 1
+            NC = Kg * B
+            tot = {k: np.zeros(NC) for k in ("out_ff", "out_fb",
+                                             "in_ff", "in_fb")}
+            for s_, t_, wf, wb in L["bundles"]:
+                tot["out_ff"][s_] += wf; tot["out_fb"][s_] += wb
+                tot["in_ff"][t_] += wf; tot["in_fb"][t_] += wb
+            cells = []
+            for c in np.nonzero(L["counts"])[0]:
+                top = per_cell.get(int(c), Counter()).most_common(
+                    CONFIG["top_types_per_cell"])
+                cells.append({"lane": int(c // B), "bin": int(c % B),
+                              "count": int(L["counts"][c]),
+                              "intra_ff": float(L["intra_ff"][c]),
+                              "intra_fb": float(L["intra_fb"][c]),
+                              "sink0": int(L["sink0"][c]),
+                              "out_ff": float(tot["out_ff"][c]),
+                              "out_fb": float(tot["out_fb"][c]),
+                              "in_ff": float(tot["in_ff"][c]),
+                              "in_fb": float(tot["in_fb"][c]),
+                              "top_types": [[t, int(cnt)] for t, cnt in top]})
+            layouts[gname][f"B{B}"] = {
+                "n_bins": B,
+                "ink_threshold_frac": thr_ink,
+                "export_floor_frac": thr_exp,
+                "lanes": [{"name": glist[i], "color": gcols[i],
+                           "n": int((glane == i).sum()),
+                           "med_rank": float(np.median(rank[glane == i]))}
+                          for i in range(Kg)],
+                "cells": cells,
+                "bundles": [{"s": s_, "t": t_, "ff": round(wf, 2),
+                             "fb": round(wb, 2)}
+                            for s_, t_, wf, wb in L["bundles"]
+                            if wf + wb >= thr_exp * Wtot],
+                "stats": stats,
+            }
+
+    # cloud positions, quantized: x = rank (uint32); per-grouping y/lane above
     # per-neuron cell-type codes for the artifact's type-highlight search
     type_names = sorted(set(types_by_node))
     type_idx = {t: i for i, t in enumerate(type_names)}
@@ -146,15 +228,12 @@ def main():
         side_map[i] = 1 if v == "left" else (2 if v == "right" else 0)
     cloud = {
         "n": int(n),
-        "K": K,
-        "y_min": float(y.min()), "y_max": float(y.max()),
-        "x_u32": b64(cl["x"].astype(np.uint32)),
-        "y_u16": b64(np.round(y01 * 65535).astype(np.uint16)),
-        "lane_u8": b64(cl["lane"].astype(np.uint8)),
+        "x_u32": b64(rank.astype(np.uint32)),
         "sink_u8": b64((out_w == 0).astype(np.uint8)),
         "side_u8": b64(side_map[side_codes]),                # 0 other, 1 L, 2 R
         "type_u16": b64(type_u16),
         "nt_u8": b64(nt_codes.astype(np.uint8)),
+        "groups": cloud_groups,
     }
 
     report = json.loads((CONFIG["streams_dir"] / "report_streams.json")

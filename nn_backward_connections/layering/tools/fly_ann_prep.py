@@ -76,6 +76,11 @@ CONFIG = {
     "ann_license": "CC-BY 4.0 — cite Schlegel et al. 2024 (Nature 634) AND "
                    "Dorkenwald et al. 2024 (Nature 634) wherever a figure "
                    "built on this join appears",
+    # Known systematic error of the transmitter classifier, corrected at the
+    # join (raw predictions kept as top_nt_raw): Eckstein et al. 2024 flag
+    # that Kenyon cells are misclassified as dopaminergic; KCs are
+    # cholinergic (Barnstedt et al. 2016, Neuron). cell_class -> true nt:
+    "nt_overrides": {"Kenyon_Cell": "acetylcholine"},
 }
 
 
@@ -181,6 +186,21 @@ def main():
         values[c] = vals
         print(f"  {c}: {len(vals)} values")
 
+    # documented transmitter corrections (raw predictions preserved)
+    top_nt_raw = codes["top_nt"].copy()
+    nt_corrections = []
+    for cls, nt_name in CONFIG["nt_overrides"].items():
+        m = codes["cell_class"] == values["cell_class"].index(cls)
+        ti = values["top_nt"].index(nt_name)
+        changed = int((codes["top_nt"][m] != ti).sum())
+        codes["top_nt"][m] = ti
+        nt_corrections.append({
+            "cell_class": cls, "set_to": nt_name, "neurons_changed": changed,
+            "reason": "systematic classifier error flagged by Eckstein et al. "
+                      "2024 (KCs predicted dopaminergic); ground truth: KCs "
+                      "are cholinergic (Barnstedt et al. 2016)"})
+        print(f"  nt override: {cls} -> {nt_name} ({changed} neurons changed)")
+
     # ---- spectral coordinates ------------------------------------------------
     t2 = time.time()
     ((y1, it1), (y2, it2)), tau = spectral_coords(
@@ -194,6 +214,7 @@ def main():
         out / "node_ann.npz",
         rank=rank.astype(np.int64),
         spec_y=y1, spec_y2=y2,
+        top_nt_raw=top_nt_raw,
         **{c: codes[c] for c in cols})
     meta = {
         "dataset": CONFIG["dataset"],
@@ -211,6 +232,7 @@ def main():
                      "annotation table use the same FlyWire root-ID space; the "
                      "99.99% join (13 unmatched of 136,648, listed above) is "
                      "the evidence — no ID translation was applied."},
+        "nt_corrections": nt_corrections,
         "spectral": {"iters": [it1, it2], "seed": CONFIG["spec_seed"],
                      "tau": tau, "tau_factor": CONFIG["spec_tau_factor"],
                      "weights": "log1p of undirected collapsed synapse counts",
