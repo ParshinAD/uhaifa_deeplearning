@@ -51,6 +51,8 @@ supplied by the 2-cycle bounds and the budget probe); a greedy lower-bound
 control flips direction on degree-matched rungs — tracked and explained in
 the study; mouse is meso-scale, so "scale-dependent" compares level of
 description, not species.
+→ Extended — and partially INVERTED at cell-type resolution — by A7
+(null-ladder v2, 2026-11-01).
 
 ### A2. Three brains, three feedback architectures. — status: reviewed (per-dataset), synthesis unreviewed
 Under the same instrument, minimal feedback organizes completely differently:
@@ -157,6 +159,44 @@ E→I — an optimal order puts inhibition early to keep its heavy output forwar
 Caveat: the I-weight share is inflated by reconstruction sampling (inhibitory
 axons complete, excitatory truncated); the direction of this bias is analyzed
 in the study file.
+
+### A7. The cell-type wiring diagram is sufficient for the fly's entire feedforward order — the type-matched ensemble overshoots the real brain, which spends its sub-type wiring on reciprocity instead. — status: reviewed (studies/null_ladder_v2/REPORT.md, 2026-11-01; charter-pre-registered, stages A–D independently reviewed, L4 probe cleared its pre-stated KEEP threshold)
+Null-ladder v2 (G03) closes the attribution A1 left open, on the fly only
+(operator-parked elsewhere). With the full real wiring fixed and only synaptic
+weights permuted (W0), the identical epoch-budgeted protocol loses 1.44 pp
+(real outside all 12 draws; +1.25 pp at the 5× budget probe) — weight
+placement carries estimator-visible order, though which weight–topology
+coupling carries it is not identified at that rung. Fixing the real reciprocal
+backbone plus exact degrees (L2R — the one null whose 2-cycle floor equals the
+real 6.72 % of W bit-exactly, so no floor-netting can dissolve the contrast)
+leaves the real graph +6.08 pp above all 12 draws (+6.31 at 5×): order in the
+choice of non-reciprocal targets beyond degrees + backbone. But a
+degree-corrected SBM at cell-type resolution (L4, K = 8,857 FlyWire types,
+99.09 % direct coverage) INVERTS the ladder: FF(L4) = 84.23 ± 0.01 vs real
+83.66 — the real brain below all 12 draws (62σ; empirical one-sided
+p ≥ 1/13), probe-confirmed at 5× budget (84.756 against the pre-stated
+KEEP ≥ 84.2029 / stability ≥ 84.396; the inversion grows to −0.65 pp).
+Two-axis reading: the type ensemble frees 4.70 pp of forced reciprocal floor
+(2.02 vs 6.72 % of W) yet converts only 0.57 pp into feedforward weight, and
+on the registered excess-FB-over-own-floor axis the real graph still beats
+every ensemble including L4 (9.62 vs 13.75 pp) — relative to its own
+type-level diagram, the fly's sub-type wiring is net feedback-spending, buying
+a 3.3× larger irreducible reciprocal core at the price of feedforward
+orderability.
+Caveats: every direction is protocol-conditional (achieved lower bounds under
+an identical epoch budget; the greedy control flips on every structured null
+and is direction-uninformative; 2-cycle upper bounds do not separate the
+optima); neither registered L4 branch anticipated the inversion — the reading
+imports the FF(null) > FF(real) branch registered, before any L4 run, for the
+sibling rungs W0/L2R; L4 is non-nested vs L3 (91 direct cell types, 31.9 % of
+neurons, span the 17 lanes), so its +2.34 pp over L3 is a non-nested
+comparison; the resemblance to the mouse meso inversion (A1) is a
+co-occurrence, not an established shared mechanism — with the fly's backbone
+held fixed (L2R) the real graph sits far ABOVE its null; fly-only by charter
+(mouse/MICrONS arms parked, scale confound open); W0's 1.44 pp is a separate
+axis, not an additive ladder increment.
+Provenance: biology/studies/null_ladder_v2/ (charter, REPORT, 5 reviews);
+biology/results/nullmodels_v2/ (39 runs + bounds_cache).
 
 ---
 

@@ -14,7 +14,8 @@ original 3-step ladder proposed for this question had already been run as **G01*
 accepts G01 as the base (critically, per §4) and adds the three rungs it did not have. Identical
 estimator everywhere (greedy-FAS warm start → Rocket-ASYM 4,000 epochs → under-relaxed sift,
 8 sweeps; every discrete score from the frozen oracle on CPU); real-graph comparators reused from
-G01's logged runs.
+G01's logged runs (era note: the real comparators are Sept-2026 G01 runs; the v2 nulls are
+Nov-2026 — same machine class, same device, same torch 2.8.0).
 
 ## 1. The extended ladder (fly connectome; mean ± sd over K draws)
 
@@ -37,8 +38,9 @@ reciprocity (a gap between an FF upper bound and a floor lower bound, not measur
 adopted as the cross-rung statistic in the stage-A review, registered before any L2R/L4 run.
 Figure: `biology/outputs/nullmodels2_fly_ladder.png`.
 
-**On the excess-FB axis the ladder is strictly monotone toward the real graph** (30.17 → … →
-13.3–13.8 → 9.62): every added real statistic removes estimator-visible feedback, and the real
+**On the excess-FB axis the ladder is monotone toward the real graph** (30.17 → … →
+13.3–13.8 → 9.62, with W0 and L4 in a 13.3–13.8 pp band whose internal order reverses):
+every added real statistic removes estimator-visible feedback, and the real
 graph beats every ensemble on it — including L4.
 
 ## 2. The three new results
@@ -48,7 +50,7 @@ graph beats every ensemble on it — including L4.
 With the full real wiring diagram fixed and only the weight assignment exchanged, the identical
 protocol loses **1.44 pp** (82.221 ± 0.033 vs 83.658; real above all 12 draws; effect = 44×
 draw sd). The 5× budget probe (pinned gs6000: 82.277 → 82.848 at 20k epochs/40 sweeps, vs real
-84.103 at the same budget) keeps the gap at **+1.26 pp** — not an under-optimization artifact.
+84.103 at the same budget) keeps the gap at **+1.25 pp** — not an under-optimization artifact.
 Caveats (stage-B review): the direction is **protocol-conditional** (the greedy bound points the
 other way: 70.25 vs real 68.91 — greedy favors every structured null and is direction-uninformative
 here, as in G01); W0 destroys *all* weight–topology coupling at once, so **which** coupling
@@ -59,7 +61,8 @@ the exchangeable floor drops to 4.46% of W vs the real 6.72%.
 ### 2.2 L2R — the reciprocal backbone + degrees leave 6.08 pp unexplained (identical-floor contrast)
 
 Fixing the real reciprocal subgraph pointwise (24.86% of W) plus the exact uni/total degree
-sequence and out-strengths: FF = 77.581 ± 0.012, real above all draws by **+6.08 pp**. This is
+sequence and out-strengths: FF = 77.581 ± 0.012, real above all draws by **+6.08 pp** (protocol-conditional; the greedy bound again flips, L2R 70.30 vs real
+68.91 — §4.1). This is
 the one ladder contrast where real and null share an identical 2-cycle floor **by construction**
 (6.717154% of W, bit-exact in all 12 production draws), so no floor-netting argument can dissolve
 the gap: given its own reciprocity and degrees, the fly's choice of **non-reciprocal targets** is
@@ -79,7 +82,8 @@ w_source-to-real excess gap. Ensemble note: v1's `w_source` rewires mutual edges
 
 The strictest biological null: every node keeps its type-resolved in/out degree and out-strength
 profile over K = 8,857 cell types (direct `cell_type` coverage 99.09%; 1,246 fallback-labeled
-nodes = 0.91% of nodes, 0.40% of W — quantified in the stage-D review as NOT the driver of what
+nodes = 0.91% of nodes, 0.40% of W, 0.13% of the ensemble's permutation freedom; adversarial worst case
+≤ 0.40 pp, below the 0.574 pp inversion — quantified in the stage-D review as NOT the driver of what
 follows). Result: **FF(L4) = 84.232 ± 0.009 — the real graph is BELOW all 12 draws** by
 0.574 pp (62σ combined; all three real seeds below all twelve draws). The type-matched ensemble
 does not merely reach the real level — it overshoots it, landing 0.026 pp from the champion
@@ -105,12 +109,17 @@ reciprocal partners — is freed.
 **Honesty items (stage-D review, all adopted):** (i) neither registered L4 branch fired as
 written ("residual bounds sub-type targeting" presumed a non-negative residual; "L4 ≈ L3" is off
 by 133σ) — the inversion reading imports the FF(null) > FF(real) branch registered pre-L4 for
-the sibling rungs W0/L2R; this import is stated, not disguised. (ii) The type partition does
+the sibling rungs W0/L2R; this import is stated, not disguised. The charter's two L4 branches, verbatim: "FF(L4)
+close to real (the type diagram pins most of the order); the residual real − L4 bounds
+individual-neuron (sub-type) targeting" and "if instead L4 ≈ L3 … must be reported as such."
+The L4 section itself is stage-B vintage: added in commit c77c040, 14 minutes before the
+first L4 run (after the selftest, which produces no FF score) — timeline verified in
+`review_stageD_l4.md` §G. (ii) The type partition does
 **NOT** refine the 17 lanes — 91 genuine direct types (R1-6, KCg-m, T4c, …; 43,580 nodes,
 31.89%) span lanes, a draw moves 0.60% of edges (0.39% of W) across lane boundaries, so
 **L4-vs-L3 (+2.34 pp) is a non-nested comparison** like L3a, a stated deviation from the
 charter's "expected ≈ yes". (iii) z-scores are effect sizes against realization noise, not
-p-values (empirical p = 1/13 at K = 12). (iv) Direction remains protocol-conditional (identical
+p-values (empirical one-sided p ≥ 1/13 at K = 12). (iv) Direction remains protocol-conditional (identical
 budget both sides; 2-cycle upper bounds cannot separate these graphs). (v) Cosmetic:
 `gen_stats.variant` inside L4 JSONs reads "L3_dcsbm" (v1 generator reused); filter by
 `kind == "type_dcsbm"`.

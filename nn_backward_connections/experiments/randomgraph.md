@@ -80,17 +80,34 @@ real-vs-null difference counts only if it exceeds realization noise (report a CI
   (own runner per the estimator contract), not `results/randomgraph/`.
 - **finding:** → Findings § below.
 
-## G03 — Null-ladder v2: which axes G01 left open (weights-on-topology, reciprocity, MICrONS)
-- **status:** in-progress (opened 2026-11-01)
+## G03 — Null-ladder v2: which axes G01 left open (weights-on-topology, reciprocity, cell types; MICrONS)
+- **status:** **answered on the fly (2026-11-01)** — `biology/studies/null_ladder_v2/REPORT.md`
+  (39 logged runs: 3 rungs × K=12 + three 5×-budget probes; stages A–D each independently
+  reviewed, PASS; probes logged for every rung). The conditional MICrONS arm stays **parked**
+  (CHARTER.md §6), so the scale-vs-species deconfound (G01 red-team note e) remains open.
 - **owner doc (charter + pre-registration):** `biology/studies/null_ladder_v2/CHARTER.md`
-- **null models:** W0 `w_topo_shuffle` (real binary topology, weights permuted — the axis G01
-  never varied); L2R `dyad_fixedmut` (real reciprocal subgraph + exact degrees, unidirectional
-  wiring randomized — directly prices the reciprocity G01 showed the L2 ensemble misses);
-  conditional stage E: the L1/L2/W0 ladder on MICrONS to deconfound the fly↑ / meso-mouse↓
-  scale-vs-species flip (G01 review red-team note e).
+- **headline (protocol-conditional, all three directions survive the 5× probe):**
+  (1) **W0** `w_topo_shuffle` — real binary topology, weights permuted: FF 82.221 ± 0.033,
+  real above all 12 draws (+1.44 pp; probe +1.25) — weight placement carries estimator-visible
+  order; which weight–topology coupling is not identified at this rung.
+  (2) **L2R** `dyad_fixedmut` — real reciprocal backbone + exact degrees, 2-cycle floor equal
+  to the real 6.7172% of W bit-exactly in all 12 draws: real above all draws by +6.08 pp
+  (probe +6.31) — order in the choice of non-reciprocal targets beyond degrees + backbone;
+  the backbone move explains ~40% of the w_source→real excess-FB gap (19.91 → 15.70 vs 9.62).
+  (3) **L4** `type_dcsbm` (K = 8,857 cell types, 99.09% direct coverage) — INVERSION: real
+  BELOW all 12 draws (84.232 ± 0.009 vs 83.658, 62σ), probe-confirmed at 5× budget (84.756 vs
+  pre-stated KEEP ≥ 84.2029 / stability ≥ 84.396; the inversion grows); on the registered
+  excess-FB-over-own-floor axis the real graph still beats L4 by 4.13 pp (floors 6.72 vs
+  2.02% of W) — the sub-type residual is spent on reciprocity, not hierarchy.
+- **null models:** W0 `w_topo_shuffle`; L2R `dyad_fixedmut`; L4 `type_dcsbm` (added at stage B,
+  registered before any L4 run existed — adjudication in `review_stageD_l4.md` §G).
 - **method:** identical estimator to G01 (`nullmodels_run.run_protocol`), fly K=12 per rung,
-  real comparators reused from G01's runs; 2-cycle bound per draw.
-- **artifacts:** `biology/results/nullmodels_v2/runs/*.json` + `biology/studies/null_ladder_v2/REPORT.md`.
+  real comparators reused from G01's runs; 2-cycle bound per draw; G01's missing w_source
+  bounds backfilled for all 76 v1 nulls in `biology/results/nullmodels_v2/bounds_cache.json`.
+- **artifacts:** `biology/results/nullmodels_v2/{runs,orders}/*`, `summary_v2.json`,
+  `bounds_cache.json`; figure `biology/outputs/nullmodels2_fly_ladder.png`; reviews
+  `biology/studies/null_ladder_v2/review_stage{A,B_w0,C_l2r,D_l4,F_report}.md`.
+- **finding:** → Findings § below; `biology/FINDINGS.md` A7.
 
 ## G02 — Divide-and-conquer via SBM / spectral communities (cross-links A-CLU)
 - **status:** open
@@ -109,3 +126,12 @@ real-vs-null difference counts only if it exceeds realization noise (report a CI
   Region-level mouse: LESS orderable than 98/100 strength-matched nulls (provable against 54/100
   via the 2-cycle bound), ~80% of its feedback forced by bidirectional area pairs. Full study +
   independent review: `biology/studies/nullmodels.md`; COSYNE-ready form: `biology/FINDINGS.md` A1.
+
+* **G03 (2026-11-01, reviewed):** below cell-type resolution the fly's 84% is NOT generic —
+  real beats every matched ensemble including real-topology/permuted-weights (+1.44 pp) and
+  real-reciprocal-backbone + degrees (+6.08 pp on an identical, bit-exact 2-cycle floor). At
+  type resolution the attribution closes and INVERTS: the K=8,857 type-dcSBM ensemble overshoots
+  the real graph by 0.57 pp (real below all 12 draws, probe-confirmed at 5× budget), while the
+  real graph keeps a 3.3× larger irreducible reciprocal core and still wins by 4.13 pp on
+  excess FB over own floor. Protocol-conditional throughout. Study + five reviews:
+  `biology/studies/null_ladder_v2/`; COSYNE-ready form: `biology/FINDINGS.md` A7.
