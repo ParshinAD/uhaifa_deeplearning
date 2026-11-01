@@ -46,7 +46,7 @@ from typing import Dict, Tuple
 
 import numpy as np
 
-V2_VARIANTS = ("w_topo_shuffle", "dyad_fixedmut")
+V2_VARIANTS = ("w_topo_shuffle", "dyad_fixedmut", "type_dcsbm")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -59,6 +59,9 @@ def edge_keys(src: np.ndarray, tgt: np.ndarray, n: int) -> np.ndarray:
 
 def _in_sorted(sorted_keys: np.ndarray, queries: np.ndarray) -> np.ndarray:
     """Vectorized membership of ``queries`` in the sorted int64 array."""
+    queries = np.asarray(queries)
+    if sorted_keys.size == 0:          # a graph with no mutual edges
+        return np.zeros(queries.shape, dtype=bool)
     pos = np.searchsorted(sorted_keys, queries)
     pos = np.minimum(pos, sorted_keys.size - 1)
     return sorted_keys[pos] == queries
@@ -185,19 +188,55 @@ def dyad_fixedmut_null(src: np.ndarray, tgt: np.ndarray, weight: np.ndarray,
     stats = dict(variant="dyad_fixedmut", seed=int(seed),
                  n_mutual_slots=int(mut.sum()), n_uni_slots=int(uni.size),
                  mutual_weight=float(weight[mut].sum()),
-                 n_bad_initial=n_initial, n_bad_repaired=n_initial,
+                 n_bad_initial=n_initial, n_bad_remaining=0,
+                 frac_uni_repaired=float(n_initial) / float(max(uni.size, 1)),
                  repair_rounds=rounds, n_duplicate_slots=n_dup)
     return src.copy(), new_tgt, weight.copy(), stats
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# L4 — cell-type labels for the fly (rung `type_dcsbm` = v1 block_configuration
+# _null with these labels instead of the 17 lanes)
+# ──────────────────────────────────────────────────────────────────────────────
+def fly_type_labels(node_ids: np.ndarray) -> Tuple[np.ndarray, list]:
+    """Per-node cell-type labels, the `load_types` convention of
+    ``layering/tools/exp_mirror_swap.py`` (used by findings A4/A3): ``cell_type``
+    from the FlyWire annotation TSV, falling back to ``"<cell_class> (class)"``
+    then ``"<super_class> (class)"`` then ``"unannotated"``. Returns
+    ``(labels int32[n], type_list)`` with labels indexing the sorted type list.
+    """
+    import csv
+    import gzip
+    from pathlib import Path
+    repo = Path(__file__).resolve().parents[2]
+    tsv = repo / "data" / "external" / "flywire_neuron_annotations.tsv.gz"
+    ctype = {}
+    with gzip.open(tsv, "rt", encoding="utf-8") as f:
+        for row in csv.DictReader(f, delimiter="\t"):
+            t = row["cell_type"].strip()
+            if not t:
+                c = row["cell_class"].strip() or row["super_class"].strip()
+                t = f"{c} (class)" if c else ""
+            ctype[int(row["root_id"])] = t or "unannotated"
+    names = [ctype.get(int(i), "unannotated") for i in np.asarray(node_ids)]
+    type_list = sorted(set(names))
+    idx = {t: i for i, t in enumerate(type_list)}
+    labels = np.array([idx[t] for t in names], dtype=np.int32)
+    return labels, type_list
 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Self-test: exact preservation guarantees + seed reproducibility
 # ──────────────────────────────────────────────────────────────────────────────
 def _validate_w0(src, tgt, w, s2, t2, w2) -> None:
+    import math
     assert np.array_equal(src, s2) and np.array_equal(tgt, t2), \
         "W0 must not touch topology"
     assert np.array_equal(np.sort(w), np.sort(w2)), "weight multiset changed"
-    assert w.sum() == w2.sum(), "total weight changed"
+    # math.fsum is permutation-invariant (exact rounding of the true sum);
+    # np.sum of a permuted float array need not be bitwise-equal (stage-A review)
+    assert math.fsum(np.asarray(w, np.float64)) == \
+        math.fsum(np.asarray(w2, np.float64)), "total weight changed"
 
 
 def _validate_dyad(src, tgt, w, s2, t2, w2, n) -> None:
@@ -268,6 +307,38 @@ def _selftest() -> None:
               f"bad_initial={stats['n_bad_initial']:,} "
               f"repair_rounds={stats['repair_rounds']} "
               f"dup_slots={stats['n_duplicate_slots']:,}")
+        # L4 — fly only (type labels are a fly annotation)
+        if name == "connectome":
+            import sys as _sys
+            from pathlib import Path as _Path
+            _sys.path.insert(0, str(_Path(__file__).resolve().parent))
+            from nullmodels_generators import (_validate_block,
+                                               _validate_null,
+                                               block_configuration_null,
+                                               fly_lane_labels)
+            tlabels, type_list = fly_type_labels(g.node_ids)
+            assert tlabels.shape[0] == n
+            # does the type partition refine the 17-lane partition?
+            lanes, _ = fly_lane_labels()
+            K_t = len(type_list)
+            span = np.zeros(K_t, dtype=np.int64)
+            for t in range(K_t):
+                span[t] = np.unique(lanes[tlabels == t]).size
+            multi = np.flatnonzero(span > 1)
+            n_multi_nodes = int(np.isin(tlabels, multi).sum())
+            print(f"   fly types: K={K_t:,}  types spanning >1 lane: "
+                  f"{multi.size} ({n_multi_nodes:,} nodes, "
+                  f"{100.0 * n_multi_nodes / n:.2f}%)")
+            s2, t2, w2, stats = block_configuration_null(src, tgt, w, tlabels,
+                                                         seed=7)
+            _validate_null(src, tgt, w, s2, t2, w2, "w_source", n)
+            _validate_block(src, tgt, w, s2, t2, w2, tlabels, n, degrees=True)
+            _, t3, _, _ = block_configuration_null(src, tgt, w, tlabels, seed=7)
+            assert np.array_equal(t2, t3), "same seed must reproduce (L4)"
+            print(f"OK {name:10s} type_dcsbm       n_blocks={stats['n_blocks']:,} "
+                  f"loops_repaired={stats['n_selfloops_repaired']:,} "
+                  f"repair_rounds={stats['repair_rounds']} "
+                  f"dup_slots={stats['n_duplicate_slots']:,}")
     print("selftest passed")
 
 

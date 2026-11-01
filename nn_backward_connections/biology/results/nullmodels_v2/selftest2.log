@@ -1,0 +1,9 @@
+mouse: n=148 m=583 2-cycle bound 5.6269% of W
+OK mouse      w_topo_shuffle   null 2-cycle bound 5.2445% of W (real 5.6269%)
+OK mouse      dyad_fixedmut    mutual_slots=166 (28.47% of m, 40.00% of W) bad_initial=29 repair_rounds=7 dup_slots=29
+connectome: n=136,648 m=5,657,719 2-cycle bound 6.7172% of W
+OK connectome w_topo_shuffle   null 2-cycle bound 4.4597% of W (real 6.7172%)
+OK connectome dyad_fixedmut    mutual_slots=1,039,790 (18.38% of m, 24.86% of W) bad_initial=13,371 repair_rounds=5 dup_slots=11,079
+   fly types: K=8,857  types spanning >1 lane: 91 (43,580 nodes, 31.89%)
+OK connectome type_dcsbm       n_blocks=456,602 loops_repaired=1,513 repair_rounds=13 dup_slots=123,799
+selftest passed

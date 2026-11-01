@@ -35,9 +35,12 @@ sys.path.insert(0, str(_REPO / "biology" / "analysis"))
 
 from mfas.io import GraphData, load_dataset                        # noqa: E402
 
+import nullmodels_run                                               # noqa: E402
 from nullmodels_run import run_protocol, _finish_run               # noqa: E402
+from nullmodels_generators import block_configuration_null          # noqa: E402
 from nullmodels2_generators import (V2_VARIANTS,                    # noqa: E402
                                     dyad_fixedmut_null,
+                                    fly_type_labels,
                                     two_cycle_bound,
                                     w_topo_shuffle_null)
 
@@ -49,7 +52,7 @@ CONFIG2 = dict(
         connectome=dict(
             epochs=4_000,            # IDENTICAL to the G01 protocol budget
             device="mps",
-            n_nulls=dict(w_topo_shuffle=12, dyad_fixedmut=12),
+            n_nulls=dict(w_topo_shuffle=12, dyad_fixedmut=12, type_dcsbm=12),
             null_pipeline_seed=42,   # one pipeline seed per null (G01 convention:
                                      # real across-seed sigma 0.0033 pp << draw sigma)
             save_orders=True,
@@ -57,23 +60,37 @@ CONFIG2 = dict(
         # stage E (MICrONS) is added here only after its sizing run is logged
         # and the budget is frozen in the charter — not before.
     ),
-    gen_seed_base=dict(w_topo_shuffle=6_000, dyad_fixedmut=7_000),
+    gen_seed_base=dict(w_topo_shuffle=6_000, dyad_fixedmut=7_000,
+                       type_dcsbm=8_000),
     results_dir=_REPO / "biology" / "results" / "nullmodels_v2",
 )
 
 
-def _draw_null(variant: str, src, tgt, w, n: int, gen_seed: int):
+_TYPE_LABELS = None
+
+
+def _draw_null(variant: str, src, tgt, w, n: int, gen_seed: int, node_ids):
+    global _TYPE_LABELS
     if variant == "w_topo_shuffle":
         return w_topo_shuffle_null(src, tgt, w, seed=gen_seed)
     if variant == "dyad_fixedmut":
         return dyad_fixedmut_null(src, tgt, w, n=n, seed=gen_seed)
+    if variant == "type_dcsbm":
+        if _TYPE_LABELS is None:
+            _TYPE_LABELS, type_list = fly_type_labels(node_ids)
+            print(f"type labels: K={len(type_list):,}", flush=True)
+        return block_configuration_null(src, tgt, w, _TYPE_LABELS,
+                                        seed=gen_seed)
     raise ValueError(f"unknown v2 variant {variant!r}")
 
 
 def run_nulls(dataset: str, variant: str, n_nulls_override: int | None,
-              start_index: int) -> None:
+              start_index: int, epochs_override: int | None = None,
+              sift_sweeps_override: int | None = None) -> None:
     ds = CONFIG2["datasets"][dataset]
-    epochs = ds["epochs"]
+    epochs = epochs_override or ds["epochs"]
+    if sift_sweeps_override is not None:   # budget-probe arm (charter §1)
+        nullmodels_run.CONFIG["sift_max_sweeps"] = sift_sweeps_override
     device = ds["device"]
     n_nulls = n_nulls_override or ds["n_nulls"][variant]
     pipe_seed = ds["null_pipeline_seed"]
@@ -93,7 +110,7 @@ def run_nulls(dataset: str, variant: str, n_nulls_override: int | None,
             continue
         t0 = time.time()
         s2, t2, w2, gen_stats = _draw_null(variant, src, tgt, w, g.n_nodes,
-                                           gen_seed)
+                                           gen_seed, g.node_ids)
         t_gen = time.time() - t0
         bound_null = two_cycle_bound(s2, t2, w2, g.n_nodes)
         g_null = GraphData(src=s2.astype(np.int32), tgt=t2.astype(np.int32),
@@ -117,8 +134,13 @@ def main() -> None:
     ap.add_argument("--variant", required=True, choices=list(V2_VARIANTS))
     ap.add_argument("--n-nulls", type=int, default=None)
     ap.add_argument("--start-index", type=int, default=0)
+    ap.add_argument("--epochs", type=int, default=None,
+                    help="override the protocol budget (budget-probe arm only)")
+    ap.add_argument("--sift-sweeps", type=int, default=None,
+                    help="override sift_max_sweeps (budget-probe arm only)")
     args = ap.parse_args()
-    run_nulls(args.dataset, args.variant, args.n_nulls, args.start_index)
+    run_nulls(args.dataset, args.variant, args.n_nulls, args.start_index,
+              args.epochs, args.sift_sweeps)
 
 
 if __name__ == "__main__":
