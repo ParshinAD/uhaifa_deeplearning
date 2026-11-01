@@ -1,0 +1,13 @@
+{
+  "dataset": "connectome",
+  "seed": 42,
+  "device": "Apple MPS",
+  "epochs": 20000,
+  "pct_greedy": 68.91342773446004,
+  "pct_rocket": 83.23188023250829,
+  "pct_sift3": 84.11242222152288,
+  "t_greedy_s": 14.076782703399658,
+  "t_rocket_s": 106.67074489593506,
+  "t_sift3_s": 112.48791694641113,
+  "note": "stage 2 ran on this machine; MPS kernels are non-deterministic, so this input differs slightly from the CUDA champion record. Stage 4 below is deterministic given this cached vector."
+}

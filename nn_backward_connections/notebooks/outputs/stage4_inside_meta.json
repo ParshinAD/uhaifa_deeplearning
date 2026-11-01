@@ -1,0 +1,20 @@
+{
+  "dataset": "connectome",
+  "n_nodes": 136648,
+  "input_pct": 84.11242222152288,
+  "final_best_pct": 84.25570290002604,
+  "final_best_score": 35313369.0,
+  "wall_s": 531.9667358398438,
+  "deep_cycles": [
+    0,
+    1,
+    38,
+    76
+  ],
+  "pos_bins": 128,
+  "alt_cycles": 77,
+  "equiv_checked": [
+    0,
+    1
+  ]
+}
