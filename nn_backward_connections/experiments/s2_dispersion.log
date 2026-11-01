@@ -1,0 +1,27 @@
+2026-08-25 11:58:58,160 INFO mfas.run_variant frozen-oracle integrity: OK
+2026-08-25 11:58:58,238 INFO mfas.run_variant [20260825T085858Z-H42-connectome-s42-verify-f41d7e] loading dataset=connectome
+2026-08-25 11:59:06,234 INFO mfas.run_variant   GraphData(name='connectome', n_nodes=136,648, n_edges=5,657,719, total_weight=41,912,141, weight_dtype=int64)
+2026-08-25 11:59:06,247 INFO mfas.run_variant   device=Apple MPS | variant=H42 role=verify
+2026-08-25 11:59:06,261 INFO mfas.run_variant   runtime guard: deadline=3450s (cap 3600s - reserve 150s)
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+2026-08-25 12:11:51,208 INFO mfas.run_variant [20260825T085858Z-H42-connectome-s42-verify-f41d7e] DONE  score=35,259,054.0000  pct=84.1261%  epochs=20000  wall=764.8s
+2026-08-25 12:11:51,208 INFO mfas.run_variant   wrote results/20260825T085858Z-H42-connectome-s42-verify-f41d7e.json
+2026-08-25 12:11:52,273 INFO mfas.run_variant frozen-oracle integrity: OK
+2026-08-25 12:11:52,341 INFO mfas.run_variant [20260825T091152Z-H42-connectome-s42-verify-f41d7e] loading dataset=connectome
+2026-08-25 12:12:00,349 INFO mfas.run_variant   GraphData(name='connectome', n_nodes=136,648, n_edges=5,657,719, total_weight=41,912,141, weight_dtype=int64)
+2026-08-25 12:12:00,364 INFO mfas.run_variant   device=Apple MPS | variant=H42 role=verify
+2026-08-25 12:12:00,378 INFO mfas.run_variant   runtime guard: deadline=3450s (cap 3600s - reserve 150s)
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+2026-08-25 12:41:36,989 INFO mfas.run_variant [20260825T091152Z-H42-connectome-s42-verify-f41d7e] DONE  score=35,257,800.0000  pct=84.1231%  epochs=20000  wall=1776.5s
+2026-08-25 12:41:36,989 INFO mfas.run_variant   wrote results/20260825T091152Z-H42-connectome-s42-verify-f41d7e.json
+2026-08-25 12:41:38,118 INFO mfas.run_variant frozen-oracle integrity: OK
+2026-08-25 12:41:38,188 INFO mfas.run_variant [20260825T094138Z-H42-connectome-s42-verify-f41d7e] loading dataset=connectome
+2026-08-25 12:41:46,275 INFO mfas.run_variant   GraphData(name='connectome', n_nodes=136,648, n_edges=5,657,719, total_weight=41,912,141, weight_dtype=int64)
+2026-08-25 12:41:46,288 INFO mfas.run_variant   device=Apple MPS | variant=H42 role=verify
+2026-08-25 12:41:46,302 INFO mfas.run_variant   runtime guard: deadline=3450s (cap 3600s - reserve 150s)
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+2026-08-25 12:55:41,921 INFO mfas.run_variant [20260825T094138Z-H42-connectome-s42-verify-f41d7e] DONE  score=35,261,693.0000  pct=84.1324%  epochs=20000  wall=835.5s
+2026-08-25 12:55:41,921 INFO mfas.run_variant   wrote results/20260825T094138Z-H42-connectome-s42-verify-f41d7e.json
