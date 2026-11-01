@@ -1,0 +1,247 @@
+{
+ "champion_ff_pct": 83.24085291200831,
+ "n": 67534,
+ "m": 10436569,
+ "total_weight": 15400557,
+ "fb_weight": 2581002,
+ "fb_pct": 16.75914708799169,
+ "d1_spearman_rank_depth_exc": {
+  "rho": 0.35556909069301634,
+  "n": 55855,
+  "p_two_sided_leq": 0.0005,
+  "exceedances": 0,
+  "perms": 2000
+ },
+ "d1_spearman_rank_depth_inh": {
+  "rho": 0.052157037523816466,
+  "n": 7219,
+  "p_two_sided_leq": 0.0005,
+  "exceedances": 0,
+  "perms": 2000
+ },
+ "d1_rank_by_layer": {
+  "exc": {
+   "L1": {
+    "n": 280,
+    "median_rank": 18028.0,
+    "q25": 11170.0,
+    "q75": 37900.0
+   },
+   "L2/3": {
+    "n": 10381,
+    "median_rank": 18492.0,
+    "q25": 12475.0,
+    "q75": 40330.0
+   },
+   "L4": {
+    "n": 18551,
+    "median_rank": 26948.0,
+    "q25": 17691.0,
+    "q75": 47730.5
+   },
+   "L5": {
+    "n": 11457,
+    "median_rank": 36429.0,
+    "q25": 27330.0,
+    "q75": 48804.0
+   },
+   "L6": {
+    "n": 14686,
+    "median_rank": 46879.5,
+    "q25": 35890.25,
+    "q75": 56483.75
+   },
+   "WM": {
+    "n": 500,
+    "median_rank": 51434.5,
+    "q25": 39239.25,
+    "q75": 59065.5
+   }
+  },
+  "inh": {
+   "L1": {
+    "n": 171,
+    "median_rank": 11388.0,
+    "q25": 7383.5,
+    "q75": 44422.5
+   },
+   "L2/3": {
+    "n": 1435,
+    "median_rank": 11556.0,
+    "q25": 7131.0,
+    "q75": 48977.5
+   },
+   "L4": {
+    "n": 1982,
+    "median_rank": 14013.0,
+    "q25": 5658.75,
+    "q75": 55776.0
+   },
+   "L5": {
+    "n": 2640,
+    "median_rank": 29757.0,
+    "q25": 4554.75,
+    "q75": 54678.5
+   },
+   "L6": {
+    "n": 973,
+    "median_rank": 40036.0,
+    "q25": 5929.0,
+    "q75": 58295.0
+   }
+  }
+ },
+ "d2_ei_direction": {
+  "exc": {
+   "out_weight": 7595197,
+   "backward_weight": 2022009,
+   "backward_share_pct": 26.622206112626177,
+   "pct_of_ff": 43.474114351083166,
+   "pct_of_fb": 78.34201600773653
+  },
+  "inh": {
+   "out_weight": 6415765,
+   "backward_weight": 334272,
+   "backward_share_pct": 5.210165896038898,
+   "pct_of_ff": 47.43918958185366,
+   "pct_of_fb": 12.951249166021569
+  },
+  "na": {
+   "out_weight": 1389595,
+   "backward_share_pct": 16.17169031264505
+  }
+ },
+ "d2_ei_direction_target_side": {
+  "exc": {
+   "in_weight": 11849808,
+   "backward_share_pct": 11.27403920806143
+  },
+  "inh": {
+   "in_weight": 2375539,
+   "backward_share_pct": 41.42360954713857
+  }
+ },
+ "d3_span_spectrum": {
+  "edges_frac": [
+   0.001,
+   0.0025,
+   0.005,
+   0.01,
+   0.017,
+   0.025,
+   0.05,
+   0.1,
+   0.2,
+   0.4,
+   1.0
+  ],
+  "weight_all": [
+   117126,
+   76310,
+   119209,
+   227961,
+   311259,
+   331704,
+   899900,
+   1576273,
+   2836932,
+   4244751,
+   4659132
+  ],
+  "weight_fb": [
+   14886,
+   14431,
+   26976,
+   59297,
+   83028,
+   87234,
+   235018,
+   370202,
+   561527,
+   711941,
+   416462
+  ],
+  "within_1p7pct_share_of_total": 5.531390845149302,
+  "fb_within_1p7pct_share_of_fb": 7.695383420857481
+ },
+ "d4_fb_hubs": {
+  "top1_in_share_pct": 0.13184801871521215,
+  "top10_in_share_pct": 0.7955824908310803,
+  "top0p1pct_in_share_pct": 3.4776803737463204,
+  "top1pct_in_share_pct": 19.791460835752936,
+  "note": "shares of FB weight arriving at (in) the top receiving neurons"
+ },
+ "d5_reconstruction": {
+  "zero_out_nodes": 1205,
+  "zero_out_median_rank_frac": 0.990612136109219,
+  "zero_out_in_last_10pct": 0.9651452282157676,
+  "proofread_axon_nodes": 249,
+  "proofread_out_w_median": 341.0,
+  "all_out_w_median": 70.0,
+  "note": "only 249 of 67,534 neurons have a proofread axon; unproofread axons are truncated, so outgoing connectivity is systematically undersampled \u2014 an honesty caveat for every directional claim"
+ },
+ "d6_spearman_rank_x_exc": {
+  "rho": 0.05106940745920322,
+  "n": 55855
+ },
+ "d6_spearman_rank_z_exc": {
+  "rho": -0.24340566578506562,
+  "n": 55855
+ },
+ "layers_meta": {
+  "boundaries_um": {
+   "L1/L23": 60.751710662841795,
+   "L23/L4": 222.5,
+   "L4/L5": 392.5,
+   "L5/L6": 562.5,
+   "L6/WM": 777.5
+  },
+  "landmarks_um": {
+   "L3_trough": [
+    122.5,
+    343.2244477921458
+   ],
+   "L4_peak": [
+    287.5,
+    588.5494569332969
+   ],
+   "L5a_trough": [
+    497.5,
+    298.3721075421737
+   ],
+   "L6_peak": [
+    642.5,
+    462.670624825895
+   ]
+  },
+  "landmark_windows_um": {
+   "L4_peak": [
+    250.0,
+    400.0
+   ],
+   "L3_trough": [
+    120.0,
+    250.0
+   ],
+   "L5a_trough": [
+    400.0,
+    560.0
+   ],
+   "L6_peak": [
+    560.0,
+    720.0
+   ]
+  },
+  "counts": {
+   "NA": 0,
+   "L1": 555,
+   "L2/3": 12788,
+   "L4": 21718,
+   "L5": 14946,
+   "L6": 16751,
+   "WM": 776
+  },
+  "note": "Layers are depth bands below a pia PROXY, anchored on landmarks of the smoothed excitatory-soma density (saved in node_ann.npz as density_centers/density_smoothed) via half-height flank crossings. Display annotation, not ground truth; never touches the optimizer or the oracle."
+ },
+ "seconds": 2.146940231323242
+}

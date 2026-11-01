@@ -80,7 +80,19 @@ layering/
 ├── tools/gallery_fly.py    ← the scalable subset at fly scale (grid DP + exact refinement,
 │                             V2/V4/V5, span spectrum, trophic control) -> outputs/gallery_fly/
 ├── tests/test_core.py      ← unit + integration tests
-└── outputs/                ← saved figures (PNG, dpi 120)
+├── outputs/                ← saved figures (PNG, dpi 120)
+│
+│   MICrONS track (2026-09-14; mirrors the fly pipeline on the mouse cortex):
+├── MICRONS_GALLERY_REVIEW.md   ← candidates, review round, fixes, selection
+├── MICRONS_FINDINGS.md         ← plain-language findings readout (artifact walkthrough)
+├── tools/microns_ann_prep.py   ← soma positions + anatomical E/I + proofread flags
+│                                 joined onto the graph; 2-D pia-tilt correction;
+│                                 density-landmark layer bands (calibrated, not traced)
+├── tools/microns_diagnostics.py← D1–D6 structural diagnostics vs the H42 order
+├── tools/microns_streams.py    ← M2 streams view (anatomical lanes × pi bins) + layouts
+├── tools/microns_gallery.py    ← M1, M3–M6 candidate figures + report
+├── tools/microns_artifact_export.py / build_microns_html.py / microns_page.html
+│                               ← the interactive artifact "MICrONS Cortex Streams"
 ```
 
 Data flow: `io_utils.load_graph_and_champion_order` → (`g`, `order`, `rank`) →

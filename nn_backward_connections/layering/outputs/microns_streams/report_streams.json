@@ -1,0 +1,302 @@
+{
+ "champion_ff_pct": 83.24085291200831,
+ "config": {
+  "ann_npz": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/microns_ann/node_ann.npz",
+  "ann_meta": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/microns_ann/node_ann_meta.json",
+  "diagnostics": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/microns_ann/diagnostics.json",
+  "out_dir": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/layering/outputs/microns_streams",
+  "n_bins_list": [
+   8,
+   16,
+   32
+  ],
+  "min_bundle_frac": 0.0002,
+  "export_bundle_frac": 5e-05,
+  "label_top_bundles": 10,
+  "sink_hatch_frac": 0.5,
+  "dpi": 110
+ },
+ "lane_sizes": {
+  "L2/3 \u00b7 exc": 10661,
+  "L1\u2013L2/3 \u00b7 inh": 1606,
+  "L4 \u00b7 exc": 18551,
+  "L4 \u00b7 inh": 1982,
+  "L5 \u00b7 exc": 11457,
+  "L5 \u00b7 inh": 2640,
+  "L6 \u00b7 exc": 14686,
+  "L6 \u00b7 inh": 973,
+  "white matter": 776,
+  "unclassified": 4202
+ },
+ "lane_median_depth_um": {
+  "L2/3 \u00b7 exc": 155.6516876220703,
+  "L1\u2013L2/3 \u00b7 inh": 141.03924560546875,
+  "L4 \u00b7 exc": 305.32806396484375,
+  "L4 \u00b7 inh": 314.630615234375,
+  "L5 \u00b7 exc": 474.8756103515625,
+  "L5 \u00b7 inh": 467.8218994140625,
+  "L6 \u00b7 exc": 644.8038330078125,
+  "L6 \u00b7 inh": 622.9060668945312,
+  "white matter": 808.954345703125,
+  "unclassified": 370.00140380859375
+ },
+ "lane_order_check": {
+  "anatomical_order": [
+   "L2/3 \u00b7 exc",
+   "L1\u2013L2/3 \u00b7 inh",
+   "L4 \u00b7 exc",
+   "L4 \u00b7 inh",
+   "L5 \u00b7 exc",
+   "L5 \u00b7 inh",
+   "L6 \u00b7 exc",
+   "L6 \u00b7 inh",
+   "white matter",
+   "unclassified"
+  ],
+  "median_rank_order": [
+   "L1\u2013L2/3 \u00b7 inh",
+   "L4 \u00b7 inh",
+   "unclassified",
+   "L2/3 \u00b7 exc",
+   "L4 \u00b7 exc",
+   "L5 \u00b7 inh",
+   "L5 \u00b7 exc",
+   "L6 \u00b7 inh",
+   "L6 \u00b7 exc",
+   "white matter"
+  ],
+  "median_ranks": {
+   "L2/3 \u00b7 exc": 18483.0,
+   "L1\u2013L2/3 \u00b7 inh": 11541.5,
+   "L4 \u00b7 exc": 26948.0,
+   "L4 \u00b7 inh": 14013.0,
+   "L5 \u00b7 exc": 36429.0,
+   "L5 \u00b7 inh": 29757.0,
+   "L6 \u00b7 exc": 46879.5,
+   "L6 \u00b7 inh": 40036.0,
+   "white matter": 47107.0,
+   "unclassified": 18076.5
+  },
+  "note": "lanes are drawn in fixed anatomical order (pia->WM); the median-rank order shows where the optimizer disagrees \u2014 inhibitory lanes sort much earlier than their excitatory band partners"
+ },
+ "variants": {
+  "ana10_B8": {
+   "cells_nonempty": 80,
+   "intra_cell_pct": 4.737016979320943,
+   "intra_cell_ff_pct": 3.502808372450425,
+   "intra_cell_fb_pct": 1.2342086068705178,
+   "inter_ff_pct_of_total": 79.73804453955789,
+   "inter_fb_pct_of_total": 15.52493848112117,
+   "same_bin_vertical_pct_of_inter": 10.760914537016147,
+   "same_lane_pct_of_inter_ff": 15.826683212673379,
+   "bundles_total": 5835,
+   "bundles_inked_ff": 662,
+   "bundles_inked_fb": 186,
+   "inked_ff_pct_of_inter_ff": 88.37021155278583,
+   "inked_fb_pct_of_inter_fb": 62.429635032771806
+  },
+  "ana10_B16": {
+   "cells_nonempty": 160,
+   "intra_cell_pct": 2.9028560460508017,
+   "intra_cell_ff_pct": 2.1786225004718984,
+   "intra_cell_fb_pct": 0.7242335455789034,
+   "inter_ff_pct_of_total": 81.06223041153642,
+   "inter_fb_pct_of_total": 16.034913542412784,
+   "same_bin_vertical_pct_of_inter": 5.965880498486609,
+   "same_lane_pct_of_inter_ff": 17.20168999846604,
+   "bundles_total": 21364,
+   "bundles_inked_ff": 859,
+   "bundles_inked_fb": 128,
+   "inked_ff_pct_of_inter_ff": 70.37607632468189,
+   "inked_fb_pct_of_inter_fb": 33.08731523333385
+  },
+  "ana10_B32": {
+   "cells_nonempty": 316,
+   "intra_cell_pct": 1.798318073820317,
+   "intra_cell_ff_pct": 1.3874238444752356,
+   "intra_cell_fb_pct": 0.41089422934508146,
+   "inter_ff_pct_of_total": 81.85342906753307,
+   "inter_fb_pct_of_total": 16.348252858646607,
+   "same_bin_vertical_pct_of_inter": 3.243174941214417,
+   "same_lane_pct_of_inter_ff": 18.002021912941608,
+   "bundles_total": 72685,
+   "bundles_inked_ff": 680,
+   "bundles_inked_fb": 62,
+   "inked_ff_pct_of_inter_ff": 43.004441417991785,
+   "inked_fb_pct_of_inter_fb": 12.788147380846654
+  }
+ },
+ "diagnostics_ref": {
+  "d1_spearman_rank_depth_exc": {
+   "rho": 0.35556909069301634,
+   "n": 55855,
+   "p_two_sided_leq": 0.0005,
+   "exceedances": 0,
+   "perms": 2000
+  },
+  "d1_spearman_rank_depth_inh": {
+   "rho": 0.052157037523816466,
+   "n": 7219,
+   "p_two_sided_leq": 0.0005,
+   "exceedances": 0,
+   "perms": 2000
+  },
+  "d1_rank_by_layer": {
+   "exc": {
+    "L1": {
+     "n": 280,
+     "median_rank": 18028.0,
+     "q25": 11170.0,
+     "q75": 37900.0
+    },
+    "L2/3": {
+     "n": 10381,
+     "median_rank": 18492.0,
+     "q25": 12475.0,
+     "q75": 40330.0
+    },
+    "L4": {
+     "n": 18551,
+     "median_rank": 26948.0,
+     "q25": 17691.0,
+     "q75": 47730.5
+    },
+    "L5": {
+     "n": 11457,
+     "median_rank": 36429.0,
+     "q25": 27330.0,
+     "q75": 48804.0
+    },
+    "L6": {
+     "n": 14686,
+     "median_rank": 46879.5,
+     "q25": 35890.25,
+     "q75": 56483.75
+    },
+    "WM": {
+     "n": 500,
+     "median_rank": 51434.5,
+     "q25": 39239.25,
+     "q75": 59065.5
+    }
+   },
+   "inh": {
+    "L1": {
+     "n": 171,
+     "median_rank": 11388.0,
+     "q25": 7383.5,
+     "q75": 44422.5
+    },
+    "L2/3": {
+     "n": 1435,
+     "median_rank": 11556.0,
+     "q25": 7131.0,
+     "q75": 48977.5
+    },
+    "L4": {
+     "n": 1982,
+     "median_rank": 14013.0,
+     "q25": 5658.75,
+     "q75": 55776.0
+    },
+    "L5": {
+     "n": 2640,
+     "median_rank": 29757.0,
+     "q25": 4554.75,
+     "q75": 54678.5
+    },
+    "L6": {
+     "n": 973,
+     "median_rank": 40036.0,
+     "q25": 5929.0,
+     "q75": 58295.0
+    }
+   }
+  },
+  "d2_ei_direction": {
+   "exc": {
+    "out_weight": 7595197,
+    "backward_weight": 2022009,
+    "backward_share_pct": 26.622206112626177,
+    "pct_of_ff": 43.474114351083166,
+    "pct_of_fb": 78.34201600773653
+   },
+   "inh": {
+    "out_weight": 6415765,
+    "backward_weight": 334272,
+    "backward_share_pct": 5.210165896038898,
+    "pct_of_ff": 47.43918958185366,
+    "pct_of_fb": 12.951249166021569
+   },
+   "na": {
+    "out_weight": 1389595,
+    "backward_share_pct": 16.17169031264505
+   }
+  },
+  "d3_span_spectrum": {
+   "edges_frac": [
+    0.001,
+    0.0025,
+    0.005,
+    0.01,
+    0.017,
+    0.025,
+    0.05,
+    0.1,
+    0.2,
+    0.4,
+    1.0
+   ],
+   "weight_all": [
+    117126,
+    76310,
+    119209,
+    227961,
+    311259,
+    331704,
+    899900,
+    1576273,
+    2836932,
+    4244751,
+    4659132
+   ],
+   "weight_fb": [
+    14886,
+    14431,
+    26976,
+    59297,
+    83028,
+    87234,
+    235018,
+    370202,
+    561527,
+    711941,
+    416462
+   ],
+   "within_1p7pct_share_of_total": 5.531390845149302,
+   "fb_within_1p7pct_share_of_fb": 7.695383420857481
+  },
+  "d4_fb_hubs": {
+   "top1_in_share_pct": 0.13184801871521215,
+   "top10_in_share_pct": 0.7955824908310803,
+   "top0p1pct_in_share_pct": 3.4776803737463204,
+   "top1pct_in_share_pct": 19.791460835752936,
+   "note": "shares of FB weight arriving at (in) the top receiving neurons"
+  },
+  "d5_reconstruction": {
+   "zero_out_nodes": 1205,
+   "zero_out_median_rank_frac": 0.990612136109219,
+   "zero_out_in_last_10pct": 0.9651452282157676,
+   "proofread_axon_nodes": 249,
+   "proofread_out_w_median": 341.0,
+   "all_out_w_median": 70.0,
+   "note": "only 249 of 67,534 neurons have a proofread axon; unproofread axons are truncated, so outgoing connectivity is systematically undersampled \u2014 an honesty caveat for every directional claim"
+  }
+ },
+ "sink_audit": {
+  "pure_sinks_zero_out_weight": 1205,
+  "pure_sources_zero_in_weight": 664,
+  "note": "hatched cells: >50% zero-out-weight members \u2014 unproofread truncated axons and volume-boundary cuts. Reconstruction, not biology: only 249 axons are proofread in this release."
+ },
+ "seconds": 3.028395891189575
+}

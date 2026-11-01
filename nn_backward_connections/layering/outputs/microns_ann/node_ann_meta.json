@@ -1,0 +1,94 @@
+{
+ "dataset": "microns",
+ "n": 67534,
+ "m": 10436569,
+ "champion_ff_pct": 83.24085291200831,
+ "join": {
+  "with_position": 67534,
+  "excitatory": 55855,
+  "inhibitory": 7219,
+  "ei_na": 4460,
+  "ei_conflicts": 663,
+  "multi_soma_roots": 5953,
+  "proofread_axon": 249,
+  "ei_source": "https://bossdb-open-data.s3.amazonaws.com/iarpa_microns/minnie/minnie65/cell_types/allen_soma_ei_class_model_v1.csv",
+  "ei_sha256": "0d5114cea032a5fd27fa098a15e7481d759513914a83d0f8bf5703e6b6cea4ce",
+  "visp_note": "allen_visp_column_soma_coarse_types_v1.csv was also fetched (sha256 4afd12cee608e20db52019da38d2c1fb739d7decb68a51056c5c8e847bf77c63) but contains only coarse excitatory/inhibitory/Unsure labels, no layer types \u2014 unused.",
+  "license": "MICrONS minnie65 public release (CC-BY 4.0) \u2014 cite MICrONS Consortium 2025 (Nature 640) wherever a figure built on this join appears."
+ },
+ "pia_fit": {
+  "method": "1.0th percentile of excitatory soma y per 100-\u00b5m (x,z) grid cell, hole-filled + gaussian-smoothed, minus 90 \u00b5m nominal L1 thickness",
+  "n_grid_cells": 86,
+  "grid_shape": [
+   15,
+   7
+  ],
+  "surface_relief_um": 396.6209593611016
+ },
+ "layers": {
+  "boundaries_um": {
+   "L1/L23": 60.751710662841795,
+   "L23/L4": 222.5,
+   "L4/L5": 392.5,
+   "L5/L6": 562.5,
+   "L6/WM": 777.5
+  },
+  "landmarks_um": {
+   "L3_trough": [
+    122.5,
+    343.2244477921458
+   ],
+   "L4_peak": [
+    287.5,
+    588.5494569332969
+   ],
+   "L5a_trough": [
+    497.5,
+    298.3721075421737
+   ],
+   "L6_peak": [
+    642.5,
+    462.670624825895
+   ]
+  },
+  "landmark_windows_um": {
+   "L4_peak": [
+    250.0,
+    400.0
+   ],
+   "L3_trough": [
+    120.0,
+    250.0
+   ],
+   "L5a_trough": [
+    400.0,
+    560.0
+   ],
+   "L6_peak": [
+    560.0,
+    720.0
+   ]
+  },
+  "counts": {
+   "NA": 0,
+   "L1": 555,
+   "L2/3": 12788,
+   "L4": 21718,
+   "L5": 14946,
+   "L6": 16751,
+   "WM": 776
+  },
+  "note": "Layers are depth bands below a pia PROXY, anchored on landmarks of the smoothed excitatory-soma density (saved in node_ann.npz as density_centers/density_smoothed) via half-height flank crossings. Display annotation, not ground truth; never touches the optimizer or the oracle."
+ },
+ "spectral": {
+  "iters": [
+   67,
+   88
+  ],
+  "seed": 42,
+  "tau": 253.64591497372774,
+  "tau_factor": 1.0,
+  "weights": "log1p of undirected collapsed synapse counts",
+  "operator": "tau-regularized random-walk (same as fly_ann_prep)"
+ }
+}

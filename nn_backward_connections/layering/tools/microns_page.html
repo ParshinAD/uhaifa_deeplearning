@@ -1,0 +1,1103 @@
+<title>MICrONS Cortex Streams</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f1f0ec; --panel:#ffffff; --ink:#1f2a44; --muted:#6b7385; --line:#d9d6cf;
+  --fb:#c23b3b; --accent:#2f4f7f; --shade:#ece4d8; --dim:#9aa3b5;
+  --exc:#2a78d6; --inh:#227a50;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151a22; --panel:#1c2230; --ink:#e6e4df; --muted:#9aa3b5; --line:#2e3646;
+    --fb:#e0625f; --accent:#9db8dc; --shade:#262c38; --dim:#6f7889;
+    --exc:#5598e7; --inh:#4aa878;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151a22; --panel:#1c2230; --ink:#e6e4df; --muted:#9aa3b5; --line:#2e3646;
+  --fb:#e0625f; --accent:#9db8dc; --shade:#262c38; --dim:#6f7889;
+  --exc:#5598e7; --inh:#4aa878;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "IBM Plex Sans",system-ui,sans-serif;height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:baseline;gap:20px;padding:11px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h1{font-size:17px;font-weight:600;margin:0;letter-spacing:.01em}
+header .fact{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--muted)}
+header .fact b{color:var(--ink);font-weight:500}
+main{flex:1;display:flex;min-height:0}
+aside{width:284px;border-right:1px solid var(--line);padding:13px 16px;display:flex;flex-direction:column;gap:13px;overflow:auto;background:var(--panel);flex-shrink:0}
+aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 6px;font-weight:600}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px}
+.ctl input[type=range]{width:100%}
+.sw{width:18px;height:3px;border-radius:2px;display:inline-block;flex-shrink:0}
+button:focus{outline:2px solid var(--accent);outline-offset:1px}
+.hint{color:var(--muted);font-size:12px}
+.card{border-top:1px solid var(--line);padding-top:10px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;font-variant-numeric:tabular-nums}
+.card .h{font-family:"IBM Plex Sans",system-ui,sans-serif;font-weight:600;font-size:13px;margin-bottom:4px}
+.card .row{display:flex;justify-content:space-between;gap:8px;padding:1px 0}
+.card .k{color:var(--muted)}
+#stage{flex:1;min-width:0;position:relative}
+#scroller{position:absolute;inset:0;overflow:auto}
+#wrap{position:relative}
+#cloud{position:absolute;left:0;top:0;pointer-events:none}
+#anat{display:block}
+svg{display:block;position:relative}
+.lane-lab{font:600 12px "IBM Plex Sans",system-ui,sans-serif;cursor:pointer}
+.lane-sub{font:10px "IBM Plex Mono",ui-monospace,monospace;fill:var(--muted)}
+.cell{cursor:pointer;stroke-linejoin:round}
+.cell.dim,.bnd.dim{opacity:.08}
+.cell.pin{stroke:var(--ink) !important;stroke-width:2.4 !important}
+#legend{position:absolute;right:12px;top:8px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:5px 10px 7px;font-size:11.5px;color:var(--muted);line-height:1.55;max-width:300px;opacity:.94}
+#legend-toggle{display:flex;align-items:center;gap:6px;width:100%;background:none;border:none;padding:2px 0;cursor:pointer;color:var(--ink);font:600 11px "IBM Plex Sans",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em}
+#legend-toggle .arr{color:var(--muted);font-size:10px;transition:transform .12s}
+#legend.collapsed #legend-body{display:none}
+#legend.collapsed .arr{transform:rotate(-90deg)}
+#legend .fbword{color:var(--fb)}
+.cell-lab{font:9px "IBM Plex Mono",ui-monospace,monospace;pointer-events:none;text-anchor:middle;dominant-baseline:central}
+.bnd{fill:none;pointer-events:stroke}
+.bnd.hi{opacity:.95}
+.axis{font:10px "IBM Plex Mono",ui-monospace,monospace;fill:var(--muted)}
+.mx-lab{font:10.5px "IBM Plex Sans",system-ui,sans-serif;cursor:pointer}
+.mx-num{font:8.5px "IBM Plex Mono",ui-monospace,monospace;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.linkbtn{background:none;border:none;padding:0;font:12px "IBM Plex Sans",system-ui,sans-serif;color:var(--accent);cursor:pointer;text-align:left}
+.linkbtn:hover{text-decoration:underline}
+.seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{flex:1;border:none;background:var(--bg);color:var(--muted);font:12px "IBM Plex Sans",system-ui,sans-serif;padding:5px 2px;cursor:pointer}
+.seg button.on{background:var(--accent);color:var(--panel)}
+#methods,#layersguide{position:fixed;inset:0;background:rgba(12,15,22,.45);display:flex;align-items:center;justify-content:center;padding:26px;z-index:10}
+.mpanel{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:6px;max-width:720px;width:100%;max-height:88vh;overflow:auto;padding:20px 26px 26px}
+.mpanel h2{font-size:15px;font-weight:600;margin:0 0 10px;color:var(--ink)}
+.mpanel h3{font-size:13px;font-weight:600;margin:0 0 6px;color:var(--ink)}
+.mpanel p{font-size:13px;line-height:1.5;margin:6px 0;max-width:64ch}
+.mpanel p.note,.mpanel li.note{color:var(--muted)}
+.mpanel code{font:12px "IBM Plex Mono",ui-monospace,monospace;background:var(--shade);padding:0 4px;border-radius:3px}
+.mpanel section{border-top:1px solid var(--line);padding:14px 0 4px;margin-top:14px}
+.mpanel ul{font-size:13px;line-height:1.5;margin:6px 0;padding-left:20px;max-width:64ch}
+.mpanel table{border-collapse:collapse;font:12px "IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;margin:8px 0}
+.mpanel th,.mpanel td{border:1px solid var(--line);padding:3px 8px;text-align:right}
+.mpanel th:first-child,.mpanel td:first-child{text-align:left}
+.mpanel th{font-family:"IBM Plex Sans",system-ui,sans-serif;font-weight:600}
+.mclose{position:absolute;top:8px;right:10px;background:none;border:none;font:18px/1 "IBM Plex Sans",sans-serif;color:var(--muted);cursor:pointer;padding:4px 8px}
+.mclose:hover{color:var(--ink)}
+.rg{border-top:1px solid var(--line);padding:12px 0 4px;margin-top:12px;scroll-margin-top:14px}
+.rg h3{font-size:13.5px;font-weight:600;margin:0 0 2px}
+.rg .sub{font:11px "IBM Plex Mono",ui-monospace,monospace;color:var(--muted);margin:0 0 6px}
+.rg p{font-size:13px;line-height:1.5;margin:4px 0;max-width:64ch}
+.rg.flash{animation:rgflash 1.6s ease-out 1}
+@keyframes rgflash{0%{background:var(--shade)}100%{background:transparent}}
+@media (prefers-reduced-motion: reduce){.rg.flash{animation:none}}
+#tip{position:fixed;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:6px 9px;font:11.5px "IBM Plex Mono",ui-monospace,monospace;pointer-events:none;z-index:20;max-width:300px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+</style>
+
+<header>
+  <h1>Mouse visual cortex, MFAS-ordered, drawn as layers</h1>
+  <span class="fact">neurons <b>67,534</b></span>
+  <span class="fact">synaptic connections <b>10,436,569</b></span>
+  <span class="fact">champion feedforward <b>83.24</b>%</span>
+  <span class="fact">order = H42 champion (pinned, oracle-verified) · MICrONS minnie65</span>
+</header>
+<main>
+  <aside>
+    <div class="ctl">
+      <h2>View</h2>
+      <div class="seg" id="viewseg">
+        <button data-v="streams" class="on">Streams</button>
+        <button data-v="anat">Anatomy</button>
+        <button data-v="matrix">Matrix</button>
+        <button data-v="ei">Balance</button>
+      </div>
+      <button type="button" id="layers-btn" class="linkbtn">What is each lane? →</button>
+      <button type="button" id="methods-btn" class="linkbtn">How it is computed →</button>
+    </div>
+    <div class="ctl" id="ctl-bins">
+      <h2>Depth bins</h2>
+      <div class="seg" id="binseg">
+        <button data-b="8">8</button>
+        <button data-b="16" class="on">16</button>
+        <button data-b="32">32</button>
+      </div>
+      <span class="hint">Equal-count contiguous slices of the champion order.</span>
+    </div>
+    <div class="ctl" id="ctl-classes">
+      <h2>Grid layers</h2>
+      <label><input type="checkbox" id="show-grid" checked><span class="sw" style="background:var(--muted)"></span>cells &amp; bundles (off = pure neuron cloud)</label>
+      <label><input type="checkbox" id="show-ff" checked><span class="sw" style="background:linear-gradient(90deg,#86b6ef,#184f95,#37996a)"></span>feedforward (source-lane colour)</label>
+      <label><input type="checkbox" id="show-fb" checked><span class="sw" style="background:var(--fb)"></span>feedback (crimson)</label>
+    </div>
+    <div class="ctl" id="ctl-thr">
+      <h2>Ink threshold</h2>
+      <input type="range" id="thr" min="0" max="100" value="50">
+      <span class="hint" id="thr-val"></span>
+      <span class="hint" id="thr-cov"></span>
+    </div>
+    <div class="ctl" id="ctl-cloud">
+      <h2>Neuron layer (67,534 dots)</h2>
+      <div class="seg" id="cloudseg">
+        <button data-c="off" class="on">off</button>
+        <button data-c="lane">lanes</button>
+        <button data-c="ei">E / I</button>
+        <button data-c="qc">reconstruction</button>
+      </div>
+      <span class="hint" id="cloud-hint"></span>
+    </div>
+    <div class="ctl" id="ctl-anat" hidden>
+      <h2>Colour by</h2>
+      <div class="seg" id="anatseg">
+        <button data-a="rank" class="on">order rank</button>
+        <button data-a="lane">lanes</button>
+        <button data-a="ei">E / I</button>
+      </div>
+      <span class="hint" id="anat-hint">Hover a dot for its neuron; the pia sits at depth 0.</span>
+    </div>
+    <div class="ctl" id="ctl-mx" hidden>
+      <h2>Matrix metric</h2>
+      <div class="seg" id="mxseg">
+        <button data-m="pct" class="on">% of weight</button>
+        <button data-m="ffshare">FF share</button>
+      </div>
+      <span class="hint" id="mx-hint"></span>
+    </div>
+    <div class="card" id="card"></div>
+  </aside>
+  <div id="stage">
+    <div id="scroller"><div id="wrap"><canvas id="cloud"></canvas><canvas id="anat" hidden></canvas><svg id="svg" role="img" aria-label="MICrONS mouse cortex drawn as cortical layers by MFAS depth"></svg></div></div>
+    <div id="legend">
+      <button type="button" id="legend-toggle" aria-expanded="true" aria-controls="legend-body">how to read <span class="arr">▾</span></button>
+      <div id="legend-body">
+      lanes are anatomy: pia at top, white matter at bottom · blue = excitatory, green = inhibitory, darker = deeper<br>
+      bundle colour = source lane (feedforward) · <span class="fbword">crimson = feedback</span>, drawn on top<br>
+      same-lane bundles bow over (FF) / under (FB) · cell area ~ neurons (sides √-scaled, floored)<br>
+      cell border = intra-cell weight · hatched = most members have no outputs here (truncated axons)<br>
+      numbers in cells = neurons; on the card = % of total weight</div>
+    </div>
+  </div>
+</main>
+
+<div id="layersguide" hidden>
+  <div class="mpanel" role="dialog" aria-modal="true" aria-labelledby="rg-title">
+    <button type="button" class="mclose" id="layers-close" aria-label="Close">×</button>
+    <h2 id="rg-title">What each lane is</h2>
+    <p>The ten lanes, top-to-bottom exactly as in the drawing — here the order is
+       <em>anatomical</em> (pia to white matter, excitatory and inhibitory sub-lanes
+       per depth band), not fitted to the optimizer. That is deliberate: any
+       diagonal structure you see in Streams is a measured relation between the
+       optimized order and real cortical depth. The lane bands are our
+       density-calibrated depth bands, not tracings of layer borders — see Methods.</p>
+    <div id="layers-body"></div>
+  </div>
+</div>
+
+<div id="methods" hidden>
+  <div class="mpanel" role="dialog" aria-modal="true" aria-labelledby="mt">
+    <button type="button" class="mclose" id="methods-close" aria-label="Close">×</button>
+    <h2 id="mt">How this page is computed</h2>
+    <p>One graph, one order: the MICrONS minnie65 connectome (67,534 neurons,
+       10,436,569 directed connections, total weight 15,400,557 synapses; v117 public
+       release, weight = synapse count per neuron pair) and the pinned H42 champion
+       order π, re-scored by the frozen oracle to <b>83.2409&thinsp;%</b> feedforward before
+       anything is drawn. An edge is <em>feedforward</em> iff its source precedes its
+       target in π — the class is fixed at node level and no layout choice here can
+       relabel an edge. This page is the sibling of "Fly Connectome Streams"
+       (136,648 neurons, 84.26&thinsp;% feedforward): same optimizer, same drawing rules,
+       a very different brain.</p>
+
+    <section>
+      <h3>The one big caveat first: axons are truncated</h3>
+      <p>Only <b>249 of 67,534</b> neurons have a proofread axon in this release; every
+         other neuron's outgoing wiring is an automatically segmented fragment. The
+         median proofread neuron carries 341 outgoing synapses in this graph against
+         70 for the population — outgoing weight is undersampled roughly everywhere,
+         and 1,205 neurons have no outputs at all (the optimizer necessarily dumps
+         them at the end of the order, median rank at the 99th percentile; they are
+         the hatched cells and the "reconstruction" dots). Long-range axons also leave
+         the 1.4&thinsp;×&thinsp;0.9&thinsp;mm volume entirely, so "output" here always means
+         <em>local</em> output. Directional statements on this page inherit this caveat;
+         the within-class direction splits are the robust part, absolute class weight
+         shares the fragile one.</p>
+    </section>
+
+    <section>
+      <h3>Anatomy joins</h3>
+      <p>Soma positions come from the public nucleus table (100&thinsp;% of graph nodes
+         matched); excitatory/inhibitory labels from the anatomy-based
+         <code>allen_soma_ei_class_model_v1</code> table (E 55,855 · I 7,219 ·
+         unclassified 4,460, of which 663 are merged segments with conflicting labels;
+         5,953 roots carry more than one soma). Depth below pia subtracts a pia proxy —
+         the 1st percentile of excitatory soma height on a 100-µm (x,z) grid,
+         hole-filled and smoothed (the pia is tilted and gently curved in raw
+         coordinates — ~5° mean slope, 397&thinsp;µm of measured relief — and the grid
+         removes both). A residual check: after
+         correction, depth still correlates weakly with z (Spearman −0.16), so
+         treat ±30&thinsp;µm structure near band borders with care.</p>
+      <p><b>Layer bands are calibrated, not traced.</b> No public flat file carries
+         minnie65's layer borders, so we anchor them on landmarks of the smoothed
+         excitatory-soma density profile — the L4 peak (288&thinsp;µm), the L3 and L5a
+         troughs, the L6 peak (642&thinsp;µm) — via half-height flank crossings:
+         L1/L2-3 at 61, L2-3/L4 at 223, L4/L5 at 393, L5/L6 at 563, L6/WM at
+         778&thinsp;µm. The full profile ships in this page's data. Bands are display
+         annotation; they never touch the optimizer or the scorer.</p>
+    </section>
+
+    <section>
+      <h3>Streams grid</h3>
+      <p><b>Lanes</b> are (depth band × E/I): four excitatory lanes (blue, darker =
+         deeper), four inhibitory lanes (green; L1's few hundred excitatory cells are
+         pooled into L2/3&thinsp;·&thinsp;exc, its interneurons into the upper inhibitory lane),
+         plus white matter and unclassified (grey). Lane order is fixed anatomically —
+         pia at the top — so the drawing cannot manufacture a hierarchy.
+         <b>Columns</b> are equal-count contiguous slices of π; a feedforward edge
+         always lands rightward-or-vertical, feedback leftward-or-vertical.
+         <b>Cells</b>: area ~ neurons (sides ~√n, floored), border ~ intra-cell weight,
+         hatched = &gt;50&thinsp;% of members have zero outputs here. <b>Bundles</b> sum
+         inter-cell weight, split into FF (source-lane colour) and FB (crimson, on
+         top, same width/alpha law ~√weight). A direction is inked iff it passes the
+         threshold slider; the live readout states exactly what share of FF and FB
+         weight is visible. The Matrix view is the honesty backstop — nothing is
+         thresholded away there.</p>
+      <p class="note">In the neuron layer, a dot's y inside its lane is its soma depth
+         within the lane's own depth range (metric µm, unlike the fly page's ordinal
+         spectral coordinate); its x is the π rank, aligned with the bins.</p>
+    </section>
+
+    <section>
+      <h3>What the order finds (all numbers recomputable)</h3>
+      <ul>
+        <li><b>The order descends the cortex.</b> Excitatory rank vs soma depth:
+            Spearman ρ = 0.356 (n = 55,855; 2,000 label permutations, 0 exceedances,
+            p ≤ 5·10⁻⁴). Median ranks: L2/3 18.5k → L4 26.9k → L5 36.4k → L6 46.9k.
+            This is monotone with depth — <em>not</em> the canonical
+            thalamus→L4→L2/3→L5 story, and it cannot be: the thalamus is outside the
+            graph, so L4's role as the entry point is invisible to the optimizer.</li>
+        <li><b>Interneurons sort early.</b> Every inhibitory lane sits 7–13k ranks
+            before its excitatory partner (upper I median 11.5k vs L2/3 E 18.5k;
+            per-band median gaps 6.7–12.9k).
+            The mechanism is arithmetic, and the Balance view shows it: I→E carries
+            33.9&thinsp;% of ALL weight and the order makes 97.3&thinsp;% of it forward, while
+            E→I carries 9.4&thinsp;% at 48.4&thinsp;% forward. A loop must pay its backward
+            cost somewhere; the optimizer puts it on the lighter side — exactly how
+            the fly page's visual-centrifugal cells were "resolved", here scaled to
+            an entire cell class.</li>
+        <li><b>The fly's chemistry finding reverses.</b> In the fly, backward weight
+            was enriched for inhibitory/modulatory transmitters. Here, with
+            anatomical labels, inhibitory output is 5.2&thinsp;% backward and excitatory
+            26.6&thinsp;% — feedback is carried by excitation. (Weight-share caveat:
+            inhibitory axons are local and well-sampled, excitatory axons truncated,
+            so class shares are biased toward inhibition.)</li>
+        <li><b>Feedback is long-range in the order here.</b> Within ±1.7&thinsp;% of the
+            order the fly holds 19&thinsp;% of its weight; this graph holds 5.5&thinsp;%
+            (a whole brain against a 1.4-mm patch — completeness differs). No feedback hub:
+            the top receiving neuron takes 0.13&thinsp;% of backward weight (top 1&thinsp;%
+            of neurons ≈ 20&thinsp;%, similar to the fly's concentration).</li>
+        <li><b>No horizontal sorting.</b> Rank vs x (the axis crossing V1 into higher
+            visual areas): ρ = +0.05 among E cells — the optimizer does not
+            rediscover area boundaries; the hierarchy it finds is radial (depth),
+            not tangential. (Rank vs z: −0.24, partly the −0.16 depth residual.)</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Provenance</h3>
+      <ul>
+        <li>Order: <code>H42_microns_s42_cuda.npz</code>, re-scored by the frozen CPU
+            oracle (score 12,819,555 = 83.2409&thinsp;%) and checked against the campaign
+            registry before use.</li>
+        <li>Graph: token-free v117 build from the public BossDB synapse table
+            (weight = synapse count; build recipe and sha256 in
+            <code>data/processed/microns_BUILD.md</code>).</li>
+        <li>Annotations: MICrONS minnie65 public release (nucleus_neuron_svm,
+            allen_soma_ei_class_model_v1, proofreading status), CC-BY 4.0 — cite
+            the MICrONS Consortium (2025, Nature 640) and Schneider-Mizell et al.
+            (2025, Nature 640) wherever these figures appear.</li>
+        <li>Everything on this page is generated by
+            <code>layering/tools/microns_ann_prep.py → microns_diagnostics.py →
+            microns_streams.py → microns_artifact_export.py</code>; the annotation
+            join is external data and never touches the optimizer or the frozen
+            scorer.</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+"use strict";
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const K = DATA.lane_list.length, N = DATA.n, WTOT = DATA.W_total;
+const state = {view:"streams", B:16, ff:true, fb:true, grid:true,
+               thrFrac:null, cloud:"off", anatColor:"rank", mx:"pct",
+               pinned:null, hover:null, hoverLane:null};
+
+function lay(){ return DATA.layouts["B"+state.B]; }
+function b64f(s, T){ const bin = atob(s); const u = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return new T(u.buffer); }
+const CX = b64f(DATA.cloud.x_u32, Uint32Array);
+const CD = b64f(DATA.cloud.depth_u16, Uint16Array);
+const CXU = b64f(DATA.cloud.xum_u16, Uint16Array);
+const CZU = b64f(DATA.cloud.zum_u16, Uint16Array);
+const CL = b64f(DATA.cloud.lane_u8, Uint8Array);
+const CEI = b64f(DATA.cloud.ei_u8, Uint8Array);
+const CF = b64f(DATA.cloud.flags_u8, Uint8Array);
+const COW = b64f(DATA.cloud.outw_u32, Uint32Array);
+const CIW = b64f(DATA.cloud.inw_u32, Uint32Array);
+const DMAX = DATA.cloud.depth_max_um, XMAX = DATA.cloud.x_max_um, ZMAX = DATA.cloud.z_max_um;
+const XMIN = DATA.cloud.x_min_um || 0, ZMIN = DATA.cloud.z_min_um || 0;
+const DSHOW = 950;   // depth range drawn in the anatomy side view (µm)
+const depthOf = i => CD[i]===65535 ? NaN : CD[i]/65534*DMAX;
+const xumOf = i => CXU[i]===65535 ? NaN : CXU[i]/65534*XMAX;
+const zumOf = i => CZU[i]===65535 ? NaN : CZU[i]/65534*ZMAX;
+
+// per-lane depth range for the streams cloud (y inside a lane = metric depth)
+const laneDepth = [];
+for(let L=0; L<K; L++) laneDepth.push([Infinity,-Infinity]);
+for(let i=0;i<N;i++){ const dep = depthOf(i); if(!isFinite(dep)) continue;
+  const r = laneDepth[CL[i]];
+  if(dep<r[0]) r[0]=dep; if(dep>r[1]) r[1]=dep; }
+
+const svg = document.getElementById("svg");
+const canvas = document.getElementById("cloud"), anatC = document.getElementById("anat");
+const card = document.getElementById("card");
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function isDark(){ return document.documentElement.dataset.theme==="dark" ||
+  (matchMedia("(prefers-color-scheme: dark)").matches &&
+   document.documentElement.dataset.theme!=="light"); }
+function mixHex(a, b, t){
+  const pa = [1,3,5].map(i=>parseInt(a.slice(i,i+2),16));
+  const pb = [1,3,5].map(i=>parseInt(b.slice(i,i+2),16));
+  return "#"+pa.map((v,i)=>Math.round(v+(pb[i]-v)*t).toString(16).padStart(2,"0")).join("");
+}
+function lum(h){ const p = [1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255);
+  return 0.2126*p[0]+0.7152*p[1]+0.0722*p[2]; }
+function laneCol(i){ const h = DATA.lane_colors[DATA.lane_list[i]];
+  return (isDark() && lum(h) < 0.24) ? mixHex(h, "#9db0cc", 0.55) : h; }
+const RANK_RAMP_LIGHT = ["#86b6ef","#5598e7","#2a78d6","#1c5cab","#104281","#0d366b"];
+// dark theme: the ramp must stay visible on #151a22 — run pale -> saturated,
+// never into near-black blues
+const RANK_RAMP_DARK = ["#cde2fb","#a6c9f2","#7fb0ea","#5b97e2","#4583d0","#3b6fb5"];
+function rankCol(frac){
+  const R = isDark() ? RANK_RAMP_DARK : RANK_RAMP_LIGHT;
+  const x = Math.max(0, Math.min(0.9999, frac))*(R.length-1);
+  const i = Math.floor(x);
+  return mixHex(R[i], R[i+1], x-i);
+}
+// lane colour for TEXT: lift toward ink where the fill colour lacks contrast
+function laneLabCol(i){
+  const h = laneCol(i);
+  const l = lum(h);
+  if(isDark() && l < 0.32) return mixHex(h, "#9db0cc", 0.5);
+  if(!isDark() && l > 0.55) return mixHex(h, "#1f2a44", 0.4);
+  return h;
+}
+
+// ---- geometry ----------------------------------------------------------
+let G = {};
+function computeGeom(){
+  const B = state.B;
+  const stage = document.getElementById("stage");
+  const availH = stage.clientHeight - 8, availW = stage.clientWidth - 8;
+  const mL = 185, mT = 26, mR = 24, mB = 40;
+  const laneS = Math.max(44, Math.floor((availH - mT - mB) / K));
+  const colW = Math.max(66, Math.floor((availW - mL - mR) / B));
+  G = {B, mL, mT, mR, mB, laneS, colW,
+       plotW: colW * B, plotH: laneS * K,
+       W: mL + colW * B + mR, H: mT + laneS * K + mB, cellGeo: {}};
+}
+const laneY = i => G.mT + (i + 0.5) * G.laneS;
+const binX  = j => G.mL + j * G.colW;
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"); }
+function fmtW(x){ return (100*x/WTOT).toFixed(2)+"%"; }
+
+// ---- streams view ------------------------------------------------------
+function drawStreams(){
+  computeGeom();
+  const L = lay(), B = state.B;
+  const cmax = Math.max(...L.cells.map(c=>c.count));
+  const imax = Math.max(...L.cells.map(c=>c.intra_ff+c.intra_fb));
+  canvas.width = G.W; canvas.height = G.H;
+  canvas.style.width = G.W+"px"; canvas.style.height = G.H+"px";
+  svg.setAttribute("width", G.W); svg.setAttribute("height", G.H);
+  svg.setAttribute("viewBox", `0 0 ${G.W} ${G.H}`);
+
+  const hFill = isDark() ? "#3b3f47" : "#c9c4ba", hLine = isDark() ? "#8a92a3" : "#6e6a62";
+  let s = `<defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><rect width="6" height="6" fill="${hFill}"/><line x1="0" y1="0" x2="0" y2="6" stroke="${hLine}" stroke-width="1.4"/></pattern></defs>`;
+  for(let i=0;i<K;i++){
+    const lane = L.lanes[i], y = laneY(i);
+    s += `<rect x="${G.mL-3}" y="${y-G.laneS*0.46}" width="${G.plotW+6}" height="${G.laneS*0.92}" fill="${i%2?css('--shade'):'none'}" opacity="0.35"/>`;
+    s += `<text class="lane-lab" data-lane="${i}" x="${G.mL-10}" y="${y-4}" text-anchor="end" fill="${laneLabCol(i)}">${esc(lane.name)}</text>`;
+    s += `<text class="lane-sub" x="${G.mL-10}" y="${y+9}" text-anchor="end">${lane.n.toLocaleString()} n · med ${(lane.med_rank/1000).toFixed(1)}k</text>`;
+  }
+  for(let j=0;j<=B;j+=2){
+    s += `<text class="axis" x="${binX(j)}" y="${G.mT+G.plotH+16}" text-anchor="middle">${Math.floor(j*N/B/1000)}k</text>`;
+  }
+  s += `<text class="axis" x="${G.mL+G.plotW/2}" y="${G.mT+G.plotH+32}" text-anchor="middle">depth = champion order π (H42); tick = rank at bin edge · lanes = anatomy, pia at top</text>`;
+
+  G.cellGeo = {};
+  let cellsSvg = "";
+  for(const c of L.cells){
+    const id = c.lane*B + c.bin, y = laneY(c.lane);
+    const f = Math.sqrt(c.count/cmax);
+    const hw = G.colW*(0.09+0.26*f), hh = G.laneS*(0.045+0.38*f);
+    const x = binX(c.bin)+G.colW/2;
+    G.cellGeo[id] = {x0:x-hw, x1:x+hw, y, hh, c};
+    const lcol = laneCol(c.lane);
+    const isSink = c.sink0/c.count > 0.5;
+    const blw = Math.max(0.5, 3.4*Math.sqrt((c.intra_ff+c.intra_fb)/imax));
+    cellsSvg += `<rect class="cell" data-cell="${id}" x="${(x-hw).toFixed(1)}" y="${(y-hh).toFixed(1)}" width="${(2*hw).toFixed(1)}" height="${(2*hh).toFixed(1)}" rx="3.5" fill="${isSink?'url(#hatch)':lcol}" fill-opacity="${(0.28+0.66*f).toFixed(2)}" stroke="${isSink?hLine:lcol}" stroke-width="${blw.toFixed(1)}"/>`;
+    if(c.count > 0.05*cmax)
+      cellsSvg += `<text class="cell-lab" x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="${(f>0.55 && lum(lcol)<0.45)?'#faf9f5':(isDark()?'#e6e4df':'#141413')}">${c.count>=1000?(c.count/1000).toFixed(1)+'k':c.count}</text>`;
+  }
+  svg.innerHTML = s + `<g id="g-ff"></g><g id="g-fb"></g><g id="g-cells">${cellsSvg}</g>`;
+  drawBundles();
+  applyGrid();
+  drawCloud();
+  if(state.pinned!=null){ showCellCard(state.pinned); markPin(); } else updateCardDefault();
+}
+function markPin(){
+  svg.querySelectorAll(".cell.pin").forEach(e=>e.classList.remove("pin"));
+  if(state.pinned!=null){
+    const el = svg.querySelector(`.cell[data-cell="${state.pinned}"]`);
+    if(el) el.classList.add("pin");
+  }
+}
+function bundlePath(sl, sb, tl, tb, isFF){
+  const B = state.B;
+  const gs = G.cellGeo[sl*B+sb], gt = G.cellGeo[tl*B+tb];
+  if(!gs || !gt) return null;
+  if(sb===tb){
+    const x = binX(sb)+G.colW/2 + (isFF?-1:1)*G.colW*0.10;
+    const sgn = Math.sign(tl-sl)||1;
+    const y0 = gs.y + sgn*gs.hh, y1 = gt.y - sgn*gt.hh;
+    const dy = Math.max(Math.abs(y1-y0)*0.3, 8);
+    return `M${x},${y0} C${x},${y0+sgn*dy} ${x},${y1-sgn*dy} ${x},${y1}`;
+  }
+  if(sl===tl){
+    const span = Math.abs(tb-sb);
+    const h = Math.min(0.14+0.05*span, 0.44)*G.laneS*(isFF?-1:1);
+    const x0 = isFF?gs.x1:gs.x0, x1 = isFF?gt.x0:gt.x1, y = gs.y;
+    return `M${x0},${y} C${x0+(x1-x0)/3},${y+h} ${x1-(x1-x0)/3},${y+h} ${x1},${y}`;
+  }
+  const x0 = isFF?gs.x1:gs.x0, x1 = isFF?gt.x0:gt.x1;
+  const dx = Math.max(Math.abs(x1-x0)*0.45, G.colW*0.4)*(isFF?1:-1);
+  return `M${x0},${gs.y} C${x0+dx},${gs.y} ${x1-dx},${gt.y} ${x1},${gt.y}`;
+}
+function drawBundles(){
+  const L = lay(), B = state.B, thr = state.thrFrac*WTOT;
+  const inked = [];
+  for(const b of L.bundles){
+    if(state.ff && b.ff>=thr) inked.push([b.s,b.t,b.ff,true]);
+    if(state.fb && b.fb>=thr) inked.push([b.s,b.t,b.fb,false]);
+  }
+  inked.sort((a,b)=>a[2]-b[2]);
+  const wmax = inked.length?inked[inked.length-1][2]:1;
+  let ffS = "", fbS = "";
+  for(const [cs,ct,w,isFF] of inked){
+    const sl = Math.floor(cs/B), sb = cs%B, tl = Math.floor(ct/B), tb = ct%B;
+    const p = bundlePath(sl,sb,tl,tb,isFF);
+    if(!p) continue;
+    const frac = w/wmax;
+    const lw = (0.5+9.5*Math.sqrt(frac)).toFixed(1);
+    const al = (0.20+0.5*Math.sqrt(frac)).toFixed(2);
+    const col = isFF ? laneCol(sl) : css('--fb');
+    const el = `<path class="bnd" data-s="${cs}" data-t="${ct}" d="${p}" stroke="${col}" stroke-width="${lw}" opacity="${al}" stroke-linecap="round"/>`;
+    if(isFF) ffS += el; else fbS += el;
+  }
+  document.getElementById("g-ff").innerHTML = ffS;
+  document.getElementById("g-fb").innerHTML = fbS;
+  const st = lay().stats;
+  const interFF = st.inter_ff_pct_of_total/100*WTOT, interFB = st.inter_fb_pct_of_total/100*WTOT;
+  let sFF = 0, sFB = 0;
+  for(const b of lay().bundles){ if(b.ff>=thr) sFF += b.ff; if(b.fb>=thr) sFB += b.fb; }
+  const ffTxt = state.ff ? `${(100*sFF/interFF).toFixed(0)} %` : "off";
+  const fbTxt = state.fb ? `${(100*sFB/interFB).toFixed(0)} %` : "off";
+  document.getElementById("thr-val").textContent =
+    `hide a direction below ${(100*state.thrFrac).toFixed(3)} % of total weight`;
+  document.getElementById("thr-cov").textContent =
+    `inked: ${ffTxt} of inter-cell FF, ${fbTxt} of inter-cell FB`;
+  if(state.pinned!=null) showCellCard(state.pinned);
+  applyIso();
+  markPin();
+}
+
+// ---- streams cloud -----------------------------------------------------
+function drawCloud(){
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  canvas.width = G.W*dpr; canvas.height = G.H*dpr;
+  canvas.style.width = G.W+"px"; canvas.style.height = G.H+"px";
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,G.W,G.H);
+  document.getElementById("cloud-hint").textContent =
+    state.cloud==="off" ? "Adds every neuron as a dot under the grid."
+    : state.cloud==="ei" ? "blue = excitatory, green = inhibitory, grey = unclassified."
+    : state.cloud==="qc" ? "crimson = zero outputs (truncated), ink-coloured = proofread axon (249), grey = the rest."
+    : "dot colour = its lane; y inside a lane = soma depth within the lane's range (metric).";
+  if(state.cloud==="off" || state.view!=="streams") return;
+  const cO = css('--dim'), cE = css('--exc'), cI = css('--inh'), cFb = css('--fb');
+  const ink = isDark() ? "#e6e4df" : "#1f2a44";
+  const mode = state.cloud;
+  ctx.globalAlpha = 0.4;
+  for(let i=0;i<N;i++){
+    const L = CL[i], r = laneDepth[L];
+    const dep = depthOf(i);
+    const t = isFinite(dep) && r[1]>r[0] ? (dep-r[0])/(r[1]-r[0]) : 0.5;
+    const px = G.mL + (CX[i]/N)*G.plotW;
+    const py = G.mT + (L + 0.08 + 0.84*t)*G.laneS;
+    ctx.fillStyle =
+      mode==="ei" ? (CEI[i]===1?cE:(CEI[i]===2?cI:cO)) :
+      mode==="qc" ? ((CF[i]&1)?cFb:((CF[i]&2)?ink:cO)) :
+      ((CF[i]&1)?cO:laneCol(L));
+    const big = mode==="qc" && (CF[i]&2);
+    ctx.fillRect(px, py, big?2.6:1.3, big?2.6:1.3);
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ---- anatomy view ------------------------------------------------------
+let ANAT = null;    // geometry + hit grid
+function drawAnat(){
+  svg.setAttribute("width", 0); svg.setAttribute("height", 0); svg.innerHTML = "";
+  canvas.width = 0; canvas.height = 0; canvas.style.width = "0px";
+  const stage = document.getElementById("stage");
+  const availW = Math.max(stage.clientWidth - 16, 700);
+  const mL = 64, mT = 44, gap = 46, mB = 30;
+  const scale = (availW - mL - 24) / (XMAX - XMIN);
+  const sideH = DSHOW*scale, topH = (ZMAX - ZMIN)*scale;
+  const Wd = availW, Hd = mT + sideH + gap + topH + mB;
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  anatC.width = Wd*dpr; anatC.height = Hd*dpr;
+  anatC.style.width = Wd+"px"; anatC.style.height = Hd+"px";
+  const ctx = anatC.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,Wd,Hd);
+  const ink = css('--ink'), muted = css('--muted'), lineC = css('--line');
+  const cO = css('--dim'), cE = css('--exc'), cI = css('--inh');
+  const mode = state.anatColor;
+  document.getElementById("anat-hint").textContent =
+    mode==="rank" ? "pale = early in the order, deep colour = late. Hover a dot for its neuron."
+    : mode==="ei" ? "blue = excitatory, green = inhibitory, grey = unclassified."
+    : "dot colour = its lane (depth band × E/I).";
+
+  ctx.font = '600 13px "IBM Plex Sans",system-ui,sans-serif';
+  ctx.fillStyle = ink;
+  ctx.fillText("side view — depth below pia vs x  (the optimizer's hierarchy is radial)", mL, 20);
+  ctx.font = '10px "IBM Plex Mono",monospace';
+  ctx.fillStyle = muted;
+  const sideY = d => mT + d*scale;                        // 0..DSHOW µm
+  const sideX = x => mL + (x - XMIN)*scale;
+  // layer boundary guides
+  const bnd = DATA.layers.boundaries_um;
+  for(const nm in bnd){
+    const y = sideY(bnd[nm]);
+    ctx.strokeStyle = lineC; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(mL, y); ctx.lineTo(sideX(XMAX), y); ctx.stroke();
+    ctx.fillText(nm, sideX(XMAX) - 34, y - 3);
+  }
+  ctx.setLineDash([]);
+  for(const d of [0,200,400,600,800]){
+    ctx.fillText(String(d), mL-30, sideY(d)+3);
+  }
+  ctx.save();
+  ctx.translate(14, mT+sideH*0.4); ctx.rotate(-Math.PI/2);
+  ctx.fillText("depth (µm)", 0, 0);
+  ctx.restore();
+
+  const topY0 = mT + sideH + gap;
+  ctx.font = '600 13px "IBM Plex Sans",system-ui,sans-serif';
+  ctx.fillStyle = ink;
+  ctx.fillText("top view — x vs z  (rank–x ρ=+0.05: no areal sorting; rank–z ρ=−0.24, partly the depth-correction residual)", mL, topY0 - 10);
+  ctx.font = '10px "IBM Plex Mono",monospace';
+  ctx.fillStyle = muted;
+  for(const x of [400, 800, 1200, 1600]){
+    if(x > XMAX || x < XMIN) continue;
+    ctx.fillText(String(x), sideX(x) - 8, topY0 + topH + 14);
+  }
+  ctx.fillText("x (µm)", sideX((XMIN+XMAX)/2) - 14, topY0 + topH + 26);
+
+  // dots + hit grid
+  const cellPx = 10;
+  const grid = new Map();
+  const pts = [];
+  ctx.globalAlpha = 0.45;
+  for(let i=0;i<N;i++){
+    const xu = xumOf(i), zu = zumOf(i), dep = depthOf(i);
+    if(!isFinite(xu)) continue;
+    const col = mode==="rank" ? rankCol(CX[i]/N)
+              : mode==="ei" ? (CEI[i]===1?cE:(CEI[i]===2?cI:cO))
+              : laneCol(CL[i]);
+    ctx.fillStyle = col;
+    if(isFinite(dep) && dep >= 0 && dep <= DSHOW){
+      const px = sideX(xu), py = sideY(dep);
+      ctx.fillRect(px, py, 1.5, 1.5);
+      const key = (px/cellPx|0)*4096 + (py/cellPx|0);
+      if(!grid.has(key)) grid.set(key, []);
+      grid.get(key).push(pts.length);
+      pts.push([px, py, i]);
+    }
+    if(isFinite(zu)){
+      ctx.fillRect(sideX(xu), topY0 + (zu - ZMIN)*scale, 1.5, 1.5);
+    }
+  }
+  ctx.globalAlpha = 1;
+  // rank colour ramp legend (only in rank mode)
+  if(mode==="rank"){
+    const lx = mL, ly = Hd - 12, lw = 160;
+    for(let i=0;i<lw;i++){ ctx.fillStyle = rankCol(i/lw); ctx.fillRect(lx+i, ly-8, 1, 8); }
+    ctx.fillStyle = muted;
+    ctx.fillText("rank 0", lx, ly+10); ctx.fillText("67.5k", lx+lw-24, ly+10);
+  }
+  ANAT = {grid, pts, cellPx};
+}
+function anatHit(px, py){
+  if(!ANAT) return null;
+  const {grid, pts, cellPx} = ANAT;
+  let best = null, bd = 8*8;
+  for(let dx=-1;dx<=1;dx++) for(let dy=-1;dy<=1;dy++){
+    const key = ((px/cellPx|0)+dx)*4096 + ((py/cellPx|0)+dy);
+    const arr = grid.get(key);
+    if(!arr) continue;
+    for(const j of arr){
+      const p = pts[j];
+      const d = (p[0]-px)**2 + (p[1]-py)**2;
+      if(d < bd){ bd = d; best = p[2]; }
+    }
+  }
+  return best;
+}
+function showNeuronCard(i){
+  const dep = depthOf(i);
+  const lane = DATA.lane_list[CL[i]];
+  const flags = [(CF[i]&1)&&"no outputs", (CF[i]&2)&&"proofread axon",
+                 (CF[i]&4)&&"multi-soma"].filter(Boolean).join(" · ") || "—";
+  card.innerHTML = `<div class="h" style="color:${laneLabCol(CL[i])}">neuron · rank ${CX[i].toLocaleString()} of ${N.toLocaleString()}</div>
+    <div class="row"><span class="k">lane</span><span>${esc(lane)}</span></div>
+    <div class="row"><span class="k">class</span><span>${CEI[i]===1?"excitatory":(CEI[i]===2?"inhibitory":"unclassified")}</span></div>
+    <div class="row"><span class="k">soma depth</span><span>${isFinite(dep)?dep.toFixed(0)+" µm":"n/a"}</span></div>
+    <div class="row"><span class="k">out / in weight</span><span>${COW[i].toLocaleString()} / ${CIW[i].toLocaleString()} syn</span></div>
+    <div class="row"><span class="k">flags</span><span>${flags}</span></div>
+    <span class="hint">outgoing weight is undersampled for all but the 249 proofread axons</span>`;
+}
+
+// ---- matrix view -------------------------------------------------------
+function drawMatrix(){
+  canvas.width = 0; canvas.height = 0; canvas.style.width = "0px";
+  const M = DATA.lane_matrix, W = M.W_pct, F = M.W_ff_pct;
+  const cs = 40, mL = 150, mT = 142, pad = 20;
+  const Wd = mL + K*cs + pad + 120, Hd = mT + K*cs + pad + 44;
+  svg.setAttribute("width", Wd); svg.setAttribute("height", Hd);
+  svg.setAttribute("viewBox", `0 0 ${Wd} ${Hd}`);
+  const maxP = Math.max(...W.flat());
+  let s = "";
+  for(let i=0;i<K;i++){
+    s += `<text class="mx-lab" data-lane="${i}" x="${mL-8}" y="${mT+i*cs+cs/2+4}" text-anchor="end" fill="${laneLabCol(i)}">${esc(DATA.lane_list[i])}</text>`;
+    s += `<text class="mx-lab" data-lane="${i}" x="${mL+i*cs+cs/2}" y="${mT-8}" text-anchor="start" transform="rotate(-55 ${mL+i*cs+cs/2} ${mT-8})" fill="${laneLabCol(i)}">${esc(DATA.lane_list[i])}</text>`;
+  }
+  const dark = isDark();
+  const base = dark ? "#1c2230" : "#ffffff";
+  for(let i=0;i<K;i++) for(let j=0;j<K;j++){
+    const p = W[i][j];
+    let fill, txtcol = dark?"#e6e4df":"#141413";
+    if(state.mx==="pct"){
+      const t = Math.sqrt(p/maxP);
+      fill = mixHex(base, "#2f5f8f", t);
+      if(t>0.55) txtcol = "#f5f5f2";
+    } else {
+      if(p < 0.02){ fill = dark ? "#262c38" : "#dedbd3"; }
+      else {
+        const share = F[i][j]/p;
+        fill = share<0.5 ? mixHex("#c23b3b", dark?"#39404e":"#d8d5cd", share*2)
+                         : mixHex(dark?"#39404e":"#d8d5cd", "#2f5f8f", (share-0.5)*2);
+        if(share<0.28||share>0.8) txtcol = "#f5f5f2";
+      }
+    }
+    s += `<rect class="mxcell" data-i="${i}" data-j="${j}" x="${mL+j*cs}" y="${mT+i*cs}" width="${cs-1}" height="${cs-1}" fill="${fill}" ${i===j?'stroke="#e08a2e" stroke-width="1.2"':''}/>`;
+    const v = state.mx==="pct" ? p : (p>=0.02?100*F[i][j]/p:null);
+    if(v!=null && p>=0.1)
+      s += `<text class="mx-num" x="${mL+j*cs+cs/2}" y="${mT+i*cs+cs/2}" fill="${txtcol}">${state.mx==="pct"?p.toFixed(1):Math.round(v)}</text>`;
+  }
+  s += `<text class="axis" x="${mL+K*cs/2}" y="${mT+K*cs+22}" text-anchor="middle">target lane → · source lane ↓ · orange boxes = intra-lane</text>`;
+  s += `<text class="axis" x="${mL+K*cs/2}" y="${mT+K*cs+36}" text-anchor="middle">${state.mx==="pct"?"cell = % of total synapse weight":"cell = % of the pair's weight that is feedforward"}</text>`;
+  svg.innerHTML = s;
+  document.getElementById("mx-hint").textContent = state.mx==="pct"
+    ? "Every gram of weight appears here — nothing thresholded away."
+    : "Blue = feedforward-dominated pair, crimson = feedback-dominated (diverging at 50 %); grey = pair under 0.02 % of weight, where a share is noise. Every red cell is an E→I pair.";
+}
+
+// ---- balance (E/I) view ------------------------------------------------
+function drawEI(){
+  canvas.width = 0; canvas.height = 0; canvas.style.width = "0px";
+  const D2 = DATA.diagnostics.d2_ei_direction;
+  const PB = DATA.ei_pair_budget;
+  const fbPct = DATA.fb_pct;
+  const ink = css('--ink'), muted = css('--muted'), lineC = css('--line');
+  const cE = css('--exc'), cI = css('--inh'), cO = css('--dim');
+  const mL = 175, barMax = 560;
+  let y = 46, s = "";
+
+  s += `<text x="${mL}" y="24" font-size="14" font-weight="600" fill="${ink}">How much of each class's output flows backward</text>`;
+  const rows = [["excitatory", D2.exc.backward_share_pct, cE, "55,855 n"],
+                ["inhibitory", D2.inh.backward_share_pct, cI, "7,219 n"],
+                ["unclassified", D2.na.backward_share_pct, cO, "4,460 n"]];
+  const shMax = 32;
+  for(const [k, share, col, nlab] of rows){
+    const w = barMax*share/shMax;
+    const tp = `${k} — ${nlab}|backward share of its outgoing weight: ${share.toFixed(1)}%|graph-wide backward share: ${fbPct.toFixed(1)}%`;
+    s += `<g data-tip="${tp}"><rect x="${mL-24}" y="${y+4}" width="10" height="10" rx="2" fill="${col}"/>`;
+    s += `<text x="${mL-30}" y="${y+13}" text-anchor="end" font-size="12.5" fill="${ink}" font-weight="600">${k}</text>`;
+    s += `<rect x="${mL}" y="${y}" width="${w.toFixed(1)}" height="18" rx="3" fill="${col}" opacity="0.85"/>`;
+    s += `<text x="${mL+w+8}" y="${y+13}" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${share.toFixed(1)} %</text>`;
+    s += `<text x="${mL+barMax+64}" y="${y+13}" text-anchor="end" font-size="10.5" fill="${muted}" font-family="IBM Plex Mono,monospace">${nlab}</text></g>`;
+    y += 27;
+  }
+  const rx = mL + barMax*fbPct/shMax;
+  s += `<line x1="${rx}" y1="40" x2="${rx}" y2="${y}" stroke="${muted}" stroke-dasharray="4 3"/>`;
+  s += `<text x="${rx+6}" y="${y+4}" font-size="11" fill="${muted}">all edges: ${fbPct.toFixed(1)} % backward</text>`;
+  s += `<text x="${mL}" y="${y+24}" font-size="12" fill="${muted}">The fly page's finding reverses: there, inhibitory/modulatory transmitters were backward-enriched.</text>`;
+  s += `<text x="${mL}" y="${y+40}" font-size="12" fill="${muted}">Here inhibition is forward-aligned and excitation carries the feedback. The panel below shows why.</text>`;
+
+  // the mechanism: E<->I pair budget
+  y += 76;
+  s += `<text x="${mL}" y="${y}" font-size="14" font-weight="600" fill="${ink}">The mechanism — who connects to whom, and which way the order points it</text>`;
+  y += 14;
+  const pairs = [["I→E", PB["I->E"], cI],
+                 ["E→E", PB["E->E"], cE],
+                 ["E→I", PB["E->I"], cE],
+                 ["I→I", PB["I->I"], cI]];
+  const pMax = Math.max(...pairs.map(p=>p[1].pct_of_total));
+  for(const [nm, p, col] of pairs){
+    const w = barMax*p.pct_of_total/pMax*0.72;
+    const ffw = w*p.ff_share_pct/100;
+    const tp = `${nm}|${p.pct_of_total.toFixed(1)}% of ALL synaptic weight|of which the order makes ${p.ff_share_pct.toFixed(1)}% feedforward`;
+    s += `<g data-tip="${tp}">`;
+    s += `<text x="${mL-10}" y="${y+14}" text-anchor="end" font-size="12.5" fill="${ink}" font-weight="600">${nm}</text>`;
+    s += `<rect x="${mL}" y="${y}" width="${ffw.toFixed(1)}" height="19" rx="2" fill="${col}" opacity="0.9"/>`;
+    s += `<rect x="${(mL+ffw).toFixed(1)}" y="${y}" width="${(w-ffw).toFixed(1)}" height="19" rx="2" fill="${css('--fb')}" opacity="0.85"/>`;
+    s += `<text x="${mL+w+8}" y="${y+14}" font-size="11.5" fill="${ink}" font-family="IBM Plex Mono,monospace">${p.pct_of_total.toFixed(1)}% of all weight · ${p.ff_share_pct.toFixed(0)}% FF</text>`;
+    s += `</g>`;
+    y += 27;
+  }
+  s += `<text x="${mL}" y="${y+8}" font-size="12" fill="${muted}">I→E is 3.6× heavier than E→I (inhibitory axons are local and dense — and better sampled). A loop must pay its</text>`;
+  s += `<text x="${mL}" y="${y+24}" font-size="12" fill="${muted}">backward cost somewhere; the optimizer puts interneurons EARLY, so the heavy I→E side runs forward (97% FF)</text>`;
+  s += `<text x="${mL}" y="${y+40}" font-size="12" fill="${muted}">and the light E→I side pays (48% FF). Crimson segments above = each pair's backward share.</text>`;
+
+  // composition
+  y += 70;
+  s += `<text x="${mL}" y="${y}" font-size="14" font-weight="600" fill="${ink}">What feedforward vs feedback weight is made of</text>`;
+  y += 16;
+  const comps = [["feedforward", D2.exc.pct_of_ff, D2.inh.pct_of_ff],
+                 ["feedback", D2.exc.pct_of_fb, D2.inh.pct_of_fb]];
+  for(const [nm, e, i] of comps){
+    const na = 100-e-i;
+    s += `<text x="${mL-10}" y="${y+14}" text-anchor="end" font-size="12.5" fill="${ink}">${nm}</text>`;
+    let x = mL;
+    for(const [v, col, lbl] of [[e, cE, "excitatory"], [i, cI, "inhibitory"], [na, cO, "unclassified"]]){
+      const w = barMax*v/100;
+      const tp = `${nm} weight from ${lbl} sources|${v.toFixed(1)}% of the ${nm} total`;
+      s += `<g data-tip="${tp}"><rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(w-2,1).toFixed(1)}" height="20" rx="2" fill="${col}" opacity="0.9"/>`;
+      if(v>7) s += `<text x="${(x+w/2).toFixed(1)}" y="${y+14}" text-anchor="middle" font-size="10.5" fill="${lum(col.startsWith('#')?col:'#888888')>0.45?'#141413':'#f7f6f3'}" font-family="IBM Plex Mono,monospace">${lbl.slice(0,1).toUpperCase()} ${v.toFixed(0)}%</text>`;
+      s += `</g>`;
+      x += w;
+    }
+    y += 30;
+  }
+  s += `<text x="${mL}" y="${y+6}" font-size="12" fill="${muted}">Nearly half of all forward weight is inhibitory — biased upward by sampling: I axons are local and complete,</text>`;
+  s += `<text x="${mL}" y="${y+22}" font-size="12" fill="${muted}">E axons are truncated at the volume boundary unless proofread (249 of 67,534 are).</text>`;
+  const D2T = DATA.diagnostics.d2_ei_direction_target_side;
+  if(D2T && D2T.inh){
+    s += `<text x="${mL}" y="${y+42}" font-size="12" fill="${muted}">Receiving side: ${D2T.inh.backward_share_pct.toFixed(0)}% of what interneurons RECEIVE is backward, vs ${D2T.exc.backward_share_pct.toFixed(0)}% for excitatory cells —</text>`;
+    s += `<text x="${mL}" y="${y+58}" font-size="12" fill="${muted}">the feedback that excitation carries lands on inhibition. The loop closes.</text>`;
+    y += 40;
+  }
+
+  // live accounting
+  y += 52;
+  const pairSum = PB["I->E"].pct_of_total + PB["E->E"].pct_of_total + PB["E->I"].pct_of_total + PB["I->I"].pct_of_total;
+  s += `<line x1="${mL}" y1="${y-12}" x2="${mL+barMax}" y2="${y-12}" stroke="${lineC}"/>`;
+  s += `<text x="${mL}" y="${y+4}" font-size="11.5" fill="${muted}" font-family="IBM Plex Mono,monospace">accounting, computed live from this page's data:</text>`;
+  s += `<text x="${mL}" y="${y+21}" font-size="11.5" fill="${muted}" font-family="IBM Plex Mono,monospace">forward share ${DATA.champion_ff_pct.toFixed(2)}% + backward ${fbPct.toFixed(2)}% = ${(DATA.champion_ff_pct+fbPct).toFixed(2)}% ${Math.abs(DATA.champion_ff_pct+fbPct-100)<0.01?"✓":"✗"}</text>`;
+  s += `<text x="${mL}" y="${y+38}" font-size="11.5" fill="${muted}" font-family="IBM Plex Mono,monospace">E/I pair rows cover ${pairSum.toFixed(1)}% of all weight (the rest touches unclassified nodes)</text>`;
+  y += 60;
+
+  const eiW = mL + barMax + 240;
+  svg.setAttribute("width", eiW); svg.setAttribute("height", y);
+  svg.setAttribute("viewBox", `0 0 ${eiW} ${y}`);
+  svg.innerHTML = s;
+}
+
+// ---- cards -------------------------------------------------------------
+function applyIso(){
+  const sel = state.pinned ?? state.hover;
+  const cells = svg.querySelectorAll(".cell"), bnds = svg.querySelectorAll(".bnd");
+  if(sel==null && state.hoverLane==null){
+    cells.forEach(e=>e.classList.remove("dim"));
+    bnds.forEach(e=>{e.classList.remove("dim","hi");});
+    return;
+  }
+  const keep = new Set();
+  bnds.forEach(e=>{
+    const s = +e.dataset.s, t = +e.dataset.t;
+    const hit = sel!=null ? (s===sel||t===sel)
+                          : Math.floor(s/state.B)===state.hoverLane;
+    e.classList.toggle("dim", !hit); e.classList.toggle("hi", hit);
+    if(hit){ keep.add(s); keep.add(t); }
+  });
+  if(sel!=null) keep.add(sel);
+  cells.forEach(e=>e.classList.toggle("dim", !keep.has(+e.dataset.cell)));
+}
+function updateCardDefault(){
+  if(state.view==="ei"){
+    const D2 = DATA.diagnostics.d2_ei_direction;
+    card.innerHTML = `<div class="h">Excitation / inhibition balance</div>
+      <div class="row"><span class="k">E backward share</span><span>${D2.exc.backward_share_pct.toFixed(1)}%</span></div>
+      <div class="row"><span class="k">I backward share</span><span>${D2.inh.backward_share_pct.toFixed(1)}%</span></div>
+      <div class="row"><span class="k">I→E of all weight</span><span>${DATA.ei_pair_budget["I->E"].pct_of_total.toFixed(1)}% (${DATA.ei_pair_budget["I->E"].ff_share_pct.toFixed(0)}% FF)</span></div>
+      <span class="hint">Hover any bar for exact numbers. E/I labels are anatomy-based (not predictions), but axon truncation biases class weight shares — see Methods.</span>`;
+    return;
+  }
+  if(state.view==="anat"){
+    const d1 = DATA.diagnostics.d1_spearman_rank_depth_exc;
+    const dx = DATA.diagnostics.d6_spearman_rank_x_exc, dz = DATA.diagnostics.d6_spearman_rank_z_exc;
+    card.innerHTML = `<div class="h">Anatomy</div>
+      <div class="row"><span class="k">rank vs depth (E)</span><span>ρ=+${d1.rho.toFixed(2)}, p≤${d1.p_two_sided_leq}</span></div>
+      <div class="row"><span class="k">rank vs x (E)</span><span>ρ=${dx.rho>=0?"+":""}${dx.rho.toFixed(2)}</span></div>
+      <div class="row"><span class="k">rank vs z (E)</span><span>ρ=${dz.rho>=0?"+":""}${dz.rho.toFixed(2)}</span></div>
+      <span class="hint">Hover a dot to inspect one neuron (side view shows somas to 950 µm). The strong gradient is vertical (depth); x is flat, and the weak z trend is partly a −0.16 depth-correction residual.</span>`;
+    return;
+  }
+  const st = lay().stats;
+  const hint = state.view==="streams"
+    ? "Hover a cell to isolate its flows; click to pin. Hover a lane name to isolate its lane; click it to read what that band is."
+    : "Hover a matrix cell for the pair's exact weights. Nothing here is thresholded away.";
+  card.innerHTML = `<div class="h">No cell selected</div>
+    <div class="row"><span class="k">hidden intra-cell</span><span>${st.intra_cell_ff_pct.toFixed(1)}% FF + ${st.intra_cell_fb_pct.toFixed(1)}% FB</span></div>
+    <div class="row"><span class="k">inter-cell FF / FB</span><span>${st.inter_ff_pct_of_total.toFixed(1)} / ${st.inter_fb_pct_of_total.toFixed(1)} % of total</span></div>
+    <div class="row"><span class="k">depth hierarchy (E)</span><span>ρ=+0.36, p≤5e-4</span></div>
+    <div class="row"><span class="k">proofread axons</span><span>249 of 67,534</span></div>
+    <span class="hint">${hint}</span>`;
+}
+function showCellCard(id){
+  const B = state.B, L = lay();
+  const c = L.cells.find(cc=>cc.lane*B+cc.bin===id);
+  if(!c) return;
+  const lane = L.lanes[c.lane];
+  const thr = state.thrFrac*WTOT;
+  let inkFF=0, inkFB=0;
+  for(const b of L.bundles){
+    if(b.s===id && b.ff>=thr) inkFF += b.ff;
+    if(b.s===id && b.fb>=thr) inkFB += b.fb;
+  }
+  const r0 = Math.round(c.bin*N/B/1000), r1 = Math.round((c.bin+1)*N/B/1000);
+  const subFF = c.out_ff>0 ? (100*(c.out_ff-inkFF)/c.out_ff).toFixed(0) : "0";
+  const subFB = c.out_fb>0 ? (100*(c.out_fb-inkFB)/c.out_fb).toFixed(0) : "0";
+  card.innerHTML = `<div class="h" style="color:${laneLabCol(c.lane)}">${esc(lane.name)} · ranks ${r0}–${r1}k</div>
+    <div class="row"><span class="k">neurons</span><span>${c.count.toLocaleString()}${c.sink0?` (${c.sink0} no-output)`:""}</span></div>
+    <div class="row"><span class="k">median soma depth</span><span>${c.med_depth_um!=null?c.med_depth_um.toFixed(0)+" µm":"n/a"}</span></div>
+    <div class="row"><span class="k">proofread axons</span><span>${c.n_proofread}</span></div>
+    <div class="row"><span class="k">intra-cell FF / FB</span><span>${fmtW(c.intra_ff)} / ${fmtW(c.intra_fb)}</span></div>
+    <div class="row"><span class="k">out FF / FB</span><span>${fmtW(c.out_ff)} / ${fmtW(c.out_fb)}</span></div>
+    <div class="row"><span class="k">in FF / FB</span><span>${fmtW(c.in_ff)} / ${fmtW(c.in_fb)}</span></div>
+    <div class="row"><span class="k">out below threshold</span><span>${subFF}% of FF, ${subFB}% of FB</span></div>
+    ${state.pinned===id?'<span class="hint">pinned — click the cell or empty space to release</span>':''}`;
+}
+
+// ---- tooltip -----------------------------------------------------------
+const tip = document.createElement("div"); tip.id = "tip"; tip.hidden = true;
+document.body.appendChild(tip);
+
+// ---- events ------------------------------------------------------------
+function render(){
+  const streams = state.view==="streams";
+  document.getElementById("ctl-bins").hidden = !streams;
+  document.getElementById("ctl-classes").hidden = !streams;
+  document.getElementById("ctl-thr").hidden = !streams || !state.grid;
+  document.getElementById("ctl-cloud").hidden = !streams;
+  document.getElementById("ctl-anat").hidden = state.view!=="anat";
+  document.getElementById("ctl-mx").hidden = state.view!=="matrix";
+  document.getElementById("legend").hidden = !streams || !state.grid;
+  anatC.hidden = state.view!=="anat";
+  state.pinned = state.hover = state.hoverLane = null;
+  buildLayers();
+  if(streams) drawStreams();
+  else if(state.view==="anat"){ drawAnat(); updateCardDefault(); }
+  else if(state.view==="matrix"){ drawMatrix(); updateCardDefault(); }
+  else { drawEI(); updateCardDefault(); }
+}
+function applyGrid(){
+  for(const id of ["g-cells","g-ff","g-fb"]){
+    const g = document.getElementById(id);
+    if(g) g.style.display = state.grid ? "" : "none";
+  }
+  document.getElementById("legend").hidden = state.view!=="streams" || !state.grid;
+  document.getElementById("ctl-thr").hidden = state.view!=="streams" || !state.grid;
+}
+function seg(id, attr, cb){
+  const el = document.getElementById(id);
+  el.addEventListener("click", e=>{
+    const b = e.target.closest("button"); if(!b) return;
+    el.querySelectorAll("button").forEach(x=>x.classList.toggle("on", x===b));
+    cb(b.dataset[attr]);
+  });
+}
+seg("viewseg","v", v=>{ state.view=v; render(); });
+seg("binseg","b", b=>{ state.B=+b; state.thrFrac=lay().ink_threshold_frac; syncThr(); render(); });
+seg("cloudseg","c", c=>{
+  if(c==="off" && !state.grid){
+    state.grid = true;
+    document.getElementById("show-grid").checked = true;
+    applyGrid();
+  }
+  state.cloud=c; drawCloud();
+});
+seg("anatseg","a", a=>{ state.anatColor=a; drawAnat(); });
+seg("mxseg","m", m=>{ state.mx=m; drawMatrix(); });
+document.getElementById("show-ff").addEventListener("change", e=>{ state.ff=e.target.checked; drawBundles(); });
+document.getElementById("show-fb").addEventListener("change", e=>{ state.fb=e.target.checked; drawBundles(); });
+document.getElementById("show-grid").addEventListener("change", e=>{
+  state.grid = e.target.checked;
+  if(!state.grid && state.cloud==="off"){
+    state.cloud = "lane";
+    document.querySelectorAll("#cloudseg button").forEach(b=>
+      b.classList.toggle("on", b.dataset.c==="lane"));
+    drawCloud();
+  }
+  applyGrid();
+});
+
+const thrEl = document.getElementById("thr");
+function thrFromSlider(v){ const lo = Math.log10(lay().export_floor_frac), hi = Math.log10(2e-3);
+  return Math.pow(10, lo + (hi-lo)*v/100); }
+function syncThr(){ const lo = Math.log10(lay().export_floor_frac), hi = Math.log10(2e-3);
+  thrEl.value = Math.round(100*(Math.log10(state.thrFrac)-lo)/(hi-lo)); }
+thrEl.addEventListener("input", ()=>{ state.thrFrac = thrFromSlider(+thrEl.value); drawBundles(); });
+
+svg.addEventListener("pointerover", e=>{
+  const cell = e.target.closest(".cell");
+  const lab = e.target.closest(".lane-lab");
+  const mx = e.target.closest(".mxcell");
+  const dt = e.target.closest("[data-tip]");
+  if(cell){ state.hover = +cell.dataset.cell; state.hoverLane = null;
+            if(state.pinned==null) showCellCard(state.hover); applyIso(); }
+  else if(lab && state.view==="streams"){ state.hoverLane = +lab.dataset.lane; state.hover = null; applyIso(); }
+  else if(dt){
+    tip.innerHTML = dt.dataset.tip.split("|").map(esc).join("<br>");
+    tip.hidden = false;
+    tip.style.left = Math.min(e.clientX+14, innerWidth-300)+"px";
+    tip.style.top = (e.clientY+12)+"px";
+    const tr = tip.getBoundingClientRect();
+    if(e.clientY+12+tr.height > innerHeight)
+      tip.style.top = (e.clientY-tr.height-10)+"px";
+  }
+  else if(mx){
+    const i = +mx.dataset.i, j = +mx.dataset.j, M = DATA.lane_matrix;
+    tip.innerHTML = `${esc(DATA.lane_list[i])} → ${esc(DATA.lane_list[j])}<br>` +
+      `${M.W_pct[i][j].toFixed(3)} % of total weight<br>` +
+      `${M.W_pct[i][j]>0? (100*M.W_ff_pct[i][j]/M.W_pct[i][j]).toFixed(0):0} % of it feedforward`;
+    tip.hidden = false;
+    tip.style.left = Math.min(e.clientX+14, innerWidth-260)+"px";
+    tip.style.top = (e.clientY+12)+"px";
+  }
+});
+svg.addEventListener("pointerout", e=>{
+  if(e.target.closest(".mxcell") || e.target.closest("[data-tip]")) tip.hidden = true;
+  if(state.pinned!=null) return;
+  if(e.target.closest(".cell")){ state.hover = null; applyIso(); updateCardDefault(); }
+  if(e.target.closest(".lane-lab")){ state.hoverLane = null; applyIso(); }
+});
+svg.addEventListener("click", e=>{
+  const lab = e.target.closest(".lane-lab, .mx-lab");
+  if(lab && lab.dataset.lane!=null){ openLayers(+lab.dataset.lane); return; }
+  const cell = e.target.closest(".cell");
+  if(!cell){
+    if(state.pinned!=null){ state.pinned=state.hover=state.hoverLane=null;
+      applyIso(); markPin(); updateCardDefault(); }
+    return;
+  }
+  const id = +cell.dataset.cell;
+  state.pinned = (state.pinned===id)? null : id;
+  if(state.pinned==null){ state.hover=state.hoverLane=null; updateCardDefault(); }
+  else showCellCard(id);
+  applyIso(); markPin();
+});
+anatC.addEventListener("pointermove", e=>{
+  const r = anatC.getBoundingClientRect();
+  const i = anatHit(e.clientX-r.left, e.clientY-r.top);
+  if(i!=null) showNeuronCard(i); else updateCardDefault();
+});
+anatC.addEventListener("pointerleave", ()=>updateCardDefault());
+
+// ---- layers guide ------------------------------------------------------
+const LANE_INFO = {
+  "L2/3 · exc": ["Upper-layer pyramidal cells: the cortex's associative fabric, wiring locally and to other cortical areas. In the canonical circuit they receive from L4 and project down to L5 — yet the optimizer puts them FIRST among excitatory lanes (their local outputs sit highest in the graph's flow).",
+    "the cortico-cortical 'chat layer'."],
+  "L1–L2/3 · inh": ["Upper-layer interneurons (L1 has almost no excitatory somas, so its cells live here too). Basket, Martinotti and L1 cells that gate and normalize the layers below. The optimizer places them earliest of all — their dense local output onto pyramidal cells outweighs their input.",
+    "gain control knobs of the upper cortex."],
+  "L4 · exc": ["The classic thalamo-recipient layer: spiny stellate and star pyramid cells. The textbook entry point of the cortex — but the thalamus is OUTSIDE this graph, so the optimizer cannot see L4's defining input and ranks it after L2/3 on intracortical wiring alone.",
+    "the input relay — invisible as such here, a caveat this page keeps visible."],
+  "L4 · inh": ["L4's interneurons, sorted ~13k ranks earlier than their excitatory neighbours — the same early-inhibition pattern as every band.", "—"],
+  "L5 · exc": ["Deep pyramidal cells, including the thick-tufted ET cells whose axons leave the cortex toward subcortical targets — outputs this 1.4-mm box cannot contain.",
+    "the cortex's broadcast output layer."],
+  "L5 · inh": ["L5's interneurons.", "—"],
+  "L6 · exc": ["Corticothalamic and IT cells at the bottom of the stack; the optimizer ranks them last among excitatory lanes — the deep end of the intracortical flow.",
+    "the feedback layer to thalamus (that loop, too, exits the volume)."],
+  "L6 · inh": ["L6's interneurons.", "—"],
+  "white matter": ["Somas below the L6/WM density boundary — a mix of deep L6b cells and displaced neurons.", "—"],
+  "unclassified": ["Neurons the E/I model left unlabeled: merged segments with conflicting labels (663), multi-soma roots, and cells the model called 'Unsure'. Kept as an honest lane rather than folded into a guess.", "—"],
+};
+function buildLayers(){
+  const body = document.getElementById("layers-body");
+  const lanes = DATA.layouts.B16.lanes;
+  body.innerHTML = lanes.map((l,i)=>{
+    const info = LANE_INFO[l.name] || ["",""];
+    return `<div class="rg" id="rg-${i}">
+      <h3 style="color:${laneLabCol(i)}">${esc(l.name)}</h3>
+      <p class="sub">${l.n.toLocaleString()} neurons · median rank ${(l.med_rank/1000).toFixed(1)}k of 67.5k${l.med_depth_um!=null?` · median depth ${l.med_depth_um.toFixed(0)} µm`:""}</p>
+      <p>${info[0]}</p>
+      ${info[1]==="—" || !info[1] ? "" : `<p class="hm"><b>In one phrase:</b> ${info[1]}</p>`}
+    </div>`;
+  }).join("");
+}
+buildLayers();
+const layersEl = document.getElementById("layersguide");
+function openLayers(laneIdx){
+  layersEl.hidden = false;
+  if(laneIdx!=null){
+    const el = document.getElementById("rg-"+laneIdx);
+    if(el){ el.scrollIntoView({block:"start"});
+            el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+  } else {
+    layersEl.querySelector(".mpanel").scrollTop = 0;
+  }
+}
+document.getElementById("layers-btn").addEventListener("click", ()=>openLayers(null));
+document.getElementById("layers-close").addEventListener("click", ()=>{ layersEl.hidden=true; });
+layersEl.addEventListener("click", e=>{ if(e.target===layersEl) layersEl.hidden=true; });
+
+(function(){
+  const leg = document.getElementById("legend");
+  const btn = document.getElementById("legend-toggle");
+  let collapsed = false;
+  try{ collapsed = localStorage.getItem("microns-legend-collapsed")==="1"; }catch(e){}
+  const apply = ()=>{ leg.classList.toggle("collapsed", collapsed);
+                      btn.setAttribute("aria-expanded", String(!collapsed)); };
+  apply();
+  btn.addEventListener("click", ()=>{
+    collapsed = !collapsed; apply();
+    try{ localStorage.setItem("microns-legend-collapsed", collapsed?"1":"0"); }catch(e){}
+  });
+})();
+
+const modal = document.getElementById("methods");
+document.getElementById("methods-btn").addEventListener("click", ()=>{ modal.hidden=false; });
+document.getElementById("methods-close").addEventListener("click", ()=>{ modal.hidden=true; });
+modal.addEventListener("click", e=>{ if(e.target===modal) modal.hidden=true; });
+addEventListener("keydown", e=>{ if(e.key==="Escape"){ modal.hidden=true; layersEl.hidden=true; } });
+
+state.thrFrac = lay().ink_threshold_frac;
+syncThr();
+render();
+addEventListener("resize", ()=>{ if(state.view==="streams") drawStreams();
+                                 else if(state.view==="anat") drawAnat(); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+new MutationObserver(muts=>{
+  if(muts.some(m=>m.attributeName==="data-theme")) render();
+}).observe(document.documentElement, {attributes:true});
+</script>
