@@ -23,7 +23,20 @@ live what share of weight is visible; *Neuron layer* adds all 136,648 neurons
 as dots (colored by stream or by hemisphere) and has a type-search box.
 Hovering a **cell** isolates everything in and out of it (click to pin);
 hovering a **lane name** isolates that stream's outgoing bundles. "How it is
-computed →" opens the methods panel.
+computed →" opens the methods panel. The header toggle switches the colour
+theme (auto / light / dark).
+
+**What-if moves.** The *What-if order* panel (Streams view) lets you change
+the order by hand and see the exact score. Pick neurons with *select* (drag a
+box over dots or click a cell; Shift adds, Alt removes) or with the lane / side
+/ type filter. Then either *move* them (drag left or right, or type Δ and press
+*Apply shift*) or store two selections as *Set A* / *Set B* and press *Swap*.
+The score is recomputed over all 5,657,719 edges, and the cells and bundles are
+rebuilt for the new order. There are *Undo* (Ctrl/Cmd+Z) and *Reset to H64*;
+*Download order* saves the ranks for re-scoring with the frozen oracle. Example: swapping
+the left and right mushroom body drops the score from 35,314,407 to 35,208,055
+synapses (-0.25 pp). A what-if order is a hand-made order, not an optimizer
+result; the findings below all describe the H64 order.
 
 ---
 

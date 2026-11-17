@@ -8,6 +8,9 @@ Writes: layering/outputs/fly_artifact/artifact_data.json  — one JSON with
   * cloud: per-neuron x (rank), y (quantized uint16 over lane bands), lane id,
     packed as base64 arrays; plus per-neuron flags (zero-out-weight)
   * global stats: hierarchy test, NT x direction, sink audit, provenance
+  * edges: meta of the edge payload (see edge_payload)
+and layering/outputs/fly_artifact/edges.zlib — the full edge list for the
+page's what-if scorer (gitignored, regenerable).
 
 Run:  $PY layering/tools/fly_artifact_export.py
 """
@@ -16,9 +19,11 @@ from __future__ import annotations
 import base64
 import csv
 import gzip
+import hashlib
 import json
 import sys
 import time
+import zlib
 from collections import Counter
 from pathlib import Path
 
@@ -39,11 +44,55 @@ CONFIG = {
     "out_dir": HERE.parent / "outputs" / "fly_artifact",
     "bins": [8, 16, 32],
     "top_types_per_cell": 5,
+    "edges_zlib_level": 9,
 }
 
 
 def b64(arr) -> str:
     return base64.b64encode(np.ascontiguousarray(arr).tobytes()).decode("ascii")
+
+
+def edge_payload(g, rank):
+    """Encode the edge list for the page's exact what-if scorer.
+
+    Endpoints are written as H64 ranks, edges sorted by (rank[src], rank[tgt]).
+    Uncompressed layout, every value little-endian and byte-plane split
+    (plane b = byte b of every value): deg uint32 (out-degree of the node with
+    rank r, r = 0..N-1) | dtgt uint32 (target rank for the first edge of a
+    source run, else the gap to the previous target, > 0) | w uint16.
+    Returns (zlib bytes, meta); see layering/VIZ_V2_DESIGN.md section 2.
+    """
+    from src.mfas.metrics import score_from_order              # frozen oracle
+    n, m = int(g.n_nodes), int(g.n_edges)
+    rs = rank[g.src.astype(np.int64)]
+    rt = rank[g.tgt.astype(np.int64)]
+    w = g.weight
+    assert not np.any(rs == rt), "self-loop in the edge list"
+    assert np.all(w == np.round(w)) and w.min() >= 1 and w.max() < 2**16, \
+        "weights do not fit uint16"
+    o = np.lexsort((rt, rs))
+    rs, rt, w16 = rs[o], rt[o], w[o].astype(np.uint16)
+    deg = np.bincount(rs, minlength=n).astype(np.uint32)
+    first = np.ones(m, dtype=bool)
+    first[1:] = rs[1:] != rs[:-1]
+    dtgt = np.diff(rt, prepend=0)
+    dtgt[first] = rt[first]
+    assert np.all(dtgt[~first] > 0), "duplicate (src, tgt) pair"
+
+    def planes(a):
+        return a.view(np.uint8).reshape(-1, a.itemsize).T.copy().tobytes()
+
+    raw = planes(deg) + planes(dtgt.astype(np.uint32)) + planes(w16)
+    assert len(raw) == 4 * n + 6 * m
+    z = zlib.compress(raw, CONFIG["edges_zlib_level"])
+    meta = {
+        "n": n, "m": m,
+        "layout": "deg_u32|dtgt_u32|w_u16, byte planes, LE, zlib",
+        "raw_bytes": len(raw), "zlib_bytes": len(z),
+        "raw_sha256": hashlib.sha256(raw).hexdigest(),
+        "ff_h64_syn": int(score_from_order(rank, g.src, g.tgt, g.weight)),
+    }
+    return z, meta
 
 
 def main():
@@ -259,6 +308,10 @@ def main():
         "spectral": meta["spectral"],
         "provenance": meta["join"],
     }
+    edges_z, data["edges"] = edge_payload(g, rank)
+    pe = out / "edges.zlib"
+    pe.write_bytes(edges_z)
+    print(f"wrote {pe}  ({len(edges_z)} B, H64 FF {data['edges']['ff_h64_syn']} syn)")
     p = out / "artifact_data.json"
     p.write_text(json.dumps(data), encoding="utf-8")
     print(f"wrote {p}  ({p.stat().st_size / 1e6:.1f} MB, {time.time() - t0:.0f}s)")

@@ -136,6 +136,28 @@ $PY_VIZ layering/tools/exec_notebook.py layering/layering_mouse.ipynb  # execute
 On a machine with a healthy BLAS (e.g. the MacBook), `$PY` can execute the
 notebook too — the split exists only because of this box's broken MKL.
 
+## Fly streams page: what-if moves (v2)
+
+The fly page (`outputs/fly_artifact/fly_streams.html`) has a theme toggle and a
+what-if panel: select neurons (box, cell click or lane/side/type filter), shift
+them rigidly along π or swap two groups A and B, and read the exact feedforward
+score of the hand-made order. Design: `VIZ_V2_DESIGN.md`.
+
+- The full edge list is inlined (`edges.zlib`, base64, ~14 MB). On load the page
+  decodes it and must score H64 to 35,314,407 synapses (the frozen oracle's value),
+  else only the what-if panel is disabled.
+- `tools/fly_whatif_core.js` holds all what-if logic (decode, score, shift, swap,
+  layout recompute). The page inlines it and the Node test requires the same file.
+- `Download order (.npy)` saves the ranks; re-score them with the oracle one-liner
+  in `VIZ_V2_DESIGN.md` §5.4. A what-if order is never a champion.
+
+```bash
+$PY layering/tools/fly_artifact_export.py      # artifact_data.json + edges.zlib (gitignored)
+$PY layering/tools/build_fly_html.py           # inline core + edges + data, asserts < 19 MiB
+node layering/tests/fly_whatif_check.mjs layering/outputs/fly_artifact
+$PY -m pytest layering/tests/test_fly_whatif.py -q   # JS vs numpy reference + frozen oracle
+```
+
 ## Roadmap
 
 1. **T3(a)** — spend the layer-assignment freedom on minimizing total edge span

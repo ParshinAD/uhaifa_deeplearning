@@ -63,3 +63,7 @@ autoresearch/.lock/
 # Watchdog scratch (runtime state, never committed)
 autoresearch/ALERT
 autoresearch/ALERTS.log
+
+# Fly artifact edge payload (~10 MB, deterministic; rebuilt by layering/tools/fly_artifact_export.py
+# and inlined into fly_streams.html by build_fly_html.py)
+layering/outputs/fly_artifact/edges.zlib

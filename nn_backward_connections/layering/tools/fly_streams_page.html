@@ -5,22 +5,25 @@
   --bg:#f1f0ec; --panel:#ffffff; --ink:#1f2a44; --muted:#6b7385; --line:#d9d6cf;
   --fb:#c23b3b; --accent:#2f4f7f; --shade:#ece4d8; --dim:#9aa3b5;
   --hemiL:#c96fae; --hemiR:#3f7fb5;
+  --hatch-bg:#c9c4ba; --hatch-ln:#6e6a62; --mx-hi:#2f5f8f; --mx-mid:#d8d5cd;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#151a22; --panel:#1c2230; --ink:#e6e4df; --muted:#9aa3b5; --line:#2e3646;
     --fb:#e0625f; --accent:#9db8dc; --shade:#262c38; --dim:#6f7889;
     --hemiL:#d98ec2; --hemiR:#7d9fc4;
+    --hatch-bg:#3a404c; --hatch-ln:#8a909c; --mx-hi:#7fa6d6; --mx-mid:#39404e;
   }
 }
 :root[data-theme="dark"]{
   --bg:#151a22; --panel:#1c2230; --ink:#e6e4df; --muted:#9aa3b5; --line:#2e3646;
   --fb:#e0625f; --accent:#9db8dc; --shade:#262c38; --dim:#6f7889;
   --hemiL:#d98ec2; --hemiR:#7d9fc4;
+  --hatch-bg:#3a404c; --hatch-ln:#8a909c; --mx-hi:#7fa6d6; --mx-mid:#39404e;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "IBM Plex Sans",system-ui,sans-serif;height:100vh;display:flex;flex-direction:column}
-header{display:flex;align-items:baseline;gap:20px;padding:11px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+header{display:flex;align-items:baseline;gap:8px 20px;padding:11px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 header h1{font-size:17px;font-weight:600;margin:0;letter-spacing:.01em}
 header .fact{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--muted)}
 header .fact b{color:var(--ink);font-weight:500}
@@ -71,6 +74,8 @@ svg{display:block;position:relative}
 .seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
 .seg button{flex:1;border:none;background:var(--bg);color:var(--muted);font:12px "IBM Plex Sans",system-ui,sans-serif;padding:5px 2px;cursor:pointer}
 .seg button.on{background:var(--accent);color:var(--panel)}
+#themeseg{margin-left:auto;align-self:center;flex:none}
+#themeseg button{padding:3px 9px}
 #methods,#regions{position:fixed;inset:0;background:rgba(12,15,22,.45);display:flex;align-items:center;justify-content:center;padding:26px;z-index:10}
 .mpanel{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:6px;max-width:720px;width:100%;max-height:88vh;overflow:auto;padding:20px 26px 26px}
 .mpanel h2{font-size:15px;font-weight:600;margin:0 0 10px;color:var(--ink)}
@@ -95,6 +100,21 @@ svg{display:block;position:relative}
 .rg.flash{animation:rgflash 1.6s ease-out 1}
 @keyframes rgflash{0%{background:var(--shade)}100%{background:transparent}}
 @media (prefers-reduced-motion: reduce){.rg.flash{animation:none}}
+#wi-body{border:none;margin:0;padding:0;min-width:0;display:flex;flex-direction:column;gap:6px}
+#wi-body[disabled]{opacity:.5}
+.wi-row{display:flex;gap:6px;align-items:center}
+.wi-row>*{flex:1;min-width:0}
+.wbtn{font:12px "IBM Plex Sans",system-ui,sans-serif;padding:4px 4px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);cursor:pointer}
+.wbtn:hover:not(:disabled){border-color:var(--accent)}
+.wbtn:disabled{opacity:.45;cursor:default}
+input[type=number]{font:inherit;font-size:12.5px;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%}
+#wi-readout{padding-top:6px}
+#wi-f-side{flex:0 0 84px}
+#wi-readout:empty{display:none}
+.wi-banner{border:1px solid var(--accent);border-radius:4px;padding:6px 10px;color:var(--ink);background:var(--shade);font-size:12.5px}
+#svg.stale #g-cells,#svg.stale #g-ff,#svg.stale #g-fb{opacity:.25;pointer-events:none}
+#svg.tool-select{cursor:crosshair;touch-action:none}
+#svg.tool-move{cursor:ew-resize;touch-action:none}
 #tip{position:fixed;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:6px 9px;font:11.5px "IBM Plex Mono",ui-monospace,monospace;pointer-events:none;z-index:20;max-width:280px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 </style>
 
@@ -103,7 +123,13 @@ svg{display:block;position:relative}
   <span class="fact">neurons <b>136,648</b></span>
   <span class="fact">edges <b>5,657,719</b></span>
   <span class="fact">champion feedforward <b>84.26</b>%</span>
-  <span class="fact">order = H64 champion (pinned, oracle-verified)</span>
+  <span class="fact" id="fact-whatif" hidden></span>
+  <span class="fact" id="fact-order">order = H64 champion (pinned, oracle-verified)</span>
+  <div class="seg" id="themeseg" role="group" aria-label="Colour theme">
+    <button data-t="auto">auto</button>
+    <button data-t="light">light</button>
+    <button data-t="dark">dark</button>
+  </div>
 </header>
 <main>
   <aside>
@@ -116,6 +142,32 @@ svg{display:block;position:relative}
       </div>
       <button type="button" id="regions-btn" class="linkbtn">What is each region? →</button>
       <button type="button" id="methods-btn" class="linkbtn">How it is computed →</button>
+    </div>
+    <div class="ctl" id="ctl-whatif">
+      <h2>What-if order</h2>
+      <span class="hint" id="wi-status">loading edges…</span>
+      <fieldset id="wi-body" disabled>
+        <div class="seg" id="toolseg">
+          <button data-tool="explore" class="on">explore</button>
+          <button data-tool="select">select</button>
+          <button data-tool="move">move</button>
+        </div>
+        <span class="hint" id="wi-tool-hint"></span>
+        <div class="wi-row"><span id="wi-sel" class="hint">Selected: 0 neurons</span><button type="button" class="linkbtn" id="wi-clear" style="flex:none">Clear</button></div>
+        <div class="wi-row"><select id="wi-f-lane" aria-label="filter by lane"></select>
+          <select id="wi-f-side" aria-label="filter by hemisphere"><option value="">any side</option><option value="1">left</option><option value="2">right</option><option value="0">other</option></select></div>
+        <input type="text" list="typelist" id="wi-f-type" placeholder="cell type (optional)" autocomplete="off">
+        <div class="wi-row"><button type="button" class="wbtn" data-f="replace">Select</button><button type="button" class="wbtn" data-f="add">Add</button><button type="button" class="wbtn" data-f="remove">Remove</button></div>
+        <div class="wi-row"><input type="number" id="wi-delta" value="5000" step="1" aria-label="shift in ranks"><button type="button" class="wbtn" id="wi-apply">Apply shift</button></div>
+        <div id="wi-swap" style="display:flex;flex-direction:column;gap:4px">
+          <div class="wi-row"><button type="button" class="wbtn" id="wi-setA">Set A</button><button type="button" class="wbtn" id="wi-setB">Set B</button><button type="button" class="wbtn" id="wi-swapbtn">Swap A ↔ B</button></div>
+          <span class="hint" id="wi-ab"></span>
+        </div>
+        <div class="wi-row"><button type="button" class="wbtn" id="wi-undo">Undo</button><button type="button" class="wbtn" id="wi-reset">Reset to H64</button></div>
+        <button type="button" class="wbtn" id="wi-dl">Download order (.npy)</button>
+      </fieldset>
+      <div class="card" id="wi-readout"></div>
+      <span class="hint" id="wi-note" hidden>What-if order made by hand, not an optimizer result. The score is recomputed exactly over all 5,657,719 edges in this page; on load the page checks itself against the frozen oracle (H64 = 35,314,407 syn).</span>
     </div>
     <div class="ctl" id="ctl-grouping">
       <h2>Y axis — group neurons by</h2>
@@ -133,12 +185,12 @@ svg{display:block;position:relative}
         <button data-b="16" class="on">16</button>
         <button data-b="32">32</button>
       </div>
-      <span class="hint">Equal-count contiguous slices of the champion order.</span>
+      <span class="hint" id="bins-hint">Equal-count contiguous slices of the champion order.</span>
     </div>
     <div class="ctl" id="ctl-classes">
       <h2>Grid layers</h2>
       <label><input type="checkbox" id="show-grid" checked><span class="sw" style="background:var(--muted)"></span>cells &amp; bundles (off = pure neuron cloud)</label>
-      <label><input type="checkbox" id="show-ff" checked><span class="sw" style="background:linear-gradient(90deg,#1f8a8d,#e08a2e,#3f6ab5)"></span>feedforward (source-lane colour)</label>
+      <label><input type="checkbox" id="show-ff" checked><span class="sw" id="sw-ff"></span>feedforward (source-lane colour)</label>
       <label><input type="checkbox" id="show-fb" checked><span class="sw" style="background:var(--fb)"></span>feedback (crimson)</label>
     </div>
     <div class="ctl" id="ctl-thr">
@@ -191,6 +243,7 @@ svg{display:block;position:relative}
        ordered by their median position in the optimized order. Click any lane
        name in the drawing to jump straight to its entry. Analogies are
        functional, not evolutionary.</p>
+    <p class="wi-banner" id="rg-banner" hidden>Everything in this panel describes the H64 champion order, not your what-if order.</p>
     <div id="regions-body"></div>
   </div>
 </div>
@@ -199,6 +252,7 @@ svg{display:block;position:relative}
   <div class="mpanel" role="dialog" aria-modal="true" aria-labelledby="mt">
     <button type="button" class="mclose" id="methods-close" aria-label="Close">×</button>
     <h2 id="mt">How this page is computed</h2>
+    <p class="wi-banner" id="mt-banner" hidden>Everything in this panel describes the H64 champion order, not your what-if order.</p>
     <p>One graph, one order: the FlyWire MFAS-challenge fly connectome (136,648 neurons,
        5,657,719 edges, total weight 41,912,141 synapses) and the pinned H64 champion
        order π, re-scored by the frozen oracle to <b>84.2582&thinsp;%</b> feedforward before
@@ -285,6 +339,25 @@ svg{display:block;position:relative}
     </section>
 
     <section>
+      <h3>What-if moves</h3>
+      <p>The what-if panel lets you move neurons by hand and see the exact feedforward score
+         of the new order. All 5,657,719 edges are inlined in the page; on load it decodes them
+         and checks that π scores 35,314,407 synapses, the frozen oracle's value, else the panel
+         stays off. Every score after that is recomputed over all edges, not estimated.
+         <b>Shift</b> moves the selected neurons by Δ, where Δ counts the unselected neurons
+         passed: inside the rigid range every selected neuron moves by exactly Δ ranks and
+         keeps its spacing; beyond it the group is compressed at the edge of the axis, which
+         for a selection spread over the whole axis (a hemisphere) happens almost at once.
+         <b>Swap A ↔ B</b> refills the ranks A and B occupy with the later group first, then
+         the earlier one (each in its own internal order); everyone else keeps its exact rank.
+         With unequal sizes, only as many neurons cross as the smaller group has, and interleaved
+         groups also get separated. After each move the grid is redrawn for the new order. Lane rows keep the H64 order, and the numbers in this panel stay those of H64.
+         <b>Download order</b> saves the current ranks as a NumPy <code>.npy</code> (node
+         index of <code>load_dataset("connectome")</code>), named with its score, for re-scoring
+         with the frozen oracle. A what-if order is a hand-made order, not an optimizer result.</p>
+    </section>
+
+    <section>
       <h3>Provenance</h3>
       <ul>
         <li>Order: <code>H64_connectome_s42_cuda.npz</code>, re-scored by the frozen CPU
@@ -306,14 +379,22 @@ svg{display:block;position:relative}
 </div>
 
 <script id="data" type="application/json">__DATA__</script>
+<script id="edges" type="application/octet-stream">__EDGES__</script>
+<script>__WHATIF_CORE__</script>
 <script>
 "use strict";
 const DATA = JSON.parse(document.getElementById("data").textContent);
 const K = DATA.lane_list.length, N = DATA.n, WTOT = DATA.W_total;
 const state = {view:"streams", B:16, ff:true, fb:true, grouping:"streams",
                thrFrac:null, cloud:"side", mx:"pct", pinned:null};
+const WCFG = {topTypes:5, historyMax:50, dragThresholdPx:4};
+// what-if state, design section 3 (layering/VIZ_V2_DESIGN.md)
+const WI = {ready:false, err:null, E:null, R0:null, ORD0:null, S0:0, R:null, ORD:null,
+            score:0, prevScore:null, steps:0, version:0, isH64:true, hist:[],
+            sel:new Uint8Array(N), nSel:0, grpA:null, grpB:null, nA:0, nB:0, swapPre:null, showAB:false,
+            tool:"explore", drag:null, cache:{}, stale:false, last:null, t:{}};
 
-function lay(){ return DATA.layouts[state.grouping]["B"+state.B]; }
+function lay(){ return WIcore.lay(WI, DATA, state.grouping, state.B); }
 function slay(){ return DATA.layouts.streams["B"+state.B]; }   // streams-pinned views
 function KL(){ return lay().lanes.length; }
 function b64f(s, T){ const bin = atob(s); const u = new Uint8Array(bin.length);
@@ -324,8 +405,8 @@ const CSINK = b64f(DATA.cloud.sink_u8, Uint8Array);
 const CT = b64f(DATA.cloud.type_u16, Uint16Array);
 const CNT = b64f(DATA.cloud.nt_u8, Uint8Array);
 const CGCACHE = {};
-function cg(){                       // per-grouping cloud arrays, decoded lazily
-  const g = state.grouping;
+function cg(){ return cgOf(state.grouping); }
+function cgOf(g){                    // per-grouping cloud arrays, decoded lazily
   if(!CGCACHE[g]){
     const gr = DATA.cloud.groups[g];
     CGCACHE[g] = {y: b64f(gr.y_u16, Uint16Array),
@@ -351,9 +432,16 @@ function mixHex(a, b, t){
 }
 function lum(h){ const p = [1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255);
   return 0.2126*p[0]+0.7152*p[1]+0.0722*p[2]; }
-// dark theme: lift lanes that would vanish against the dark ground
+// dark theme: hand-picked replacements for colours below 3:1 on the dark ground,
+// kept apart from their neighbours (DE76 >= 12.4); the generic lift is only a
+// fallback for future colours not in the map
+const DARK_OVERRIDE = {"#6b4d1e":"#9a7238", "#7a4fa3":"#a07ad0", "#2a4d8f":"#7fa2e6",
+                       "#1f2a44":"#a9b8d9", "#101418":"#d6d9de"};
 function colLift(h){
-  return (isDark() && lum(h) < 0.22) ? mixHex(h, "#9db0cc", 0.55) : h; }
+  if(!isDark()) return h;
+  return DARK_OVERRIDE[h] ?? (lum(h) < 0.22 ? mixHex(h, "#9db0cc", 0.55) : h); }
+// text colour on a fill (nontransparent hex): dark text on light fills
+function txtOn(fill){ return lum(fill) > 0.45 ? "#141413" : (isDark() ? css('--ink') : "#faf9f5"); }
 function laneCol(i){ return colLift(lay().lanes[i].color); }
 function streamCol(i){ return colLift(DATA.layouts.streams.B16.lanes[i].color); }
 
@@ -388,7 +476,7 @@ function drawStreams(){
   svg.setAttribute("width", G.W); svg.setAttribute("height", G.H);
   svg.setAttribute("viewBox", `0 0 ${G.W} ${G.H}`);
 
-  let s = `<defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><rect width="6" height="6" fill="#c9c4ba"/><line x1="0" y1="0" x2="0" y2="6" stroke="#6e6a62" stroke-width="1.4"/></pattern></defs>`;
+  let s = `<defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><rect width="6" height="6" fill="${css('--hatch-bg')}"/><line x1="0" y1="0" x2="0" y2="6" stroke="${css('--hatch-ln')}" stroke-width="1.4"/></pattern></defs>`;
 
   // lane bands + labels (compact single-line labels when rows are tight)
   const tight = G.laneS < 34;
@@ -406,10 +494,11 @@ function drawStreams(){
   for(let j=0;j<=B;j+=2){
     s += `<text class="axis" x="${binX(j)}" y="${G.mT+G.plotH+16}" text-anchor="middle">${Math.floor(j*N/B/1000)}k</text>`;
   }
-  s += `<text class="axis" x="${G.mL+G.plotW/2}" y="${G.mT+G.plotH+32}" text-anchor="middle">depth = champion order π (H64); tick = rank at bin edge</text>`;
+  s += `<text class="axis" x="${G.mL+G.plotW/2}" y="${G.mT+G.plotH+32}" text-anchor="middle">depth = ${WI.isH64 ? "champion order π (H64)" : `what-if order (${wiTag()}); rows keep H64 order`}; tick = rank at bin edge</text>`;
 
   // cells
   G.cellGeo = {};
+  const bgC = css('--bg'), hatchBg = css('--hatch-bg'), hatchLn = css('--hatch-ln');
   let cellsSvg = "";
   for(const c of L.cells){
     const id = c.lane*B + c.bin, y = laneY(c.lane);
@@ -420,9 +509,10 @@ function drawStreams(){
     const lcol = laneCol(c.lane);
     const isSink = c.sink0/c.count > 0.5;
     const blw = Math.max(0.5, 3.4*Math.sqrt((c.intra_ff+c.intra_fb)/imax));
-    cellsSvg += `<rect class="cell" data-cell="${id}" x="${(x-hw).toFixed(1)}" y="${(y-hh).toFixed(1)}" width="${(2*hw).toFixed(1)}" height="${(2*hh).toFixed(1)}" rx="3.5" fill="${isSink?'url(#hatch)':lcol}" fill-opacity="${(0.28+0.66*f).toFixed(2)}" stroke="${isSink?'#6e6a62':lcol}" stroke-width="${blw.toFixed(1)}"/>`;
+    const fop = 0.28+0.66*f;
+    cellsSvg += `<rect class="cell" data-cell="${id}" x="${(x-hw).toFixed(1)}" y="${(y-hh).toFixed(1)}" width="${(2*hw).toFixed(1)}" height="${(2*hh).toFixed(1)}" rx="3.5" fill="${isSink?'url(#hatch)':lcol}" fill-opacity="${fop.toFixed(2)}" stroke="${isSink?hatchLn:lcol}" stroke-width="${blw.toFixed(1)}"/>`;
     if(c.count > 0.05*cmax && !tight)
-      cellsSvg += `<text class="cell-lab" x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="${f>0.55?'#faf9f5':(isDark()?'#e6e4df':'#141413')}">${c.count>=1000?(c.count/1000).toFixed(1)+'k':c.count}</text>`;
+      cellsSvg += `<text class="cell-lab" x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="${txtOn(mixHex(bgC, isSink?hatchBg:lcol, fop))}">${c.count>=1000?(c.count/1000).toFixed(1)+'k':c.count}</text>`;
   }
   svg.innerHTML = s + `<g id="g-ff"></g><g id="g-fb"></g><g id="g-cells">${cellsSvg}</g>`;
   drawBundles();
@@ -516,36 +606,46 @@ function drawCloud(){
     : "y within a lane = rank of the spectral affinity coordinate (ordinal); grey dots = no outputs in graph.";
   if(state.cloud==="off" || state.view!=="streams") return;
   const CGR = cg();
-  const yMin = CGR.y_min, yMax = CGR.y_max, CY = CGR.y, CL = CGR.lane;
+  const CL = CGR.lane;
   const laneCols = lay().lanes.map((l,i)=>laneCol(i));
   const cL = css('--hemiL'), cR = css('--hemiR'), cO = css('--dim');
   const ntv = DATA.nt_stats.values;
-  const ntCols = ntv.map(v=>NT_COLORS[v] || cO);
+  const ntCols = ntv.map(v=>NT_COLORS[v] ? colLift(NT_COLORS[v]) : cO);
   const mode = state.cloud;
   const colorOf = i =>
     mode==="side" ? (CS[i]===1?cL:(CS[i]===2?cR:cO)) :
     mode==="nt"   ? (ntv[CNT[i]]==="NA" ? cO : ntCols[CNT[i]]) :
     (CSINK[i]?cO:laneCols[CL[i]]);
-  const sel = state.typeSel;
-  const pxy = i => [G.mL + (CX[i]/N)*G.plotW,
-                    G.mT + ((yMin + (CY[i]/65535)*(yMax-yMin))+0.5)*G.laneS];
-  ctx.globalAlpha = sel==null ? 0.38 : 0.10;
+  // highlight precedence: A/B while the swap row is hovered, then the selection, then the type
+  const A = WI.grpA, Bg = WI.grpB, cA = css('--accent'), cB = css('--ink');
+  const hiCol = WI.showAB && (A || Bg) ? (i => A && A[i] ? cA : Bg && Bg[i] ? cB : null)
+    : WI.nSel ? (i => WI.sel[i] ? colorOf(i) : null)
+    : state.typeSel!=null ? (i => CT[i]===state.typeSel ? colorOf(i) : null) : null;
+  const pxy = dotPos(curR(), CGR);
+  ctx.globalAlpha = hiCol==null ? 0.38 : 0.10;
   for(let i=0;i<N;i++){
-    if(sel!=null && CT[i]===sel) continue;
+    if(hiCol!=null && hiCol(i)!=null) continue;
     const [px,py] = pxy(i);
-    ctx.fillStyle = sel!=null ? cO : colorOf(i);
+    ctx.fillStyle = hiCol!=null ? cO : colorOf(i);
     ctx.fillRect(px, py, 1.3, 1.3);
   }
-  if(sel!=null){                       // highlighted type drawn on top, larger
+  if(hiCol!=null){                     // highlighted dots drawn on top, larger
     ctx.globalAlpha = 0.95;
     for(let i=0;i<N;i++){
-      if(CT[i]!==sel) continue;
+      const c = hiCol(i);
+      if(c==null) continue;
       const [px,py] = pxy(i);
-      ctx.fillStyle = colorOf(i);
+      ctx.fillStyle = c;
       ctx.fillRect(px-1, py-1, 2.6, 2.6);
     }
   }
   ctx.globalAlpha = 1;
+}
+function curR(){ return WI.drag ? WI.drag.R : (WI.R || CX); }
+function dotPos(R, CGR){
+  const yMin = CGR.y_min, yMax = CGR.y_max, CY = CGR.y;
+  return i => [G.mL + (R[i]/N)*G.plotW,
+               G.mT + ((yMin + (CY[i]/65535)*(yMax-yMin))+0.5)*G.laneS];
 }
 
 // ---- isolation / cards -------------------------------------------------
@@ -570,8 +670,12 @@ function applyIso(){
 }
 
 function updateCardDefault(){
+  if(WI.stale){
+    card.innerHTML = `<div class="h">Moving…</div><span class="hint">Grid shows the order before this move.</span>`;
+    return;
+  }
   if(state.view==="chem"){
-    const S = DATA.nt_stats;
+    const S = WIcore.ntData(WI, DATA);
     const sumFF = S.w_ff.reduce((a,b)=>a+b,0), sumFB = S.w_fb.reduce((a,b)=>a+b,0);
     card.innerHTML = `<div class="h">Transmitter chemistry</div>
       <div class="row"><span class="k">feedforward weight</span><span>${(sumFF/1e6).toFixed(2)}M syn = ${(100*sumFF/WTOT).toFixed(2)}%</span></div>
@@ -588,7 +692,7 @@ function updateCardDefault(){
     <div class="row"><span class="k">hidden intra-cell</span><span>${st.intra_cell_ff_pct.toFixed(1)}% FF + ${st.intra_cell_fb_pct.toFixed(1)}% FB</span></div>
     <div class="row"><span class="k">inter-cell FF / FB</span><span>${st.inter_ff_pct_of_total.toFixed(1)} / ${st.inter_fb_pct_of_total.toFixed(1)} % of total</span></div>
     <div class="row"><span class="k">same-column flows</span><span>${st.same_bin_vertical_pct_of_inter.toFixed(1)}% of inter</span></div>
-    <div class="row"><span class="k">hierarchy test</span><span>ρ=0.263, p≤5e-4</span></div>
+    <div class="row"><span class="k">${WI.isH64?"":"H64 "}hierarchy test</span><span>ρ=0.263, p≤5e-4</span></div>
     <span class="hint">${hint}</span>`;
 }
 function showCellCard(id){
@@ -606,7 +710,7 @@ function showCellCard(id){
   const types = c.top_types.map(t=>`<li>${esc(t[0])} <span class="k">${t[1].toLocaleString()}</span></li>`).join("");
   const subFF = c.out_ff>0 ? (100*(c.out_ff-inkFF)/c.out_ff).toFixed(0) : "0";
   const subFB = c.out_fb>0 ? (100*(c.out_fb-inkFB)/c.out_fb).toFixed(0) : "0";
-  card.innerHTML = `<div class="h" style="color:${lane.color}">${esc(lane.name)} · ranks ${r0}–${r1}k</div>
+  card.innerHTML = `<div class="h" style="color:${laneCol(c.lane)}">${esc(lane.name)} · ranks ${r0}–${r1}k</div>
     <div class="row"><span class="k">neurons</span><span>${c.count.toLocaleString()}${c.sink0?` (${c.sink0} no-output)`:""}</span></div>
     <div class="row"><span class="k">top cell types</span><span></span></div><ul>${types}</ul>
     <div class="row"><span class="k">intra-cell FF / FB</span><span>${fmtW(c.intra_ff)} / ${fmtW(c.intra_fb)}</span></div>
@@ -619,9 +723,9 @@ function showCellCard(id){
 // ---- matrix view -------------------------------------------------------
 function drawMatrix(){
   canvas.width = 0; canvas.height = 0; canvas.style.width = "0px";
-  const M = DATA.lane_matrix, W = M.W_pct, F = M.W_ff_pct;
+  const M = WIcore.mxData(WI, DATA), W = M.W_pct, F = M.W_ff_pct;
   const cs = 34, mL = 185, mT = 165, pad = 20;
-  const Wd = mL + K*cs + pad, Hd = mT + K*cs + pad + 30;
+  const Wd = mL + K*cs + pad, Hd = mT + K*cs + pad + 44;
   svg.setAttribute("width", Wd); svg.setAttribute("height", Hd);
   svg.setAttribute("viewBox", `0 0 ${Wd} ${Hd}`);
   const maxP = Math.max(...W.flat());
@@ -630,46 +734,46 @@ function drawMatrix(){
     s += `<text class="mx-lab" data-lane="${i}" data-g="streams" x="${mL-8}" y="${mT+i*cs+cs/2+4}" text-anchor="end" fill="${streamCol(i)}">${esc(DATA.lane_list[i])}</text>`;
     s += `<text class="mx-lab" data-lane="${i}" data-g="streams" x="${mL+i*cs+cs/2}" y="${mT-8}" text-anchor="start" transform="rotate(-55 ${mL+i*cs+cs/2} ${mT-8})" fill="${streamCol(i)}">${esc(DATA.lane_list[i])}</text>`;
   }
-  const dark = isDark();
-  const base = dark ? "#1c2230" : "#ffffff";
+  const base = css('--panel'), hi = css('--mx-hi'), mid = css('--mx-mid'), fbC = css('--fb');
+  const boxC = colLift("#e08a2e");
   for(let i=0;i<K;i++) for(let j=0;j<K;j++){
     const p = W[i][j];
-    let fill, txtcol = dark?"#e6e4df":"#141413";
+    let fill;
     if(state.mx==="pct"){
-      const t = Math.sqrt(p/maxP);
-      fill = mixHex(base, "#2f5f8f", t);
-      if(t>0.55) txtcol = "#f5f5f2";
+      fill = mixHex(base, hi, Math.sqrt(p/maxP));
     } else {
       if(p < 0.005){ fill = base; }
       else {
         const share = F[i][j]/p;         // FF fraction of the pair
-        fill = share<0.5 ? mixHex("#c23b3b", dark?"#39404e":"#d8d5cd", share*2)
-                         : mixHex(dark?"#39404e":"#d8d5cd", "#2f5f8f", (share-0.5)*2);
-        if(share<0.28||share>0.8) txtcol = "#f5f5f2";
+        fill = share<0.5 ? mixHex(fbC, mid, share*2) : mixHex(mid, hi, (share-0.5)*2);
       }
     }
-    s += `<rect class="mxcell" data-i="${i}" data-j="${j}" x="${mL+j*cs}" y="${mT+i*cs}" width="${cs-1}" height="${cs-1}" fill="${fill}" ${i===j?'stroke="#e08a2e" stroke-width="1.2"':''}/>`;
+    const txtcol = txtOn(fill);
+    s += `<rect class="mxcell" data-i="${i}" data-j="${j}" x="${mL+j*cs}" y="${mT+i*cs}" width="${cs-1}" height="${cs-1}" fill="${fill}" ${i===j?`stroke="${boxC}" stroke-width="1.2"`:''}/>`;
     const v = state.mx==="pct" ? p : (p>=0.005?100*F[i][j]/p:null);
     if(v!=null && p>=0.15)
       s += `<text class="mx-num" x="${mL+j*cs+cs/2}" y="${mT+i*cs+cs/2}" fill="${txtcol}">${state.mx==="pct"?p.toFixed(1):Math.round(v)}</text>`;
   }
-  s += `<text class="axis" x="${mL+K*cs/2}" y="${mT+K*cs+22}" text-anchor="middle">target lane → · source lane ↓ · orange boxes = intra-lane · ${state.mx==="pct"?"cell = % of total synapse weight":"cell = % of the pair's weight that is feedforward"}</text>`;
+  s += `<text class="axis" x="${mL+K*cs/2}" y="${mT+K*cs+22}" text-anchor="middle">target lane → · source lane ↓ · orange boxes = intra-lane</text>`;
+  s += `<text class="axis" x="${mL+K*cs/2}" y="${mT+K*cs+36}" text-anchor="middle">${state.mx==="pct"?"cell = % of total synapse weight":"cell = % of the pair's weight that is feedforward"}${WI.isH64?"":` · FF by what-if order (${wiTag()})`}</text>`;
   svg.innerHTML = s;
   document.getElementById("mx-hint").textContent = (state.mx==="pct"
     ? "Every gram of weight appears here — nothing thresholded away."
     : "Blue = feedforward-dominated pair, crimson = feedback-dominated (diverging at 50 %).")
-    + " The matrix is always computed on the 17 streams.";
+    + " The matrix is always computed on the 17 streams."
+    + (WI.isH64 ? "" : ` FF by what-if order (${wiTag()}).`);
 }
 
 // ---- chemistry view ----------------------------------------------------
 function drawChem(){
   canvas.width = 0; canvas.height = 0; canvas.style.width = "0px";
-  const S = DATA.nt_stats, ntv = S.values;
+  const S = WIcore.ntData(WI, DATA), ntv = S.values;
   const order = ["acetylcholine","gaba","glutamate","dopamine","serotonin","octopamine"];
   const idx = Object.fromEntries(ntv.map((v,i)=>[v,i]));
   const sumFF = S.w_ff.reduce((a,b)=>a+b,0), sumFB = S.w_fb.reduce((a,b)=>a+b,0);
   const ink = css('--ink'), muted = css('--muted'), lineC = css('--line');
   const sel = state.ntSel;                      // transmitter name or null
+  const ntc = k => colLift(NT_COLORS[k]);
   const dimA = k => (sel!=null && k!==sel) ? 0.18 : 1;
   const fmtM = x => x>=1e6 ? (x/1e6).toFixed(2)+"M" : Math.round(x).toLocaleString();
   const tipOf = (k,i) => {
@@ -681,10 +785,12 @@ function drawChem(){
   };
 
   const mL = 165, barMax = 620;
-  let y = 46, s = "";
+  let y = WI.isH64 ? 46 : 62, s = "";
 
   // Panel A — backward share within each transmitter
   s += `<text x="${mL}" y="24" font-size="14" font-weight="600" fill="${ink}">How much of each transmitter's weight flows backward</text>`;
+  if(!WI.isH64)
+    s += `<text x="${mL}" y="42" font-size="11.5" fill="${muted}">FF/FB by what-if order (${wiTag()})</text>`;
   const rows = order.map(k=>[k, idx[k]]).sort((a,b)=>
     (S.w_fb[b[1]]/(S.w_ff[b[1]]+S.w_fb[b[1]])) - (S.w_fb[a[1]]/(S.w_ff[a[1]]+S.w_fb[a[1]])));
   const shMax = Math.max(...rows.map(r=>100*S.w_fb[r[1]]/(S.w_ff[r[1]]+S.w_fb[r[1]])))*1.15;
@@ -692,9 +798,9 @@ function drawChem(){
     const share = 100*S.w_fb[i]/(S.w_ff[i]+S.w_fb[i]);
     const w = barMax*share/shMax;
     s += `<g data-nt="${k}" data-tip="${tipOf(k,i)}" opacity="${dimA(k)}" style="cursor:pointer">`;
-    s += `<rect x="${mL-24}" y="${y+4}" width="10" height="10" rx="2" fill="${NT_COLORS[k]}"/>`;
+    s += `<rect x="${mL-24}" y="${y+4}" width="10" height="10" rx="2" fill="${ntc(k)}"/>`;
     s += `<text x="${mL-30}" y="${y+13}" text-anchor="end" font-size="12.5" fill="${ink}" font-weight="600">${k}</text>`;
-    s += `<rect x="${mL}" y="${y}" width="${w.toFixed(1)}" height="18" rx="3" fill="${NT_COLORS[k]}" opacity="0.85"/>`;
+    s += `<rect x="${mL}" y="${y}" width="${w.toFixed(1)}" height="18" rx="3" fill="${ntc(k)}" opacity="0.85"/>`;
     s += `<text x="${mL+w+8}" y="${y+13}" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${share.toFixed(1)} %</text>`;
     s += `<text x="${mL+barMax+72}" y="${y+13}" text-anchor="end" font-size="10.5" fill="${muted}" font-family="IBM Plex Mono,monospace">${S.n_neurons[i].toLocaleString()} n</text>`;
     s += `</g>`;
@@ -702,7 +808,7 @@ function drawChem(){
   }
   const avg = 100*sumFB/WTOT;
   const rx = mL + barMax*avg/shMax;
-  s += `<line x1="${rx}" y1="40" x2="${rx}" y2="${y}" stroke="${muted}" stroke-dasharray="4 3"/>`;
+  s += `<line x1="${rx}" y1="${WI.isH64?40:56}" x2="${rx}" y2="${y}" stroke="${muted}" stroke-dasharray="4 3"/>`;
   s += `<text x="${rx+6}" y="${y+4}" font-size="11" fill="${muted}">all edges: ${avg.toFixed(1)} % backward</text>`;
   s += `<text x="${mL}" y="${y+24}" font-size="12" fill="${muted}">Right of the dashed line = over-represented in feedback. GABA and glutamate are inhibitory in the fly;</text>`;
   s += `<text x="${mL}" y="${y+40}" font-size="12" fill="${muted}">dopamine and serotonin are neuromodulators. Click any bar to follow one transmitter through every panel.</text>`;
@@ -719,9 +825,9 @@ function drawChem(){
       const w = barMax*v/tot;
       if(w < 1){ x += w; continue; }
       s += `<g data-nt="${k}" data-tip="${tipOf(k,i)}" opacity="${dimA(k)}" style="cursor:pointer">`;
-      s += `<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(w-2,1).toFixed(1)}" height="20" rx="2" fill="${NT_COLORS[k]}" opacity="0.9"/>`;
+      s += `<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(w-2,1).toFixed(1)}" height="20" rx="2" fill="${ntc(k)}" opacity="0.9"/>`;
       if(pct >= 5)
-        s += `<text x="${(x+w/2).toFixed(1)}" y="${y+14}" text-anchor="middle" font-size="10.5" fill="${lum(NT_COLORS[k])>0.45?'#141413':'#f7f6f3'}" font-family="IBM Plex Mono,monospace">${pct.toFixed(0)}%</text>`;
+        s += `<text x="${(x+w/2).toFixed(1)}" y="${y+14}" text-anchor="middle" font-size="10.5" fill="${lum(ntc(k))>0.45?'#141413':'#f7f6f3'}" font-family="IBM Plex Mono,monospace">${pct.toFixed(0)}%</text>`;
       s += `</g>`;
       x += w;
     }
@@ -759,7 +865,7 @@ function drawChem(){
       if(w < 0.8){ x += w; continue; }
       const t = `${esc(lanes[li].name)} · ${k}|${fmtM(v)} syn = ${(100*v/laneTot).toFixed(1)}% of this stream's output|of which backward: ${(100*outFB[i]/Math.max(v,1e-9)).toFixed(1)}%`;
       s += `<g data-nt="${k}" data-tip="${t}" opacity="${dimA(k)}" style="cursor:pointer">`;
-      s += `<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(w-1.5,0.8).toFixed(1)}" height="15" rx="1.5" fill="${NT_COLORS[k]}" opacity="0.9"/>`;
+      s += `<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(w-1.5,0.8).toFixed(1)}" height="15" rx="1.5" fill="${ntc(k)}" opacity="0.9"/>`;
       s += `</g>`;
       x += w;
     }
@@ -773,13 +879,14 @@ function drawChem(){
   // live accounting check — every displayed number re-derives from these sums
   y += 20;
   const okTot = Math.abs(sumFF+sumFB - WTOT) < 0.5;
-  const okFF = Math.abs(100*sumFF/WTOT - DATA.champion_ff_pct) < 0.005;
+  const refPct = WI.isH64 ? DATA.champion_ff_pct : 100*WI.score/WTOT;   // what-if: its own exact score
+  const okFF = Math.abs(100*sumFF/WTOT - refPct) < 0.005;
   const laneSum = S.lane_out_ff.flat().reduce((a,b)=>a+b,0) + S.lane_out_fb.flat().reduce((a,b)=>a+b,0);
   const okLane = Math.abs(laneSum - WTOT) < 0.5;
   s += `<line x1="${mL}" y1="${y-12}" x2="${mL+barMax}" y2="${y-12}" stroke="${lineC}"/>`;
   s += `<text x="${mL}" y="${y+4}" font-size="11.5" fill="${muted}" font-family="IBM Plex Mono,monospace">accounting, computed live from this page's data:</text>`;
-  s += `<text x="${mL}" y="${y+21}" font-size="11.5" fill="${muted}" font-family="IBM Plex Mono,monospace">forward ${fmtM(sumFF)} + backward ${fmtM(sumFB)} = ${fmtM(sumFF+sumFB)} of ${fmtM(WTOT)} total syn ${okTot?"✓":"✗"} · forward share ${(100*sumFF/WTOT).toFixed(2)}% = champion ${DATA.champion_ff_pct.toFixed(2)}% ${okFF?"✓":"✗"}</text>`;
-  s += `<text x="${mL}" y="${y+38}" font-size="11.5" fill="${muted}" font-family="IBM Plex Mono,monospace">stream rows re-sum to the same total ${okLane?"✓":"✗"} · the Methods table and the Streams caption derive from these same sums</text>`;
+  s += `<text x="${mL}" y="${y+21}" font-size="11.5" fill="${muted}" font-family="IBM Plex Mono,monospace">forward ${fmtM(sumFF)} + backward ${fmtM(sumFB)} = ${fmtM(sumFF+sumFB)} of ${fmtM(WTOT)} total syn ${okTot?"✓":"✗"} · forward share ${(100*sumFF/WTOT).toFixed(2)}% = ${WI.isH64?"champion":"what-if"} ${refPct.toFixed(2)}% ${okFF?"✓":"✗"}</text>`;
+  s += `<text x="${mL}" y="${y+38}" font-size="11.5" fill="${muted}" font-family="IBM Plex Mono,monospace">stream rows re-sum to the same total ${okLane?"✓":"✗"} · ${WI.isH64?"the Methods table and the Streams caption derive from these same sums":"the Methods table describes H64, not this order"}</text>`;
   const iNA = idx["NA"];
   s += `<text x="${mL}" y="${y+58}" font-size="11" fill="${muted}">Transmitter labels are per-neuron predictions (Eckstein et al. 2024); the ${S.n_neurons[iNA]} unlabeled neurons carry ${fmtM(S.w_ff[iNA]+S.w_fb[iNA])} syn (&lt;0.01 %) — folded out of the bars, included in the sums.</text>`;
 
@@ -790,7 +897,7 @@ function drawChem(){
 }
 
 function showNtCard(k){
-  const S = DATA.nt_stats, i = S.values.indexOf(k);
+  const S = WIcore.ntData(WI, DATA), i = S.values.indexOf(k);
   if(i<0) return;
   const of=S.w_ff[i], ob=S.w_fb[i], tot=of+ob;
   const sumFF = S.w_ff.reduce((a,b)=>a+b,0), sumFB = S.w_fb.reduce((a,b)=>a+b,0);
@@ -798,7 +905,7 @@ function showNtCard(k){
   const byLane = lanes.map((l,li)=>[l.name, S.lane_out_ff[li][i]+S.lane_out_fb[li][i]])
                       .sort((a,b)=>b[1]-a[1]).slice(0,3);
   const fm = x => x>=1e6 ? (x/1e6).toFixed(2)+"M" : Math.round(x).toLocaleString();
-  card.innerHTML = `<div class="h" style="color:${NT_COLORS[k]}">${esc(k)}</div>
+  card.innerHTML = `<div class="h" style="color:${colLift(NT_COLORS[k])}">${esc(k)}</div>
     <div class="row"><span class="k">neurons</span><span>${S.n_neurons[i].toLocaleString()}</span></div>
     <div class="row"><span class="k">output weight</span><span>${fm(tot)} syn = ${(100*tot/WTOT).toFixed(1)}% of all</span></div>
     <div class="row"><span class="k">of all forward</span><span>${(100*of/sumFF).toFixed(1)}%</span></div>
@@ -816,6 +923,14 @@ document.body.appendChild(tip);
 // ---- events ------------------------------------------------------------
 function render(){
   const streams = state.view==="streams";
+  ensureCache();
+  document.getElementById("ctl-whatif").hidden = !streams;
+  svg.classList.toggle("tool-select", streams && WI.tool==="select");
+  svg.classList.toggle("tool-move", streams && WI.tool==="move");
+  fillLaneFilter();
+  document.getElementById("bins-hint").textContent = WI.isH64
+    ? "Equal-count contiguous slices of the champion order."
+    : "Equal-count contiguous slices of the current what-if order.";
   document.getElementById("ctl-grouping").hidden = !streams;
   document.getElementById("ctl-bins").hidden = !streams;
   document.getElementById("ctl-classes").hidden = !streams;
@@ -825,6 +940,8 @@ function render(){
   document.getElementById("legend").hidden = !streams || !state.grid;
   state.pinned = state.hover = state.hoverLane = null;
   state.ntSel = null;
+  document.getElementById("sw-ff").style.background =
+    `linear-gradient(90deg,${["#1f8a8d","#e08a2e","#3f6ab5"].map(colLift).join(",")})`;
   buildRegions();                    // heading colors follow the theme
   if(streams) drawStreams();
   else if(state.view==="matrix"){ drawMatrix(); updateCardDefault(); }
@@ -846,11 +963,12 @@ function seg(id, attr, cb){
     cb(b.dataset[attr]);
   });
 }
-seg("viewseg","v", v=>{ state.view=v; render(); });
-seg("binseg","b", b=>{ state.B=+b; state.thrFrac=lay().ink_threshold_frac; syncThr(); render(); });
-seg("groupseg","g", v=>{ state.grouping=v; state.typeSel=null;
+seg("viewseg","v", v=>{ cancelDrag(); state.view=v; render(); });
+// ensureCache() before lay(): a what-if layout must exist before the threshold reads it
+seg("binseg","b", b=>{ cancelDrag(); state.B=+b; ensureCache(); state.thrFrac=lay().ink_threshold_frac; syncThr(); render(); });
+seg("groupseg","g", v=>{ cancelDrag(); state.grouping=v; state.typeSel=null;
   document.getElementById("type-find").value=""; document.getElementById("type-hint").textContent="";
-  state.thrFrac=lay().ink_threshold_frac; syncThr(); render(); });
+  ensureCache(); state.thrFrac=lay().ink_threshold_frac; syncThr(); render(); });
 seg("cloudseg","c", c=>{
   if(c==="off" && !state.grid){        // never leave both layers off
     state.grid = true;
@@ -907,7 +1025,10 @@ function syncThr(){ const lo = Math.log10(lay().export_floor_frac), hi = Math.lo
   thrEl.value = Math.round(100*(Math.log10(state.thrFrac)-lo)/(hi-lo)); }
 thrEl.addEventListener("input", ()=>{ state.thrFrac = thrFromSlider(+thrEl.value); drawBundles(); });
 
+// select / move tools own the pointer in the streams view (a click still fires after a brush)
+const toolOn = () => state.view==="streams" && WI.tool!=="explore";
 svg.addEventListener("pointerover", e=>{
+  if(toolOn()) return;
   const cell = e.target.closest(".cell");
   const lab = e.target.closest(".lane-lab");
   const mx = e.target.closest(".mxcell");
@@ -925,7 +1046,7 @@ svg.addEventListener("pointerover", e=>{
       tip.style.top = (e.clientY-tr.height-10)+"px";
   }
   else if(mx){
-    const i = +mx.dataset.i, j = +mx.dataset.j, M = DATA.lane_matrix;
+    const i = +mx.dataset.i, j = +mx.dataset.j, M = WIcore.mxData(WI, DATA);
     tip.innerHTML = `${esc(DATA.lane_list[i])} → ${esc(DATA.lane_list[j])}<br>` +
       `${M.W_pct[i][j].toFixed(3)} % of total weight<br>` +
       `${M.W_pct[i][j]>0? (100*M.W_ff_pct[i][j]/M.W_pct[i][j]).toFixed(0):0} % of it feedforward`;
@@ -935,12 +1056,14 @@ svg.addEventListener("pointerover", e=>{
   }
 });
 svg.addEventListener("pointerout", e=>{
+  if(toolOn()) return;
   if(e.target.closest(".mxcell") || e.target.closest("[data-tip]")) tip.hidden = true;
   if(state.pinned!=null) return;
   if(e.target.closest(".cell")){ state.hover = null; applyIso(); updateCardDefault(); }
   if(e.target.closest(".lane-lab")){ state.hoverLane = null; applyIso(); }
 });
 svg.addEventListener("click", e=>{
+  if(toolOn()) return;
   const lab = e.target.closest(".lane-lab, .mx-lab");
   if(lab && lab.dataset.lane!=null){
     openRegions(+lab.dataset.lane, lab.dataset.g || state.grouping); return; }
@@ -968,6 +1091,330 @@ svg.addEventListener("click", e=>{
   else showCellCard(id);
   applyIso(); markPin();
 });
+
+// ---- what-if moves (design sections 3-6) -------------------------------
+const wiTag = () => `H64 + ${WI.steps} move${WI.steps===1?"":"s"}`;
+const sgn = x => (x<0?"-":"+") + Math.abs(x).toLocaleString();
+const sgnPP = x => (x<0?"-":"+") + Math.abs(100*x/WTOT).toFixed(4);
+const TOOL_HINT = {explore: "",
+  select: "Drag a box over dots or click a cell. Shift adds, Alt removes.",
+  move: "Drag left/right anywhere in the plot to shift the selection. Esc cancels."};
+
+async function loadEdges(){
+  try{
+    if(typeof DecompressionStream!=="function")
+      throw new Error("this browser has no DecompressionStream (needs Chrome 80+, Firefox 113+, Safari 16.4+)");
+    if(DATA.edges.n!==N || DATA.edges.m!==DATA.m) throw new Error("edge metadata does not match the page data");
+    const el = document.getElementById("edges");
+    const raw = await WIcore.inflate(WIcore.b64ToBytes(el.textContent));
+    el.textContent = "";
+    const R0 = Int32Array.from(CX), ORD0 = new Int32Array(N);
+    for(let i=0;i<N;i++) ORD0[R0[i]] = i;
+    const E = WIcore.decodeEdges(raw, N, DATA.m, ORD0, WTOT);
+    const S0 = WIcore.score(R0, E);
+    if(S0 !== DATA.edges.ff_h64_syn)
+      throw new Error(`self-check failed: H64 scores ${S0} here, the oracle says ${DATA.edges.ff_h64_syn}`);
+    Object.assign(WI, {E, R0, ORD0, S0, R:R0, ORD:ORD0, score:S0, ready:true});
+  }catch(e){ WI.err = e.message || String(e); }
+  updateWhatIf();
+}
+
+// cache rule (design section 6): filled here, before anything reads lay()/mxData()/ntData()
+function ensureCache(){
+  if(WI.isH64) return;
+  const g = state.grouping, key = g+"|B"+state.B;
+  if(!WI.cache[key]){
+    const L = DATA.layouts[g]["B"+state.B];
+    WI.cache[key] = WIcore.buildLayout(WI.R, cgOf(g).lane, DATA.cloud.groups[g].K, state.B, WI.E, CSINK, CT,
+      {lanes:L.lanes, typeNames:DATA.type_names, ink_threshold_frac:L.ink_threshold_frac,
+       export_floor_frac:L.export_floor_frac, W_total:WTOT, topTypes:WCFG.topTypes});
+  }
+  if(state.view==="matrix" && !WI.cache.mx)
+    WI.cache.mx = {...DATA.lane_matrix, W_ff_pct: WIcore.laneFF(WI.R, cgOf("streams").lane, K, WI.E, WTOT)};
+  if(state.view==="chem" && !WI.cache.nt)
+    WI.cache.nt = {...DATA.nt_stats, ...WIcore.ntSums(WI.R, CNT, cgOf("streams").lane, K,
+                                                      DATA.nt_stats.values.length, WI.E)};
+}
+
+function commit(R, ORD, score, steps){
+  WI.hist.push({R:WI.R, score:WI.score, steps:WI.steps});
+  if(WI.hist.length > WCFG.historyMax) WI.hist.shift();
+  WI.prevScore = WI.score;
+  Object.assign(WI, {R, ORD, score, steps});
+  setOrder();
+}
+// Cells and bundles are rebuilt synchronously; no frame is yielded before the rebuild,
+// so the stale grid is only ever visible during a drag (design 4.1, review r4).
+function setOrder(){
+  WI.version++; WI.drag = null; WI.stale = false; WI.cache = {}; WI.swapPre = null;
+  let same = true;
+  for(let i=0;i<N && same;i++) same = WI.R[i]===WI.R0[i];
+  WI.isH64 = same;
+  svg.classList.remove("stale");
+  render();
+  updateWhatIf();
+}
+function timed(label, f){
+  const t0 = performance.now();
+  f();
+  WI.t.commit = performance.now() - t0;
+  if(!WI.t.logged){ WI.t.logged = true; console.info(`what-if ${label}: ${Math.round(WI.t.commit)} ms (op + score + rebuild)`); }
+}
+function applyShift(delta){
+  if(!WI.nSel || WI.nSel===N || !delta) return;
+  timed("shift", ()=>{
+    const r = WIcore.shift(WI.R, WI.ORD, WI.sel, delta);
+    if(!r.delta) return;
+    WI.last = {op:"shift", delta:r.delta, rigid:r.rigid, saturated:r.saturated};
+    commit(r.R, r.ORD, WIcore.score(r.R, WI.E), WI.steps+1);
+  });
+}
+function swapPreview(){
+  if(!WI.swapPre && WI.ready && WI.grpA && WI.grpB){
+    try{ WI.swapPre = WIcore.swapGroups(WI.R, WI.ORD, WI.grpA, WI.grpB); }
+    catch(e){ WI.swapPre = {error: e.message}; }
+  }
+  return WI.swapPre;
+}
+function doSwap(){
+  const p = swapPreview();
+  if(!p || p.error) return;
+  timed("swap", ()=>{
+    WI.last = {op:"swap"};
+    commit(p.R, p.ORD, WIcore.score(p.R, WI.E), WI.steps+1);
+  });
+}
+function undo(){
+  const h = WI.hist.pop();
+  if(!h) return;
+  cancelDrag();
+  const ORD = new Int32Array(N);
+  for(let i=0;i<N;i++) ORD[h.R[i]] = i;
+  WI.prevScore = WI.score; WI.last = null;
+  Object.assign(WI, {R:h.R, ORD, score:h.score, steps:h.steps});
+  setOrder();
+}
+function resetOrder(){
+  if(WI.isH64) return;
+  cancelDrag(); WI.last = null;
+  commit(WI.R0, WI.ORD0, WI.S0, 0);
+}
+
+// ---- selection ----
+function setSel(mask, mode){                 // mask null = clear
+  if(mask==null) WI.sel.fill(0);
+  else if(mode==="replace") WI.sel.set(mask);
+  else { const v = mode==="add" ? 1 : 0; for(let i=0;i<N;i++) if(mask[i]) WI.sel[i] = v; }
+  let n = 0;
+  for(let i=0;i<N;i++) n += WI.sel[i];
+  WI.nSel = n;
+  updateWhatIf(); drawCloud();
+}
+const modeOf = e => e.altKey ? "remove" : e.shiftKey ? "add" : "replace";
+let laneFilterFor = null;
+function fillLaneFilter(){
+  if(laneFilterFor===state.grouping) return;
+  document.getElementById("wi-f-lane").innerHTML = `<option value="">any lane</option>` +
+    DATA.layouts[state.grouping].B16.lanes.map((l,i)=>`<option value="${i}">${esc(l.name)}</option>`).join("");
+  laneFilterFor = state.grouping;
+}
+document.querySelectorAll("#wi-body [data-f]").forEach(b=>b.addEventListener("click", ()=>{
+  const lane = document.getElementById("wi-f-lane").value, side = document.getElementById("wi-f-side").value;
+  const q = document.getElementById("wi-f-type").value.trim(), t = q ? DATA.type_names.indexOf(q) : -1;
+  const hint = document.getElementById("wi-tool-hint");
+  if(q && t<0){ hint.textContent = "Unknown cell type: pick one from the list."; return; }
+  hint.textContent = TOOL_HINT[WI.tool];
+  const CL = cg().lane, m = new Uint8Array(N);
+  for(let i=0;i<N;i++)
+    m[i] = (lane==="" || CL[i]===+lane) && (t<0 || CT[i]===t) &&
+           (side==="" || (side==="0" ? CS[i]!==1 && CS[i]!==2 : CS[i]===+side)) ? 1 : 0;
+  setSel(m, b.dataset.f);
+}));
+document.getElementById("wi-clear").addEventListener("click", ()=>setSel(null, "replace"));
+
+seg("toolseg","tool", t=>{
+  cancelDrag(); WI.tool = t;
+  svg.classList.toggle("tool-select", t==="select"); svg.classList.toggle("tool-move", t==="move");
+  document.getElementById("wi-tool-hint").textContent = TOOL_HINT[t];
+  if(t==="explore" || state.view!=="streams") return;
+  state.pinned = state.hover = state.hoverLane = null;
+  applyIso(); markPin(); updateCardDefault();
+  if(state.cloud==="off"){
+    state.cloud = "lane";
+    document.querySelectorAll("#cloudseg button").forEach(b=>
+      b.classList.toggle("on", b.dataset.c==="lane"));
+    drawCloud();
+  }
+});
+
+// ---- pointer gestures: brush / cell click (select), live drag (move) ----
+let brush = null;                            // {x0, y0, x, y, mode, cell, rect}
+const svgXY = e => { const rc = svg.getBoundingClientRect(); return [e.clientX-rc.left, e.clientY-rc.top]; };
+svg.addEventListener("pointerdown", e=>{
+  if(!toolOn() || !WI.ready || e.button!==0) return;
+  const [x,y] = svgXY(e);
+  if(WI.tool==="select"){
+    const c = e.target.closest(".cell");
+    brush = {x0:x, y0:y, x, y, mode:modeOf(e), cell: c ? +c.dataset.cell : null, rect:null};
+  } else {
+    if(!WI.nSel || WI.nSel===N) return;
+    WI.drag = {x0:x, want:0, delta:0, R:WI.R, ORD:WI.ORD, score:WI.score, rigid:true, saturated:false,
+               b:WIcore.shiftBounds(WI.R, WI.ORD, WI.sel), raf:0};
+    WI.stale = true; svg.classList.add("stale"); updateCardDefault();
+    document.getElementById("thr-cov").textContent = "";
+    updateReadout();
+  }
+  svg.setPointerCapture(e.pointerId);
+  e.preventDefault();
+});
+svg.addEventListener("pointermove", e=>{
+  if(!brush && !WI.drag) return;
+  const [x,y] = svgXY(e);
+  if(brush){
+    brush.x = x; brush.y = y;
+    if(!brush.rect && Math.hypot(x-brush.x0, y-brush.y0) < WCFG.dragThresholdPx) return;
+    if(!brush.rect){
+      brush.rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      brush.rect.setAttribute("fill", "none"); brush.rect.setAttribute("stroke", css('--accent'));
+      brush.rect.setAttribute("stroke-dasharray", "5 3"); brush.rect.setAttribute("pointer-events", "none");
+      svg.appendChild(brush.rect);
+    }
+    brush.rect.setAttribute("x", Math.min(x, brush.x0)); brush.rect.setAttribute("y", Math.min(y, brush.y0));
+    brush.rect.setAttribute("width", Math.abs(x-brush.x0)); brush.rect.setAttribute("height", Math.abs(y-brush.y0));
+    return;
+  }
+  const d = WI.drag;                         // pointermove only stores the target; one shift+score per frame
+  d.want = Math.min(Math.max(Math.round((x-d.x0)*N/G.plotW), d.b.satLo), d.b.satHi);
+  if(!d.raf) d.raf = requestAnimationFrame(dragFrame);
+});
+function dragCompute(d){
+  if(d.want===d.delta) return;
+  const r = WIcore.shift(WI.R, WI.ORD, WI.sel, d.want);
+  Object.assign(d, {delta:r.delta, R:r.R, ORD:r.ORD, rigid:r.rigid, saturated:r.saturated,
+                    score:WIcore.score(r.R, WI.E)});
+}
+function dragFrame(){
+  const d = WI.drag;
+  if(!d) return;
+  d.raf = 0;
+  dragCompute(d);
+  const t0 = performance.now();
+  drawCloud();
+  WI.t.cloud = performance.now() - t0;
+  updateReadout();
+}
+svg.addEventListener("pointerup", e=>{
+  if(brush){ finishBrush(); return; }
+  const d = WI.drag;
+  if(!d) return;
+  if(d.raf){ cancelAnimationFrame(d.raf); d.raf = 0; }
+  if(d.want===0){ cancelDrag(); return; }    // no move: just leave the stale state
+  timed("drag", ()=>{
+    dragCompute(d);
+    WI.last = {op:"shift", delta:d.delta, rigid:d.rigid, saturated:d.saturated};
+    commit(d.R, d.ORD, d.score, WI.steps+1);
+  });
+});
+svg.addEventListener("pointercancel", ()=>cancelDrag());
+svg.addEventListener("lostpointercapture", ()=>cancelDrag());   // no-op after a normal pointerup
+function cancelDrag(){
+  if(brush){ if(brush.rect) brush.rect.remove(); brush = null; }
+  const d = WI.drag;
+  if(!d) return;
+  if(d.raf) cancelAnimationFrame(d.raf);
+  WI.drag = null; WI.stale = false; svg.classList.remove("stale");
+  if(state.view==="streams"){ drawBundles(); drawCloud(); if(state.pinned==null) updateCardDefault(); }
+  updateWhatIf();
+}
+function finishBrush(){
+  const p = brush; brush = null;
+  const m = new Uint8Array(N), R = WI.R, CL = cg().lane, B = state.B;
+  if(p.rect){
+    p.rect.remove();
+    const x0 = Math.min(p.x, p.x0), x1 = Math.max(p.x, p.x0), y0 = Math.min(p.y, p.y0), y1 = Math.max(p.y, p.y0);
+    const pxy = dotPos(R, cg());
+    for(let i=0;i<N;i++){ const [px,py] = pxy(i); m[i] = px>=x0 && px<=x1 && py>=y0 && py<=y1 ? 1 : 0; }
+  } else if(p.cell!=null){
+    const lane = Math.floor(p.cell/B), bin = p.cell%B;
+    for(let i=0;i<N;i++) m[i] = CL[i]===lane && Math.min(Math.floor(R[i]*B/N), B-1)===bin ? 1 : 0;
+  } else return;
+  setSel(m, p.mode);
+}
+
+// ---- buttons ----
+document.getElementById("wi-apply").addEventListener("click", ()=>
+  applyShift(Math.round(+document.getElementById("wi-delta").value || 0)));
+for(const [id, k] of [["wi-setA","grpA"], ["wi-setB","grpB"]])
+  document.getElementById(id).addEventListener("click", ()=>{
+    if(!WI.nSel) return;
+    WI[k] = WI.sel.slice(); WI[k==="grpA"?"nA":"nB"] = WI.nSel; WI.swapPre = null;
+    updateWhatIf();
+    if(WI.showAB) drawCloud();
+  });
+document.getElementById("wi-swapbtn").addEventListener("click", doSwap);
+document.getElementById("wi-undo").addEventListener("click", undo);
+document.getElementById("wi-reset").addEventListener("click", resetOrder);
+document.getElementById("wi-dl").addEventListener("click", ()=>{
+  if(WI.isH64) return;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([WIcore.ranksToNpy(WI.R)], {type:"application/octet-stream"}));
+  a.download = `fly_whatif_ranks_ff${WI.score}.npy`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+});
+const swapRow = document.getElementById("wi-swap");
+swapRow.addEventListener("mouseenter", ()=>{ WI.showAB = true; if(WI.grpA || WI.grpB) drawCloud(); });
+swapRow.addEventListener("mouseleave", ()=>{ WI.showAB = false; if(WI.grpA || WI.grpB) drawCloud(); });
+
+// ---- panel text ----
+function updateWhatIf(){
+  const st = document.getElementById("wi-status");
+  document.getElementById("wi-body").disabled = !WI.ready;
+  st.hidden = WI.ready;
+  st.textContent = WI.err ? `What-if moves are off: ${WI.err}` : "loading edges…";
+  if(!WI.ready) return;
+  let nL = 0, nR = 0;
+  for(let i=0;i<N;i++) if(WI.sel[i]){ if(CS[i]===1) nL++; else if(CS[i]===2) nR++; }
+  document.getElementById("wi-sel").textContent = `Selected: ${WI.nSel.toLocaleString()} neurons` +
+    (WI.nSel ? ` (L ${nL.toLocaleString()} / R ${nR.toLocaleString()} / other ${(WI.nSel-nL-nR).toLocaleString()})` : "");
+  const off = (id, v) => { document.getElementById(id).disabled = v; };
+  off("wi-apply", !WI.nSel || WI.nSel===N);
+  off("wi-setA", !WI.nSel); off("wi-setB", !WI.nSel);
+  off("wi-undo", !WI.hist.length); off("wi-reset", WI.isH64); off("wi-dl", WI.isH64);
+  const p = swapPreview();
+  off("wi-swapbtn", !p || !!p.error);
+  const med = m => `med ${(m/1000).toFixed(1)}k`;
+  let ab = `A: ${WI.grpA ? WI.nA.toLocaleString() + (p && !p.error ? " · " + med(p.medA) : "") : "not set"}` +
+           ` | B: ${WI.grpB ? WI.nB.toLocaleString() + (p && !p.error ? " · " + med(p.medB) : "") : "not set"}`;
+  if(p) ab += p.error ? `. ${p.error}; swap is off.` : (p.warnings.length ? `. ${p.warnings.join(" ")}` : "");
+  document.getElementById("wi-ab").textContent = ab;
+  const fw = document.getElementById("fact-whatif");
+  fw.hidden = WI.isH64;
+  fw.innerHTML = `what-if FF <b>${(100*WI.score/WTOT).toFixed(4)}</b>%`;
+  document.getElementById("fact-order").textContent = WI.isH64
+    ? "order = H64 champion (pinned, oracle-verified)" : `order = what-if (${wiTag()}; not optimized)`;
+  document.getElementById("wi-note").hidden = WI.isH64;
+  updateReadout();
+}
+function updateReadout(){
+  const d = WI.drag, s = d ? d.score : WI.score;
+  const row = (k, v) => `<div class="row"><span class="k">${k}</span><span style="white-space:nowrap">${v}</span></div>`;
+  const shape = x => x.rigid ? "" : row("", x.saturated ? "saturated" : "compressed at the edge");
+  let h = row(WI.isH64 && !d ? "H64 FF" : "what-if FF", `${(100*s/WTOT).toFixed(4)} %`) +
+          row("vs H64", `${sgnPP(s-WI.S0)} pp (${sgn(s-WI.S0)} syn)`);
+  if(d){
+    h += row("dragging", `Δ = ${sgn(d.delta)}`) + shape(d);
+    const fw = document.getElementById("fact-whatif");
+    fw.hidden = false;
+    fw.innerHTML = `what-if FF <b>${(100*s/WTOT).toFixed(4)}</b>%`;
+  }
+  else {
+    if(WI.prevScore!=null) h += row("vs prev.", `${sgnPP(WI.score-WI.prevScore)} pp (${sgn(WI.score-WI.prevScore)} syn)`);
+    h += row("steps", WI.steps);
+    if(WI.last && WI.last.op==="shift") h += row("last shift", `Δ = ${sgn(WI.last.delta)}`) + shape(WI.last);
+  }
+  document.getElementById("wi-readout").innerHTML = h;
+}
 
 // ---- regions guide -----------------------------------------------------
 const LANE_INFO = {
@@ -1106,6 +1553,7 @@ const regions = document.getElementById("regions");
 function openRegions(laneIdx, g){
   g = g || state.grouping;
   if(regionsBuiltFor !== g) buildRegions(g);
+  document.getElementById("rg-banner").hidden = WI.isH64;
   regions.hidden = false;
   if(laneIdx!=null){
     const el = document.getElementById("rg-"+laneIdx);
@@ -1136,10 +1584,22 @@ regions.addEventListener("click", e=>{ if(e.target===regions) regions.hidden=tru
 
 // methods modal
 const modal = document.getElementById("methods");
-document.getElementById("methods-btn").addEventListener("click", ()=>{ modal.hidden=false; });
+document.getElementById("methods-btn").addEventListener("click", ()=>{
+  document.getElementById("mt-banner").hidden = WI.isH64; modal.hidden=false;
+  modal.querySelector(".mpanel").scrollTop = 0; });
 document.getElementById("methods-close").addEventListener("click", ()=>{ modal.hidden=true; });
 modal.addEventListener("click", e=>{ if(e.target===modal) modal.hidden=true; });
-addEventListener("keydown", e=>{ if(e.key==="Escape"){ modal.hidden=true; regions.hidden=true; } });
+addEventListener("keydown", e=>{
+  if(e.key==="Escape"){
+    if(WI.drag){ cancelDrag(); return; }
+    if(!modal.hidden || !regions.hidden){ modal.hidden=true; regions.hidden=true; return; }
+    if(toolOn() && WI.nSel) setSel(null, "replace");
+  }
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==="z" && !e.shiftKey &&
+     !/^(INPUT|TEXTAREA)$/.test(document.activeElement && document.activeElement.tagName)){
+    if(WI.ready && WI.hist.length){ e.preventDefault(); undo(); }
+  }
+});
 
 // NT table
 (function(){
@@ -1152,12 +1612,38 @@ addEventListener("keydown", e=>{ if(e.key==="Escape"){ modal.hidden=true; region
   t.innerHTML = h;
 })();
 
+// colour theme: auto / light / dark (remembered per browser; fails safe to auto).
+// auto restores the data-theme the host page had at load instead of deleting it.
+let hostTheme = document.documentElement.dataset.theme, themeChoice = "auto";
+try{ const t = localStorage.getItem("fly-theme"); if(t==="light" || t==="dark") themeChoice = t; }catch(e){}
+const themeAttr = () => themeChoice==="auto" ? hostTheme : themeChoice;
+function markThemeSeg(){
+  document.querySelectorAll("#themeseg button").forEach(b=>b.classList.toggle("on", b.dataset.t===themeChoice));
+}
+function applyTheme(){
+  const v = themeAttr();
+  if(v==null) document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.dataset.theme = v;
+  markThemeSeg();
+}
+seg("themeseg","t", t=>{
+  themeChoice = t;
+  try{ localStorage.setItem("fly-theme", t); }catch(e){}
+  applyTheme();
+});
+applyTheme();
+
 state.thrFrac = lay().ink_threshold_frac;
 syncThr();
 render();
-addEventListener("resize", ()=>{ if(state.view==="streams") drawStreams(); });
+addEventListener("resize", ()=>{ cancelDrag(); if(state.view==="streams") drawStreams(); });
+loadEdges();
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
 new MutationObserver(muts=>{
-  if(muts.some(m=>m.attributeName==="data-theme")) render();
+  if(!muts.some(m=>m.attributeName==="data-theme")) return;
+  // records arrive asynchronously, so a change is foreign iff it differs from what the toggle wrote
+  const now = document.documentElement.dataset.theme;
+  if(now !== themeAttr()){ hostTheme = now; themeChoice = "auto"; markThemeSeg(); }
+  render();
 }).observe(document.documentElement, {attributes:true});
 </script>
