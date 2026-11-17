@@ -6,7 +6,7 @@ neurons get the FlyWire cell_class of their matched flywireType (majority over F
 neurons of that type), so the optic lanes use exactly the FlyWire rule. Nerve-cord neurons get
 their own lanes.
 
-    $PY male_cns/ann_prep.py
+    $PY male_cns/pipeline/ann_prep.py
 Output: data/processed/malecns_ann.csv.gz, male_cns/results/ann_summary.json
 """
 import json
@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "layering" / "tools"))
 from fly_streams import MB_CLASSES, OLFACTION_CLASSES  # noqa: E402
 

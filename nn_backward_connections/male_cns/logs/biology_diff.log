@@ -1,0 +1,166 @@
+flywire done
+malecns_brain done
+malecns done
+{
+ "types_cross_sex": {
+  "types": 6782,
+  "spearman": 0.6099924871552873,
+  "pearson": 0.5876623440072315,
+  "both_fb_heavy_top": [
+   {
+    "t": "LMa5",
+    "lane_f": "medulla",
+    "fb_share_f": 0.906,
+    "fb_share_m": 0.748
+   },
+   {
+    "t": "lLN1_bc",
+    "lane_f": "olfaction: AL\u00b7LH",
+    "fb_share_f": 0.571,
+    "fb_share_m": 0.648
+   },
+   {
+    "t": "APL",
+    "lane_f": "mushroom body",
+    "fb_share_f": 0.647,
+    "fb_share_m": 0.647
+   },
+   {
+    "t": "LMa4",
+    "lane_f": "medulla\u2192lobula",
+    "fb_share_f": 0.593,
+    "fb_share_m": 0.667
+   },
+   {
+    "t": "Y11",
+    "lane_f": "lobula (plate)",
+    "fb_share_f": 0.553,
+    "fb_share_m": 0.58
+   },
+   {
+    "t": "Y1",
+    "lane_f": "lobula (plate)",
+    "fb_share_f": 0.591,
+    "fb_share_m": 0.675
+   },
+   {
+    "t": "TmY16",
+    "lane_f": "medulla\u2192lobula",
+    "fb_share_f": 0.792,
+    "fb_share_m": 0.744
+   },
+   {
+    "t": "TmY14",
+    "lane_f": "visual projection",
+    "fb_share_f": 0.956,
+    "fb_share_m": 0.957
+   },
+   {
+    "t": "LMa1",
+    "lane_f": "lobula (plate)",
+    "fb_share_f": 0.848,
+    "fb_share_m": 0.694
+   },
+   {
+    "t": "Li32",
+    "lane_f": "lobula (plate)",
+    "fb_share_f": 0.549,
+    "fb_share_m": 0.668
+   },
+   {
+    "t": "Pm14",
+    "lane_f": "medulla",
+    "fb_share_f": 0.601,
+    "fb_share_m": 0.517
+   },
+   {
+    "t": "Li30",
+    "lane_f": "lobula (plate)",
+    "fb_share_f": 0.681,
+    "fb_share_m": 0.712
+   }
+  ],
+  "more_fb_in_male": [
+   {
+    "t": "AN_GNG_101",
+    "lane_f": "ascending (VNC)",
+    "fb_share_f": 0.0,
+    "fb_share_m": 1.0
+   },
+   {
+    "t": "AN_GNG_26",
+    "lane_f": "ascending (VNC)",
+    "fb_share_f": 0.014,
+    "fb_share_m": 0.997
+   },
+   {
+    "t": "CB2084",
+    "lane_f": "central (other)",
+    "fb_share_f": 0.006,
+    "fb_share_m": 0.987
+   },
+   {
+    "t": "cL14",
+    "lane_f": "visual centrifugal",
+    "fb_share_f": 0.022,
+    "fb_share_m": 1.0
+   },
+   {
+    "t": "OCC01b",
+    "lane_f": "visual centrifugal",
+    "fb_share_f": 0.006,
+    "fb_share_m": 0.982
+   },
+   {
+    "t": "AN_GNG_AMMC_3",
+    "lane_f": "ascending (VNC)",
+    "fb_share_f": 0.0,
+    "fb_share_m": 0.971
+   },
+   {
+    "t": "CB3916",
+    "lane_f": "central (other)",
+    "fb_share_f": 0.007,
+    "fb_share_m": 0.968
+   },
+   {
+    "t": "FB6L",
+    "lane_f": "central complex",
+    "fb_share_f": 0.042,
+    "fb_share_m": 1.0
+   },
+   {
+    "t": "hDeltaK",
+    "lane_f": "central complex",
+    "fb_share_f": 0.002,
+    "fb_share_m": 0.953
+   },
+   {
+    "t": "AN_GNG_156",
+    "lane_f": "ascending (VNC)",
+    "fb_share_f": 0.0,
+    "fb_share_m": 0.95
+   }
+  ],
+  "more_fb_in_female": [
+   {
+    "t": "OA-VUMa5",
+    "lane_f": "olfaction: AL\u00b7LH",
+    "fb_share_f": 1.0,
+    "fb_share_m": 0.062
+   },
+   {
+    "t": "DNge138",
+    "lane_f": "descending",
+    "fb_share_f": 0.978,
+    "fb_share_m": 0.06
+   },
+   {
+    "t": "DNg34",
+    "lane_f": "descending",
+    "fb_share_f": 0.931,
+    "fb_share_m": 0.025
+   },
+   {
+    "t": "PS262",
+    "lane_f": "c

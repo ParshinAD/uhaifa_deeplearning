@@ -1,0 +1,13 @@
+n=164425 m=15270204 W=113731681 FF=93041515 (81.8079 %)
+  lane: 22 values
+  class: 22 values
+  superclass: 26 values
+  side: 5 values
+  flow: 4 values
+  top_nt: 8 values
+  region: 3 values
+spectral coords: 300 + 111 iterations, tau=300.365 (42 s)
+saved -> /Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/male_cns/results/streams (43 s total)
+real 42.87
+user 38.75
+sys 4.09

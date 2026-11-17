@@ -25,7 +25,7 @@ into `data/raw/male_cns/` (gitignored).
 - `data/processed/malecns.npz`: n = 164,425, m = 15,270,204, total weight = 113,731,681
 - `data/processed/malecns_nodes.csv.gz`: annotations + NT predictions per node
 - `data/processed/malecns_ann.csv.gz`: lanes / flow / region / NT in the FlyWire vocabulary
-  (`male_cns/ann_prep.py`)
+  (`male_cns/pipeline/ann_prep.py`)
 
 ## Reader environment
 The `allen` env has no feather reader. `build_graph.py` runs in a separate venv,
@@ -33,4 +33,4 @@ The `allen` env has no feather reader. `build_graph.py` runs in a separate venv,
 env was not changed. Recreate it with:
 
     uv venv male_cns/.venv --python 3.11 && uv pip install --python male_cns/.venv/bin/python pandas pyarrow numpy
-    male_cns/.venv/bin/python -I male_cns/build_graph.py
+    male_cns/.venv/bin/python -I male_cns/pipeline/build_graph.py

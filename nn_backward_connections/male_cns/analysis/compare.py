@@ -4,7 +4,7 @@ Reads male_cns/results/analysis_{flywire,malecns,malecns_brain}.json, type_ranks
 the null-ladder JSONs (FlyWire: biology/results/nullmodels/runs; male: male_cns/results/nulls)
 and writes male_cns/results/comparison.json + male_cns/outputs/*.png.
 
-    $PY male_cns/compare.py
+    $PY male_cns/analysis/compare.py
 """
 import json
 from pathlib import Path
@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 RES = ROOT / "male_cns" / "results"
 OUT = ROOT / "male_cns" / "outputs"
 CONFIG = dict(dpi=120, min_type_n=1, ladder=["L1_gnm", "w_source", "L3_dcsbm", "real"],
@@ -178,7 +178,7 @@ print(table.round(4).to_string())
 
 # ---- Figure 6: streams x depth: where each lane's neurons sit along the order, female vs male CNS
 import sys  # noqa: E402
-sys.path.insert(0, str(ROOT / "male_cns"))
+sys.path.insert(0, str(ROOT / "male_cns" / "analysis"))
 from analyze import load  # noqa: E402
 bins = 40
 fig, axes = plt.subplots(1, 2, figsize=(14, 7), sharey=False)

@@ -2,7 +2,7 @@
 other matched types of the same lane? A sex-specific signal would show up here; lab and
 segmentation differences would not prefer these types.
 
-    $PY male_cns/dimorphism.py
+    $PY male_cns/analysis/dimorphism.py
 Output: male_cns/results/dimorphism.json
 """
 import json
@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 RES = ROOT / "male_cns" / "results"
 CONFIG = dict(seed=42, n_perm=10000)
 

@@ -1,8 +1,8 @@
 # Male CNS v1.0: the project's analyses on a second fly, the other sex
 
-Status 2026-11-17: first pass done, one MFAS seed, unreviewed by an independent run unless
-marked. Everything here is separate from the FlyWire record; nothing in `src/`, `layering/`,
-`biology/` or `autoresearch/` was changed.
+Status 2026-11-17: first pass done, one MFAS seed, numbers and code reviewed once by an
+independent agent. Everything here is separate from the FlyWire record; nothing in `src/`,
+`layering/`, `biology/` or `autoresearch/` was changed.
 
 Dataset: Janelia FlyEM Male CNS v1.0 (brain + ventral nerve cord, one male fly). Build and
 provenance: `BUILD.md`. Graph used everywhere: traced-only neuron pairs, weight = synapse
@@ -10,34 +10,50 @@ count, weight >= 2 (same floor as our FlyWire graph): n = 164,425, m = 15,270,20
 W = 113,731,681. Brain-only subgraph (nerve-cord superclasses removed): n = 144,153,
 m = 13,014,794.
 
+## Start here
+
+| want to | open |
+|---|---|
+| look at the network | `outputs/streams/malecns_streams.html` (interactive page, same as the FlyWire "Fly Connectome Streams"; open in a browser) |
+| read the biology and the male vs female differences | `FINDINGS.md` (English), `FINDINGS.ru.md` (Russian) |
+| check a number | this README (sections below) and the file in `results/` it names |
+| rebuild everything | "How to reproduce" below; data provenance in `BUILD.md` |
+
+## Folder map
+
+| folder / file | contents |
+|---|---|
+| `BUILD.md` | download URLs, sha256, graph definition, reader venv |
+| `FINDINGS.md`, `FINDINGS.ru.md` | biological readings, in the format of `layering/FLY_FINDINGS.md` |
+| `pipeline/` | `build_graph.py` (feather -> npz), `ann_prep.py` (lanes / flow / NT in FlyWire vocabulary), `run_mfas.py` (H64 order), `run_nulls.py` (null ladder) |
+| `analysis/` | `analyze.py` (one script for both flies: A2, A3, A4, A5 swap, B1, B2, B5, B7, 2-cycle floor), `vnc_loop.py`, `noise_ceiling.py`, `dimorphism.py`, `biology_diff.py` (hemispheres, reciprocity by lane, per-type FB, lane-pair changes, MB roles, VNC neuromeres), `compare.py` (table + figures) |
+| `streams/` | the interactive page pipeline (prep, layouts, export, template, build); its own `README.md` |
+| `results/` | every number (JSON / CSV); male order `malecns_H64_s42_rank.npy`; `nulls/` null-ladder runs and orders; `streams/` page data |
+| `outputs/` | figures `fig1..fig6`; `streams/` the page and its static previews |
+| `logs/` | run logs |
+
 ## How to reproduce
 
 ```bash
 PY=/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python
-male_cns/.venv/bin/python -I male_cns/build_graph.py   # feather -> npz (see BUILD.md)
-$PY male_cns/ann_prep.py                                # lanes / flow / NT in FlyWire vocabulary
-$PY male_cns/run_mfas.py --seed 42                      # H64 with the connectome constants, ~62 min MPS
-$PY male_cns/analyze.py --dataset flywire               # same analysis code on FlyWire (port check)
-$PY male_cns/analyze.py --dataset malecns
-$PY male_cns/analyze.py --dataset malecns_brain
-$PY male_cns/run_nulls.py                               # null ladder, ~70 min MPS
-$PY male_cns/vnc_loop.py
-$PY male_cns/noise_ceiling.py
-$PY male_cns/dimorphism.py
-$PY male_cns/compare.py                                 # table + figures
+male_cns/.venv/bin/python -I male_cns/pipeline/build_graph.py   # feather -> npz (see BUILD.md)
+$PY male_cns/pipeline/ann_prep.py                                # lanes / flow / NT in FlyWire vocabulary
+$PY male_cns/pipeline/run_mfas.py --seed 42                      # H64 with the connectome constants, ~62 min MPS
+$PY male_cns/analysis/analyze.py --dataset flywire               # same analysis code on FlyWire (port check)
+$PY male_cns/analysis/analyze.py --dataset malecns
+$PY male_cns/analysis/analyze.py --dataset malecns_brain
+$PY male_cns/pipeline/run_nulls.py                               # null ladder, ~70 min MPS
+$PY male_cns/analysis/vnc_loop.py
+$PY male_cns/analysis/noise_ceiling.py
+$PY male_cns/analysis/dimorphism.py
+$PY male_cns/analysis/compare.py                                 # table + figures
+$PY male_cns/analysis/biology_diff.py                            # ~3 min
+# interactive page, ~1 min total (see streams/README.md)
+$PY male_cns/streams/malecns_streams_prep.py
+$PY male_cns/streams/malecns_streams.py
+$PY male_cns/streams/malecns_artifact_export.py
+$PY male_cns/streams/build_malecns_html.py
 ```
-
-| file | what |
-|---|---|
-| `build_graph.py`, `ann_prep.py` | graph and per-node annotations (lanes follow `layering/tools/fly_streams.py:lane_of`; optic neurons take the FlyWire `cell_class` of their matched `flywireType`) |
-| `run_mfas.py` | the FlyWire champion pipeline H64, unchanged constants, scored by the frozen oracle |
-| `analyze.py` | one dataset-agnostic script for findings A2, A3, A4, A5 (swap), B1, B2, B5, B7 and the 2-cycle floor of A1 |
-| `run_nulls.py` | null ladder A1 with the FlyWire G01 protocol (4,000 epochs, 8 sift sweeps) |
-| `vnc_loop.py`, `noise_ceiling.py`, `dimorphism.py` | new analyses that only make sense with two flies |
-| `compare.py` | `results/comparison_table.csv`, `results/comparison.json`, `outputs/fig1..fig6` |
-| `results/` | every number quoted below (JSON / CSV), the male order `malecns_H64_s42_rank.npy` |
-| `page_ru/index.html` | Russian one-page visual summary for the supervisor (open locally; images from `outputs/`) |
-| `logs/` | run logs |
 
 ## Port check
 
@@ -67,9 +83,10 @@ null); mirror pairs 65,158 (published 65,452) and swap cost -2.19 pp
 
 Rows other than the FF rows use the H64 order (restricted to the brain for the middle column).
 
-Reading: the male graph is about 3 pp less feedforward at equal protocol. Only the 2-cycle
-floor is a rigorous bound: it is 0.9-1.5 pp of W higher in the male, about half of the gap, and
-it stays ~42 % of all feedback in both flies. The null ladder (section 10) shows the male nulls
+Reading: the male graph is about 3 pp less feedforward at equal protocol. The 2-cycle floor
+(a strict lower bound on feedback within each graph) is 0.9 pp of W higher in the male CNS and
+1.5 pp in the male brain, a third (CNS) to a half (brain) of the gap; a difference of two lower
+bounds does not bound the difference in feedback. The floor stays ~42 % of all feedback in both. The null ladder (section 10) shows the male nulls
 lose as much order as the real graph or more (G(n,m) -4.5 pp, degree-matched -5.1 pp, lane
 dcSBM -3.0 pp, real -2.8 pp). So the gap is consistent with size, density (93 vs 41 edges per
 neuron) and degree differences and needs no extra male feedback structure. Density alone is
@@ -138,7 +155,7 @@ choice; one seed each cannot tell. Re-tune after the swap (the other half of A5)
   (median 0.27; 16 % in the last tenth). Several DN types (DNg03, DNge116, DNp17...) and the
   Johnston's organ afferents (JO-A, JO-C) jump from the end of the female order to the front of
   the male order.
-- Brain->cord edges are 88.9 % feedforward, cord->brain 77.1 %; the brain-cord crossing holds
+- Brain->cord edges are 89.0 % feedforward, cord->brain 77.1 %; the brain-cord crossing holds
   only 4.8 % of all male FB. The cord's own FB (cord->cord) is 11.3 % of FB.
 - Reading (guess, not tested): the female positions of AN and DN neurons are partly artefacts
   of the volume boundary (the order audits its dataset, as in B5). JO afferents are not
@@ -198,7 +215,7 @@ w_shuffled), female 12-20. Within a rung std <= 0.025 pp, range <= 0.10 pp, in b
 - 2,751 male neurons carry combined FlyWire labels such as "FC1A,FC1B,FC1F"; 315 of these 420
   labels have no exact FlyWire match and drop out of the cross-sex comparison.
 - Not ported: A7 type-dcSBM ladder, B6 central-only re-optimisation, A5 re-tune, B4 degraded
-  order, the interactive streams artifact, MICrONS-only findings A6/B8.
+  order, static neuron-cloud PNGs (`fly_cloud.py`), MICrONS-only findings A6/B8.
 - Aborted run, logged for completeness: H64 was first started on the graph with weight-1
   edges kept (25,563,096 edges); it was stopped during Rocket, before any score, when the
   weight floor was set to 2 to match FlyWire. Greedy-FAS on the all-weights graph was not recorded.

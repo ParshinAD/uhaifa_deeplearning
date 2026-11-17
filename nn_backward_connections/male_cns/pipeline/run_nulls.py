@@ -3,10 +3,10 @@
 Reuses the FlyWire G01 protocol and generators unchanged (biology/analysis/nullmodels_run.py:
 greedy-FAS -> Rocket+ASYM at 4,000 epochs -> 8 sift sweeps, frozen oracle), so the male
 ladder is directly comparable with the logged FlyWire runs in biology/results/nullmodels/runs/.
-L3 lanes are the Male CNS lanes of male_cns/ann_prep.py. Fewer draws per rung than FlyWire
+L3 lanes are the Male CNS lanes of male_cns/pipeline/ann_prep.py. Fewer draws per rung than FlyWire
 (compute); FlyWire draws have std <= 0.025 pp within a rung.
 
-    $PY male_cns/run_nulls.py            # resumes: existing JSONs are skipped
+    $PY male_cns/pipeline/run_nulls.py            # resumes: existing JSONs are skipped
 """
 import sys
 import time
@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "biology" / "analysis"))
 from mfas.io import GraphData  # noqa: E402

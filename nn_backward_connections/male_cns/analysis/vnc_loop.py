@@ -1,7 +1,7 @@
 """Where the Male CNS order cuts the brain <-> nerve-cord loop, and cross-sex rank agreement
 without the neurons that FlyWire truncates at the neck.
 
-    $PY male_cns/vnc_loop.py
+    $PY male_cns/analysis/vnc_loop.py
 Output: male_cns/results/vnc_loop.json
 """
 import json
@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 RES = ROOT / "male_cns" / "results"
 CONFIG = dict(early=0.1, late=0.9, neck_lanes=["ascending (VNC)", "descending", "sensory (other)", "motor"])
 

@@ -4,9 +4,9 @@ Re-implements, in one dataset-agnostic script, the FlyWire analyses behind biolo
 (A2, A3, A4, A5 swap, B1, B2, B5, B7, 2-cycle floor of A1). Running it on FlyWire re-checks the
 port against the published FlyWire numbers; running it on Male CNS gives the comparison.
 
-    $PY male_cns/analyze.py --dataset flywire
-    $PY male_cns/analyze.py --dataset malecns [--rank male_cns/results/malecns_H64_s42_rank.npy]
-    $PY male_cns/analyze.py --dataset malecns_brain   # brain-only subgraph, restricted order
+    $PY male_cns/analysis/analyze.py --dataset flywire
+    $PY male_cns/analysis/analyze.py --dataset malecns [--rank male_cns/results/malecns_H64_s42_rank.npy]
+    $PY male_cns/analysis/analyze.py --dataset malecns_brain   # brain-only subgraph, restricted order
 
 Output: male_cns/results/analysis_<dataset>.json (+ lane matrix CSV, per-type ranks CSV)
 """
@@ -21,7 +21,7 @@ from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
 from scipy.stats import binomtest
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "layering" / "tools"))
 from mfas.io import load_connectome  # noqa: E402

@@ -5,7 +5,7 @@ The FlyWire champion constants are reused unchanged (20,000 epochs, 40 sift swee
 keys are set here at runtime; no repo source file is edited. Scores come from the
 frozen oracle src/mfas/metrics.py.
 
-    $PY male_cns/run_mfas.py --seed 42
+    $PY male_cns/pipeline/run_mfas.py --seed 42
 """
 import argparse
 import json
@@ -16,7 +16,7 @@ from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
 from mfas.experiments import H64  # noqa: E402

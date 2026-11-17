@@ -20,7 +20,11 @@ in a separate gitignored venv `male_cns/.venv`; `allen` was not changed.
   missing nerve cord; do not compare those lanes across datasets. Cross-sex type-position
   Spearman 0.77 vs same-brain ceiling 0.92-0.95; dimorphic types do not move more (p = 0.81).
   Left/right: both orders have a side bias of opposite sign (likely optimizer choice).
-- Not done: more seeds (CUDA), A7, B6, A5 re-tune, B4.
+- Interactive page `male_cns/outputs/streams/malecns_streams.html` (same as FlyWire "Fly
+  Connectome Streams"); biology write-up `male_cns/FINDINGS.md` / `.ru.md`. Extra reciprocity in
+  the male sits in mushroom body, olfaction and central complex, not in the optic lobe.
+- Not done: more seeds (CUDA), A7, B6, A5 re-tune, B4. Page not published as an artifact
+  (publishing needs the user's approval).
 
 ## 2026-11-17 — FlyWire best known score moved to 84.807 %
 

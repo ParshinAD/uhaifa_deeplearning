@@ -3,7 +3,7 @@
 Runs in the isolated reader env male_cns/.venv (pandas + pyarrow; the `allen` env has no
 feather reader and is not modified):
 
-    male_cns/.venv/bin/python -I male_cns/build_graph.py
+    male_cns/.venv/bin/python -I male_cns/pipeline/build_graph.py
 
 Inputs (public bucket gs://flyem-male-cns, no token; see male_cns/BUILD.md for URLs and sha256):
     data/raw/male_cns/connectome-weights-male-cns-v1.0-minconf-0.5-traced-only.feather
@@ -21,7 +21,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / "data" / "raw" / "male_cns"
 CONFIG = dict(
     weights="connectome-weights-male-cns-v1.0-minconf-0.5-traced-only.feather",
@@ -31,7 +31,7 @@ CONFIG = dict(
     min_weight=2,
     ann_cols=["bodyId", "type", "flywireType", "instance", "superclass", "class", "subclass",
               "somaSide", "rootSide", "status", "statusLabel", "itoleeHl", "trumanHl",
-              "dimorphism", "fruDsx", "group"],
+              "dimorphism", "fruDsx", "group", "somaNeuromere"],
 )
 
 e = pd.read_feather(RAW / CONFIG["weights"], columns=["body_pre", "body_post", "weight"])

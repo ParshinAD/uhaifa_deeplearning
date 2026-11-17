@@ -1,7 +1,7 @@
 """Noise ceiling for the cross-sex type comparison: how well do two good orders of the SAME
 brain agree on per-type median position? Compared with the female-vs-male Spearman.
 
-    $PY male_cns/noise_ceiling.py
+    $PY male_cns/analysis/noise_ceiling.py
 Output: male_cns/results/noise_ceiling.json
 """
 import json
@@ -11,9 +11,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 RES = ROOT / "male_cns" / "results"
-sys.path.insert(0, str(ROOT / "male_cns"))
+sys.path.insert(0, str(ROOT / "male_cns" / "analysis"))
 from analyze import load  # noqa: E402
 
 CONFIG = dict(

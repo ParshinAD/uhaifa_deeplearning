@@ -1,0 +1,270 @@
+{
+ "champion_ff_pct": 81.80791331133143,
+ "config": {
+  "n_bins_list": [
+   8,
+   16,
+   32
+  ],
+  "min_bundle_frac": 0.0002,
+  "export_bundle_frac": 5e-05,
+  "label_top_bundles": 10,
+  "sink_hatch_frac": 0.5,
+  "perm_test_n": 2000,
+  "perm_seed": 42,
+  "dpi": 110,
+  "graph": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/data/processed/malecns.npz",
+  "ann_npz": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/male_cns/results/streams/node_ann.npz",
+  "ann_meta": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/male_cns/results/streams/node_ann_meta.json",
+  "out_dir": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/male_cns/results/streams",
+  "png_dir": "/Users/abed359/IdeaProjects/university/deeplearning_thesis/nn_backward_connections/male_cns/outputs/streams"
+ },
+ "lane_colors": {
+  "VNC sensory": "#56b4e9",
+  "sensory (other)": "#74a33e",
+  "photoreceptors": "#1f8a8d",
+  "lamina": "#efd077",
+  "ascending (VNC)": "#9c9a30",
+  "medulla": "#e08a2e",
+  "unannotated": "#8f8f8f",
+  "visual centrifugal": "#c96fae",
+  "olfaction: AL\u00b7LH": "#3f9b6e",
+  "medulla\u2192lobula": "#8a6d15",
+  "lobula (plate)": "#6b4d1e",
+  "optic (other)": "#b5a98c",
+  "mushroom body": "#3f6ab5",
+  "visual projection": "#7a4fa3",
+  "central (other)": "#5b7fa6",
+  "central complex": "#2a4d8f",
+  "descending": "#1f2a44",
+  "VNC intrinsic": "#4d6b5e",
+  "motor (brain)": "#101418",
+  "motor (VNC)": "#3b3b3b",
+  "endocrine": "#6b7385"
+ },
+ "lane_sizes": {
+  "VNC sensory": 6300,
+  "sensory (other)": 4728,
+  "photoreceptors": 4083,
+  "lamina": 8965,
+  "ascending (VNC)": 2381,
+  "medulla": 28466,
+  "unannotated": 149,
+  "visual centrifugal": 563,
+  "olfaction: AL\u00b7LH": 1633,
+  "medulla\u2192lobula": 39820,
+  "lobula (plate)": 11742,
+  "optic (other)": 388,
+  "mushroom body": 4505,
+  "visual projection": 9202,
+  "central (other)": 22908,
+  "central complex": 3114,
+  "descending": 1314,
+  "VNC intrinsic": 13148,
+  "motor (brain)": 111,
+  "motor (VNC)": 814,
+  "endocrine": 91
+ },
+ "lane_order_check": {
+  "identical": false,
+  "position_changes": {
+   "unannotated": {
+    "median_pos": 6,
+    "mean_pos": 9,
+    "median_rank": 61704.0,
+    "mean_rank": 82390.20805369127
+   },
+   "visual centrifugal": {
+    "median_pos": 7,
+    "mean_pos": 6,
+    "median_rank": 69799.0,
+    "mean_rank": 69633.55062166962
+   },
+   "medulla\u2192lobula": {
+    "median_pos": 9,
+    "mean_pos": 7,
+    "median_rank": 81180.5,
+    "mean_rank": 79715.34668508287
+   },
+   "lobula (plate)": {
+    "median_pos": 10,
+    "mean_pos": 11,
+    "median_rank": 87463.5,
+    "mean_rank": 92111.63958439788
+   },
+   "optic (other)": {
+    "median_pos": 11,
+    "mean_pos": 10,
+    "median_rank": 106618.5,
+    "mean_rank": 90492.9587628866
+   },
+   "mushroom body": {
+    "median_pos": 12,
+    "mean_pos": 15,
+    "median_rank": 120242.0,
+    "mean_rank": 121320.23307436182
+   },
+   "visual projection": {
+    "median_pos": 13,
+    "mean_pos": 14,
+    "median_rank": 125621.5,
+    "mean_rank": 117987.20734622909
+   },
+   "central (other)": {
+    "median_pos": 14,
+    "mean_pos": 16,
+    "median_rank": 137189.5,
+    "mean_rank": 121977.24602758861
+   },
+   "central complex": {
+    "median_pos": 15,
+    "mean_pos": 17,
+    "median_rank": 137404.5,
+    "mean_rank": 135303.4466923571
+   },
+   "descending": {
+    "median_pos": 16,
+    "mean_pos": 12,
+    "median_rank": 149112.0,
+    "mean_rank": 108112.31659056316
+   },
+   "VNC intrinsic": {
+    "median_pos": 17,
+    "mean_pos": 13,
+    "median_rank": 153051.5,
+    "mean_rank": 115245.01300578035
+   },
+   "motor (VNC)": {
+    "median_pos": 19,
+    "mean_pos": 20,
+    "median_rank": 160649.5,
+    "mean_rank": 160201.58476658477
+   },
+   "endocrine": {
+    "median_pos": 20,
+    "mean_pos": 19,
+    "median_rank": 161089.0,
+    "mean_rank": 153563.85714285713
+   }
+  }
+ },
+ "variants": {
+  "mcns21_B8": {
+   "cells_nonempty": 142,
+   "intra_cell_pct": 25.135644482384816,
+   "intra_cell_ff_pct": 19.6368477135232,
+   "intra_cell_fb_pct": 5.498796768861616,
+   "inter_ff_pct_of_total": 62.17106559780823,
+   "inter_fb_pct_of_total": 12.693289919806954,
+   "same_bin_vertical_pct_of_inter": 21.90452488469894,
+   "same_lane_pct_of_inter_ff": 28.938153677739038,
+   "bundles_total": 6839,
+   "bundles_inked_ff": 418,
+   "bundles_inked_fb": 143,
+   "inked_ff_pct_of_inter_ff": 90.41018129184964,
+   "inked_fb_pct_of_inter_fb": 68.67757316075347
+  },
+  "mcns21_B16": {
+   "cells_nonempty": 254,
+   "intra_cell_pct": 18.80168903860658,
+   "intra_cell_ff_pct": 14.603346098436724,
+   "intra_cell_fb_pct": 4.198342940169855,
+   "inter_ff_pct_of_total": 67.2045672128947,
+   "inter_fb_pct_of_total": 13.993743748498714,
+   "same_bin_vertical_pct_of_inter": 12.390548494045428,
+   "same_lane_pct_of_inter_ff": 34.260558583658835,
+   "bundles_total": 18007,
+   "bundles_inked_ff": 632,
+   "bundles_inked_fb": 134,
+   "inked_ff_pct_of_inter_ff": 81.09794470139319,
+   "inked_fb_pct_of_inter_fb": 47.941920112193785
+  },
+  "mcns21_B32": {
+   "cells_nonempty": 432,
+   "intra_cell_pct": 14.076271324961775,
+   "intra_cell_ff_pct": 10.839216383340013,
+   "intra_cell_fb_pct": 3.2370549416217633,
+   "inter_ff_pct_of_total": 70.96869692799142,
+   "inter_fb_pct_of_total": 14.955031747046807,
+   "same_bin_vertical_pct_of_inter": 6.777969180301679,
+   "same_lane_pct_of_inter_ff": 37.74733226840306,
+   "bundles_total": 42316,
+   "bundles_inked_ff": 774,
+   "bundles_inked_fb": 100,
+   "inked_ff_pct_of_inter_ff": 66.26322393176133,
+   "inked_fb_pct_of_inter_fb": 30.226063753949543
+  }
+ },
+ "flow_hierarchy_test": {
+  "spearman_rho": 0.23689969070462838,
+  "n": 164425,
+  "perms": 2000,
+  "exceedances": 0,
+  "p_two_sided_leq": 0.0005,
+  "note": "rho of flow ordinal (aff<intr<eff) vs champion rank; label permutation null; p is a <= bound at the 1/perms floor"
+ },
+ "nt_direction": {
+  "NA": {
+   "pct_of_ff": 1.2777801393281267,
+   "pct_of_fb": 2.6740239783479747,
+   "fb_share_within_nt": 31.757748865466677
+  },
+  "acetylcholine": {
+   "pct_of_ff": 62.750702199980296,
+   "pct_of_fb": 45.1057473390982,
+   "fb_share_within_nt": 13.781622241310254
+  },
+  "dopamine": {
+   "pct_of_ff": 0.20225594993804646,
+   "pct_of_fb": 1.239250569570104,
+   "fb_share_within_nt": 57.672436092085874
+  },
+  "gaba": {
+   "pct_of_ff": 19.03550044300117,
+   "pct_of_fb": 29.24493210929289,
+   "fb_share_within_nt": 25.464567140550255
+  },
+  "glutamate": {
+   "pct_of_ff": 15.80147958682745,
+   "pct_of_fb": 20.92320573938363,
+   "fb_share_within_nt": 22.74736006791452
+  },
+  "histamine": {
+   "pct_of_ff": 0.48612707993845544,
+   "pct_of_fb": 0.41160133756297557,
+   "fb_share_within_nt": 15.845056664576592
+  },
+  "octopamine": {
+   "pct_of_ff": 0.36797874583190093,
+   "pct_of_fb": 0.24162686756597312,
+   "fb_share_within_nt": 12.74142000071362
+  },
+  "serotonin": {
+   "pct_of_ff": 0.07817585515455117,
+   "pct_of_fb": 0.15961205917825888,
+   "fb_share_within_nt": 31.225416036308623
+  },
+  "_note": "top_nt is the Male CNS consensus prediction (malecns_ann.csv.gz), Kenyon cells set to acetylcholine; 'unclear' and missing are NA. Not ground truth"
+ },
+ "sink_audit": {
+  "pure_sinks_zero_out_weight": 2163,
+  "pure_sources_zero_in_weight": 411,
+  "sinks_by_lane": {
+   "VNC sensory": 22,
+   "sensory (other)": 11,
+   "photoreceptors": 75,
+   "lamina": 9,
+   "medulla": 1618,
+   "unannotated": 53,
+   "visual centrifugal": 16,
+   "optic (other)": 3,
+   "central (other)": 3,
+   "VNC intrinsic": 15,
+   "motor (brain)": 7,
+   "motor (VNC)": 301,
+   "endocrine": 30
+  },
+  "note": "cells with >50% zero-out-weight members are hatched grey"
+ },
+ "seconds": 22.467685222625732
+}
