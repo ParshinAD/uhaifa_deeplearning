@@ -1,0 +1,101 @@
+{
+ "blocks": {
+  "brain->brain": {
+   "share_of_W": 0.8109986785476248,
+   "ff_share": 0.8115957628499677,
+   "share_of_FB": 0.8399013811682323
+  },
+  "brain->VNC": {
+   "share_of_W": 0.03319764525418384,
+   "ff_share": 0.8895703067890235,
+   "share_of_FB": 0.02015165078907535
+  },
+  "VNC->brain": {
+   "share_of_W": 0.02172478220910144,
+   "ff_share": 0.7706160281949623,
+   "share_of_FB": 0.02739277200579251
+  },
+  "VNC->VNC": {
+   "share_of_W": 0.13407889398908998,
+   "ff_share": 0.8472842644687022,
+   "share_of_FB": 0.11255419603689985
+  }
+ },
+ "descending": {
+  "n": 1314,
+  "median": 0.9068749087724419,
+  "frac_early": 0.21613394216133944,
+  "frac_late": 0.5593607305936074,
+  "input_from_vnc_share_early": 0.11692678963804456,
+  "input_from_vnc_share_late": 0.01973636450920195
+ },
+ "ascending (VNC)": {
+  "n": 2381,
+  "median": 0.2717060769717316,
+  "frac_early": 0.4598908021839564,
+  "frac_late": 0.1625367492650147,
+  "input_from_vnc_share_early": 0.5254866182233541,
+  "input_from_vnc_share_late": 0.5837532654490103
+ },
+ "VNC sensory": {
+  "n": 6300,
+  "median": 0.051552693037512774,
+  "frac_early": 0.8871428571428572,
+  "frac_late": 0.011111111111111112,
+  "input_from_vnc_share_early": 0.8669010479808185,
+  "input_from_vnc_share_late": 0.9569182663076522
+ },
+ "VNC intrinsic": {
+  "n": 13148,
+  "median": 0.9308343064272855,
+  "frac_early": 0.12511408579251596,
+  "frac_late": 0.6426072406449651,
+  "input_from_vnc_share_early": 0.8174495101333428,
+  "input_from_vnc_share_late": 0.7787210500796389
+ },
+ "motor (VNC)": {
+  "n": 814,
+  "median": 0.9770441054833844,
+  "frac_early": 0.006142506142506143,
+  "frac_late": 0.9840294840294841,
+  "input_from_vnc_share_early": 0.9803149606299213,
+  "input_from_vnc_share_late": 0.8488054076388802
+ },
+ "early_DN_input_by_lane_share": {
+  "central (other)": 0.43,
+  "ascending (VNC)": 0.2091,
+  "descending": 0.1379,
+  "VNC sensory": 0.0642,
+  "sensory (other)": 0.0637,
+  "VNC intrinsic": 0.0527
+ },
+ "early_DN_types_top": {
+  "DNg08": 19,
+  "DNpe008": 17,
+  "DNg106": 16,
+  "DNg07": 16,
+  "DNge091": 12,
+  "DNg03": 11,
+  "DNp17": 11,
+  "DNge115": 8,
+  "DNge085": 7,
+  "DNge111": 6
+ },
+ "cross_sex_spearman_all": 0.7195896124972844,
+ "cross_sex_spearman_without_neck_lanes": 0.7398261771993483,
+ "cross_sex_types_without_neck_lanes": 6241,
+ "cross_sex_abs_delta_gt_0.5_by_lane": {
+  "central (other)": 275,
+  "ascending (VNC)": 90,
+  "descending": 54,
+  "sensory (other)": 18,
+  "central complex": 8,
+  "visual projection": 6,
+  "visual centrifugal": 4,
+  "olfaction: AL\u00b7LH": 3,
+  "mushroom body": 3,
+  "lamina": 1,
+  "motor": 1,
+  "medulla": 1
+ }
+}

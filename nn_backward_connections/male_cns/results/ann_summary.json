@@ -1,0 +1,53 @@
+{
+ "n": 164425,
+ "lane_counts": {
+  "medulla\u2192lobula": 39820,
+  "medulla": 28466,
+  "central (other)": 22908,
+  "VNC intrinsic": 13148,
+  "lobula (plate)": 11742,
+  "visual projection": 9202,
+  "lamina": 8965,
+  "VNC sensory": 6300,
+  "sensory (other)": 4728,
+  "mushroom body": 4505,
+  "photoreceptors": 4083,
+  "central complex": 3114,
+  "ascending (VNC)": 2381,
+  "olfaction: AL\u00b7LH": 1633,
+  "descending": 1314,
+  "motor (VNC)": 814,
+  "visual centrifugal": 563,
+  "optic (other)": 388,
+  "unannotated": 149,
+  "motor (brain)": 111,
+  "endocrine": 91
+ },
+ "flow_counts": {
+  "intrinsic": 147763,
+  "afferent": 15646,
+  "efferent": 1016
+ },
+ "region_counts": {
+  "brain": 144153,
+  "VNC": 20272
+ },
+ "top_nt_counts": {
+  "ACh": 103661,
+  "Glu": 29295,
+  "GABA": 22055,
+  "HA": 5878,
+  "nan": 2995,
+  "DA": 392,
+  "OA": 101,
+  "5-HT": 48
+ },
+ "side_counts": {
+  "right": 74239,
+  "left": 74086,
+  "na": 15708,
+  "center": 392
+ },
+ "optic_intrinsic_without_fw_class": 249,
+ "kenyon_cells_nt_overridden": 4064
+}

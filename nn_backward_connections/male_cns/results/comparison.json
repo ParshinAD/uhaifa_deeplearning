@@ -1,0 +1,455 @@
+{
+ "table": {
+  "flywire": {
+   "n": 136648.0,
+   "m": 5657719.0,
+   "total_weight": 41912141.0,
+   "ff_pct": 84.25817950936937,
+   "reciprocal_edge_share": 0.18378254558064833,
+   "two_cycle_floor_pct_of_W": 6.7171538671813495,
+   "two_cycle_floor_share_of_fb": 0.42670756353620803,
+   "fb_span_median_n": 0.13286692816579826,
+   "giant_scc_frac": 0.9282243428370704,
+   "fb_weight_inside_giant_scc_pct": 99.9935583944427,
+   "zero_output_sinks": 2447.0,
+   "flow_rho": 0.45368373025804176,
+   "type_iqr_median": 0.04395998448557231,
+   "type_iqr_null_median": 0.488814244000966,
+   "types_tighter_than_null_5pct": 0.9463869463869464,
+   "inhibitory_share_of_fb_pct": 55.8300774174891,
+   "inhibitory_share_of_ff_pct": 38.20527412509008,
+   "fb_within_same_lane_pct": 51.486161764023834,
+   "fb_inside_optic_lanes_pct": 47.63764346971248,
+   "degree_hubs_inhibitory_count": 11.0,
+   "mirror_paired_neuron_frac": 0.9536619635852702,
+   "mirror_swap_cost_pp": -2.19123857213593,
+   "mirror_left_earlier_rate_types_ge5_pairs": 0.5679347826086957,
+   "fb_inside_vnc_pct": NaN,
+   "fb_brain_vnc_crossing_pct": NaN,
+   "vnc_median_rank_frac": NaN,
+   "fb_top_1_nodes_pct": 0.41960618600264876,
+   "fb_top_10_nodes_pct": 2.1597415112521965,
+   "fb_top_100_nodes_pct": 7.048154714936977,
+   "fb_top_1000_nodes_pct": 20.085623336739552
+  },
+  "malecns": {
+   "n": 164425.0,
+   "m": 15270204.0,
+   "total_weight": 113731681.0,
+   "ff_pct": 81.80791331133143,
+   "reciprocal_edge_share": 0.22342137668887724,
+   "two_cycle_floor_pct_of_W": 7.635166317466107,
+   "two_cycle_floor_share_of_fb": 0.41969711601153903,
+   "fb_span_median_n": 0.08520602098221074,
+   "giant_scc_frac": 0.983883229435913,
+   "fb_weight_inside_giant_scc_pct": 99.99985983679396,
+   "zero_output_sinks": 2163.0,
+   "flow_rho": 0.47044656348169583,
+   "type_iqr_median": 0.02391530433513357,
+   "type_iqr_null_median": 0.48821948134092347,
+   "types_tighter_than_null_5pct": 0.9793233082706767,
+   "inhibitory_share_of_fb_pct": 50.16813784867652,
+   "inhibitory_share_of_ff_pct": 34.83698002982862,
+   "fb_within_same_lane_pct": 57.51492278988965,
+   "fb_inside_optic_lanes_pct": 29.94821791183309,
+   "degree_hubs_inhibitory_count": 10.0,
+   "mirror_paired_neuron_frac": 0.8700623384521818,
+   "mirror_swap_cost_pp": -1.6175607217130619,
+   "mirror_left_earlier_rate_types_ge5_pairs": 0.4413863404689093,
+   "fb_inside_vnc_pct": 11.255419603689985,
+   "fb_brain_vnc_crossing_pct": 4.754442279486786,
+   "vnc_median_rank_frac": 0.42819478908188585,
+   "fb_top_1_nodes_pct": 0.25013332420822526,
+   "fb_top_10_nodes_pct": 1.126745430655317,
+   "fb_top_100_nodes_pct": 4.454973923360499,
+   "fb_top_1000_nodes_pct": 14.324251917553488
+  },
+  "malecns_brain": {
+   "n": 144153.0,
+   "m": 13014794.0,
+   "total_weight": 92236243.0,
+   "ff_pct": 81.15957628499677,
+   "reciprocal_edge_share": 0.2323829328378152,
+   "two_cycle_floor_pct_of_W": 8.259143859534696,
+   "two_cycle_floor_share_of_fb": 0.438373572933908,
+   "fb_span_median_n": 0.09630739561438194,
+   "giant_scc_frac": 0.9853280889055379,
+   "fb_weight_inside_giant_scc_pct": 99.99984462845167,
+   "zero_output_sinks": 1819.0,
+   "flow_rho": 0.3829542543728789,
+   "type_iqr_median": 0.027526499805760607,
+   "type_iqr_null_median": 0.4898232421333037,
+   "types_tighter_than_null_5pct": 0.9747126436781609,
+   "inhibitory_share_of_fb_pct": 49.91910609108835,
+   "inhibitory_share_of_ff_pct": 33.468835568054864,
+   "fb_within_same_lane_pct": 56.56048018785456,
+   "fb_inside_optic_lanes_pct": 35.65682660287763,
+   "degree_hubs_inhibitory_count": 10.0,
+   "mirror_paired_neuron_frac": 0.903928464894938,
+   "mirror_swap_cost_pp": -1.4543805735886224,
+   "mirror_left_earlier_rate_types_ge5_pairs": 0.431266846361186,
+   "fb_inside_vnc_pct": NaN,
+   "fb_brain_vnc_crossing_pct": NaN,
+   "vnc_median_rank_frac": NaN,
+   "fb_top_1_nodes_pct": 0.2978127311331609,
+   "fb_top_10_nodes_pct": 1.3415211070234327,
+   "fb_top_100_nodes_pct": 5.2805667769938935,
+   "fb_top_1000_nodes_pct": 16.191156838428377
+  }
+ },
+ "nt": {
+  "flywire": {
+   "ACh": {
+    "n": 90259,
+    "obs": 0.11297001326054408,
+    "null_mean": 0.16001167406977526,
+    "z": -39.81685123907818
+   },
+   "GABA": {
+    "n": 19013,
+    "obs": 0.20896757925891749,
+    "null_mean": 0.14735195174992072,
+    "z": 15.708707828583078
+   },
+   "Glu": {
+    "n": 24540,
+    "obs": 0.22249213958796626,
+    "null_mean": 0.1592941562359005,
+    "z": 17.336056839495136
+   },
+   "HA": null,
+   "DA": {
+    "n": 682,
+    "obs": 0.5169931347231845,
+    "null_mean": 0.1510453791537739,
+    "z": 14.774659288456169
+   },
+   "5-HT": {
+    "n": 1891,
+    "obs": 0.2882560456356788,
+    "null_mean": 0.11914913782944046,
+    "z": 9.693176507636508
+   },
+   "OA": {
+    "n": 160,
+    "obs": 0.16723632482673836,
+    "null_mean": 0.10014054101691061,
+    "z": 1.5221750553462379
+   }
+  },
+  "malecns": {
+   "ACh": {
+    "n": 103661,
+    "obs": 0.13781622241310254,
+    "null_mean": 0.17589706598780191,
+    "z": -34.94475896970509
+   },
+   "GABA": {
+    "n": 22055,
+    "obs": 0.25464567140550254,
+    "null_mean": 0.18523108949096703,
+    "z": 22.046548089427134
+   },
+   "Glu": {
+    "n": 29295,
+    "obs": 0.22747360067914518,
+    "null_mean": 0.1890431476657274,
+    "z": 12.293189667576648
+   },
+   "HA": {
+    "n": 5878,
+    "obs": 0.15845056664576593,
+    "null_mean": 0.15761747778852825,
+    "z": 0.11404957641072055
+   },
+   "DA": {
+    "n": 392,
+    "obs": 0.5767243609208588,
+    "null_mean": 0.22335152152028404,
+    "z": 12.224756751174386
+   },
+   "5-HT": {
+    "n": 48,
+    "obs": 0.31225416036308623,
+    "null_mean": 0.1776531488557476,
+    "z": 1.9465354891231603
+   },
+   "OA": {
+    "n": 101,
+    "obs": 0.12741420000713619,
+    "null_mean": 0.17258309085136772,
+    "z": -0.6090593251588639
+   }
+  },
+  "malecns_brain": {
+   "ACh": {
+    "n": 92349,
+    "obs": 0.14012408432040935,
+    "null_mean": 0.18369000709364172,
+    "z": -35.209246615803245
+   },
+   "GABA": {
+    "n": 16737,
+    "obs": 0.27709511196725256,
+    "null_mean": 0.1910334802519832,
+    "z": 19.218031990909598
+   },
+   "Glu": {
+    "n": 26874,
+    "obs": 0.23664615208504663,
+    "null_mean": 0.19132379799614568,
+    "z": 12.933358603037085
+   },
+   "HA": {
+    "n": 5876,
+    "obs": 0.15628452595975098,
+    "null_mean": 0.15738939270541236,
+    "z": -0.1572757480458818
+   },
+   "DA": {
+    "n": 392,
+    "obs": 0.5767243609208588,
+    "null_mean": 0.22354289773216374,
+    "z": 11.963090629978556
+   },
+   "5-HT": {
+    "n": 31,
+    "obs": 0.3637423783027355,
+    "null_mean": 0.21607499863275192,
+    "z": 1.7015831608836398
+   },
+   "OA": {
+    "n": 52,
+    "obs": 0.12682728645565836,
+    "null_mean": 0.171374259373715,
+    "z": -0.604021812253345
+   }
+  }
+ },
+ "ladder_female": {
+  "L1_gnm": {
+   "mean": 69.82293487862303,
+   "std": 0.01902179586411831,
+   "k": 12,
+   "greedy": 64.6074823124243
+  },
+  "L3_dcsbm": {
+   "mean": 81.89610738329975,
+   "std": 0.017553494152509327,
+   "k": 12,
+   "greedy": 70.66022249575208
+  },
+  "L3a_sbm": {
+   "mean": 75.99219559474822,
+   "std": 0.02506901833923974,
+   "k": 12,
+   "greedy": 66.96966399306588
+  },
+  "real": {
+   "mean": 83.65820697794146,
+   "std": 0.003347284276395205,
+   "k": 3,
+   "greedy": 68.91342773446004
+  },
+  "w_shuffled": {
+   "mean": 77.22037308950645,
+   "std": 0.024252159392583118,
+   "k": 20,
+   "greedy": 69.10042259592512
+  },
+  "w_source": {
+   "mean": 79.98073123966633,
+   "std": 0.015028957028064524,
+   "k": 20,
+   "greedy": 72.64887124234478
+  }
+ },
+ "ladder_male": {
+  "L1_gnm": {
+   "mean": 65.35674992206731,
+   "std": 0.01609017442754697,
+   "k": 3,
+   "greedy": 61.277382332896316
+  },
+  "L3_dcsbm": {
+   "mean": 78.87925323698211,
+   "std": 0.01715282087388209,
+   "k": 3,
+   "greedy": 67.43076158934701
+  },
+  "real": {
+   "mean": 80.83145363867435,
+   "std": 0.0045137776794313906,
+   "k": 2,
+   "greedy": 65.88121123436134
+  },
+  "w_shuffled": {
+   "mean": 72.91472373471733,
+   "std": 0.010018596904446106,
+   "k": 2,
+   "greedy": 65.81367420393619
+  },
+  "w_source": {
+   "mean": 74.84334905768253,
+   "std": 0.024853541941356392,
+   "k": 3,
+   "greedy": 67.94758240376898
+  }
+ },
+ "ladder_male_brain_real": {
+  "real": {
+   "mean": 80.67651237702732,
+   "std": NaN,
+   "k": 1,
+   "greedy": 65.76477751809557
+  }
+ },
+ "cross_sex": {
+  "types_matched": 7325,
+  "spearman_type_median_rank": 0.7195896124972845,
+  "neurons_weighted_abs_delta_median": 0.03524240820925584,
+  "biggest_movers_earlier_in_male": [
+   {
+    "flywire_type": "DNg03",
+    "lane_f": "descending",
+    "median_rank_f": 0.997,
+    "median_rank_m": 0.021
+   },
+   {
+    "flywire_type": "JO-A3",
+    "lane_f": "sensory (other)",
+    "median_rank_f": 0.993,
+    "median_rank_m": 0.022
+   },
+   {
+    "flywire_type": "DNge116",
+    "lane_f": "descending",
+    "median_rank_f": 0.991,
+    "median_rank_m": 0.022
+   },
+   {
+    "flywire_type": "JO-A1",
+    "lane_f": "sensory (other)",
+    "median_rank_f": 0.982,
+    "median_rank_m": 0.019
+   },
+   {
+    "flywire_type": "DNp17",
+    "lane_f": "descending",
+    "median_rank_f": 0.998,
+    "median_rank_m": 0.038
+   },
+   {
+    "flywire_type": "JO-A2",
+    "lane_f": "sensory (other)",
+    "median_rank_f": 0.982,
+    "median_rank_m": 0.022
+   },
+   {
+    "flywire_type": "JO-CM",
+    "lane_f": "sensory (other)",
+    "median_rank_f": 0.982,
+    "median_rank_m": 0.024
+   },
+   {
+    "flywire_type": "DNge085",
+    "lane_f": "descending",
+    "median_rank_f": 0.981,
+    "median_rank_m": 0.023
+   },
+   {
+    "flywire_type": "JO-CA1",
+    "lane_f": "sensory (other)",
+    "median_rank_f": 0.992,
+    "median_rank_m": 0.034
+   },
+   {
+    "flywire_type": "DNge149",
+    "lane_f": "descending",
+    "median_rank_f": 0.981,
+    "median_rank_m": 0.024
+   }
+  ],
+  "biggest_movers_later_in_male": [
+   {
+    "flywire_type": "AN_GNG_AMMC_3",
+    "lane_f": "ascending (VNC)",
+    "median_rank_f": 0.001,
+    "median_rank_m": 0.977
+   },
+   {
+    "flywire_type": "AN_GNG_180",
+    "lane_f": "ascending (VNC)",
+    "median_rank_f": 0.002,
+    "median_rank_m": 0.975
+   },
+   {
+    "flywire_type": "AN_multi_51",
+    "lane_f": "ascending (VNC)",
+    "median_rank_f": 0.001,
+    "median_rank_m": 0.974
+   },
+   {
+    "flywire_type": "AN_GNG_158",
+    "lane_f": "ascending (VNC)",
+    "median_rank_f": 0.002,
+    "median_rank_m": 0.975
+   },
+   {
+    "flywire_type": "AN_GNG_16",
+    "lane_f": "ascending (VNC)",
+    "median_rank_f": 0.003,
+    "median_rank_m": 0.975
+   },
+   {
+    "flywire_type": "AN_GNG_SAD_23",
+    "lane_f": "ascending (VNC)",
+    "median_rank_f": 0.002,
+    "median_rank_m": 0.973
+   },
+   {
+    "flywire_type": "AN_GNG_9",
+    "lane_f": "ascending (VNC)",
+    "median_rank_f": 0.003,
+    "median_rank_m": 0.975
+   },
+   {
+    "flywire_type": "AN_GNG_203",
+    "lane_f": "ascending (VNC)",
+    "median_rank_f": 0.002,
+    "median_rank_m": 0.974
+   },
+   {
+    "flywire_type": "AN_GNG_IPS_11",
+    "lane_f": "ascending (VNC)",
+    "median_rank_f": 0.001,
+    "median_rank_m": 0.972
+   },
+   {
+    "flywire_type": "AN_GNG_VES_8",
+    "lane_f": "ascending (VNC)",
+    "median_rank_f": 0.002,
+    "median_rank_m": 0.973
+   }
+  ],
+  "within_lane_spearman": {
+   "ascending (VNC)": 0.17409972338646176,
+   "central (other)": 0.7135728810727031,
+   "central complex": 0.48713982343162965,
+   "descending": 0.5254763531509887,
+   "endocrine": null,
+   "lamina": null,
+   "lobula (plate)": 0.8058612544834222,
+   "medulla": 0.8695740640260445,
+   "medulla\u2192lobula": 0.9031827711072993,
+   "motor": 0.5488522024634717,
+   "mushroom body": 0.4668231530905696,
+   "olfaction: AL\u00b7LH": 0.8376637060205623,
+   "optic (other)": 0.7769607843137256,
+   "photoreceptors": null,
+   "sensory (other)": -0.08032294605748456,
+   "visual centrifugal": 0.7331888673023281,
+   "visual projection": 0.7763816287306222
+  }
+ }
+}

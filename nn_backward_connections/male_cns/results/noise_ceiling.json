@@ -1,0 +1,133 @@
+{
+ "flywire": {
+  "connectome__real__ps42__e4000.npy": {
+   "types": 8831,
+   "spearman": 0.9481080000050324,
+   "neuron_spearman": 0.9328621704031979,
+   "by_lane": {
+    "ascending (VNC)": 0.648,
+    "central (other)": 0.934,
+    "central complex": 0.89,
+    "descending": 0.851,
+    "endocrine": null,
+    "lamina": null,
+    "lobula (plate)": 0.911,
+    "medulla": 0.976,
+    "medulla\u2192lobula": 0.951,
+    "motor": 0.697,
+    "mushroom body": 0.914,
+    "olfaction: AL\u00b7LH": 0.97,
+    "optic (other)": 0.843,
+    "photoreceptors": null,
+    "sensory (other)": 0.816,
+    "visual centrifugal": 0.928,
+    "visual projection": 0.897
+   }
+  },
+  "connectome__real__ps123__e4000.npy": {
+   "types": 8831,
+   "spearman": 0.9491273155437404,
+   "neuron_spearman": 0.9333244335151589,
+   "by_lane": {
+    "ascending (VNC)": 0.645,
+    "central (other)": 0.935,
+    "central complex": 0.891,
+    "descending": 0.85,
+    "endocrine": null,
+    "lamina": null,
+    "lobula (plate)": 0.916,
+    "medulla": 0.975,
+    "medulla\u2192lobula": 0.952,
+    "motor": 0.698,
+    "mushroom body": 0.915,
+    "olfaction: AL\u00b7LH": 0.968,
+    "optic (other)": 0.828,
+    "photoreceptors": null,
+    "sensory (other)": 0.812,
+    "visual centrifugal": 0.928,
+    "visual projection": 0.883
+   }
+  },
+  "connectome__real__ps999__e4000.npy": {
+   "types": 8831,
+   "spearman": 0.9493803327602804,
+   "neuron_spearman": 0.9330835368569568,
+   "by_lane": {
+    "ascending (VNC)": 0.64,
+    "central (other)": 0.936,
+    "central complex": 0.89,
+    "descending": 0.853,
+    "endocrine": null,
+    "lamina": null,
+    "lobula (plate)": 0.9,
+    "medulla": 0.967,
+    "medulla\u2192lobula": 0.958,
+    "motor": 0.697,
+    "mushroom body": 0.918,
+    "olfaction: AL\u00b7LH": 0.969,
+    "optic (other)": 0.858,
+    "photoreceptors": null,
+    "sensory (other)": 0.821,
+    "visual centrifugal": 0.941,
+    "visual projection": 0.903
+   }
+  }
+ },
+ "malecns": {
+  "malecns__real__ps42__e4000.npy": {
+   "types": 8199,
+   "spearman": 0.9164214119800501,
+   "neuron_spearman": 0.9496764259573753,
+   "by_lane": {
+    "ascending (VNC)": 0.935,
+    "central (other)": 0.926,
+    "central complex": 0.804,
+    "descending": 0.84,
+    "endocrine": 0.545,
+    "lamina": null,
+    "lobula (plate)": 0.951,
+    "medulla": 0.938,
+    "medulla\u2192lobula": 0.981,
+    "motor (VNC)": null,
+    "motor (brain)": 0.713,
+    "mushroom body": 0.885,
+    "olfaction: AL\u00b7LH": 0.974,
+    "optic (other)": 0.956,
+    "photoreceptors": null,
+    "sensory (other)": 0.643,
+    "visual centrifugal": 0.927,
+    "visual projection": 0.939
+   }
+  },
+  "malecns__real__ps123__e4000.npy": {
+   "types": 8199,
+   "spearman": 0.9151068189379251,
+   "neuron_spearman": 0.9499212453174206,
+   "by_lane": {
+    "ascending (VNC)": 0.947,
+    "central (other)": 0.923,
+    "central complex": 0.816,
+    "descending": 0.837,
+    "endocrine": 0.827,
+    "lamina": null,
+    "lobula (plate)": 0.952,
+    "medulla": 0.941,
+    "medulla\u2192lobula": 0.981,
+    "motor (VNC)": null,
+    "motor (brain)": 0.715,
+    "mushroom body": 0.895,
+    "olfaction: AL\u00b7LH": 0.973,
+    "optic (other)": 0.963,
+    "photoreceptors": null,
+    "sensory (other)": 0.654,
+    "visual centrifugal": 0.924,
+    "visual projection": 0.935
+   }
+  }
+ },
+ "cross_sex_protocol_orders": {
+  "types": 7325,
+  "spearman": 0.7711914241341935,
+  "spearman_without_neck_lanes": 0.7393911064704406
+ }
+}

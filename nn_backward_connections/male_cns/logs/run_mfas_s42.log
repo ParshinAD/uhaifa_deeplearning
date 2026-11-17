@@ -1,0 +1,27 @@
+GraphData(name='malecns', n_nodes=164,425, n_edges=15,270,204, total_weight=113,731,681, weight_dtype=int64)
+greedy-FAS 65.8812 65.7 s
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+{
+ "dataset": "malecns",
+ "algo": "H64 (connectome constants)",
+ "seed": 42,
+ "device": "Apple MPS",
+ "git_commit": "0139df7",
+ "n_nodes": 164425,
+ "n_edges": 15270204,
+ "total_weight": 113731681,
+ "greedy_score": 74927809,
+ "greedy_pct": 65.88121123436134,
+ "pure_rocket_pct": 80.43004569676589,
+ "sift_pct": 81.47966528341387,
+ "alt_pct": 81.80791331133143,
+ "final_score": 93041515,
+ "final_pct": 81.80791331133143,
+ "feedback_pct": 18.192086688668567,
+ "wall_clock_s": 3692.7874631881714,
+ "n_epochs_done": 20000,
+ "n_sift_sweeps": 40,
+ "n_alt_cycles": 77,
+ "rank_file": "male_cns/results/malecns_H64_s42_rank.npy"
+}

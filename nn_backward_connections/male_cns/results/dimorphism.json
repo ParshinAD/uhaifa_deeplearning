@@ -1,0 +1,124 @@
+{
+ "types": 7325,
+ "dimorphic_types": 617,
+ "median_abs_delta_dimorphic": 0.0279376143020381,
+ "median_abs_delta_other": 0.03317541039512155,
+ "diff": -0.00523779609308345,
+ "p_one_sided": 0.8057,
+ "by_lane": {
+  "ascending (VNC)": {
+   "false": 0.2013,
+   "true": 0.212
+  },
+  "central (other)": {
+   "false": 0.0238,
+   "true": 0.0219
+  },
+  "central complex": {
+   "false": 0.067,
+   "true": 0.0713
+  },
+  "descending": {
+   "false": 0.015,
+   "true": 0.015
+  },
+  "endocrine": {
+   "false": 0.0185,
+   "true": 0.0145
+  },
+  "medulla\u2192lobula": {
+   "false": 0.0294,
+   "true": 0.0503
+  },
+  "motor": {
+   "false": 0.0224,
+   "true": 0.0146
+  },
+  "mushroom body": {
+   "false": 0.0278,
+   "true": 0.0348
+  },
+  "olfaction: AL\u00b7LH": {
+   "false": 0.0593,
+   "true": 0.0598
+  },
+  "optic (other)": {
+   "false": 0.0398,
+   "true": 0.0703
+  },
+  "sensory (other)": {
+   "false": 0.0893,
+   "true": 0.0231
+  },
+  "visual centrifugal": {
+   "false": 0.0775,
+   "true": 0.2455
+  },
+  "visual projection": {
+   "false": 0.0237,
+   "true": 0.0094
+  }
+ },
+ "top_dimorphic_movers": [
+  {
+   "flywire_type": "AN_GNG_SAD_23",
+   "lane_f": "ascending (VNC)",
+   "median_rank_f": 0.002,
+   "median_rank_m": 0.973
+  },
+  {
+   "flywire_type": "DNge116",
+   "lane_f": "descending",
+   "median_rank_f": 0.991,
+   "median_rank_m": 0.022
+  },
+  {
+   "flywire_type": "AN_GNG_163",
+   "lane_f": "ascending (VNC)",
+   "median_rank_f": 0.04,
+   "median_rank_m": 0.965
+  },
+  {
+   "flywire_type": "SMP020",
+   "lane_f": "central (other)",
+   "median_rank_f": 0.944,
+   "median_rank_m": 0.028
+  },
+  {
+   "flywire_type": "AN_GNG_182",
+   "lane_f": "ascending (VNC)",
+   "median_rank_f": 0.061,
+   "median_rank_m": 0.965
+  },
+  {
+   "flywire_type": "DNde007",
+   "lane_f": "descending",
+   "median_rank_f": 0.934,
+   "median_rank_m": 0.033
+  },
+  {
+   "flywire_type": "SMP276",
+   "lane_f": "central (other)",
+   "median_rank_f": 0.916,
+   "median_rank_m": 0.018
+  },
+  {
+   "flywire_type": "CB3916",
+   "lane_f": "central (other)",
+   "median_rank_f": 0.089,
+   "median_rank_m": 0.977
+  },
+  {
+   "flywire_type": "CB1918",
+   "lane_f": "central (other)",
+   "median_rank_f": 0.092,
+   "median_rank_m": 0.978
+  },
+  {
+   "flywire_type": "CRE065",
+   "lane_f": "central (other)",
+   "median_rank_f": 0.062,
+   "median_rank_m": 0.935
+  }
+ ]
+}
