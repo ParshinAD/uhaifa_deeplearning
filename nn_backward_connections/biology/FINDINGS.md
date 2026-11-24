@@ -197,6 +197,11 @@ held fixed (L2R) the real graph sits far ABOVE its null; fly-only by charter
 axis, not an additive ladder increment.
 Provenance: biology/studies/null_ladder_v2/ (charter, REPORT, 5 reviews);
 biology/results/nullmodels_v2/ (39 runs + bounds_cache).
+Replication (2026-11-24, reviewed with corrections): the Male CNS shows the
+same inversion under the same generator and protocol — real 80.83 % below all
+12 type-matched draws (81.228 ± 0.013, −0.40 pp; −0.47 pp at 5× budget for one
+draw), 2-cycle floor 7.64 % real vs 2.82 % null. One animal per dataset; see
+male_cns/README.md §11 for limits.
 
 ---
 

@@ -1,0 +1,5 @@
+GraphData(name='malecns', n_nodes=164,425, n_edges=15,270,204, total_weight=113,731,681, weight_dtype=int64)
+types 13819 fallback nodes 2069 share of W touching a fallback node 0.0145 real 2-cycle floor %W 7.6352
+/opt/homebrew/Caskroom/miniforge/base/envs/allen/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+[done] malecns__type_dcsbm_singlefb__gs8000__ps42__e4000.json  final=81.2673%  greedy=66.1852%  (276.8s)

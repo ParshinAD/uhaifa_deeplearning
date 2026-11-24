@@ -197,6 +197,23 @@ p = 3e-4), in opposite directions. In FlyWire the mirrored order is a near-equal
 this was not re-tested on the male, and there is one seed per fly. So the side is most likely
 the optimizer's arbitrary choice.
 
+## 14. New (2026-11-24): the cell-type null overshoots the real graph in the male too (`results/nulls/malecns__type_dcsbm__*.json`)
+
+**What was measured.** A random graph that keeps, for every neuron, its in/out degree and
+out-strength towards every cell type (11,768 types), run through the same optimizer protocol.
+Twelve such graphs reach 81.228 +- 0.013 % forward weight; the real male graph reaches 80.83 %
+(two seeds), below all twelve, a gap of -0.40 pp. FlyWire: 84.232 vs 83.658, -0.57 pp. At five
+times the budget the gap for the probed draw does not shrink (-0.47 pp; FlyWire -0.65 pp). The
+real graph keeps a reciprocal floor of 7.64 % of weight, its type-matched nulls 2.82 % (FlyWire
+6.72 vs 2.02). A control with every untyped neuron as its own type stays above the real graph
+(81.267 %, one draw).
+
+**What it may mean.** The FlyWire result A7 (`biology/FINDINGS.md`) is not specific to that
+dataset: in a second fly, from another lab and of the other sex, the type-level wiring diagram
+again gives at least as much feedforward order as the real graph, while the real graph has 2.7
+times the reciprocal weight of its type-matched null. Both numbers are heuristic values under
+one protocol, not optima. Details and limits: `README.md` section 11.
+
 ## Caveats for all claims
 
 - One MFAS seed for the male on MPS; female numbers are the pinned CUDA champion.

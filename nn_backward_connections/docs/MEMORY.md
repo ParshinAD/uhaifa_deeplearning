@@ -3,6 +3,18 @@
 Facts and decisions that are not derivable from the code or git history. One entry per
 fact, newest first. Each entry links to where the evidence lives.
 
+## 2026-11-24 — A7 inversion replicated on the Male CNS
+
+`male_cns/pipeline/run_nulls_l4.py`, write-up `male_cns/README.md` section 11. Same L4
+type-dcSBM generator and G01 protocol as FlyWire. Real male graph 80.83 % FF (2 seeds) is
+below all 12 type-matched draws (81.228 +- 0.013), gap -0.40 pp (FlyWire -0.57); at 5x budget
+-0.47 pp for one draw (FlyWire -0.65). 2-cycle floor real 7.64 % vs null 2.82 % of W.
+Fallback-label control (untyped neurons as singleton types) 81.267, still above real.
+Independent review: PASS-with-corrections, all applied.
+
+- Not done: W0 and L2R rungs on the male, more than one probe draw, a simple-graph variant
+  of the null (draws have 4.19 % parallel slots), A7 on MICrONS.
+
 ## 2026-11-17 — Male CNS v1.0 analysed (second fly, other sex), first pass
 
 All in `male_cns/` (README = findings, BUILD = provenance). Graph: traced-only pairs, weight >= 2
@@ -23,7 +35,7 @@ in a separate gitignored venv `male_cns/.venv`; `allen` was not changed.
 - Interactive page `male_cns/outputs/streams/malecns_streams.html` (same as FlyWire "Fly
   Connectome Streams"); biology write-up `male_cns/FINDINGS.md` / `.ru.md`. Extra reciprocity in
   the male sits in mushroom body, olfaction and central complex, not in the optic lobe.
-- Not done: more seeds (CUDA), A7, B6, A5 re-tune, B4. Page not published as an artifact
+- Not done: more seeds (CUDA), B6, A5 re-tune, B4 (A7 L4 rung done 2026-11-24, entry above). Page not published as an artifact
   (publishing needs the user's approval).
 
 ## 2026-11-17 — FlyWire best known score moved to 84.807 %

@@ -25,7 +25,7 @@ m = 13,014,794.
 |---|---|
 | `BUILD.md` | download URLs, sha256, graph definition, reader venv |
 | `FINDINGS.md`, `FINDINGS.ru.md` | biological readings, in the format of `layering/FLY_FINDINGS.md` |
-| `pipeline/` | `build_graph.py` (feather -> npz), `ann_prep.py` (lanes / flow / NT in FlyWire vocabulary), `run_mfas.py` (H64 order), `run_nulls.py` (null ladder) |
+| `pipeline/` | `build_graph.py` (feather -> npz), `ann_prep.py` (lanes / flow / NT in FlyWire vocabulary), `run_mfas.py` (H64 order), `run_nulls.py` (null ladder), `run_nulls_l4.py` (cell-type null) |
 | `analysis/` | `analyze.py` (one script for both flies: A2, A3, A4, A5 swap, B1, B2, B5, B7, 2-cycle floor), `vnc_loop.py`, `noise_ceiling.py`, `dimorphism.py`, `biology_diff.py` (hemispheres, reciprocity by lane, per-type FB, lane-pair changes, MB roles, VNC neuromeres), `compare.py` (table + figures) |
 | `streams/` | the interactive page pipeline (prep, layouts, export, template, build); its own `README.md` |
 | `results/` | every number (JSON / CSV); male order `malecns_H64_s42_rank.npy`; `nulls/` null-ladder runs and orders; `streams/` page data |
@@ -43,6 +43,9 @@ $PY male_cns/analysis/analyze.py --dataset flywire               # same analysis
 $PY male_cns/analysis/analyze.py --dataset malecns
 $PY male_cns/analysis/analyze.py --dataset malecns_brain
 $PY male_cns/pipeline/run_nulls.py                               # null ladder, ~70 min MPS
+$PY male_cns/pipeline/run_nulls_l4.py                            # cell-type null, 12 draws, ~60 min MPS
+$PY male_cns/pipeline/run_nulls_l4.py --n-nulls 1 --epochs 20000 --sift-sweeps 40   # budget probe, ~19 min
+$PY male_cns/pipeline/run_nulls_l4.py --real --epochs 20000 --sift-sweeps 40        # ~19 min
 $PY male_cns/analysis/vnc_loop.py
 $PY male_cns/analysis/noise_ceiling.py
 $PY male_cns/analysis/dimorphism.py
@@ -196,13 +199,61 @@ w_shuffled), female 12-20. Within a rung std <= 0.025 pp, range <= 0.10 pp, in b
 | degree-matched, source weights (w_source) | 79.98 | 74.84 |
 | degree + lane blocks (L3 dcSBM) | 81.90 | 78.88 |
 | real graph | 83.66 | 80.83 |
+| cell-type dcSBM (L4, added 2026-11-24) | 84.23 | 81.23 |
 
-- The real graph is above every null draw in both flies; margin over the best rung (lane dcSBM):
-  +1.76 pp female, +1.95 pp male.
+- The real graph is above every draw of the first four rungs in both flies; margin over the
+  lane dcSBM: +1.76 pp female, +1.95 pp male.
 - Degrees carry most of the order in both (+10.2 / +9.5 pp over G(n,m)).
 - Lanes add more in the male (+4.0 vs +1.9 pp). Probable reason (guess): the male lanes include
   the nerve cord, whose sensory and motor lanes pin the two ends of the order.
 - Figure: `outputs/fig5_null_ladder.png`.
+
+### 11. Cell-type null (A7): the inversion replicates in the male
+
+`pipeline/run_nulls_l4.py`, runs `results/nulls/malecns__type_dcsbm__*.json`. Same generator
+and protocol as the FlyWire L4 rung (`biology/studies/null_ladder_v2/REPORT.md` section 2.3):
+every node keeps its in/out degree and out-strength profile over cell types, targets are
+permuted inside each (source type, target type) block. Male types: `cell_type`, 11,768 labels
+including fallbacks (2,069 nodes without a type get "<superclass> (class)"; 1.45 % of W touches
+one). The reading rule was written in the script before the first run. Not in fig5.
+
+| | female (v2 report) | male CNS |
+|---|---|---|
+| real graph, FF % | 83.658 (3 seeds) | 80.828 / 80.835 (2 seeds) |
+| type dcSBM, 12 draws, FF % | 84.232 +- 0.009 | 81.228 +- 0.013 (81.211 to 81.254) |
+| real minus null | -0.574 pp | -0.396 pp |
+| draws above the real graph | 12 / 12 | 12 / 12 |
+| 5x budget (20,000 epochs, 40 sweeps), real / one draw | 84.103 / 84.756 | 81.454 / 81.926 |
+| real minus null at 5x budget | -0.653 pp | -0.471 pp |
+| 2-cycle floor, % of W, real / null | 6.72 / 2.02 | 7.64 / 2.82 |
+| FB above own floor, real / null | 9.62 / 13.75 | 11.53 / 15.95 |
+| weight moved by one draw (gs8000; female value recomputed, not logged) | 77.7 % | 75.3 % |
+| fallback control: untyped neurons as singleton types, one draw | not run | 81.267 |
+
+Reading: in both flies, under this protocol and budget, the type-level wiring diagram reaches
+the real level of order and passes it, and the real graph keeps 2.7x (male) to 3.3x (female)
+the reciprocal floor of its type-matched null. For the one probed draw the gap does not shrink
+at 5x budget (draw gs8000 vs real seed 42: -0.385 to -0.471 pp). On the FB-above-floor axis
+the real graph is ahead by 4.4 pp (male) and 4.1 pp (female).
+
+Limits:
+- One pipeline seed per null, one probe draw, one real seed in the probe. Direction is
+  protocol-conditional (identical heuristic budget on both sides). The greedy start has the
+  same sign (null 66.19 vs real 65.88) but is not a direction control: greedy also puts the
+  lane and degree nulls above the real graph.
+- Fallback types are coarse (largest: `cb_intrinsic (class)` 880 nodes, `vnc_sensory (class)`
+  697) and 1.45 % of W touches one, more than the gap as a worst-case bound. The control draw
+  with every untyped neuron as its own type gives 81.267 %, still above the real graph, so the
+  fallback labels do not drive the inversion (one draw).
+- A draw is a multigraph: 4.19 % of slots fall on an already used pair (FlyWire 2.19 %). The
+  scorer and the floor add parallel slots as weight on one edge. A simple-graph variant was
+  not run.
+- 2.68 % of W sits in one-slot blocks and stays exactly real; 24.7 % of W is unmoved in one
+  draw. 5,358 of the 11,768 types have two nodes, so much of the permutation exchanges left
+  and right homologues.
+- Male types are finer (11,768 vs 8,857); 781 neurons carry combined `cell_type` labels.
+- `gen_stats.variant` in these JSONs reads "L3_dcsbm" (generator reused); filter by `kind`.
+- One animal per sex: the replication is across datasets, not a statement about sex.
 
 ## Limits
 
@@ -214,7 +265,7 @@ w_shuffled), female 12-20. Within a rung std <= 0.025 pp, range <= 0.10 pp, in b
   matches (249 optic neurons without a match go to "optic (other)").
 - 2,751 male neurons carry combined FlyWire labels such as "FC1A,FC1B,FC1F"; 315 of these 420
   labels have no exact FlyWire match and drop out of the cross-sex comparison.
-- Not ported: A7 type-dcSBM ladder, B6 central-only re-optimisation, A5 re-tune, B4 degraded
+- Not ported: the other A7 rungs (W0, L2R), B6 central-only re-optimisation, A5 re-tune, B4 degraded
   order, static neuron-cloud PNGs (`fly_cloud.py`), MICrONS-only findings A6/B8.
 - Aborted run, logged for completeness: H64 was first started on the graph with weight-1
   edges kept (25,563,096 edges); it was stopped during Rocket, before any score, when the
