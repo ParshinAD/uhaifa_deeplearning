@@ -1,0 +1,21 @@
+{
+ "command": "/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python ceiling/src/m_dual_check.py /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mdual/champ_back.npz champion_backward X",
+ "git_commit": "deecf6bce360e2f122333fba8b151d541afe8962",
+ "input": "/private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mdual/champ_back.npz",
+ "key": "X",
+ "S": null,
+ "divw": false,
+ "n": 136648,
+ "m": 5657719,
+ "nonzero_X": 1173245,
+ "L": 1,
+ "witness_source": 86212,
+ "witness_edge": 4516880,
+ "sum_wX": "6597734",
+ "sum_wX_float": 6597734.0,
+ "check_s": 105.2,
+ "UB": "6597734",
+ "UB_float": 6597734.0,
+ "runtime_s": 117.2
+}
+$P -u ceiling/src/m_dual_check.py $SP/champ_back.npz champion_backward X  549.62s user 1.33s system 469% cpu 1:57.27 total

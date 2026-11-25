@@ -1,0 +1,17 @@
+kernels vs Floyd: PASS mismatches 0 s 1.3
+tiny graphs vs all-cycle LP: PASS bad 0 s 0.4
+  mouse nodes 148 m 583 cycLP(json) 0.622613 UB 0.622613 L 1000000 ok True
+  celltype80_20262137 nodes 80 m 4286 cycLP(json) 57045.0 UB 57045.000484 L 1000000 ok True
+  recip80_20261138 nodes 80 m 1647 cycLP(json) 17123.0 UB 17123.0 L 1000000 ok True
+  recip80_20261137 nodes 80 m 1529 cycLP(json) 17739.0 UB 17739.0 L 1000000 ok True
+  celltype45_20262134 nodes 45 m 1354 cycLP(json) 25347.0 UB 25347.0 L 1000000 ok True
+  celltype80_20262138 nodes 80 m 1345 cycLP(json) 7316.0 UB 7316.0 L 1000000 ok True
+  recip45_20261133 nodes 45 m 1088 cycLP(json) 7804.5 UB 7804.5 L 1000000 ok True
+  recip60_20261136 nodes 60 m 750 cycLP(json) 6563.0 UB 6563.0 L 1000000 ok True
+  recip60_20261135 nodes 60 m 731 cycLP(json) 7328.0 UB 7328.0 L 1000000 ok True
+  recip45_20261134 nodes 45 m 702 cycLP(json) 10452.0 UB 10452.0 L 1000000 ok True
+  celltype60_20262135 nodes 60 m 693 cycLP(json) 4843.0 UB 4843.0 L 1000000 ok True
+  celltype45_20262133 nodes 45 m 674 cycLP(json) 7484.0 UB 7484.0 L 1000000 ok True
+  recip30_20261132 nodes 30 m 449 cycLP(json) 5447.0 UB 5447.0 L 1000000 ok True
+calibration: PASS bad 0 s 18.4
+ALL PASS

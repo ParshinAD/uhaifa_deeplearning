@@ -1,0 +1,123 @@
+{
+ "command": "python ceiling/src/m_cg2_run.py --tag smoke --init --rounds 1 --pdhg-iters 200 --pdhg-final-iters 200 --n-sources 2000 --k 20",
+ "config": {
+  "tag": "smoke",
+  "init": true,
+  "route_seed": "",
+  "state": "",
+  "rounds": 1,
+  "time_limit": 3300,
+  "pdhg_iters": 200,
+  "pdhg_final_iters": 200,
+  "pdhg_tol": 0.02,
+  "check_every": 100,
+  "omega": 1.0,
+  "n_sources": 2000,
+  "k": 20,
+  "max_add": 4000000,
+  "floor_len": 0.001,
+  "margin": 0.0001,
+  "prune_eps": 0.05,
+  "prune_age": 2,
+  "threads": 8,
+  "seed": 0,
+  "D": 10000,
+  "no_cert": false
+ },
+ "git_commit": "deecf6bce360e2f122333fba8b151d541afe8962",
+ "rounds": [
+  {
+   "round": 0,
+   "pool": 10941007,
+   "primal": 5889840.153767578,
+   "dual_estimate_pool": 5892378.606876483,
+   "pdhg_hist": [
+    [
+     100,
+     36.2,
+     5889757.2,
+     5892417.9
+    ],
+    [
+     200,
+     43.3,
+     5889840.2,
+     5892378.6
+    ]
+   ],
+   "pruned": 0,
+   "price": {
+    "sources": 2000,
+    "raw": 29799,
+    "pops": 166471632,
+    "relax": 7783647074,
+    "too_long": 0,
+    "overflow": 0,
+    "seconds": 16.5,
+    "unique": 29787,
+    "new": 29787,
+    "violated_true_len": 29787,
+    "added": 29787,
+    "mean_dual_len": 0.2162,
+    "by_len": {
+     "4": 2395,
+     "5": 2030,
+     "6": 3148,
+     "7": 6162,
+     "8": 8495,
+     "9": 4771,
+     "10": 1204,
+     "11": 508,
+     "12": 263,
+     "13": 263,
+     "14": 267,
+     "15": 140,
+     "16": 64,
+     "17": 21,
+     "18": 18,
+     "19": 19,
+     "20": 10,
+     "21": 3,
+     "22": 2,
+     "23": 2,
+     "24": 1,
+     "26": 1
+    }
+   },
+   "seconds": 43.6
+  },
+  {
+   "round": 1,
+   "pool": 10970794,
+   "primal": 5888695.281417594,
+   "dual_estimate_pool": 5898249.856277294,
+   "pdhg_hist": [
+    [
+     100,
+     79.9,
+     5885210.2,
+     5899739.1
+    ],
+    [
+     200,
+     87.1,
+     5888695.3,
+     5898249.9
+    ]
+   ]
+  }
+ ],
+ "pool_size": 10970794,
+ "pool_lp_primal": 5888695.281417594,
+ "pool_lp_dual_estimate": 5898249.856277294,
+ "state": "/private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/cg2/state_smoke.npz",
+ "cert": "ceiling/certs/c3smoke.npz",
+ "D": 10000,
+ "cycles_in_cert": 3823051,
+ "LB": 5890802,
+ "ceiling_pct": 85.9449,
+ "lb_before_refill": 5888519,
+ "verifier_status": "PASS",
+ "verifier_stdout": "{\n \"cert\": \"/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/certs/c3smoke.npz\",\n \"status\": \"PASS\",\n \"reason\": null,\n \"D\": 10000,\n \"slack_units\": 247165331456,\n \"n_edges_tight\": 1409266,\n \"n_cycles\": 3823051,\n \"n_cycle_edge_entries\": 13204106,\n \"max_cycle_len\": 21,\n \"n_pieces\": 0,\n \"n_piece_edge_entries\": 0,\n \"max_piece_nodes\": 0,\n \"sum_y\": 58908024339,\n \"sum_claim\": 0,\n \"LB\": 5890802,\n \"W\": 41912141,\n \"ceiling_pct_fraction\": \"3602133900/41912141\",\n \"ceiling_pct\": 85.944879,\n \"seconds\": 1.81\n}\nPASS\n",
+ "runtime_s": 114.0
+}

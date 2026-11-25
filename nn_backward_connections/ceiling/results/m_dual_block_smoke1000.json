@@ -1,0 +1,48 @@
+{
+ "command": "/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python ceiling/src/m_dual_block.py 1000 60 62 smoke1000 600",
+ "git_commit": "deecf6bce360e2f122333fba8b151d541afe8962",
+ "k": 1000,
+ "windows_done": [
+  60,
+  61
+ ],
+ "S": 1000000,
+ "F_champion": 6597734,
+ "total_gain_float": 126.0,
+ "assembled_sum_wX_over_S": 6597608.0,
+ "windows": [
+  {
+   "window": 60,
+   "nodes": 1000,
+   "m_scc": 4853,
+   "F_pi": 5383,
+   "lp": 5303.0,
+   "rounds": 38,
+   "rows": 3493,
+   "L_before_rescale": 1000000,
+   "L": 1000000,
+   "UB_block": 5303.0,
+   "seconds": 2.1,
+   "F_rounded": 5303,
+   "gain": 80.0
+  },
+  {
+   "window": 61,
+   "nodes": 1000,
+   "m_scc": 3668,
+   "F_pi": 4678,
+   "lp": 4632.0,
+   "rounds": 16,
+   "rows": 2384,
+   "L_before_rescale": 1000000,
+   "L": 1000000,
+   "UB_block": 4632.0,
+   "seconds": 0.5,
+   "F_rounded": 4632,
+   "gain": 46.0
+  }
+ ],
+ "runtime_s": 21.9,
+ "rounded_order_feedback": 6597608.0,
+ "rounded_order_ff_pct": 84.2584801382492
+}

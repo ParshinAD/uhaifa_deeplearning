@@ -1,0 +1,7 @@
+pool 10312196 nnz 88592790 unique hashes 10312196 | t 14.0
+round 3 pool 10312196 PDHG iters 100  | t 18.1
+  pdhg it 100 cur 6041510.0 6047519.9 best 6041566.2 6047482.2 gap% 0.0978 | t 62.1
+round 3 pool LP primal 6041566.2 dual est 6047482.2 | t 62.1
+  resid H 2 {'H': 2, 'cycles': 293, 'routed': 204.8} | t 67.4
+  resid H 3 {'H': 3, 'cycles': 695, 'routed': 266.4} | t 87.1
+  resid H 4 {'H': 4, 'cycles': 1248, 'routed': 353.7} | t 167.0

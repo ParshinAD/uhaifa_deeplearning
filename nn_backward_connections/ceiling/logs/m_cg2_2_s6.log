@@ -1,0 +1,92 @@
+pool 10312196 nnz 88592790 unique hashes 10312196 | t 14.0
+round 3 pool 10312196 PDHG iters 600  | t 18.2
+  pdhg it 100 cur 6041510.0 6047519.9 best 6041566.2 6047482.2 gap% 0.0978 | t 62.8
+  pdhg it 200 cur 6041707.7 6047461.4 best 6041756.6 6047427.0 gap% 0.0938 | t 75.8
+  pdhg it 300 cur 6041867.8 6047406.3 best 6041925.6 6047377.4 gap% 0.0902 | t 88.5
+  pdhg it 400 cur 6042026.9 6047358.7 best 6042071.5 6047329.9 gap% 0.087 | t 101.1
+  pdhg it 500 cur 6042181.1 6047313.4 best 6042217.4 6047287.0 gap% 0.0838 | t 114.1
+  pdhg it 600 cur 6042318.9 6047270.7 best 6042356.9 6047246.5 gap% 0.0809 | t 126.8
+round 3 pool LP primal 6042356.9 dual est 6047246.5 | t 126.8
+round 3 short {'kind': 'short', 'H': 6, 'sources': 136648, 'raw': 3507915, 'work': 35110200820, 'candidates': 90206317, 'overflow': 0, 'seconds': 44.1, 'unique': 3507915, 'new': 3499018, 'violated_true_len': 3499018, 'added': 3499018, 'mean_dual_len': 0.6997, 'by_len': {2: 35, 3: 1369, 4: 158671, 5: 788505, 6: 2550438}} | t 174.0
+round 3 pruned 2565900 | t 174.3
+round 4 pool 11245314 PDHG iters 600  | t 174.4
+  pdhg it 100 cur 6009330.2 6099437.9 best 6009330.2 6095916.9 gap% 1.4204 | t 216.6
+  pdhg it 200 cur 6044465.3 6088927.6 best 6047546.1 6085605.0 gap% 0.6254 | t 229.2
+  pdhg it 300 cur 6056460.7 6084969.6 best 6056660.5 6083798.2 gap% 0.4461 | t 241.8
+  pdhg it 400 cur 6061551.1 6083614.6 best 6061551.1 6082951.3 gap% 0.3518 | t 254.5
+  pdhg it 500 cur 6064712.3 6082871.2 best 6064712.3 6082417.5 gap% 0.2911 | t 267.1
+  pdhg it 600 cur 6066942.5 6082377.5 best 6066942.5 6082043.5 gap% 0.2483 | t 279.8
+round 4 pool LP primal 6066942.5 dual est 6082043.5 | t 279.9
+round 4 short {'kind': 'short', 'H': 6, 'sources': 136648, 'raw': 3083401, 'work': 36295869946, 'candidates': 62693030, 'overflow': 0, 'seconds': 45.4, 'unique': 3083401, 'new': 3022307, 'violated_true_len': 3022307, 'added': 3022307, 'mean_dual_len': 0.8354, 'by_len': {2: 613, 3: 18301, 4: 238846, 5: 826157, 6: 1938390}} | t 328.2
+round 4 pruned 2540755 | t 328.4
+round 5 pool 11726866 PDHG iters 600  | t 328.5
+  pdhg it 100 cur 6050981.8 6118647.3 best 6050981.8 6114164.2 gap% 1.0334 | t 363.2
+  pdhg it 200 cur 6076047.8 6109956.5 best 6082287.3 6106941.2 gap% 0.4037 | t 375.0
+  pdhg it 300 cur 6086172.4 6106451.6 best 6088169.4 6105490.8 gap% 0.2837 | t 386.9
+  pdhg it 400 cur 6090025.0 6105294.2 best 6090991.9 6104765.0 gap% 0.2256 | t 398.7
+  pdhg it 500 cur 6092256.0 6104676.6 best 6092883.8 6104313.1 gap% 0.1872 | t 410.6
+  pdhg it 600 cur 6093774.2 6104261.3 best 6094246.6 6104003.1 gap% 0.1598 | t 422.7
+round 5 pool LP primal 6094246.6 dual est 6104003.1 | t 422.7
+round 5 short {'kind': 'short', 'H': 6, 'sources': 136648, 'raw': 2522295, 'work': 36254369528, 'candidates': 31524758, 'overflow': 0, 'seconds': 44.8, 'unique': 2522295, 'new': 2382904, 'violated_true_len': 2382904, 'added': 2382904, 'mean_dual_len': 0.9197, 'by_len': {2: 592, 3: 19366, 4: 282172, 5: 754077, 6: 1326697}} | t 470.0
+round 5 pruned 3044198 | t 470.3
+round 6 pool 11065572 PDHG iters 600  | t 470.3
+  pdhg it 100 cur 6081130.1 6130494.1 best 6081130.1 6127289.5 gap% 0.7533 | t 502.1
+  pdhg it 200 cur 6098953.5 6123771.9 best 6103786.5 6121600.1 gap% 0.291 | t 513.5
+  pdhg it 300 cur 6106217.0 6121065.0 best 6108022.7 6120381.6 gap% 0.2019 | t 524.7
+  pdhg it 400 cur 6108982.7 6120125.3 best 6109989.6 6119736.8 gap% 0.1593 | t 535.7
+  pdhg it 500 cur 6110527.2 6119592.5 best 6111254.8 6119340.7 gap% 0.1321 | t 547.0
+  pdhg it 600 cur 6111581.7 6119253.7 best 6112114.3 6119060.7 gap% 0.1135 | t 558.6
+round 6 pool LP primal 6112114.3 dual est 6119060.7 | t 558.6
+round 6 short {'kind': 'short', 'H': 6, 'sources': 136648, 'raw': 2155658, 'work': 36267287375, 'candidates': 18726250, 'overflow': 0, 'seconds': 44.9, 'unique': 2155658, 'new': 1940850, 'violated_true_len': 1940850, 'added': 1940850, 'mean_dual_len': 0.9515, 'by_len': {2: 631, 3: 21377, 4: 278225, 5: 648485, 6: 992132}} | t 605.6
+round 6 pruned 2034067 | t 605.9
+round 7 pool 10972355 PDHG iters 600  | t 605.9
+  pdhg it 100 cur 6098693.7 6136718.0 best 6099251.7 6134168.4 gap% 0.5692 | t 636.9
+  pdhg it 200 cur 6109983.3 6132245.8 best 6112806.3 6131250.9 gap% 0.3008 | t 647.7
+  pdhg it 300 cur 6115153.5 6130264.2 best 6116911.8 6129710.3 gap% 0.2088 | t 658.5
+  pdhg it 400 cur 6117895.3 6129231.1 best 6119110.5 6128877.9 gap% 0.1594 | t 669.8
+  pdhg it 500 cur 6119574.6 6128604.2 best 6120454.5 6128358.5 gap% 0.129 | t 681.2
+  pdhg it 600 cur 6120701.0 6128187.6 best 6121355.2 6128006.0 gap% 0.1085 | t 692.3
+round 7 pool LP primal 6121355.2 dual est 6128006.0 | t 692.3
+round 7 short {'kind': 'short', 'H': 6, 'sources': 136648, 'raw': 1920278, 'work': 36303035706, 'candidates': 12064045, 'overflow': 0, 'seconds': 44.5, 'unique': 1920278, 'new': 1597446, 'violated_true_len': 1597446, 'added': 1597446, 'mean_dual_len': 0.9748, 'by_len': {2: 557, 3: 19554, 4: 260648, 5: 545768, 6: 770919}} | t 738.7
+round 7 pruned 1250858 | t 739.0
+round 8 pool 11318943 PDHG iters 600  | t 739.0
+  pdhg it 100 cur 6110568.2 6139518.0 best 6113157.0 6137517.5 gap% 0.3969 | t 771.0
+  pdhg it 200 cur 6118573.1 6136192.7 best 6120934.6 6135501.1 gap% 0.2374 | t 782.2
+  pdhg it 300 cur 6122287.6 6134696.8 best 6123835.6 6134296.2 gap% 0.1705 | t 793.5
+  pdhg it 400 cur 6124380.0 6133857.7 best 6125436.9 6133602.8 gap% 0.1331 | t 804.7
+  pdhg it 500 cur 6125695.3 6133329.3 best 6126467.6 6133148.8 gap% 0.1089 | t 815.8
+  pdhg it 600 cur 6126617.7 6132977.2 best 6127185.3 6132832.3 gap% 0.0921 | t 827.0
+round 8 pool LP primal 6127185.3 dual est 6132832.3 | t 827.0
+round 8 short {'kind': 'short', 'H': 6, 'sources': 136648, 'raw': 1640023, 'work': 36183947547, 'candidates': 7743192, 'overflow': 0, 'seconds': 44.7, 'unique': 1640023, 'new': 1237127, 'violated_true_len': 1237127, 'added': 1237127, 'mean_dual_len': 0.9856, 'by_len': {2: 445, 3: 16195, 4: 213347, 5: 416618, 6: 590522}} | t 873.5
+round 8 pruned 848639 | t 873.7
+round 9 pool 11707431 PDHG iters 600  | t 873.8
+  pdhg it 100 cur 6118620.3 6140135.0 best 6121558.6 6138500.3 gap% 0.276 | t 907.2
+  pdhg it 200 cur 6124228.6 6137747.2 best 6126069.7 6137252.1 gap% 0.1822 | t 918.8
+  pdhg it 300 cur 6126806.7 6136686.4 best 6128018.2 6136396.3 gap% 0.1365 | t 930.4
+  pdhg it 400 cur 6128311.1 6136058.6 best 6129183.4 6135864.2 gap% 0.1089 | t 941.9
+  pdhg it 500 cur 6129278.2 6135636.8 best 6129957.5 6135498.4 gap% 0.0903 | t 953.7
+  pdhg it 600 cur 6129996.9 6135343.5 best 6130500.8 6135232.9 gap% 0.0771 | t 965.9
+round 9 pool LP primal 6130500.8 dual est 6135232.9 | t 965.9
+round 9 short {'kind': 'short', 'H': 6, 'sources': 136648, 'raw': 1429315, 'work': 36063527747, 'candidates': 5392921, 'overflow': 0, 'seconds': 44.1, 'unique': 1429315, 'new': 976753, 'violated_true_len': 976753, 'added': 976753, 'mean_dual_len': 0.992, 'by_len': {2: 305, 3: 11821, 4: 164988, 5: 345897, 6: 453742}} | t 1011.6
+round 9 pruned 526044 | t 1011.9
+round 10 pool 12158140 PDHG iters 600  | t 1011.9
+  pdhg it 100 cur 6123921.2 6139891.8 best 6126713.5 6138587.6 gap% 0.1934 | t 1046.3
+  pdhg it 200 cur 6127861.3 6138199.3 best 6129264.9 6137817.5 gap% 0.1393 | t 1058.0
+  pdhg it 300 cur 6129639.8 6137460.8 best 6130550.8 6137242.8 gap% 0.109 | t 1069.8
+  pdhg it 400 cur 6130723.0 6137007.4 best 6131375.1 6136863.2 gap% 0.0894 | t 1081.6
+  pdhg it 500 cur 6131448.5 6136693.2 best 6131957.8 6136588.6 gap% 0.0755 | t 1093.5
+  pdhg it 600 cur 6131979.6 6136462.0 best 6132393.2 6136379.8 gap% 0.065 | t 1104.3
+round 10 pool LP primal 6132393.2 dual est 6136379.8 | t 1104.3
+round 10 short {'kind': 'short', 'H': 6, 'sources': 136648, 'raw': 1161561, 'work': 35912248233, 'candidates': 3327845, 'overflow': 0, 'seconds': 43.3, 'unique': 1161561, 'new': 686272, 'violated_true_len': 686272, 'added': 686272, 'mean_dual_len': 0.9946, 'by_len': {2: 224, 3: 8070, 4: 118854, 5: 229355, 6: 329769}} | t 1149.1
+round 10 pruned 315898 | t 1149.4
+round 11 pool 12528514 PDHG iters 600  | t 1149.4
+  pdhg it 100 cur 6127559.8 6139313.6 best 6129938.5 6138307.8 gap% 0.1363 | t 1185.9
+  pdhg it 200 cur 6130369.3 6138133.2 best 6131381.1 6137833.9 gap% 0.1051 | t 1198.1
+  pdhg it 300 cur 6131579.7 6137615.7 best 6132255.6 6137458.4 gap% 0.0848 | t 1210.2
+  pdhg it 400 cur 6132327.1 6137303.0 best 6132825.8 6137188.6 gap% 0.0711 | t 1222.7
+  pdhg it 500 cur 6132862.3 6137078.3 best 6133250.6 6136991.6 gap% 0.061 | t 1235.0
+  pdhg it 600 cur 6133251.9 6136906.5 best 6133568.7 6136841.3 gap% 0.0533 | t 1247.7
+round 11 pool LP primal 6133568.7 dual est 6136841.3 | t 1247.7
+state saved /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/cg2/state_2_s6.npz | t 1247.8
+cert c32_s6.npz LB 6134076 ceiling 85.3644 lb before refill 6133266 refill gain 809.8 verifier PASS | t 1284.1
+done | t 1284.1

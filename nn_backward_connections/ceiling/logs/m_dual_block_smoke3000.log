@@ -1,0 +1,36 @@
+  round 0 rows 9925 kept 7832 new 9925 lp 14350.0 s 0.2
+  round 1 rows 16184 kept 8561 new 8352 lp 14913.5 s 0.7
+  round 2 rows 16407 kept 9028 new 7846 lp 15169.5 s 1.1
+  round 3 rows 16513 kept 9528 new 7485 lp 15336.5 s 1.6
+  round 4 rows 16591 kept 9622 new 7063 lp 15435.125 s 2.1
+  round 5 rows 16679 kept 9500 new 7057 lp 15502.811 s 2.6
+  round 6 rows 16504 kept 10089 new 7004 lp 15573.5 s 3.0
+  round 7 rows 16550 kept 9955 new 6461 lp 15595.455 s 3.6
+  round 8 rows 16677 kept 10157 new 6722 lp 15624.5 s 4.1
+  round 9 rows 15474 kept 10141 new 5317 lp 15646.756 s 4.6
+  round 10 rows 15414 kept 10021 new 5273 lp 15664.75 s 5.1
+  round 11 rows 16847 kept 10356 new 6826 lp 15679.426 s 5.6
+  round 12 rows 17310 kept 10865 new 6954 lp 15713.75 s 6.1
+  round 13 rows 17661 kept 10845 new 6796 lp 15718.3 s 6.7
+  round 14 rows 16353 kept 10779 new 5508 lp 15722.868 s 7.3
+  round 15 rows 16096 kept 10713 new 5317 lp 15725.803 s 7.8
+  round 16 rows 16942 kept 10882 new 6229 lp 15728.563 s 8.3
+  round 17 rows 16128 kept 10933 new 5246 lp 15730.897 s 8.8
+  round 18 rows 15944 kept 10919 new 5011 lp 15731.738 s 9.4
+  round 19 rows 15447 kept 10963 new 4528 lp 15734.163 s 10.1
+  round 20 rows 15574 kept 11577 new 4611 lp 15735.833 s 10.5
+  round 21 rows 16233 kept 12229 new 4656 lp 15735.833 s 11.1
+  round 22 rows 16555 kept 12859 new 4326 lp 15735.833 s 11.8
+  round 23 rows 16330 kept 11658 new 3471 lp 15736.098 s 12.5
+  round 24 rows 15118 kept 12741 new 3460 lp 15736.333 s 12.9
+  round 25 rows 16162 kept 12950 new 3421 lp 15736.5 s 13.5
+  round 26 rows 13556 kept 11949 new 606 lp 15736.5 s 13.8
+  round 27 rows 15695 kept 13777 new 3746 lp 15736.5 s 14.4
+  round 28 rows 16620 kept 14163 new 2843 lp 15736.5 s 14.9
+  round 29 rows 16864 kept 14775 new 2701 lp 15736.5 s 15.6
+  round 30 rows 15084 kept 14623 new 309 lp 15736.5 s 16.1
+  round 31 rows 16089 kept 14393 new 1466 lp 15736.5 s 16.6
+  round 32 rows 15512 kept 14573 new 1119 lp 15736.5 s 17.2
+  round 33 rows 16661 kept 14708 new 2088 lp 15736.5 s 18.0
+window 20 {"window": 20, "nodes": 3000, "m_scc": 17924, "F_pi": 16127, "lp": 15736.5, "rounds": 34, "rows": 14708, "L_before_rescale": 1000000, "L": 1000000, "UB_block": 15736.5, "seconds": 18.2, "F_rounded": 15749, "gain": 390.5}
+assembled sum wX / S 6597343.5 gain 390.5 runtime 37.4 rounded order feedback 6597356.0

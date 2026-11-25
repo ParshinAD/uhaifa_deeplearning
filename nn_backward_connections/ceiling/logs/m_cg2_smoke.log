@@ -1,0 +1,13 @@
+pool 10941007 nnz 40795968 unique hashes 10941007 | t 13.3
+round 0 pool 10941007 PDHG iters 200  | t 17.4
+  pdhg it 100 cur 5889609.4 5892472.6 best 5889757.2 5892417.9 gap% 0.0452 | t 36.2
+  pdhg it 200 cur 5889778.3 5892413.9 best 5889840.2 5892378.6 gap% 0.0431 | t 43.3
+round 0 pool LP primal 5889840.2 dual est 5892378.6 | t 43.3
+round 0 pruned 0 price {'sources': 2000, 'raw': 29799, 'pops': 166471632, 'relax': 7783647074, 'too_long': 0, 'overflow': 0, 'seconds': 16.5, 'unique': 29787, 'new': 29787, 'violated_true_len': 29787, 'added': 29787, 'mean_dual_len': 0.2162, 'by_len': {4: 2395, 5: 2030, 6: 3148, 7: 6162, 8: 8495, 9: 4771, 10: 1204, 11: 508, 12: 263, 13: 263, 14: 267, 15: 140, 16: 64, 17: 21, 18: 18, 19: 19, 20: 10, 21: 3, 22: 2, 23: 2, 24: 1, 26: 1}} | t 61.0
+round 1 pool 10970794 PDHG iters 200 final | t 61.0
+  pdhg it 100 cur 5879347.1 5902477.6 best 5885210.2 5899739.1 gap% 0.2463 | t 79.9
+  pdhg it 200 cur 5886712.7 5899307.8 best 5888695.3 5898249.9 gap% 0.162 | t 87.1
+round 1 pool LP primal 5888695.3 dual est 5898249.9 | t 87.1
+state saved /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/cg2/state_smoke.npz | t 87.2
+cert c3smoke.npz LB 5890802 ceiling 85.9449 lb before refill 5888519 refill gain 2283.1 verifier PASS | t 114.0
+done | t 114.0

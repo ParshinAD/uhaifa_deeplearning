@@ -82,3 +82,30 @@ Prediction: certified LB >= 6.10 M (ceiling <= 85.45 %) within the phase-2 budge
 dual (fractional FAS lengths) puts the cycle-LP optimum between 6.25 M and 6.37 M (i.e. at
 or slightly below the leaderboard top's 6,367,908 feedback).
 Kill: certified LB < 5.95 M after the phase-2 budget.
+- 2026-11-25 H7 SUPPORTED (first part; `results/M_CG2.md`): certified LB 6,138,414
+  (85.3541 %, c34_fin, verifier PASS, re-run by orchestrator) >= 6.10 M prediction. Second
+  part (cycle-LP optimum in [6.25, 6.37] M) open: CG not converged (exact pricing on final
+  duals finds violated cycles from 119,470 of 127,550 sources, min length 0.686, mostly at
+  PDHG precision). Biggest single step: seeding the pool with method-R cycles (+113k).
+  Long cycles (13-21 edges) get almost no weight; packing mass sits on 2-7 edge cycles.
+- 2026-11-25 DUAL result (`results/M_DUAL.md`, not yet independently reviewed): exact
+  integer check of repaired CG2 duals proves tau* <= 6,192,600.95. With the certified LB:
+  6,138,414 <= tau* <= 6,192,601. No cycle packing can certify a ceiling below 85.2248 %.
+  P's extrapolation (tau* ~ 5.92-6.0 M) is refuted. H3 restated: leaderboard feedback
+  (6,367,908) exceeds tau* by >= 175,307; the split between leaderboard suboptimality and
+  integrality gap is unknown.
+
+## H8. Who owns the 175k: the orders or the LP? (added 2026-11-25, before the runs)
+Test: exact optimum (MILP with lazy cycle constraints, HiGHS) of contiguous windows of the
+H64 order (and of a few dense subgraphs of 500-3000 nodes), vs the window's cycle-LP value
+and vs the best known order of the window.
+Prediction: on windows the cycle LP stays within 0.2 % of the exact optimum (as on pieces),
+so most of the ~1 % window gap between LP and the H64 order is order suboptimality.
+Kill / reverse: if exact window optima sit >= 0.5 % above the window LP on average, the
+integrality gap is real at that scale and the true OPT is likely far above tau*.
+
+## H9. The bracket can be closed to < 20k (added 2026-11-25)
+Prediction: one more CG campaign started from the repaired (feasible) duals, with high
+precision PDHG and pricing focused on the cycles the repair had to lift, raises LB by
+>= 25k and/or lowers the UB by >= 10k.
+Kill: LB gain < 10k and UB gain < 5k after 3 h.

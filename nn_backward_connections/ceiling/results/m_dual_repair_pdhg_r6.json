@@ -1,0 +1,25 @@
+{
+ "command": "/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python ceiling/src/m_dual_repair.py /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mshort/pdhg_r6.npz x pdhg_r6 estimate",
+ "git_commit": "deecf6bce360e2f122333fba8b151d541afe8962",
+ "input": "/private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mshort/pdhg_r6.npz",
+ "key": "x",
+ "S": 1000000,
+ "mode": "estimate",
+ "sum_wX0_over_S": 5892113.15934,
+ "zero_share_in_scc": 0.637589692431367,
+ "F_queries": 757086,
+ "F_weight": 4387036,
+ "sample_sources_violated_share": 0.902,
+ "sample_sources_zero_cycle_share": 0.8285,
+ "sample_shortest_cycle_quantiles_over_S": [
+  0.0,
+  0.0,
+  0.9998429000000001
+ ],
+ "sample_F_violated_share": 0.9995,
+ "est_parallel_raise_cost": 2154130.732298226,
+ "est_parallel_UB": 8046243.891638226,
+ "sample_s": 21.7,
+ "est_full_query_cpu_s": 24656.326190294265,
+ "runtime_s": 31.6
+}

@@ -1,0 +1,21 @@
+{
+ "command": "/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python ceiling/src/m_dual_check.py /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mdual/block_k3000all.npz block_k3000all X",
+ "git_commit": "deecf6bce360e2f122333fba8b151d541afe8962",
+ "input": "/private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mdual/block_k3000all.npz",
+ "key": "X",
+ "S": null,
+ "divw": false,
+ "n": 136648,
+ "m": 5657719,
+ "nonzero_X": 1185047,
+ "L": 1000000,
+ "witness_source": 78384,
+ "witness_edge": 4422439,
+ "sum_wX": "6581707224547",
+ "sum_wX_float": 6581707224547.0,
+ "check_s": 10500.5,
+ "UB": "6581707224547/1000000",
+ "UB_float": 6581707.224547,
+ "runtime_s": 10523.4
+}
+$P -u ceiling/src/m_dual_check.py $SP/block_k3000all.npz block_k3000all X  757.32s user 4.59s system 7% cpu 2:55:23.65 total

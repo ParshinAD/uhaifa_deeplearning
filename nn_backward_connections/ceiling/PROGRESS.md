@@ -8,6 +8,7 @@ Worktree: `/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling`, 
 | cert | LB (syn) | ceiling FF % | verified by | notes |
 |---|---|---|---|---|
 | c00_2cycle | 2,815,303 | 93.2828 | verify_cert PASS (2026-11-25) | certs/c00_2cycle.npz |
+| c34_fin (CG2, round 17) | 6,138,414 | 85.3541 | verify_cert PASS, re-run by orchestrator | D=10000, 6,710,328 cycles, len <= 19 |
 | c1r6_cg_r6 (method P, CG round 6) | 5,890,045 | 85.9467 | verify_cert PASS, re-run by orchestrator 2026-11-25 | D=10000, 3,734,535 cycles, len 2..15 |
 | c21_route_improve_r1 (method R) | 5,843,849 | 86.0569 | verify_cert PASS, re-run by orchestrator 2026-11-25 | 1,760,774 cycles, max len 11 |
 | prior: 2-cycle + 420 s greedy 3-cycles (2026-08-19 probe) | 4,537,757 | 89.1732 | not certified (no cert file) | |
@@ -42,3 +43,18 @@ agent per bound method.
   triangle LP and K2 pieces add nothing. Main line now: solve the full cycle LP (H7).
 - 2026-11-25: method P done (results/M_SHORT.md). Joint 2+3 LP optimum in [4,889,601, 4,889,963] (88.33 %); column generation with Dijkstra pricing, 6 rounds, gains halving; best c1r6 LB 5,890,045 = 85.9467 % (re-verified by me). Not converged: pricing still finds violated cycles. Warm-start pools in scratchpad/mshort (3.3 GB, volatile).
 - Open tension: P extrapolates the full cycle LP at 5.92-6.0 M (integrality gap ~1.5 pp), calibration says the cycle LP ~ OPT on pieces. Needs a rigorous upper bound on the cycle LP (scaled dual lengths) to decide.
+- 2026-11-25: checkpoint commit deecf6b (local, not pushed; certs gitignored). Phase 2 launched:
+  CG2 (column generation to convergence, C pricing, H7), DUAL (rigorous upper bound on the
+  cycle-LP value tau* from repaired dual lengths), RED-TEAM 1 (try to break verifier + proof
+  chain, own independent checker).
+- 2026-11-25: RED-TEAM 1 PASS (reviews/REDTEAM_1.md): 0/22 crafted invalid certs pass;
+  independent from-scratch checker (copied to reviews/redteam1/mycheck.py) reproduces
+  LB 5,890,045 (c1r6) and 5,843,849 (c21) exactly; every certified cycle contains a backward
+  edge of H64. Minor: duplicate zip members accepted (last wins), meta compared with ==.
+- 2026-11-25: CG2 c34_fin LB 6,138,414 = 85.3541 % (re-verified by me). Pool LP primal 6,138,043 vs dual est 6,140,143 (gap 0.034 %). H7 prediction (>= 6.10 M) met. DUAL rough estimate (not rigorous) for tau* ~ 6.19 M. Agents still finishing.
+- 2026-11-25: CG2 done (results/M_CG2.md). Note: the Mac slept ~2.9 h mid-run; future long
+  runs go under `caffeinate -i`. Pool state for continuation: scratchpad/cg2/state_4_fin.npz.
+- 2026-11-25: DUAL done: 6,138,414 <= tau* <= 6,192,601 (cycle-packing ceiling can never go
+  below 85.2248 %). Side: window-LP rounding gives an order 6,490 syn better than H64
+  (84.2737 %, one pass, not pinned). Phase 3 launched: REVIEW-DUAL (fresh reviewer of the UB
+  proof), H8 (exact window MILPs), H9 (close the bracket).

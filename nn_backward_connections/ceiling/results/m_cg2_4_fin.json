@@ -1,0 +1,269 @@
+{
+ "command": "python ceiling/src/m_cg2_run.py --tag 4_fin --state /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/cg2/state_3_dj.npz --rounds 2 --k 30 --n-sources 40000 --floor-len 0.001 --sat-weight 20 --short-H 6 --short-k 50 --pdhg-iters 1200 --pdhg-final-iters 3000 --pdhg-tol 0.004 --time-limit 3000 --seed 200",
+ "config": {
+  "tag": "4_fin",
+  "init": false,
+  "route_seed": "",
+  "state": "/private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/cg2/state_3_dj.npz",
+  "rounds": 2,
+  "time_limit": 3000.0,
+  "pdhg_iters": 1200,
+  "pdhg_final_iters": 3000,
+  "pdhg_tol": 0.004,
+  "check_every": 100,
+  "omega": 1.0,
+  "n_sources": 40000,
+  "pop_limit": 0,
+  "k": 30,
+  "max_add": 4000000,
+  "floor_len": 0.001,
+  "sat_weight": 20.0,
+  "resid_phases": "",
+  "resid_scale": 10,
+  "resid_work_limit": 3000000,
+  "short_H": 6,
+  "short_k": 50,
+  "short_floor": 0.001,
+  "margin": 0.0001,
+  "prune_eps": 0.05,
+  "prune_age": 2,
+  "threads": 8,
+  "seed": 200,
+  "D": 10000,
+  "no_cert": false
+ },
+ "git_commit": "deecf6bce360e2f122333fba8b151d541afe8962",
+ "rounds": [
+  {
+   "round": 16,
+   "pool": 14725318,
+   "primal": 6137765.023317134,
+   "dual_estimate_pool": 6139853.962771407,
+   "pdhg_hist": [
+    [
+     100,
+     67.3,
+     6135908.2,
+     6140410.5
+    ],
+    [
+     200,
+     82.8,
+     6136208.9,
+     6140306.5
+    ],
+    [
+     300,
+     98.8,
+     6136481.8,
+     6140223.4
+    ],
+    [
+     400,
+     114.1,
+     6136716.3,
+     6140154.1
+    ],
+    [
+     500,
+     129.8,
+     6136915.0,
+     6140095.5
+    ],
+    [
+     600,
+     145.8,
+     6137089.6,
+     6140044.6
+    ],
+    [
+     700,
+     161.7,
+     6137243.1,
+     6140001.8
+    ],
+    [
+     800,
+     177.1,
+     6137377.1,
+     6139965.8
+    ],
+    [
+     900,
+     192.9,
+     6137498.6,
+     6139934.5
+    ],
+    [
+     1000,
+     208.6,
+     6137599.4,
+     6139905.6
+    ],
+    [
+     1100,
+     224.1,
+     6137686.2,
+     6139878.9
+    ],
+    [
+     1200,
+     240.0,
+     6137765.0,
+     6139854.0
+    ]
+   ],
+   "pruned": 512549,
+   "short": {
+    "kind": "short",
+    "H": 6,
+    "sources": 136648,
+    "raw": 443117,
+    "work": 35436140609,
+    "candidates": 840852,
+    "overflow": 0,
+    "seconds": 46.1,
+    "unique": 443117,
+    "new": 228490,
+    "violated_true_len": 228490,
+    "added": 228490,
+    "mean_dual_len": 0.9943,
+    "by_len": {
+     "2": 42,
+     "3": 2774,
+     "4": 31046,
+     "5": 68348,
+     "6": 126280
+    }
+   },
+   "price": {
+    "sources": 40000,
+    "raw": 175245,
+    "pops": 3227532470,
+    "relax": 140767259295,
+    "too_long": 0,
+    "overflow": 0,
+    "seconds": 323.4,
+    "unique": 169835,
+    "new": 169835,
+    "violated_true_len": 169835,
+    "added": 169835,
+    "mean_dual_len": 0.8568,
+    "by_len": {
+     "2": 7,
+     "3": 60,
+     "4": 234,
+     "5": 116,
+     "6": 335,
+     "7": 1485,
+     "8": 3495,
+     "9": 7421,
+     "10": 12030,
+     "11": 17862,
+     "12": 34443,
+     "13": 36038,
+     "14": 24981,
+     "15": 14913,
+     "16": 6692,
+     "17": 3220,
+     "18": 1972,
+     "19": 1461,
+     "20": 1517,
+     "21": 1045,
+     "22": 431,
+     "23": 73,
+     "24": 4
+    },
+    "added_after_resid_dedup": 169539
+   },
+   "seconds": 595.4
+  },
+  {
+   "round": 17,
+   "pool": 14610798,
+   "primal": 6138043.254704882,
+   "dual_estimate_pool": 6140143.2967467075,
+   "pdhg_hist": [
+    [
+     100,
+     661.3,
+     6134483.6,
+     6141144.6
+    ],
+    [
+     200,
+     676.0,
+     6135750.4,
+     6140923.7
+    ],
+    [
+     300,
+     690.6,
+     6136334.4,
+     6140732.0
+    ],
+    [
+     400,
+     708.1,
+     6136734.5,
+     6140591.9
+    ],
+    [
+     500,
+     728.4,
+     6137049.3,
+     6140484.6
+    ],
+    [
+     600,
+     748.7,
+     6137316.5,
+     6140399.8
+    ],
+    [
+     700,
+     769.3,
+     6137530.7,
+     6140331.0
+    ],
+    [
+     800,
+     790.6,
+     6137698.4,
+     6140273.0
+    ],
+    [
+     900,
+     811.6,
+     6137834.2,
+     6140222.5
+    ],
+    [
+     1000,
+     835.2,
+     6137946.3,
+     6140180.0
+    ],
+    [
+     1100,
+     11175.7,
+     6138043.3,
+     6140143.3
+    ]
+   ]
+  }
+ ],
+ "pool_size": 14610798,
+ "pool_lp_primal": 6138043.254704882,
+ "pool_lp_dual_estimate": 6140143.2967467075,
+ "state": "/private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/cg2/state_4_fin.npz",
+ "cert": "ceiling/certs/c34_fin.npz",
+ "D": 10000,
+ "cycles_in_cert": 6710328,
+ "LB": 6138414,
+ "ceiling_pct": 85.3541,
+ "lb_before_refill": 6137708,
+ "verifier_status": "PASS",
+ "verifier_stdout": "{\n \"cert\": \"/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/certs/c34_fin.npz\",\n \"status\": \"PASS\",\n \"reason\": null,\n \"D\": 10000,\n \"slack_units\": 231319519370,\n \"n_edges_tight\": 1484857,\n \"n_cycles\": 6710328,\n \"n_cycle_edge_entries\": 29895303,\n \"max_cycle_len\": 19,\n \"n_pieces\": 0,\n \"n_piece_edge_entries\": 0,\n \"max_piece_nodes\": 0,\n \"sum_y\": 61384149466,\n \"sum_claim\": 0,\n \"LB\": 6138414,\n \"W\": 41912141,\n \"ceiling_pct_fraction\": \"3577372700/41912141\",\n \"ceiling_pct\": 85.354091,\n \"seconds\": 2.9\n}\nPASS\n",
+ "runtime_s": 11216.4
+}
