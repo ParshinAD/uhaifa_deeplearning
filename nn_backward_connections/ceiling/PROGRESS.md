@@ -1,12 +1,13 @@
 # FF ceiling study: progress (resume point)
 
 Worktree: `/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling`, branch
-`research/ff-ceiling` (from `layering/v1` at 657786f). Not committed yet.
+`research/ff-ceiling` (from `layering/v1` at 657786f). Study complete; final write-up in REPORT.md / REPORT.ru.md.
 
 ## Current best certified ceiling
 
 | cert | LB (syn) | ceiling FF % | verified by | notes |
 |---|---|---|---|---|
+| c45_e (H9 close, run 5_e) | 6,141,103 | 85.3477 | verify_cert PASS, re-run by orchestrator | D=10000, 6,748,248 cycles, len <= 22, 110 MB, sha256 e243142c...7766 |
 | c00_2cycle | 2,815,303 | 93.2828 | verify_cert PASS (2026-11-25) | certs/c00_2cycle.npz |
 | c34_fin (CG2, round 17) | 6,138,414 | 85.3541 | verify_cert PASS, re-run by orchestrator | D=10000, 6,710,328 cycles, len <= 19 |
 | c1r6_cg_r6 (method P, CG round 6) | 5,890,045 | 85.9467 | verify_cert PASS, re-run by orchestrator 2026-11-25 | D=10000, 3,734,535 cycles, len 2..15 |
@@ -24,8 +25,7 @@ Our order 84.2582 % (H64, FB 6,597,734); leaderboard top 84.8065 % (FB 6,367,908
 
 ## Next
 
-Phase 1: hypotheses with predictions (`HYPOTHESES.md`), from literature + scout, then one
-agent per bound method.
+Done. Open options are listed in REPORT.md sections 8-9 and REPORT.ru.md (next steps).
 
 ## Log (append-only)
 
@@ -58,3 +58,27 @@ agent per bound method.
   below 85.2248 %). Side: window-LP rounding gives an order 6,490 syn better than H64
   (84.2737 %, one pass, not pinned). Phase 3 launched: REVIEW-DUAL (fresh reviewer of the UB
   proof), H8 (exact window MILPs), H9 (close the bracket).
+- 2026-11-25: REVIEW-DUAL PASS (reviews/REVIEW_DUAL.md): independent C check over all
+  136,648 heads, min cycle = S exactly, same sum; tau* <= 6,192,600.95 is proven. UB length
+  vector pinned as certs/ub_tau_repair_heads.npz (X int64 sha256 43b2b56d...9f88, S = 1e6,
+  compressed 8.6 MB; will be committed with the final certs). Source duals sha256 6f4e3a4d...f696.
+- 2026-11-25: H8 done (results/M_WIN.md): exact optima on 71/78 pieces (H64 windows 300-3000
+  ranks, reciprocal clusters of 500). Cycle LP below OPT by 0.016 % on average (worst 0.271 %);
+  on 34 solved M_DUAL windows H64 is 1.318 % above OPT, OPT only 0.008 % above LP. Window gap
+  is order suboptimality, not integrality. Caveats: induced windows hold 16 % of H64 feedback;
+  9 densest central windows not solved. Exact window re-solve is worth only ~14-22k syn (est.).
+- 2026-11-25: H9 run 1_a: c41_a LB 6,139,869 = 85.3506 % (verify_cert PASS, re-run by
+  orchestrator). Claimed UB tau* <= 6,156,973.01 (X_1_a, S = 1e6), independent check by the
+  REVIEW-DUAL C checker running. Run 2_b still in progress.
+- 2026-11-25: independent REVIEW-DUAL checker (scratchpad review_dual/rcheck) confirms the run
+  1_a UB: min cycle = S, sum wX = 6,156,973,012,593 / 1e6.
+- 2026-11-25: H9 done (results/M_CLOSE.md). Final bracket 6,141,103 <= tau* <= 6,142,034.07
+  (width 931). Best cert c45_e LB 6,141,103 = 85.3477 % (verify_cert PASS, re-run by
+  orchestrator; sha256 e243142c...7766, 107 MB, too big for git, reproduce via M_CLOSE.md).
+  No cycle packing can give a ceiling below 85.3455 %. UB lengths pinned as
+  certs/ub_tau_close_5e.npz (X sha256 22b9799a...120b, S = 1e6). Independent check running.
+- 2026-11-25: independent C checker (reviews/ub_independent/, from REVIEW-DUAL) confirms the
+  final UB X_5_e: 0 edges on a cycle < S, min = S, sum wX = 6,142,034,070,615 / 1e6. Bracket
+  6,141,103 <= tau* <= 6,142,034.07 is fully verified on both sides.
+- 2026-11-25: final reports REPORT.md / REPORT.ru.md written; accuracy review (3 errors, 6
+  overstatements) and style review (undefined tags, RU calques) applied. Study complete.

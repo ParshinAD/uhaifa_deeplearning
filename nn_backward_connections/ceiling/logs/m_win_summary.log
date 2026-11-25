@@ -1,0 +1,21 @@
+group | n | optimal | sum opt | (opt-lp)/opt % | max per-inst % | (h64-opt)/opt % | (ls-opt)/opt % | (lpls-opt)/opt % | max s
+at 3000 | 37 | 34 | 609608 | 0.008 | 0.081 | 1.318 | 1.288 | 0.139 | 3300.5
+recip 500 | 3 | 2 | 111300 | 0.01 | 0.012 | 23.862 | 1.169 | 0.129 | 1500.1
+recip 1000 | 1 | 0 | 0 | None | None | None | None | None | 1125.9
+recip 2000 | 1 | 0 | 0 | None | None | None | None | None | 1128.5
+win 300 | 8 | 8 | 15789 | 0.0 | 0.0 | 1.805 | 1.805 | 0.0 | 0.5
+win 600 | 8 | 8 | 32814 | 0.106 | 0.271 | 3.188 | 3.105 | 1.012 | 326.2
+win 1000 | 8 | 8 | 26445 | 0.028 | 0.061 | 3.275 | 3.275 | 1.066 | 30.1
+win 2000 | 8 | 8 | 78702 | 0.079 | 0.225 | 2.445 | 2.367 | 0.912 | 792.8
+win 3000 | 4 | 3 | 40165 | 0.001 | 0.001 | 2.268 | 2.159 | 0.025 | 896.1
+unsolved instances (bracket lower = max(lp, MILP dual bound), upper = best order found):
+  hard_al3000 at:3000:81000 m_scc 11016 lp 4649.9 conv True lower 4660.0 upper 4721 h64 4968 ls 4968 lpls 4866 (upper-lp)/upper % 1.506 (upper-lower)/upper % 1.292 s 1600.2
+  hard_al87000 at:3000:87000 m_scc 12668 lp 7283.4 conv True lower 7293.0 upper 7305 h64 7688 ls 7685 lpls 7487 (upper-lp)/upper % 0.296 (upper-lower)/upper % 0.164 s 2400.2
+  dense_a recip:1000:0 m_scc 38259 lp 110019.5 conv False lower 110026.0 upper 110200 h64 133103 ls 112009 lpls 110200 (upper-lp)/upper % 0.164 (upper-lower)/upper % 0.158 s 1125.9
+  dense_a recip:2000:0 m_scc 76250 lp 292888.2 conv False lower 292889.0 upper 323744 h64 350329 ls 323744 lpls 323885 (upper-lp)/upper % 9.531 (upper-lower)/upper % 9.531 s 1128.5
+  dense_b recip:500:2 m_scc 13620 lp 88060.9 conv True lower 88089.0 upper 89648 h64 100092 ls 91056 lpls 89648 (upper-lp)/upper % 1.77 (upper-lower)/upper % 1.739 s 1500.1
+  heavy41 at:3000:123000 m_scc 17739 lp 38531.4 conv True lower 38546.0 upper 40487 h64 40581 ls 40581 lpls 40487 (upper-lp)/upper % 4.83 (upper-lower)/upper % 4.794 s 3300.5
+  w3000a win:3000:central:0 m_scc 26818 lp 52503.1 conv False lower 52503.1 upper 56356 h64 56430 ls 56424 lpls 56356 (upper-lp)/upper % 6.837 (upper-lower)/upper % 6.837 s 896.1
+aligned 3000 windows: 37 of 46, optimal 34 | sum F_h64 670881 sum best order 662121 sum lower 660107.0 sum lp 660024.9 | gain h64 - best order (exact, achievable) 8760 | h64 - lower (max possible gain) 10774.0
+  solved only: 34 sum F_h64 617644 sum opt 609608 sum lp 609560.2 | (h64 - opt)/opt % 1.318 (opt - lp)/opt % 0.008
+missing window starts: [90000, 93000, 96000, 105000, 108000, 117000, 120000, 126000, 129000]

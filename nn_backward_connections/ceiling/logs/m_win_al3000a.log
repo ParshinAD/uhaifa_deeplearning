@@ -1,0 +1,86 @@
+  at:3000:0 round 0 rows 15 milp 46.0 new 0 s 0.1
+at:3000:0 k 3000 m 149 m_scc 30 | lp 46.0 conv True | opt 46 bracket 46 46 | h64 46 ls 46 lpls 46 | lp/up 1.0 h64/up 1.0 | s lp 0.0 milp 0.0 total 0.1
+  at:3000:3000 round 0 rows 69 milp 173.0 new 0 s 0.1
+at:3000:3000 k 3000 m 271 m_scc 138 | lp 173.0 conv True | opt 173 bracket 173 173 | h64 173 ls 173 lpls 173 | lp/up 1.0 h64/up 1.0 | s lp 0.0 milp 0.0 total 0.1
+  at:3000:6000 round 0 rows 86 milp 288.0 new 0 s 0.1
+at:3000:6000 k 3000 m 579 m_scc 169 | lp 288.0 conv True | opt 288 bracket 288 288 | h64 288 ls 288 lpls 288 | lp/up 1.0 h64/up 1.0 | s lp 0.1 milp 0.0 total 0.1
+  at:3000:9000 round 0 rows 279 milp 1859.0 new 1 s 0.2
+  at:3000:9000 round 1 rows 280 milp 1859.0 new 0 s 0.2
+at:3000:9000 k 3000 m 1836 m_scc 602 | lp 1859.0 conv True | opt 1859 bracket 1859 1859 | h64 1874 ls 1874 lpls 1859 | lp/up 1.0 h64/up 1.00807 | s lp 0.1 milp 0.0 total 0.2
+  at:3000:12000 round 0 rows 7742 milp 24481.0 new 359 s 5.4
+  at:3000:12000 round 1 rows 8101 milp 24483.0 new 0 s 6.0
+at:3000:12000 k 3000 m 13309 m_scc 12267 | lp 24478.0 conv True | opt 24483 bracket 24483 24483 | h64 24951 ls 24951 lpls 24500 | lp/up 0.9998 h64/up 1.01912 | s lp 4.4 milp 1.1 total 6.0
+  at:3000:15000 round 0 rows 15799 milp 31557.0 new 41 s 6.8
+  at:3000:15000 round 1 rows 15840 milp 31557.0 new 15 s 7.1
+  at:3000:15000 round 2 rows 15855 milp 31557.0 new 0 s 7.5
+at:3000:15000 k 3000 m 15204 m_scc 13983 | lp 31557.0 conv True | opt 31557 bracket 31557 31557 | h64 32219 ls 32175 lpls 31557 | lp/up 1.0 h64/up 1.02098 | s lp 6.1 milp 1.1 total 7.5
+  at:3000:18000 round 0 rows 4392 milp 24101.0 new 2 s 1.1
+  at:3000:18000 round 1 rows 4394 milp 24101.0 new 0 s 1.1
+at:3000:18000 k 3000 m 8955 m_scc 7543 | lp 24101.0 conv True | opt 24101 bracket 24101 24101 | h64 24332 ls 24327 lpls 24101 | lp/up 1.0 h64/up 1.00958 | s lp 0.8 milp 0.1 total 1.1
+  at:3000:21000 round 0 rows 5843 milp 18402.0 new 1802 s 3.0
+  at:3000:21000 round 1 rows 7645 milp 18402.0 new 10 s 3.2
+  at:3000:21000 round 2 rows 7655 milp 18402.0 new 0 s 3.3
+at:3000:21000 k 3000 m 10918 m_scc 10275 | lp 18402.0 conv True | opt 18402 bracket 18402 18402 | h64 18578 ls 18578 lpls 18402 | lp/up 1.0 h64/up 1.00956 | s lp 2.7 milp 0.5 total 3.3
+  at:3000:24000 round 0 rows 8885 milp 17313.0 new 250 s 5.7
+  at:3000:24000 round 1 rows 9135 milp 17314.0 new 4 s 6.3
+  at:3000:24000 round 2 rows 9139 milp 17315.0 new 77 s 8.9
+  at:3000:24000 round 3 rows 9216 milp 17315.0 new 16 s 10.3
+  at:3000:24000 round 4 rows 9232 milp 17315.0 new 0 s 11.9
+at:3000:24000 k 3000 m 11706 m_scc 11260 | lp 17312.0 conv True | opt 17315 bracket 17315 17315 | h64 17501 ls 17496 lpls 17335 | lp/up 0.99983 h64/up 1.01074 | s lp 4.9 milp 6.7 total 11.9
+  at:3000:27000 round 0 rows 18263 milp 31430.0 new 1530 s 31.0
+  at:3000:27000 round 1 rows 19793 milp 31431.0 new 2131 s 44.3
+  at:3000:27000 round 2 rows 21924 milp 31431.0 new 22 s 58.6
+  at:3000:27000 round 3 rows 21946 milp 31431.0 new 0 s 76.2
+at:3000:27000 k 3000 m 20146 m_scc 19866 | lp 31427.0 conv True | opt 31431 bracket 31431 31431 | h64 31884 ls 31884 lpls 31459 | lp/up 0.99987 h64/up 1.01441 | s lp 18.1 milp 57.8 total 76.2
+  at:3000:30000 round 0 rows 6152 milp 9791.0 new 233 s 1.7
+  at:3000:30000 round 1 rows 6385 milp 9791.0 new 0 s 1.8
+at:3000:30000 k 3000 m 15557 m_scc 14651 | lp 9791.0 conv True | opt 9791 bracket 9791 9791 | h64 9974 ls 9974 lpls 9791 | lp/up 1.0 h64/up 1.01869 | s lp 1.4 milp 0.2 total 1.8
+  at:3000:33000 round 0 rows 8243 milp 14644.0 new 0 s 3.1
+at:3000:33000 k 3000 m 16121 m_scc 15885 | lp 14644.0 conv True | opt 14644 bracket 14644 14644 | h64 14897 ls 14856 lpls 14644 | lp/up 1.0 h64/up 1.01728 | s lp 2.6 milp 0.2 total 3.1
+  at:3000:36000 round 0 rows 3735 milp 9029.0 new 12 s 1.0
+  at:3000:36000 round 1 rows 3747 milp 9029.0 new 2 s 1.0
+  at:3000:36000 round 2 rows 3749 milp 9029.0 new 3 s 1.1
+  at:3000:36000 round 3 rows 3752 milp 9029.0 new 0 s 1.1
+at:3000:36000 k 3000 m 9071 m_scc 7818 | lp 9029.0 conv True | opt 9029 bracket 9029 9029 | h64 9164 ls 9164 lpls 9029 | lp/up 1.0 h64/up 1.01495 | s lp 0.8 milp 0.2 total 1.1
+  at:3000:39000 round 0 rows 6264 milp 11078.0 new 141 s 3.0
+  at:3000:39000 round 1 rows 6405 milp 11078.0 new 0 s 3.2
+at:3000:39000 k 3000 m 12521 m_scc 11854 | lp 11077.2 conv True | opt 11078 bracket 11078 11078 | h64 11310 ls 11298 lpls 11082 | lp/up 0.99993 h64/up 1.02094 | s lp 2.5 milp 0.4 total 3.2
+  at:3000:42000 round 0 rows 4846 milp 11759.0 new 762 s 1.9
+  at:3000:42000 round 1 rows 5608 milp 11759.0 new 6 s 2.0
+  at:3000:42000 round 2 rows 5614 milp 11759.0 new 0 s 2.1
+at:3000:42000 k 3000 m 10026 m_scc 8913 | lp 11759.0 conv True | opt 11759 bracket 11759 11759 | h64 12024 ls 12024 lpls 11759 | lp/up 1.0 h64/up 1.02254 | s lp 1.6 milp 0.4 total 2.1
+  at:3000:45000 round 0 rows 8624 milp 19651.0 new 1455 s 8.2
+  at:3000:45000 round 1 rows 10079 milp 19651.0 new 235 s 9.0
+  at:3000:45000 round 2 rows 10314 milp 19651.0 new 0 s 9.6
+at:3000:45000 k 3000 m 14958 m_scc 14909 | lp 19650.2 conv True | opt 19651 bracket 19651 19651 | h64 19996 ls 19996 lpls 19661 | lp/up 0.99996 h64/up 1.01756 | s lp 7.6 milp 1.8 total 9.6
+  at:3000:48000 round 0 rows 6637 milp 10784.0 new 34 s 11.9
+  at:3000:48000 round 1 rows 6671 milp 10784.0 new 154 s 15.5
+  at:3000:48000 round 2 rows 6825 milp 10784.0 new 17 s 19.9
+  at:3000:48000 round 3 rows 6842 milp 10784.0 new 0 s 22.3
+at:3000:48000 k 3000 m 12661 m_scc 11489 | lp 10783.0 conv True | opt 10784 bracket 10784 10784 | h64 10956 ls 10956 lpls 10835 | lp/up 0.99991 h64/up 1.01595 | s lp 8.9 milp 13.2 total 22.3
+  at:3000:51000 round 0 rows 20487 milp 109382.0 new 890 s 221.0
+  at:3000:51000 round 1 rows 21377 milp 109388.0 new 272 s 374.3
+at:3000:51000 k 3000 m 23431 m_scc 23110 | lp 109372.1 conv True | opt None bracket 109388.0 109673 | h64 109940 ls 109940 lpls 109673 | lp/up 0.99726 h64/up 1.00243 | s lp 116.6 milp 383.0 total 500.0
+  at:3000:54000 round 0 rows 257 milp 751.0 new 0 s 0.2
+at:3000:54000 k 3000 m 1317 m_scc 538 | lp 751.0 conv True | opt 751 bracket 751 751 | h64 757 ls 757 lpls 751 | lp/up 1.0 h64/up 1.00799 | s lp 0.1 milp 0.0 total 0.2
+  at:3000:57000 round 0 rows 9313 milp 14518.0 new 2532 s 7.2
+  at:3000:57000 round 1 rows 11845 milp 14518.0 new 239 s 8.9
+  at:3000:57000 round 2 rows 12084 milp 14519.0 new 1095 s 11.7
+  at:3000:57000 round 3 rows 13179 milp 14519.0 new 0 s 14.7
+at:3000:57000 k 3000 m 12532 m_scc 12379 | lp 14516.5 conv True | opt 14519 bracket 14519 14519 | h64 14690 ls 14688 lpls 14546 | lp/up 0.99983 h64/up 1.01178 | s lp 6.2 milp 8.0 total 14.7
+  at:3000:60000 round 0 rows 13617 milp 15737.0 new 1176 s 16.9
+  at:3000:60000 round 1 rows 14793 milp 15737.0 new 2777 s 18.2
+  at:3000:60000 round 2 rows 17570 milp 15737.0 new 23 s 20.4
+  at:3000:60000 round 3 rows 17593 milp 15737.0 new 0 s 22.7
+at:3000:60000 k 3000 m 18586 m_scc 17924 | lp 15736.5 conv True | opt 15737 bracket 15737 15737 | h64 16127 ls 16125 lpls 15744 | lp/up 0.99997 h64/up 1.02478 | s lp 15.5 milp 6.8 total 22.7
+  at:3000:63000 round 0 rows 9269 milp 11995.0 new 597 s 9.2
+  at:3000:63000 round 1 rows 9866 milp 11995.0 new 21 s 9.8
+  at:3000:63000 round 2 rows 9887 milp 11995.0 new 192 s 10.2
+  at:3000:63000 round 3 rows 10079 milp 11995.0 new 179 s 10.7
+  at:3000:63000 round 4 rows 10258 milp 11995.0 new 0 s 11.3
+at:3000:63000 k 3000 m 13721 m_scc 13441 | lp 11994.5 conv True | opt 11995 bracket 11995 11995 | h64 12219 ls 12219 lpls 12000 | lp/up 0.99996 h64/up 1.01867 | s lp 8.4 milp 2.5 total 11.3
+  at:3000:66000 round 0 rows 3498 milp 7004.0 new 93 s 3.1
+  at:3000:66000 round 1 rows 3591 milp 7004.0 new 43 s 3.2
+  at:3000:66000 round 2 rows 3634 milp 7004.0 new 0 s 3.3
+at:3000:66000 k 3000 m 6791 m_scc 5692 | lp 7004.0 conv True | opt 7004 bracket 7004 7004 | h64 7116 ls 7116 lpls 7004 | lp/up 1.0 h64/up 1.01599 | s lp 2.8 milp 0.3 total 3.3
+done 23 instances, total s 715.2 -> /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_win_al3000a.json

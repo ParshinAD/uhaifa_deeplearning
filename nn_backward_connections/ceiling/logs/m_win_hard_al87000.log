@@ -1,0 +1,8 @@
+  at:3000:87000 round 0 rows 9294 milp 7289.0 new 2758 s 93.3
+  at:3000:87000 round 1 rows 12052 milp 7289.0 new 3349 s 186.8
+  at:3000:87000 round 2 rows 15401 milp 7291.0 new 3411 s 383.6
+  at:3000:87000 round 3 rows 18812 milp 7292.0 new 1776 s 820.9
+  at:3000:87000 round 4 rows 20588 milp 7292.0 new 2128 s 1158.7
+  at:3000:87000 round 5 rows 22716 milp 7293.0 new 906 s 2005.5
+at:3000:87000 k 3000 m 13203 m_scc 12668 | lp 7283.4 conv True | opt None bracket 7293.0 7305 | h64 7688 ls 7685 lpls 7487 | lp/up 0.99704 h64/up 1.05243 | s lp 28.8 milp 2370.9 total 2400.2
+done 1 instances, total s 2409.5 -> /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_win_hard_al87000.json

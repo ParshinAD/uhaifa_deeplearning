@@ -1,0 +1,9 @@
+  win:2000:central:0 round 0 rows 4758 milp 15335.0 new 1904 s 30.6
+  win:2000:central:0 round 1 rows 6662 milp 15340.0 new 1787 s 100.5
+  win:2000:central:0 round 2 rows 8449 milp 15343.0 new 1542 s 189.5
+  win:2000:central:0 round 3 rows 9991 milp 15344.0 new 907 s 275.9
+  win:2000:central:0 round 4 rows 10898 milp 15347.0 new 1502 s 390.7
+  win:2000:central:0 round 5 rows 12400 milp 15351.0 new 19 s 553.2
+  win:2000:central:0 round 6 rows 12419 milp 15351.0 new 0 s 656.8
+win:2000:central:0 k 2000 m 6916 m_scc 5999 | lp 15323.8 conv True | opt 15351 bracket 15351 15351 | h64 15761 ls 15761 lpls 15693 | lp/up 0.99823 h64/up 1.02671 | s lp 6.3 milp 650.3 total 656.8
+done 1 instances, total s 669.4 -> /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_win_hard_c2000a.json

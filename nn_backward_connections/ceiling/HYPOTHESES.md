@@ -109,3 +109,13 @@ Prediction: one more CG campaign started from the repaired (feasible) duals, wit
 precision PDHG and pricing focused on the cycles the repair had to lift, raises LB by
 >= 25k and/or lowers the UB by >= 10k.
 Kill: LB gain < 10k and UB gain < 5k after 3 h.
+- 2026-11-25 H8 SUPPORTED (`results/M_WIN.md`): on 71 exactly solved windows / dense clusters
+  (300-3000 nodes) the cycle LP is 0.016 % below OPT on average (worst 0.271 %, kill line
+  0.5 %). On 34 M_DUAL windows H64 sits 1.318 % above OPT. Inside windows the gap is the
+  order's, not the LP's. Not tested: long cycles across windows (84 % of H64 feedback) and the
+  9 densest central windows.
+- 2026-11-25 H9 CONFIRMED via the UB side (`results/M_CLOSE.md`): bracket 54,187 -> 931 syn
+  (6,141,103 <= tau* <= 6,142,034.07). UB fell 50,567 (prediction >= 10k); LB rose only
+  2,689 (prediction >= 25k missed, and the new UB shows at most +3,620 was possible). The old
+  gap sat almost entirely on the dual side. H7 second part (tau* in [6.25, 6.37] M) REJECTED:
+  tau* ~ 6.142 M. Leaderboard top exceeds tau* by >= 225,873; our H64 by >= 455,699.

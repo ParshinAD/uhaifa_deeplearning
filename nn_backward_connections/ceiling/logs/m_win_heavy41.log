@@ -1,0 +1,2 @@
+at:3000:123000 k 3000 m 18907 m_scc 17739 | lp 38531.4 conv True | opt None bracket 38546.0 40487 | h64 40581 ls 40581 lpls 40487 | lp/up 0.9517 h64/up 1.00232 | s lp 200.9 milp 3099.0 total 3300.5
+done 1 instances, total s 3312.6 -> /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_win_heavy41.json

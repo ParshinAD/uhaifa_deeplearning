@@ -1,0 +1,26 @@
+  at:3000:81000 round 0 rows 5525 milp 4657.0 new 1864 s 287.2
+at:3000:81000 k 3000 m 11604 m_scc 11016 | lp 4649.9 conv True | opt None bracket 4657.0 4779 | h64 4968 ls 4968 lpls 4866 | lp/up 0.97299 h64/up 1.03955 | s lp 25.0 milp 375.1 total 400.5
+  at:3000:84000 round 0 rows 2519 milp 4554.0 new 167 s 1.4
+  at:3000:84000 round 1 rows 2686 milp 4555.0 new 0 s 1.5
+at:3000:84000 k 3000 m 6027 m_scc 4784 | lp 4554.0 conv True | opt 4555 bracket 4555 4555 | h64 4677 ls 4677 lpls 4593 | lp/up 0.99978 h64/up 1.02678 | s lp 1.0 milp 0.1 total 1.5
+  at:3000:87000 round 0 rows 9294 milp 7289.0 new 2758 s 105.3
+  at:3000:87000 round 1 rows 12052 milp 7289.0 new 3349 s 192.9
+at:3000:87000 k 3000 m 13203 m_scc 12668 | lp 7283.4 conv True | opt None bracket 7289.0 7451 | h64 7688 ls 7685 lpls 7487 | lp/up 0.9775 h64/up 1.03181 | s lp 33.3 milp 366.4 total 400.3
+  at:3000:99000 round 0 rows 5793 milp 48771.0 new 33 s 1.4
+  at:3000:99000 round 1 rows 5826 milp 48771.0 new 1 s 1.5
+  at:3000:99000 round 2 rows 5827 milp 48771.0 new 0 s 1.6
+at:3000:99000 k 3000 m 10111 m_scc 9831 | lp 48770.8 conv True | opt 48771 bracket 48771 48771 | h64 48942 ls 48924 lpls 48777 | lp/up 1.0 h64/up 1.00351 | s lp 0.8 milp 0.4 total 1.6
+  at:3000:102000 round 0 rows 2547 milp 32721.0 new 1 s 0.3
+  at:3000:102000 round 1 rows 2548 milp 32721.0 new 0 s 0.3
+at:3000:102000 k 3000 m 4955 m_scc 4702 | lp 32721.0 conv True | opt 32721 bracket 32721 32721 | h64 32766 ls 32766 lpls 32721 | lp/up 1.0 h64/up 1.00138 | s lp 0.1 milp 0.1 total 0.3
+  at:3000:111000 round 0 rows 18476 milp 57214.0 new 2638 s 18.9
+  at:3000:111000 round 1 rows 21114 milp 57214.0 new 0 s 22.5
+at:3000:111000 k 3000 m 23163 m_scc 22867 | lp 57211.8 conv True | opt 57214 bracket 57214 57214 | h64 58046 ls 58023 lpls 57308 | lp/up 0.99996 h64/up 1.01454 | s lp 14.7 milp 7.3 total 22.5
+  at:3000:114000 round 0 rows 10616 milp 28406.0 new 471 s 13.6
+  at:3000:114000 round 1 rows 11087 milp 28408.0 new 0 s 19.4
+at:3000:114000 k 3000 m 16838 m_scc 15904 | lp 28405.5 conv True | opt 28408 bracket 28408 28408 | h64 29162 ls 29137 lpls 28437 | lp/up 0.99991 h64/up 1.02654 | s lp 12.1 milp 6.8 total 19.4
+  at:3000:132000 round 0 rows 91 milp 160.0 new 0 s 0.1
+at:3000:132000 k 3000 m 4602 m_scc 186 | lp 160.0 conv True | opt 160 bracket 160 160 | h64 162 ls 162 lpls 160 | lp/up 1.0 h64/up 1.0125 | s lp 0.0 milp 0.0 total 0.2
+  at:3000:135000 round 0 rows 8 milp 16.0 new 0 s 0.0
+at:3000:135000 k 1648 m 96 m_scc 16 | lp 16.0 conv True | opt 16 bracket 16 16 | h64 16 ls 16 lpls 16 | lp/up 1.0 h64/up 1.0 | s lp 0.0 milp 0.0 total 0.0
+done 9 instances, total s 858.3 -> /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_win_al3000c.json

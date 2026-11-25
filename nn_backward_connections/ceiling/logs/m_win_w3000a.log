@@ -1,0 +1,11 @@
+  win:3000:early:0 round 0 rows 19839 milp 35047.0 new 9 s 24.1
+  win:3000:early:0 round 1 rows 19848 milp 35047.0 new 16 s 26.7
+  win:3000:early:0 round 2 rows 19864 milp 35047.0 new 0 s 29.0
+win:3000:early:0 k 3000 m 18786 m_scc 17731 | lp 35046.5 conv True | opt 35047 bracket 35047 35047 | h64 35889 ls 35845 lpls 35057 | lp/up 0.99999 h64/up 1.02402 | s lp 21.2 milp 7.3 total 29.0
+  win:3000:optic:0 round 0 rows 2418 milp 2756.0 new 91 s 0.8
+  win:3000:optic:0 round 1 rows 2509 milp 2756.0 new 0 s 0.9
+win:3000:optic:0 k 3000 m 5546 m_scc 4680 | lp 2756.0 conv True | opt 2756 bracket 2756 2756 | h64 2809 ls 2809 lpls 2756 | lp/up 1.0 h64/up 1.01923 | s lp 0.6 milp 0.1 total 0.9
+win:3000:central:0 k 3000 m 27182 m_scc 26818 | lp 52503.1 conv False | opt None bracket 52503.1 56356 | h64 56430 ls 56424 lpls 56356 | lp/up 0.93163 h64/up 1.00131 | s lp 603.2 milp 292.2 total 896.1
+  win:3000:late:0 round 0 rows 835 milp 2362.0 new 0 s 0.4
+win:3000:late:0 k 3000 m 7761 m_scc 1318 | lp 2362.0 conv True | opt 2362 bracket 2362 2362 | h64 2378 ls 2378 lpls 2362 | lp/up 1.0 h64/up 1.00677 | s lp 0.2 milp 0.0 total 0.4
+done 4 instances, total s 938.3 -> /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_win_w3000a.json

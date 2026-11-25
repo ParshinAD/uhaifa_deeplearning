@@ -1,0 +1,10 @@
+  recip:500:1 round 0 rows 14896 milp 54744.0 new 1600 s 97.4
+  recip:500:1 round 1 rows 16496 milp 54744.0 new 37 s 141.6
+  recip:500:1 round 2 rows 16533 milp 54744.0 new 125 s 182.0
+  recip:500:1 round 3 rows 16658 milp 54745.0 new 207 s 230.5
+  recip:500:1 round 4 rows 16865 milp 54746.0 new 7 s 310.3
+  recip:500:1 round 5 rows 16872 milp 54746.0 new 8 s 383.2
+  recip:500:1 round 6 rows 16880 milp 54746.0 new 0 s 471.6
+recip:500:1 k 500 m 17483 m_scc 17483 | lp 54742.0 conv True | opt 54746 bracket 54746 54746 | h64 67393 ls 55235 lpls 54774 | lp/up 0.99993 h64/up 1.23101 | s lp 60.0 milp 411.5 total 471.6
+recip:500:2 k 500 m 13620 m_scc 13620 | lp 88060.9 conv True | opt None bracket 88089.0 89648 | h64 100092 ls 91056 lpls 89648 | lp/up 0.9823 h64/up 1.1165 | s lp 90.7 milp 1409.1 total 1500.1
+done 2 instances, total s 1981.1 -> /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_win_dense_b.json

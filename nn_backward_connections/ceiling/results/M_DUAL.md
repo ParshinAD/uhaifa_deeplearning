@@ -1,6 +1,6 @@
 # Method D: upper bounds on the cycle LP value tau* (fractional feedback arc sets)
 
-Date 2026-11-25. Worktree base commit deecf6b (ceiling/ files of this method are not committed).
+Date 2026-11-25. Worktree base commit deecf6b (method files committed in b01ab22).
 MacBook, CPU only, at most 6 threads, shared with the CG2 agent. W = 41,912,141.
 Our order (H64): feedback 6,597,734. Leaderboard top: 6,367,908. Best certified LB at the time of
 writing: 6,138,414 (CG2, `M_CG2.md`).

@@ -1,0 +1,6 @@
+  at:3000:51000 round 0 rows 20487 milp 109382.0 new 890 s 163.5
+  at:3000:51000 round 1 rows 21377 milp 109388.0 new 272 s 280.8
+  at:3000:51000 round 2 rows 21649 milp 109388.0 new 9 s 410.0
+  at:3000:51000 round 3 rows 21658 milp 109389.0 new 0 s 546.1
+at:3000:51000 k 3000 m 23431 m_scc 23110 | lp 109372.1 conv True | opt 109389 bracket 109389 109389 | h64 109940 ls 109940 lpls 109673 | lp/up 0.99985 h64/up 1.00504 | s lp 87.0 milp 458.7 total 546.1
+done 1 instances, total s 555.5 -> /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_win_hard_al51000.json

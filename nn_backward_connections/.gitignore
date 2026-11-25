@@ -64,4 +64,6 @@ autoresearch/.lock/
 autoresearch/ALERT
 autoresearch/ALERTS.log
 ceiling/certs/*.npz
+!ceiling/certs/ub_tau_repair_heads.npz
+!ceiling/certs/ub_tau_close_5e.npz
 ceiling/results/state/

@@ -1,4 +1,4 @@
-import json, sys, zipfile, io, itertools
+import json, os, sys, zipfile, io, itertools
 from pathlib import Path
 import numpy as np
 
@@ -8,8 +8,8 @@ from cert_io import edge_checksum
 from verify_cert import verify
 from src.mfas.io import GraphData
 
-TMP = Path("/private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/redteam/att")
-TMP.mkdir(exist_ok=True)
+TMP = Path(os.environ.get("REDTEAM_TMP", "/tmp/redteam")) / "att"
+TMP.mkdir(parents=True, exist_ok=True)
 
 
 def mk(edges, name="toy"):

@@ -1,0 +1,22 @@
+{
+ "command": "/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python ceiling/src/m_close_lower.py /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/close/X_4_d.npz 4_d 32 16 1",
+ "git_commit": "b01ab22bb5c482bb7a0f5407fcb2d6a42eaf40ea",
+ "input": "/private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/close/X_4_d.npz",
+ "S": 1000000,
+ "start_L": 1000000,
+ "start_UB": "3071470402967/500000",
+ "start_UB_float": 6142940.81,
+ "passes": [
+  {
+   "lowered_edges": 640730,
+   "lower_gain": 495.9,
+   "raise_cost": 10.8,
+   "L": 1000000,
+   "UB": "49139645981/8000",
+   "UB_float": 6142455.75,
+   "UB_status": "PASS L>=S",
+   "seconds": 1312.9
+  }
+ ],
+ "runtime_s": 1429.5
+}

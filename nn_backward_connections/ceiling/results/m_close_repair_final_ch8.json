@@ -1,0 +1,23 @@
+{
+ "command": "/opt/homebrew/Caskroom/miniforge/base/envs/allen/bin/python ceiling/src/m_close_repair.py /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/cg2/duals_final.npz x final_ch8 8",
+ "git_commit": "b01ab22bb5c482bb7a0f5407fcb2d6a42eaf40ea",
+ "input": "/private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/cg2/duals_final.npz",
+ "key": "x",
+ "S": 1000000,
+ "chunks": 8,
+ "sum_wX0_over_S": 6139728.8,
+ "raise_cost": 43573.5,
+ "raised_edges": 544497,
+ "raise_cycles": 544497,
+ "raise_s": 680.7,
+ "L": 1000000,
+ "witness_source": 89593,
+ "witness_edge": 5274242,
+ "sum_wX": "6183302312432",
+ "sum_wX_float": 6183302312432.0,
+ "check_s": 155.5,
+ "UB": "386456394527/62500",
+ "UB_float": 6183302.312432,
+ "UB_status": "PASS L>=S",
+ "runtime_s": 845.7
+}

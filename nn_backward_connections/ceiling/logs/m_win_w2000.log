@@ -1,0 +1,30 @@
+  win:2000:early:0 round 0 rows 7968 milp 16228.0 new 1 s 4.8
+  win:2000:early:0 round 1 rows 7969 milp 16228.0 new 0 s 5.1
+win:2000:early:0 k 2000 m 9629 m_scc 8997 | lp 16228.0 conv True | opt 16228 bracket 16228 16228 | h64 16837 ls 16793 lpls 16228 | lp/up 1.0 h64/up 1.03753 | s lp 4.3 milp 0.6 total 5.1
+  win:2000:early:1 round 0 rows 1960 milp 14360.0 new 13 s 0.6
+  win:2000:early:1 round 1 rows 1973 milp 14360.0 new 0 s 0.6
+win:2000:early:1 k 2000 m 4259 m_scc 3447 | lp 14360.0 conv True | opt 14360 bracket 14360 14360 | h64 14441 ls 14436 lpls 14360 | lp/up 1.0 h64/up 1.00564 | s lp 0.5 milp 0.1 total 0.6
+  win:2000:optic:0 round 0 rows 3165 milp 5972.0 new 94 s 0.8
+  win:2000:optic:0 round 1 rows 3259 milp 5972.0 new 17 s 0.8
+  win:2000:optic:0 round 2 rows 3276 milp 5972.0 new 0 s 0.9
+win:2000:optic:0 k 2000 m 6937 m_scc 6549 | lp 5972.0 conv True | opt 5972 bracket 5972 5972 | h64 6085 ls 6073 lpls 5972 | lp/up 1.0 h64/up 1.01892 | s lp 0.6 milp 0.1 total 0.9
+  win:2000:optic:1 round 0 rows 9144 milp 10998.0 new 617 s 11.1
+  win:2000:optic:1 round 1 rows 9761 milp 10998.0 new 305 s 11.5
+  win:2000:optic:1 round 2 rows 10066 milp 10998.0 new 0 s 11.9
+win:2000:optic:1 k 2000 m 12113 m_scc 11958 | lp 10998.0 conv True | opt 10998 bracket 10998 10998 | h64 11230 ls 11230 lpls 11011 | lp/up 1.0 h64/up 1.02109 | s lp 10.2 milp 1.5 total 11.9
+  win:2000:central:0 round 0 rows 4758 milp 15335.0 new 1904 s 30.7
+  win:2000:central:0 round 1 rows 6662 milp 15340.0 new 1787 s 98.0
+  win:2000:central:0 round 2 rows 8449 milp 15343.0 new 1542 s 183.4
+  win:2000:central:0 round 3 rows 9991 milp 15344.0 new 907 s 268.9
+  win:2000:central:0 round 4 rows 10898 milp 15347.0 new 1502 s 379.1
+win:2000:central:0 k 2000 m 6916 m_scc 5999 | lp 15323.8 conv True | opt None bracket 15347.0 15693 | h64 15761 ls 15761 lpls 15693 | lp/up 0.97648 h64/up 1.00433 | s lp 7.6 milp 392.3 total 400.0
+  win:2000:central:1 round 0 rows 4629 milp 15596.0 new 1313 s 48.0
+  win:2000:central:1 round 1 rows 5942 milp 15604.0 new 1615 s 121.3
+  win:2000:central:1 round 2 rows 7557 milp 15608.0 new 1283 s 220.9
+  win:2000:central:1 round 3 rows 8840 milp 15611.0 new 1652 s 373.6
+win:2000:central:1 k 2000 m 6902 m_scc 5997 | lp 15581.8 conv True | opt None bracket 15611.0 15980 | h64 16096 ls 16096 lpls 15980 | lp/up 0.97508 h64/up 1.00726 | s lp 6.5 milp 393.3 total 400.0
+  win:2000:late:0 round 0 rows 52 milp 79.0 new 0 s 0.1
+win:2000:late:0 k 2000 m 292 m_scc 100 | lp 79.0 conv True | opt 79 bracket 79 79 | h64 79 ls 79 lpls 79 | lp/up 1.0 h64/up 1.0 | s lp 0.0 milp 0.0 total 0.1
+  win:2000:late:1 round 0 rows 56 milp 97.0 new 0 s 0.1
+win:2000:late:1 k 2000 m 1501 m_scc 110 | lp 97.0 conv True | opt 97 bracket 97 97 | h64 97 ls 97 lpls 97 | lp/up 1.0 h64/up 1.0 | s lp 0.0 milp 0.0 total 0.1
+done 8 instances, total s 831.1 -> /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_win_w2000.json

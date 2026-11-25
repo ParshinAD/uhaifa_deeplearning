@@ -1,0 +1,62 @@
+pool 14610798 nnz 76753200 | t 11.2
+round 18 pool 14610798 PDHG iters 1500  | t 18.2
+  pdhg it 100 best 6138134.6 6140111.5 gap% 0.0322 | t 72.4
+  pdhg it 200 best 6138225.0 6140084.7 gap% 0.0303 | t 85.6
+  pdhg it 300 best 6138303.8 6140060.8 gap% 0.0286 | t 99.1
+  pdhg it 400 best 6138370.6 6140038.6 gap% 0.0272 | t 112.9
+  pdhg it 500 best 6138428.2 6140019.0 gap% 0.0259 | t 126.7
+  pdhg it 600 best 6138483.4 6140002.2 gap% 0.0247 | t 140.3
+  pdhg it 700 best 6138539.7 6139987.1 gap% 0.0236 | t 153.3
+  pdhg it 800 best 6138593.6 6139973.7 gap% 0.0225 | t 166.1
+  pdhg it 900 best 6138642.7 6139960.8 gap% 0.0215 | t 179.2
+  pdhg it 1000 best 6138684.2 6139949.1 gap% 0.0206 | t 192.3
+  pdhg it 1100 best 6138721.7 6139938.5 gap% 0.0198 | t 205.2
+  pdhg it 1200 best 6138755.2 6139928.2 gap% 0.0191 | t 218.0
+  pdhg it 1300 best 6138785.5 6139919.0 gap% 0.0185 | t 231.0
+  pdhg it 1400 best 6138813.5 6139910.6 gap% 0.0179 | t 244.2
+  pdhg it 1500 best 6138838.3 6139902.7 gap% 0.0173 | t 258.5
+round 18 pool LP primal 6138838.3 dual est 6139902.7 | t 258.5
+round 18 repair {"sum_wX0": 6139731.6, "raise_cost": 44957.7, "raised": 506358, "raise_cycles": 114786, "raise_s": 762.0, "L": 1000000, "UB": "6184689322311/1000000", "UB_float": 6184689.32, "check_s": 114.1, "UB_status": "PASS L>=S", "raise_cycles_violated_pool_duals": 114786, "raise_cycle_len_quantiles": [0.7931, 0.8994, 0.9734]} | t 1134.6
+round 18 short {"kind": "short", "raw": 193936, "seconds": 33.9, "added": 84028, "added_by_len": {"2": 15, "3": 673, "4": 11986, "5": 25470, "6": 45884}} | t 1170.8
+round 18 pruned 394349 added raise cycles 114171 | t 1170.8
+round 19 pool 14414648 PDHG iters 1500  | t 1170.8
+  pdhg it 100 best 6133182.4 6142706.6 gap% 0.155 | t 1212.4
+  pdhg it 200 best 6135112.6 6142297.6 gap% 0.117 | t 1223.2
+  pdhg it 300 best 6136158.6 6141938.6 gap% 0.0941 | t 1233.8
+  pdhg it 400 best 6136828.5 6141676.4 gap% 0.0789 | t 1244.7
+  pdhg it 500 best 6137313.2 6141485.7 gap% 0.0679 | t 1256.4
+  pdhg it 600 best 6137684.4 6141338.3 gap% 0.0595 | t 1267.9
+  pdhg it 700 best 6137964.9 6141222.9 gap% 0.0531 | t 1279.3
+  pdhg it 800 best 6138182.9 6141127.4 gap% 0.0479 | t 1290.0
+  pdhg it 900 best 6138361.5 6141049.7 gap% 0.0438 | t 1299.9
+  pdhg it 1000 best 6138522.0 6140984.6 gap% 0.0401 | t 1309.7
+  pdhg it 1100 best 6138664.5 6140931.0 gap% 0.0369 | t 1319.2
+  pdhg it 1200 best 6138786.9 6140885.0 gap% 0.0342 | t 1328.8
+  pdhg it 1300 best 6138891.8 6140845.9 gap% 0.0318 | t 1339.0
+  pdhg it 1400 best 6138981.6 6140811.0 gap% 0.0298 | t 1349.6
+  pdhg it 1500 best 6139063.2 6140780.8 gap% 0.028 | t 1360.2
+round 19 pool LP primal 6139063.2 dual est 6140780.8 | t 1360.3
+round 19 repair {"sum_wX0": 6140375.3, "raise_cost": 28023.9, "raised": 538962, "raise_cycles": 94311, "raise_s": 555.1, "L": 1000000, "UB": "1233679842499/200000", "UB_float": 6168399.21, "check_s": 117.7, "UB_status": "PASS L>=S", "raise_cycles_violated_pool_duals": 94311, "raise_cycle_len_quantiles": [0.8354, 0.9243, 0.9836]} | t 2033.1
+round 19 short {"kind": "short", "raw": 457845, "seconds": 36.0, "added": 191984, "added_by_len": {"2": 31, "3": 1280, "4": 23666, "5": 57700, "6": 109307}} | t 2071.5
+round 19 pruned 166629 added raise cycles 92816 | t 2071.5
+round 20 pool 14532819 PDHG iters 1500 final | t 2071.5
+  pdhg it 100 best 6135728.6 6142415.6 gap% 0.1089 | t 2113.3
+  pdhg it 200 best 6136792.9 6142164.2 gap% 0.0875 | t 2122.6
+  pdhg it 300 best 6137452.0 6141932.5 gap% 0.0729 | t 2132.1
+  pdhg it 400 best 6137912.3 6141761.4 gap% 0.0627 | t 2141.8
+  pdhg it 500 best 6138260.1 6141628.0 gap% 0.0548 | t 2152.1
+  pdhg it 600 best 6138526.7 6141523.5 gap% 0.0488 | t 2161.6
+  pdhg it 700 best 6138731.1 6141437.1 gap% 0.0441 | t 2170.9
+  pdhg it 800 best 6138901.5 6141365.7 gap% 0.0401 | t 2180.3
+  pdhg it 900 best 6139046.8 6141305.8 gap% 0.0368 | t 2189.5
+  pdhg it 1000 best 6139171.1 6141254.2 gap% 0.0339 | t 2198.8
+  pdhg it 1100 best 6139285.6 6141212.0 gap% 0.0314 | t 2208.1
+  pdhg it 1200 best 6139382.6 6141175.7 gap% 0.0292 | t 2217.6
+  pdhg it 1300 best 6139460.4 6141142.6 gap% 0.0274 | t 2227.0
+  pdhg it 1400 best 6139536.1 6141114.0 gap% 0.0257 | t 2236.4
+  pdhg it 1500 best 6139604.8 6141089.0 gap% 0.0242 | t 2246.0
+round 20 pool LP primal 6139604.8 dual est 6141089.0 | t 2246.0
+round 20 repair {"sum_wX0": 6140734.2, "raise_cost": 16238.9, "raised": 529192, "raise_cycles": 69241, "raise_s": 535.6, "L": 1000000, "UB": "6156973012593/1000000", "UB_float": 6156973.01, "check_s": 118.7, "UB_status": "PASS L>=S", "raise_cycles_violated_pool_duals": 69241, "raise_cycle_len_quantiles": [0.8868, 0.9445, 0.9876]} | t 2900.2
+state saved /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/close/state_1_a.npz | t 2900.4
+cert c41_a.npz LB 6139869 ceiling 85.3506 lb before refill 6139276 refill gain 593.3 verifier PASS | t 2931.4
+done | t 2931.4

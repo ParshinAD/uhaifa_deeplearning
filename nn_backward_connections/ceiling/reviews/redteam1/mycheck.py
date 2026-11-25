@@ -1,10 +1,11 @@
 """Independent checker, does not import verify_cert / cert_io / src.mfas.io."""
-import gzip, hashlib, json, sys, zipfile
+import gzip, hashlib, json, os, sys, zipfile
 import numpy as np
 import pandas as pd
 
 REPO = "/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections"
-OUT = "/private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/redteam/graph.npz"
+OUT = os.environ.get("REDTEAM_TMP", "/tmp/redteam") + "/graph.npz"
+os.makedirs(os.path.dirname(OUT), exist_ok=True)
 
 
 def build_graph():
