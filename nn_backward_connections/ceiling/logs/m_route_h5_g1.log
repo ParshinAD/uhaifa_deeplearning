@@ -1,0 +1,21 @@
+isolation test {'records': 219217, 'edge_entries': 825883, 'searches': 221476, 'work': 189745005, 'work_limit_hits': 0, 'routed': 1433959} seconds 58.7
+== by span
+  {'group': '1-10', 'edges': 38703, 'demand': 262617, 'routed': 259897, 'unrouted': 2720, 'unrouted_share_of_group': 0.0104, 'share_of_all_unrouted': 0.0027, 'unrouted_no_path_even_alone': 466}
+  {'group': '11-100', 'edges': 24180, 'demand': 205999, 'routed': 193927, 'unrouted': 12072, 'unrouted_share_of_group': 0.0586, 'share_of_all_unrouted': 0.0122, 'unrouted_no_path_even_alone': 758}
+  {'group': '101-1000', 'edges': 60757, 'demand': 481675, 'routed': 408977, 'unrouted': 72698, 'unrouted_share_of_group': 0.1509, 'share_of_all_unrouted': 0.0732, 'unrouted_no_path_even_alone': 1395}
+  {'group': '1001-10000', 'edges': 264480, 'demand': 1577670, 'routed': 1277643, 'unrouted': 300027, 'unrouted_share_of_group': 0.1902, 'share_of_all_unrouted': 0.3021, 'unrouted_no_path_even_alone': 3300}
+  {'group': '10001-100000', 'edges': 749642, 'demand': 3751842, 'routed': 3188643, 'unrouted': 563199, 'unrouted_share_of_group': 0.1501, 'share_of_all_unrouted': 0.5671, 'unrouted_no_path_even_alone': 1266}
+  {'group': '100001-1000000000', 'edges': 35483, 'demand': 317931, 'routed': 275446, 'unrouted': 42485, 'unrouted_share_of_group': 0.1336, 'share_of_all_unrouted': 0.0428, 'unrouted_no_path_even_alone': 11}
+== by super_class (both endpoints; else cross)
+  {'group': 'ascending', 'edges': 174, 'demand': 1595, 'routed': 1368, 'unrouted': 227, 'unrouted_share_of_group': 0.1423, 'share_of_all_unrouted': 0.0002, 'unrouted_no_path_even_alone': 0}
+  {'group': 'central', 'edges': 168395, 'demand': 2167029, 'routed': 1757939, 'unrouted': 409090, 'unrouted_share_of_group': 0.1888, 'share_of_all_unrouted': 0.4119, 'unrouted_no_path_even_alone': 2255}
+  {'group': 'descending', 'edges': 1666, 'demand': 20598, 'routed': 15159, 'unrouted': 5439, 'unrouted_share_of_group': 0.2641, 'share_of_all_unrouted': 0.0055, 'unrouted_no_path_even_alone': 11}
+  {'group': 'motor', 'edges': 14, 'demand': 206, 'routed': 206, 'unrouted': 0, 'unrouted_share_of_group': 0.0, 'share_of_all_unrouted': 0.0, 'unrouted_no_path_even_alone': 0}
+  {'group': 'optic', 'edges': 785379, 'demand': 3117142, 'routed': 2762576, 'unrouted': 354566, 'unrouted_share_of_group': 0.1137, 'share_of_all_unrouted': 0.357, 'unrouted_no_path_even_alone': 3385}
+  {'group': 'sensory', 'edges': 565, 'demand': 2973, 'routed': 2870, 'unrouted': 103, 'unrouted_share_of_group': 0.0346, 'share_of_all_unrouted': 0.0001, 'unrouted_no_path_even_alone': 12}
+  {'group': 'sensory_ascending', 'edges': 26, 'demand': 171, 'routed': 170, 'unrouted': 1, 'unrouted_share_of_group': 0.0058, 'share_of_all_unrouted': 0.0, 'unrouted_no_path_even_alone': 0}
+  {'group': 'visual_centrifugal', 'edges': 830, 'demand': 5266, 'routed': 4264, 'unrouted': 1002, 'unrouted_share_of_group': 0.1903, 'share_of_all_unrouted': 0.001, 'unrouted_no_path_even_alone': 34}
+  {'group': 'visual_projection', 'edges': 17012, 'demand': 66096, 'routed': 51047, 'unrouted': 15049, 'unrouted_share_of_group': 0.2277, 'share_of_all_unrouted': 0.0152, 'unrouted_no_path_even_alone': 151}
+  {'group': 'cross-class', 'edges': 199184, 'demand': 1216658, 'routed': 1008934, 'unrouted': 207724, 'unrouted_share_of_group': 0.1707, 'share_of_all_unrouted': 0.2091, 'unrouted_no_path_even_alone': 1348}
+total {'demand': 6597734, 'routed': 5604533, 'unrouted': 993201, 'unrouted_edges': 221476, 'fully_unrouted_edges': 128485, 'unrouted_no_path_even_alone': 7196, 'edges_no_path_even_alone': 2259}
+wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_route_h5_g1.json /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_route_unrouted.npz

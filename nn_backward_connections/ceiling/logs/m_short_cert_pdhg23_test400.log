@@ -1,0 +1,44 @@
+float sum 4885289.67 floored sum/D 4885100.05 overloaded edges 0
+after repair sum/D 4885100.05 refill gain/D 2234.8
+{
+ "cert": "/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/certs/c11_pdhg23_test400.npz",
+ "status": "PASS",
+ "reason": null,
+ "D": 10000,
+ "slack_units": 294220941978,
+ "n_edges_tight": 1029711,
+ "n_cycles": 3837011,
+ "n_cycle_edge_entries": 11016816,
+ "max_cycle_len": 3,
+ "n_pieces": 0,
+ "n_piece_edge_entries": 0,
+ "max_piece_nodes": 0,
+ "sum_y": 48873348560,
+ "sum_claim": 0,
+ "LB": 4887334,
+ "W": 41912141,
+ "ceiling_pct_fraction": "3702480700/41912141",
+ "ceiling_pct": 88.339097,
+ "seconds": 2.89
+}
+PASS
+ 
+LB 4887334 ceiling 88.3391 verifier rc 0
+       75.33 real        70.45 user         2.33 sys
+          2069233664  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              291178  page reclaims
+                  93  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  36  voluntary context switches
+               24133  involuntary context switches
+        376302227999  instructions retired
+         99008638824  cycles elapsed
+           943901048  peak memory footprint

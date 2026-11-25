@@ -1,0 +1,3 @@
+unsolved instances 1
+celltype 300 20262125 lb2 21865.0 g23 39016.0 cycLP 44602.846 tight cycles 3778 of 78597 | opt None bracket 44607.0 50701.0 H64 on piece 50701.0 MILP rounds 7 status 1 | t lp 402.2 t milp 300.1
+done total s 716.7

@@ -1,0 +1,3 @@
+loaded connectome n 136648 giant SCC 126840 t 17.2
+celltype k 300 seed 20262125 m 8620 W 339917 scc [291] | lb2 21865.0 g23 39016.0 cycLP 44602.846 triLP None opt None | exact None None None | t {'lb_2cycle': 0.0, 'greedy_23': 0.17, 'cycle_lp': 460.69, 'exact_lazy_cycle_milp': 135.78}
+KILLED Wed Nov 25 04:05:26 IST 2026 by operator: 30 min run budget reached during the second instance (seed 20262126); first instance saved in m_calib_pieces_bigct.json

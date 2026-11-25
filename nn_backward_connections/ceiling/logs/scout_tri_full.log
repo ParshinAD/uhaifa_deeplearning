@@ -1,0 +1,7 @@
+closing pairs (u<x, x->u, path u->?->x) count 1250116 s 14.4
+directed 3-cycles in residual graph 2765514 expand s 12.9
+sum of min residual cap over 3-cycles (no sharing) 8488017
+greedy random-order packing of all 3-cycles: gain 1717011 s 3.5
+LB 2-cycle + all-3-cycle greedy 4532314 ceiling 89.1862
+greedy max-mincap-first packing: gain 1785371 LB 4600674 ceiling 89.0231
+total s 69.0

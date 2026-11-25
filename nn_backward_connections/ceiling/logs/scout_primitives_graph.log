@@ -1,0 +1,15 @@
+residual giant SCC: nodes 124984 edges 5000481 cap sum 35392715 build s 28.9
+scipy dijkstra 1 source s 0.115 reachable 124984
+scipy dijkstra 10 sources s 1.127
+scipy dijkstra 100 sources s 11.024 out MB 95.4
+scipy dijkstra 1 source with limit=3*median length s 0.162 reached 123410
+scipy BFS 1 source s 0.014 visited 124984
+scipy dijkstra unweighted (hop BFS distances) s 0.071 max hops 8
+igraph build s 3.8
+igraph distances 1 source s 0.167
+igraph distances 10 sources s 0.873
+igraph BFS 1 source s 0.035
+== vectorized 3-cycle enumeration rate (A[rows] @ A, masked by A^T)
+rows 2000 nnz(A^2 rows) 6819660 3-cycle paths through these start nodes 138767 s 0.24 (matmul 0.16 )
+extrapolated directed 3-cycles in residual giant (rough, random rows) 2890609 est full enumeration s 15.0 triangles per s 584114
+maxrss GB 1.77

@@ -1,0 +1,6 @@
+kind random
+LP cols 100000 rows 50000 nnz 299997 status 1 Time limit reached. (HiGHS Status 13: model_status is Time l obj None s 400.02 maxrss GB 0.39
+highs-ipm status 0 obj 366891.26 s 33.45 maxrss GB 0.63
+kind tri3
+LP cols 100000 rows 262018 nnz 300000 status 0 Optimization terminated successfully. (HiGHS Status 7: Optim obj 256702.0 s 0.6 maxrss GB 0.57
+highs-ipm status 0 obj 256702.0 s 0.61 maxrss GB 0.82

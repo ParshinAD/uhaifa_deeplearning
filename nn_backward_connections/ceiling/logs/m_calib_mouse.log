@@ -1,0 +1,12 @@
+mouse n 148 m 583 W 9.159036
+champion H63 ff% 93.175383 feedback 0.625069
+lb_2cycle 0.515373 share of opt 0.827758 gap closed 0.0 ceiling ff% 94.373065 t 0.0
+greedy_23 0.586634 share of opt 0.942213 gap closed 0.6645 ceiling ff% 93.59502 t 0.02
+cycle_lp 0.622613 share of opt 1.0 gap closed 1.0 ceiling ff% 93.202194 t 0.09
+triangle_lp 0.622613 share of opt 1.0 gap closed 1.0 ceiling ff% 93.202194 t 1.98
+cycle LP rounds 4 cycles 517 dual sum 0.622613
+exact lazy-cycle MILP 0.622613 rounds 1 t 0.02
+exact ordering MILP 0.622613 lazy triangle info {'rounds': 13, 'rows': 39363} t 3.93
+order from MILP solution: feedback 0.622613 oracle ff% 93.202194
+OPT ff% 93.202194 agrees with scout 93.202194: True
+wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_calib_mouse.json total s 6.1

@@ -1,0 +1,8 @@
+loaded connectome n 136648 giant SCC 126840 t 16.7
+bfs k 120 seed 20263125 m 1221 W 12564 scc [108] | lb2 1868.0 g23 2095.0 cycLP 2199.0 triLP 2199.0 opt 2199.0 | exact 2199.0 2199.0 None | t {'lb_2cycle': 0.0, 'greedy_23': 0.01, 'cycle_lp': 0.23, 'exact_lazy_cycle_milp': 0.06, 'triangle_lp': 6.42, 'exact_ordering_milp': 6.8}
+bfs k 120 seed 20263126 m 710 W 3648 scc [105] | lb2 398.0 g23 440.0 cycLP 454.0 triLP 454.0 opt 454.0 | exact 454.0 454.0 None | t {'lb_2cycle': 0.0, 'greedy_23': 0.01, 'cycle_lp': 0.05, 'exact_lazy_cycle_milp': 0.03, 'triangle_lp': 1.05, 'exact_ordering_milp': 1.71}
+bfs k 200 seed 20263127 m 1626 W 31515 scc [173] | lb2 2705.0 g23 3393.0 cycLP 3705.0 triLP 3705.0 opt 3705.0 | exact 3705.0 None None | t {'lb_2cycle': 0.0, 'greedy_23': 0.06, 'cycle_lp': 0.4, 'exact_lazy_cycle_milp': 0.07}
+bfs k 200 seed 20263128 m 4500 W 116577 scc [194] | lb2 25900.0 g23 30830.0 cycLP 31927.0 triLP 31927.0 opt 31927.0 | exact 31927.0 None None | t {'lb_2cycle': 0.0, 'greedy_23': 0.05, 'cycle_lp': 13.72, 'exact_lazy_cycle_milp': 3.51}
+bfs k 300 seed 20263129 m 3974 W 33247 scc [283] | lb2 2635.0 g23 3458.0 cycLP 3984.5 triLP None opt 3986.0 | exact 3986.0 None None | t {'lb_2cycle': 0.0, 'greedy_23': 0.15, 'cycle_lp': 18.19, 'exact_lazy_cycle_milp': 15.61}
+bfs k 300 seed 20263130 m 2921 W 45450 scc [270, 2] | lb2 3254.0 g23 4754.0 cycLP 5897.0 triLP 5897.0 opt 5897.0 | exact 5897.0 None None | t {'lb_2cycle': 0.0, 'greedy_23': 0.17, 'cycle_lp': 5.69, 'exact_lazy_cycle_milp': 0.83}
+done 6 instances, total s 92.0 -> /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_calib_pieces_bigbfs.json

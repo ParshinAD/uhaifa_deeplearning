@@ -1,0 +1,21 @@
+chunks 0 of 1000 cycles 261 s 88.3
+chunks 50 of 1000 cycles 15059 s 209.9
+chunks 100 of 1000 cycles 29843 s 297.5
+chunks 150 of 1000 cycles 44105 s 369.8
+chunks 200 of 1000 cycles 58761 s 408.4
+chunks 250 of 1000 cycles 73464 s 458.4
+chunks 300 of 1000 cycles 87691 s 499.0
+chunks 350 of 1000 cycles 102036 s 536.7
+chunks 400 of 1000 cycles 116105 s 574.3
+chunks 450 of 1000 cycles 131124 s 607.8
+chunks 500 of 1000 cycles 145809 s 641.8
+chunks 550 of 1000 cycles 160164 s 673.8
+chunks 600 of 1000 cycles 175030 s 793.1
+chunks 650 of 1000 cycles 189927 s 828.3
+chunks 700 of 1000 cycles 204645 s 856.0
+chunks 750 of 1000 cycles 219025 s 980.8
+chunks 800 of 1000 cycles 233460 s 1050.0
+chunks 850 of 1000 cycles 247874 s 1122.3
+chunks 900 of 1000 cycles 262715 s 1189.2
+chunks 950 of 1000 cycles 277234 s 1256.6
+{'config': {'seed': 0, 'n_sources': 20000, 'workers': 4, 'k_per_source': 20, 'min_len': 4, 'margin': 0.0001, 'floor_len': 0.001, 'batch': 20}, 'sources': 20000, 'raw': 290998, 'unique': 285645, 'by_len': {4: 205181, 5: 72011, 6: 7298, 7: 996, 8: 121, 9: 31, 10: 6, 11: 1}, 'mean_dual_len': 0.019087567734983553, 'runtime_s': 1312.1}

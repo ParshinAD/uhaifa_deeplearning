@@ -1,0 +1,11 @@
+columns 7955404 rows used 4016425 build s 48.5
+it 200 cur 4866916.8 4909540.8 avg 4808549.9 4978044.9 best 4866916.8 4909540.8 gap% 0.8682 s 103.8
+it 400 cur 4881922.0 4897387.0 avg 4885289.7 4899549.7 best 4885289.7 4897387.0 gap% 0.247 s 237.7
+best primal 4885289.7 best dual 4897387.0 s 237.8
+==> ceiling/logs/m_short_mwu23_e0.1.log <==
+round 300 sel 143263 primal 4774088.9 dual 5869968.1 best 4774088.9 5436249.1 gap% 12.18 s 218.9
+
+==> ceiling/logs/m_short_mwu23_e0.3.log <==
+round 300 sel 572677 primal 4854765.7 dual 7007057.8 best 4854765.7 6202755.7 gap% 21.732 s 252.4
+
+[exited with code 0]

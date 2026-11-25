@@ -1,0 +1,18 @@
+{'stage': 'dag', 'alpha': '1', 'H': 1, 'tried': 1173245, 'seconds': 9.2, 'routed_total': 2815303, 'records': 519895, 'edge_entries': 1039790, 'searches': 1273116, 'work': 50668996, 'work_limit_hits': 0, 'routed': 2815303}
+{'stage': 'dag', 'alpha': '1', 'H': 2, 'tried': 753221, 'seconds': 29.9, 'routed_total': 4511452, 'records': 609783, 'edge_entries': 1829349, 'searches': 1028947, 'work': 230874828, 'work_limit_hits': 0, 'routed': 1696149}
+{'stage': 'dag', 'alpha': '1', 'H': 3, 'tried': 419164, 'seconds': 50.5, 'routed_total': 5289146, 'records': 337029, 'edge_entries': 1348116, 'searches': 609561, 'work': 696423808, 'work_limit_hits': 0, 'routed': 777694}
+{'stage': 'dag', 'alpha': '1', 'H': 4, 'tried': 272532, 'seconds': 18.6, 'routed_total': 5506102, 'records': 103139, 'edge_entries': 515695, 'searches': 339522, 'work': 1057646110, 'work_limit_hits': 0, 'routed': 216956}
+{'stage': 'dag', 'alpha': '1', 'H': 5, 'tried': 236383, 'seconds': 23.7, 'routed_total': 5572052, 'records': 34375, 'edge_entries': 206250, 'searches': 260680, 'work': 1393007984, 'work_limit_hits': 0, 'routed': 65950}
+{'stage': 'dag', 'alpha': '1', 'H': 6, 'tried': 226305, 'seconds': 33.6, 'routed_total': 5592085, 'records': 11611, 'edge_entries': 81277, 'searches': 234844, 'work': 1891319366, 'work_limit_hits': 0, 'routed': 20033}
+{'stage': 'dag', 'alpha': '1', 'H': 8, 'tried': 223233, 'seconds': 63.8, 'routed_total': 5602448, 'records': 6644, 'edge_entries': 56384, 'searches': 228395, 'work': 3090068883, 'work_limit_hits': 0, 'routed': 10363}
+{'stage': 'dag', 'alpha': '1', 'H': 10, 'tried': 221751, 'seconds': 69.4, 'routed_total': 5604161, 'records': 1220, 'edge_entries': 12807, 'searches': 222743, 'work': 3302454808, 'work_limit_hits': 0, 'routed': 1713}
+dag routed 5604161 share 0.8494
+{'stage': 'residual', 'H': 2, 'tried': 221523, 'seconds': 1.3, 'routed_total': 5629110, 'records': 12068, 'edge_entries': 36204, 'searches': 220891, 'work': 77953808, 'work_limit_hits': 0, 'routed': 24949}
+{'stage': 'residual', 'H': 3, 'tried': 208823, 'seconds': 11.2, 'routed_total': 5707562, 'records': 42356, 'edge_entries': 169424, 'searches': 209475, 'work': 588870674, 'work_limit_hits': 0, 'routed': 78452}
+{'stage': 'residual', 'H': 4, 'tried': 167119, 'seconds': 30.1, 'routed_total': 5775309, 'records': 38478, 'edge_entries': 192390, 'searches': 168435, 'work': 1768722986, 'work_limit_hits': 0, 'routed': 67747}
+{'stage': 'residual', 'H': 5, 'tried': 129957, 'seconds': 97.2, 'routed_total': 5813514, 'records': 23197, 'edge_entries': 139182, 'searches': 131671, 'work': 4944893057, 'work_limit_hits': 0, 'routed': 38205}
+{'stage': 'residual', 'H': 6, 'tried': 108474, 'seconds': 163.4, 'routed_total': 5831015, 'records': 11616, 'edge_entries': 81312, 'searches': 109322, 'work': 10943153694, 'work_limit_hits': 0, 'routed': 17501}
+{'stage': 'residual', 'H': 8, 'tried': 97706, 'seconds': 834.0, 'routed_total': 5843849, 'records': 9363, 'edge_entries': 82228, 'searches': 97301, 'work': 35648798783, 'work_limit_hits': 0, 'routed': 12834}
+LB 5843849 ceiling 86.0569 time 1483.3
+verify PASS 20.3 s
+wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_route_improve_r1.json

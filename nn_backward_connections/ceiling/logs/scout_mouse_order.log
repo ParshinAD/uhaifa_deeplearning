@@ -1,0 +1,12 @@
+mouse n 148 m 583 W 9.159036 self loops 0 dups 0
+weight min/median/max 0.000184 0.006359 0.613959
+reciprocal pairs 83 edge share 0.2847 weight share 0.4
+2-cycle LB 0.515373 ceiling 94.3731
+champion ff% 93.175383 feedback 0.625069 backward edges 124
+SCC count 46 sizes>1 [102, 2]
+edges inside SCCs 465 weight between SCCs 1.727607
+order formulation: nodes 104 vars 5356 transitivity rows 182104 build s 0.0
+status 0 Optimization terminated successfully. (HiGHS Status 7: Optimal)
+best feedback 0.622613 ff% 93.202194
+dual bound feedback 0.622613 ceiling 93.202194
+t 1.8

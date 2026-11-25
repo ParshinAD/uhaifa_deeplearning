@@ -1,0 +1,35 @@
+{
+ "command": "python ceiling/src/m_short_refill.py ceiling/certs/c15_cg_r1.npz c16_cg_r1_refill1500.npz ceiling/results/m_short_cg_r1_refill1500.json 1500",
+ "git_commit": "657786fb8c6b97a591aab1e9c6c3295a4d159ace",
+ "seed": 0,
+ "config": {
+  "seed": 0,
+  "time_limit_s": 1500.0,
+  "rebuild_every": 2000,
+  "k_per_source": 10,
+  "passes": 5
+ },
+ "D": 10000,
+ "base_LB": 5165389,
+ "new_cycles": 342866,
+ "new_cycle_len_hist": {
+  "4": 200963,
+  "5": 99965,
+  "6": 30893,
+  "7": 7320,
+  "8": 2139,
+  "9": 910,
+  "10": 492,
+  "11": 140,
+  "12": 32,
+  "13": 9,
+  "14": 1,
+  "15": 2
+ },
+ "LB": 5442629,
+ "ceiling_pct": 87.0142,
+ "cert": "ceiling/certs/c16_cg_r1_refill1500.npz",
+ "verifier_returncode": 0,
+ "verifier_stdout": "{\n \"cert\": \"/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/certs/c16_cg_r1_refill1500.npz\",\n \"status\": \"PASS\",\n \"reason\": null,\n \"D\": 10000,\n \"slack_units\": 269421164629,\n \"n_edges_tight\": 1502318,\n \"n_cycles\": 4194620,\n \"n_cycle_edge_entries\": 12909347,\n \"max_cycle_len\": 15,\n \"n_pieces\": 0,\n \"n_piece_edge_entries\": 0,\n \"max_piece_nodes\": 0,\n \"sum_y\": 54426297389,\n \"sum_claim\": 0,\n \"LB\": 5442629,\n \"W\": 41912141,\n \"ceiling_pct_fraction\": \"3646951200/41912141\",\n \"ceiling_pct\": 87.014195,\n \"seconds\": 2.64\n}\nPASS\n",
+ "runtime_s": 1578.5
+}

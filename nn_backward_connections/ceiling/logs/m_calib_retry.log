@@ -1,0 +1,5 @@
+unsolved instances 3
+recip 200 20261128 lb2 30384.0 g23 41995.0 cycLP 45712.385 tight cycles 3466 of 49926 | opt None bracket 45717.0 52538.0 H64 on piece 52538.0 MILP rounds 5 status 1 | t lp 175.0 t milp 300.0
+recip 300 20261129 lb2 24639.0 g23 28209.0 cycLP 29594.0 tight cycles 5242 of 39986 | opt None bracket 29597.0 37351.0 H64 on piece 37351.0 MILP rounds 12 status 1 | t lp 90.1 t milp 300.2
+celltype 200 20262127 lb2 56167.0 g23 65873.0 cycLP 69425.5 tight cycles 3276 of 29941 | opt 69449.0 bracket 69449.0 69449.0 H64 on piece 79491.0 MILP rounds 10 status 0 | t lp 28.6 t milp 150.4
+done total s 1060.4

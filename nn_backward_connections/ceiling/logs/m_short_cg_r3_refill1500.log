@@ -1,0 +1,29 @@
+pass 0 sources 0 new cycles 9340 gain/D 698.1 s 61.1
+pass 0 sources 20000 new cycles 104730 gain/D 14021.2 s 498.7
+pass 0 sources 40000 new cycles 194626 gain/D 38385.7 s 928.3
+pass 0 sources 60000 new cycles 274322 gain/D 68772.4 s 1317.3
+pass 0 done gain/D 84150.4
+{
+ "cert": "/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/certs/c19_cg_r3_refill1500.npz",
+ "status": "PASS",
+ "reason": null,
+ "D": 10000,
+ "slack_units": 255518887947,
+ "n_edges_tight": 1658477,
+ "n_cycles": 3945707,
+ "n_cycle_edge_entries": 13125351,
+ "max_cycle_len": 23,
+ "n_pieces": 0,
+ "n_piece_edge_entries": 0,
+ "max_piece_nodes": 0,
+ "sum_y": 57390144515,
+ "sum_claim": 0,
+ "LB": 5739014,
+ "W": 41912141,
+ "ceiling_pct_fraction": "3617312700/41912141",
+ "ceiling_pct": 86.307037,
+ "seconds": 2.27
+}
+PASS
+
+LB 5739014 ceiling 86.307 rc 0

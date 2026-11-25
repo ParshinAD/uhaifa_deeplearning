@@ -1,0 +1,97 @@
+{
+ "command": "python ceiling/src/m_short_cert.py /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mshort/pool_r6.npz /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mshort/pdhg_r6.npz 10000 c1r6_cg_r6.npz ceiling/results/m_short_cg_r6.json 1",
+ "git_commit": "657786fb8c6b97a591aab1e9c6c3295a4d159ace",
+ "seed": null,
+ "D": 10000,
+ "columns_by_length": {
+  "2": 519895,
+  "3": 7435509,
+  "4": 11045,
+  "5": 22999,
+  "6": 80114,
+  "7": 201068,
+  "8": 166737,
+  "9": 54882,
+  "10": 17487,
+  "11": 9213,
+  "12": 5229,
+  "13": 2674,
+  "14": 1132,
+  "15": 598,
+  "16": 241,
+  "17": 107,
+  "18": 43,
+  "19": 15,
+  "20": 14,
+  "21": 6,
+  "22": 3,
+  "25": 1
+ },
+ "cycles_in_cert": 3734535,
+ "LB": 5890045,
+ "ceiling_pct": 85.9467,
+ "lb_before_refill": 5889422,
+ "fractional_input": 5889593.617938743,
+ "dual_estimate": 5892487.331215908,
+ "solver_info": {
+  "config": {
+   "omega": 1.0,
+   "iters": 1500,
+   "check_every": 200,
+   "time_limit_s": 3300
+  },
+  "columns": 10941007,
+  "best_primal": 5889593.617938743,
+  "best_dual": 5892487.331215908,
+  "runtime_s": 504.9,
+  "hist": [
+   [
+    200,
+    79.1,
+    5872752.509889294,
+    5899344.2938204985
+   ],
+   [
+    400,
+    143.5,
+    5885736.736474893,
+    5893968.80869535
+   ],
+   [
+    600,
+    209.3,
+    5887504.433909901,
+    5893295.820437828
+   ],
+   [
+    800,
+    275.3,
+    5888339.499148521,
+    5892974.933167053
+   ],
+   [
+    1000,
+    341.5,
+    5888874.214166169,
+    5892759.292489705
+   ],
+   [
+    1200,
+    406.5,
+    5889275.142730938,
+    5892603.051207805
+   ],
+   [
+    1400,
+    472.6,
+    5889593.617938743,
+    5892487.331215908
+   ]
+  ]
+ },
+ "cert": "ceiling/certs/c1r6_cg_r6.npz",
+ "verifier_returncode": 0,
+ "verifier_stdout": "{\n \"cert\": \"/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/certs/c1r6_cg_r6.npz\",\n \"status\": \"PASS\",\n \"reason\": null,\n \"D\": 10000,\n \"slack_units\": 247352222631,\n \"n_edges_tight\": 1425169,\n \"n_cycles\": 3734535,\n \"n_cycle_edge_entries\": 12846791,\n \"max_cycle_len\": 15,\n \"n_pieces\": 0,\n \"n_piece_edge_entries\": 0,\n \"max_piece_nodes\": 0,\n \"sum_y\": 58900452725,\n \"sum_claim\": 0,\n \"LB\": 5890045,\n \"W\": 41912141,\n \"ceiling_pct_fraction\": \"3602209600/41912141\",\n \"ceiling_pct\": 85.946685,\n \"seconds\": 1.8\n}\nPASS\n",
+ "runtime_cert_s": 40.2,
+ "runtime_total_s": 53.6
+}

@@ -1,0 +1,1 @@
+{"config": {"seed": 0, "n_sources": 20000, "workers": 4, "k_per_source": 20, "min_len": 4, "margin": 0.0001, "floor_len": 0.001, "batch": 20}, "sources": 20000, "raw": 290998, "unique": 285645, "by_len": {"4": 205181, "5": 72011, "6": 7298, "7": 996, "8": 121, "9": 31, "10": 6, "11": 1}, "mean_dual_len": 0.019087567734983553, "runtime_s": 1312.1}

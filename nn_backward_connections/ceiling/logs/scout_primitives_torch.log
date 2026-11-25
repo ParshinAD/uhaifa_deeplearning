@@ -1,0 +1,6 @@
+torch CPU sparse(A) @ dense(n x 64) x10 s 2.344
+torch MPS sparse mm failed: NotImplementedError Could not run 'aten::_sparse_coo_tensor_with_dims_and_tensors' with arguments from the 'SparseMPS' backend. This could be because the operator doesn't
+/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/src/scout_primitives.py:169: UserWarning: Sparse CSR tensor support is in beta state. If you miss a functionality in the sparse tensor support, please submit a feature request to https://github.com/pytorch/pytorch/issues. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/aten/src/ATen/SparseCsrTensorImpl.cpp:55.)
+  Ac = A.to_sparse_csr().to(dev)
+torch MPS CSR mm failed: NotImplementedError Could not run 'new_compressed_tensor' from the 'mps:0' device.)
+scipy CSR @ dense(n x 64) x10 s 1.488

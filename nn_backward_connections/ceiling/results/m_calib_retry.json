@@ -1,0 +1,83 @@
+{
+ "config": {
+  "src": "/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_calib_pieces_big.json",
+  "out": "/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_calib_retry.json",
+  "milp_time": "300.0",
+  "dual_tol": "1e-09"
+ },
+ "instances": [
+  {
+   "kind": "recip",
+   "size": 200,
+   "seed": 20261128,
+   "m": 5948,
+   "W": 194251.0,
+   "lb_2cycle": 30384.0,
+   "greedy_23": 41995.0,
+   "cycle_lp": 45712.38461538462,
+   "n_cycles": 49926,
+   "n_tight_cycles": 3466,
+   "milp_rounds": 5,
+   "milp_last_status": 1,
+   "milp_dual_bound": 45717.0,
+   "opt": null,
+   "lower": 45717.0,
+   "upper": 52538.0,
+   "h64_feedback_on_piece": 52538.0,
+   "times_s": {
+    "cycle_lp": 174.96368193626404,
+    "milp": 300.03273701667786
+   },
+   "cycle_lp_share_of_upper": 0.8700823140466827
+  },
+  {
+   "kind": "recip",
+   "size": 300,
+   "seed": 20261129,
+   "m": 9339,
+   "W": 121867.0,
+   "lb_2cycle": 24639.0,
+   "greedy_23": 28209.0,
+   "cycle_lp": 29594.0,
+   "n_cycles": 39986,
+   "n_tight_cycles": 5242,
+   "milp_rounds": 12,
+   "milp_last_status": 1,
+   "milp_dual_bound": 29597.0,
+   "opt": null,
+   "lower": 29597.0,
+   "upper": 37351.0,
+   "h64_feedback_on_piece": 37351.0,
+   "times_s": {
+    "cycle_lp": 90.08023977279663,
+    "milp": 300.1823260784149
+   },
+   "cycle_lp_share_of_upper": 0.79232149072314
+  },
+  {
+   "kind": "celltype",
+   "size": 200,
+   "seed": 20262127,
+   "m": 5336,
+   "W": 258067.0,
+   "lb_2cycle": 56167.0,
+   "greedy_23": 65873.0,
+   "cycle_lp": 69425.5,
+   "n_cycles": 29941,
+   "n_tight_cycles": 3276,
+   "milp_rounds": 10,
+   "milp_last_status": 0,
+   "milp_dual_bound": 69449.0,
+   "opt": 69449.0,
+   "lower": 69449.0,
+   "upper": 69449.0,
+   "h64_feedback_on_piece": 79491.0,
+   "times_s": {
+    "cycle_lp": 28.635125160217285,
+    "milp": 150.37482595443726
+   },
+   "cycle_lp_share_of_upper": 0.9996616221975838
+  }
+ ],
+ "runtime_s": 1060.3935968875885
+}

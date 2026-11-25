@@ -1,0 +1,26 @@
+float sum 5436549.23 floored sum/D 5436378.02 overloaded edges 0
+after repair sum/D 5436378.02 refill gain/D 590.05
+{
+ "cert": "/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/certs/c17_cg_r2.npz",
+ "status": "PASS",
+ "reason": null,
+ "D": 10000,
+ "slack_units": 270416990756,
+ "n_edges_tight": 1272521,
+ "n_cycles": 3621405,
+ "n_cycle_edge_entries": 10969534,
+ "max_cycle_len": 11,
+ "n_pieces": 0,
+ "n_piece_edge_entries": 0,
+ "max_piece_nodes": 0,
+ "sum_y": 54369680717,
+ "sum_claim": 0,
+ "LB": 5436968,
+ "W": 41912141,
+ "ceiling_pct_fraction": "3647517300/41912141",
+ "ceiling_pct": 87.027702,
+ "seconds": 2.43
+}
+PASS
+ 
+LB 5436968 ceiling 87.0277 verifier rc 0

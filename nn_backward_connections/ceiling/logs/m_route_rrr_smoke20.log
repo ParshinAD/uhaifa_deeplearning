@@ -1,0 +1,37 @@
+start routed 5604533 records 1623979 load 31.2 s
+{'round': 1, 'batch': 20, 'blocked_edges': 39, 'ripped_records': 139, 'ripped_amount': 420, 'gain': -8, 'kept': False, 'routed': 5604533, 'seconds': 5.0}
+{'round': 3, 'batch': 20, 'blocked_edges': 48, 'ripped_records': 158, 'ripped_amount': 665, 'gain': 3, 'kept': True, 'routed': 5604536, 'seconds': 0.8}
+{'round': 9, 'batch': 20, 'blocked_edges': 44, 'ripped_records': 91, 'ripped_amount': 378, 'gain': 5, 'kept': True, 'routed': 5604541, 'seconds': 1.1}
+{'round': 11, 'batch': 20, 'blocked_edges': 46, 'ripped_records': 86, 'ripped_amount': 398, 'gain': 0, 'kept': False, 'routed': 5604541, 'seconds': 0.8}
+{'round': 21, 'batch': 20, 'blocked_edges': 40, 'ripped_records': 89, 'ripped_amount': 238, 'gain': -1, 'kept': False, 'routed': 5604541, 'seconds': 0.7}
+{'round': 31, 'batch': 20, 'blocked_edges': 42, 'ripped_records': 215, 'ripped_amount': 554, 'gain': -3, 'kept': False, 'routed': 5604541, 'seconds': 0.7}
+{'round': 41, 'batch': 20, 'blocked_edges': 45, 'ripped_records': 98, 'ripped_amount': 352, 'gain': -8, 'kept': False, 'routed': 5604541, 'seconds': 0.7}
+{'round': 48, 'batch': 20, 'blocked_edges': 47, 'ripped_records': 96, 'ripped_amount': 407, 'gain': 1, 'kept': True, 'routed': 5604542, 'seconds': 0.7}
+{'round': 51, 'batch': 20, 'blocked_edges': 42, 'ripped_records': 142, 'ripped_amount': 425, 'gain': -4, 'kept': False, 'routed': 5604542, 'seconds': 0.6}
+{'round': 56, 'batch': 20, 'blocked_edges': 37, 'ripped_records': 58, 'ripped_amount': 137, 'gain': 1, 'kept': True, 'routed': 5604543, 'seconds': 0.6}
+{'round': 57, 'batch': 20, 'blocked_edges': 39, 'ripped_records': 97, 'ripped_amount': 349, 'gain': 1, 'kept': True, 'routed': 5604544, 'seconds': 3.2}
+{'round': 61, 'batch': 20, 'blocked_edges': 42, 'ripped_records': 81, 'ripped_amount': 236, 'gain': -2, 'kept': False, 'routed': 5604544, 'seconds': 0.6}
+{'round': 70, 'batch': 20, 'blocked_edges': 45, 'ripped_records': 102, 'ripped_amount': 315, 'gain': 1, 'kept': True, 'routed': 5604545, 'seconds': 0.6}
+{'round': 71, 'batch': 20, 'blocked_edges': 34, 'ripped_records': 84, 'ripped_amount': 299, 'gain': 1, 'kept': True, 'routed': 5604546, 'seconds': 3.0}
+{'round': 76, 'batch': 20, 'blocked_edges': 42, 'ripped_records': 106, 'ripped_amount': 352, 'gain': 2, 'kept': True, 'routed': 5604548, 'seconds': 0.6}
+{'round': 81, 'batch': 20, 'blocked_edges': 56, 'ripped_records': 104, 'ripped_amount': 254, 'gain': -1, 'kept': False, 'routed': 5604548, 'seconds': 0.6}
+{'round': 83, 'batch': 20, 'blocked_edges': 44, 'ripped_records': 117, 'ripped_amount': 450, 'gain': 1, 'kept': True, 'routed': 5604549, 'seconds': 0.6}
+{'round': 88, 'batch': 20, 'blocked_edges': 42, 'ripped_records': 137, 'ripped_amount': 470, 'gain': 3, 'kept': True, 'routed': 5604552, 'seconds': 0.6}
+{'round': 91, 'batch': 20, 'blocked_edges': 43, 'ripped_records': 72, 'ripped_amount': 219, 'gain': -3, 'kept': False, 'routed': 5604552, 'seconds': 0.6}
+{'round': 92, 'batch': 20, 'blocked_edges': 38, 'ripped_records': 142, 'ripped_amount': 375, 'gain': 3, 'kept': True, 'routed': 5604555, 'seconds': 0.6}
+{'round': 101, 'batch': 20, 'blocked_edges': 52, 'ripped_records': 100, 'ripped_amount': 366, 'gain': -1, 'kept': False, 'routed': 5604555, 'seconds': 0.6}
+{'round': 103, 'batch': 20, 'blocked_edges': 44, 'ripped_records': 177, 'ripped_amount': 616, 'gain': 1, 'kept': True, 'routed': 5604556, 'seconds': 0.6}
+{'round': 104, 'batch': 20, 'blocked_edges': 44, 'ripped_records': 91, 'ripped_amount': 302, 'gain': 2, 'kept': True, 'routed': 5604558, 'seconds': 3.1}
+{'round': 109, 'batch': 20, 'blocked_edges': 43, 'ripped_records': 70, 'ripped_amount': 207, 'gain': 1, 'kept': True, 'routed': 5604559, 'seconds': 0.7}
+{'round': 111, 'batch': 20, 'blocked_edges': 43, 'ripped_records': 97, 'ripped_amount': 309, 'gain': -4, 'kept': False, 'routed': 5604559, 'seconds': 0.6}
+{'round': 114, 'batch': 20, 'blocked_edges': 45, 'ripped_records': 121, 'ripped_amount': 352, 'gain': 1, 'kept': True, 'routed': 5604560, 'seconds': 0.6}
+{'round': 118, 'batch': 20, 'blocked_edges': 36, 'ripped_records': 92, 'ripped_amount': 333, 'gain': 3, 'kept': True, 'routed': 5604563, 'seconds': 0.6}
+{'round': 121, 'batch': 20, 'blocked_edges': 39, 'ripped_records': 118, 'ripped_amount': 329, 'gain': -4, 'kept': False, 'routed': 5604563, 'seconds': 0.6}
+{'round': 123, 'batch': 20, 'blocked_edges': 44, 'ripped_records': 98, 'ripped_amount': 238, 'gain': 3, 'kept': True, 'routed': 5604566, 'seconds': 0.6}
+{'round': 131, 'batch': 20, 'blocked_edges': 41, 'ripped_records': 146, 'ripped_amount': 578, 'gain': -2, 'kept': False, 'routed': 5604566, 'seconds': 0.7}
+{'round': 141, 'batch': 20, 'blocked_edges': 34, 'ripped_records': 78, 'ripped_amount': 185, 'gain': 3, 'kept': True, 'routed': 5604569, 'seconds': 0.6}
+{'round': 146, 'batch': 20, 'blocked_edges': 39, 'ripped_records': 159, 'ripped_amount': 481, 'gain': 3, 'kept': True, 'routed': 5604572, 'seconds': 0.7}
+rrr done rounds 146 kept 19 dag routed 5604572 gain 39
+LB 5604572 ceiling 86.6278 time 187.0
+verify PASS 18.3 s
+wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_route_rrr_smoke20.json

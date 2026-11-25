@@ -1,0 +1,36 @@
+n 136648 m 5657719 W 41912141 stage1 LB 2815303 ceiling 93.2828
+t 30.0 seeds 113428 of 5069964 triangles_seen 248373 packed_triangles 78790 LB 3042628 ceiling 92.7405
+t 60.0 seeds 228919 of 5069964 triangles_seen 486764 packed_triangles 148118 LB 3240239 ceiling 92.269
+CHECKPOINT 60 s LB 3240239 ceiling 92.269 seeds 228919
+t 90.0 seeds 335219 of 5069964 triangles_seen 698014 packed_triangles 203505 LB 3395649 ceiling 91.8982
+t 120.0 seeds 454415 of 5069964 triangles_seen 922972 packed_triangles 257573 LB 3547203 ceiling 91.5366
+CHECKPOINT 120 s LB 3547203 ceiling 91.5366 seeds 454415
+t 150.0 seeds 602601 of 5069964 triangles_seen 1193025 packed_triangles 315313 LB 3706263 ceiling 91.1571
+t 180.0 seeds 732724 of 5069964 triangles_seen 1422328 packed_triangles 358567 LB 3824431 ceiling 90.8751
+t 210.0 seeds 852687 of 5069964 triangles_seen 1624564 packed_triangles 392924 LB 3916993 ceiling 90.6543
+t 240.0 seeds 1008505 of 5069964 triangles_seen 1884868 packed_triangles 431637 LB 4020731 ceiling 90.4068
+t 270.0 seeds 1132846 of 5069964 triangles_seen 2085140 packed_triangles 457940 LB 4091256 ceiling 90.2385
+t 300.0 seeds 1290654 of 5069964 triangles_seen 2331596 packed_triangles 486607 LB 4168012 ceiling 90.0554
+t 330.0 seeds 1446438 of 5069964 triangles_seen 2569399 packed_triangles 510416 LB 4231290 ceiling 89.9044
+t 360.0 seeds 1602932 of 5069964 triangles_seen 2804047 packed_triangles 531145 LB 4286121 ceiling 89.7736
+t 390.0 seeds 1760325 of 5069964 triangles_seen 3034573 packed_triangles 548771 LB 4333259 ceiling 89.6611
+t 420.0 seeds 1920087 of 5069964 triangles_seen 3264921 packed_triangles 563784 LB 4372450 ceiling 89.5676
+CHECKPOINT 420 s LB 4372450 ceiling 89.5676 seeds 1920087
+t 450.0 seeds 2080831 of 5069964 triangles_seen 3494300 packed_triangles 576956 LB 4406807 ceiling 89.4856
+t 480.0 seeds 2240477 of 5069964 triangles_seen 3716156 packed_triangles 587961 LB 4435190 ceiling 89.4179
+t 510.0 seeds 2398799 of 5069964 triangles_seen 3935167 packed_triangles 596996 LB 4458650 ceiling 89.3619
+t 540.0 seeds 2563629 of 5069964 triangles_seen 4159308 packed_triangles 605110 LB 4480337 ceiling 89.3102
+t 570.0 seeds 2720764 of 5069964 triangles_seen 4371997 packed_triangles 611441 LB 4496818 ceiling 89.2708
+t 600.0 seeds 2881656 of 5069964 triangles_seen 4587525 packed_triangles 616864 LB 4511005 ceiling 89.237
+t 630.0 seeds 3041149 of 5069964 triangles_seen 4801888 packed_triangles 621423 LB 4522730 ceiling 89.209
+t 660.0 seeds 3200317 of 5069964 triangles_seen 5014830 packed_triangles 625202 LB 4532425 ceiling 89.1859
+t 690.0 seeds 3362129 of 5069964 triangles_seen 5230378 packed_triangles 628389 LB 4540691 ceiling 89.1662
+t 720.0 seeds 3545496 of 5069964 triangles_seen 5472116 packed_triangles 631158 LB 4547729 ceiling 89.1494
+t 750.0 seeds 3703599 of 5069964 triangles_seen 5678283 packed_triangles 633008 LB 4552496 ceiling 89.138
+t 780.0 seeds 3863652 of 5069964 triangles_seen 5885398 packed_triangles 634419 LB 4556122 ceiling 89.1294
+t 810.0 seeds 4015728 of 5069964 triangles_seen 6083144 packed_triangles 635422 LB 4558595 ceiling 89.1234
+t 840.0 seeds 4174397 of 5069964 triangles_seen 6289328 packed_triangles 636219 LB 4560613 ceiling 89.1186
+t 870.0 seeds 4331874 of 5069964 triangles_seen 6495028 packed_triangles 636770 LB 4561993 ceiling 89.1153
+FINAL stopped at budget t 900.0 seeds 4489697 of 5069964 triangles_seen 6698237 packed 637099 LB 4562821 ceiling 89.1134
+seed edges per s 4988.6 triangles seen per s 7442.5
+residual weight left 31038981

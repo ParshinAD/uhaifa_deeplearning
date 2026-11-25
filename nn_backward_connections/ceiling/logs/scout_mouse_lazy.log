@@ -1,0 +1,12 @@
+mouse n 148 m 583 W 9.159036 self loops 0 dups 0
+weight min/median/max 0.000184 0.006359 0.613959
+reciprocal pairs 83 edge share 0.2847 weight share 0.4
+2-cycle LB 0.515373 ceiling 94.3731
+champion ff% 93.175383 feedback 0.625069 backward edges 124
+SCC count 46 sizes>1 [102, 2]
+edges inside SCCs 465 weight between SCCs 1.727607
+iter 0 cycles 333 status 0 obj 0.603427 dual bound 0.603427 new cycles 192 t 0.0
+iter 1 cycles 525 status 0 obj 0.622041 dual bound 0.622041 new cycles 2 t 0.0
+iter 2 cycles 527 status 0 obj 0.622613 dual bound 0.622613 new cycles 0 t 0.0
+OPTIMAL feedback 0.622613 OPT ff% 93.202194 champion gap pp 0.026811 t 0.018
+oracle check: order from topo sort of G minus y scores ff% 93.202194

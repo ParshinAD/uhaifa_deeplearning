@@ -1,0 +1,26 @@
+float sum 0.0 floored sum/D 0.0 overloaded edges 0
+after repair sum/D 0.0 refill gain/D 4556165.0
+{
+ "cert": "/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/certs/c10_greedy23_joint.npz",
+ "status": "PASS",
+ "reason": null,
+ "D": 1,
+ "slack_units": 30736706,
+ "n_edges_tight": 1344226,
+ "n_cycles": 1046287,
+ "n_cycle_edge_entries": 2680948,
+ "max_cycle_len": 3,
+ "n_pieces": 0,
+ "n_piece_edge_entries": 0,
+ "max_piece_nodes": 0,
+ "sum_y": 4556165,
+ "sum_claim": 0,
+ "LB": 4556165,
+ "W": 41912141,
+ "ceiling_pct_fraction": "3735597600/41912141",
+ "ceiling_pct": 89.129248,
+ "seconds": 0.79
+}
+PASS
+ 
+LB 4556165 ceiling 89.1292 verifier rc 0

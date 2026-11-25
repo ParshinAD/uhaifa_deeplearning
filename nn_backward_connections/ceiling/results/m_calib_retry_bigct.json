@@ -1,0 +1,35 @@
+{
+ "config": {
+  "src": "/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_calib_pieces_bigct.json",
+  "out": "/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_calib_retry_bigct.json",
+  "milp_time": "300.0",
+  "dual_tol": "1e-09"
+ },
+ "instances": [
+  {
+   "kind": "celltype",
+   "size": 300,
+   "seed": 20262125,
+   "m": 8620,
+   "W": 339917.0,
+   "lb_2cycle": 21865.0,
+   "greedy_23": 39016.0,
+   "cycle_lp": 44602.846153846134,
+   "n_cycles": 78597,
+   "n_tight_cycles": 3778,
+   "milp_rounds": 7,
+   "milp_last_status": 1,
+   "milp_dual_bound": 44607.0,
+   "opt": null,
+   "lower": 44607.0,
+   "upper": 50701.0,
+   "h64_feedback_on_piece": 50701.0,
+   "times_s": {
+    "cycle_lp": 402.1997871398926,
+    "milp": 300.1083209514618
+   },
+   "cycle_lp_share_of_upper": 0.8797232037602046
+  }
+ ],
+ "runtime_s": 716.7094328403473
+}

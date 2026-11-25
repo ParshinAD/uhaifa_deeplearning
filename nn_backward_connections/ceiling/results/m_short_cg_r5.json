@@ -1,0 +1,80 @@
+{
+ "command": "python ceiling/src/m_short_cert.py /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mshort/pool_r5.npz /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mshort/pdhg_r5.npz 10000 c1r5_cg_r5.npz ceiling/results/m_short_cg_r5.json 1",
+ "git_commit": "657786fb8c6b97a591aab1e9c6c3295a4d159ace",
+ "seed": null,
+ "D": 10000,
+ "columns_by_length": {
+  "2": 519895,
+  "3": 7435509,
+  "4": 18336,
+  "5": 62713,
+  "6": 178524,
+  "7": 207203,
+  "8": 80753,
+  "9": 17329,
+  "10": 6083,
+  "11": 1797,
+  "12": 474,
+  "13": 157,
+  "14": 109,
+  "15": 45,
+  "16": 23,
+  "17": 7,
+  "18": 1
+ },
+ "cycles_in_cert": 3710498,
+ "LB": 5855428,
+ "ceiling_pct": 86.0293,
+ "lb_before_refill": 5854673,
+ "fractional_input": 5854845.191165983,
+ "dual_estimate": 5858603.015955844,
+ "solver_info": {
+  "config": {
+   "omega": 1.0,
+   "iters": 1000,
+   "check_every": 200,
+   "time_limit_s": 3300
+  },
+  "columns": 10367399,
+  "best_primal": 5854845.191165983,
+  "best_dual": 5858603.015955844,
+  "runtime_s": 220.1,
+  "hist": [
+   [
+    200,
+    54.6,
+    5837961.970864866,
+    5865900.019884603
+   ],
+   [
+    400,
+    96.0,
+    5851512.962698803,
+    5860007.578332937
+   ],
+   [
+    600,
+    137.4,
+    5853424.3033242,
+    5859203.945598131
+   ],
+   [
+    800,
+    178.8,
+    5854297.638599709,
+    5858836.33735272
+   ],
+   [
+    1000,
+    220.1,
+    5854845.191165983,
+    5858603.015955844
+   ]
+  ]
+ },
+ "cert": "ceiling/certs/c1r5_cg_r5.npz",
+ "verifier_returncode": 0,
+ "verifier_stdout": "{\n \"cert\": \"/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/certs/c1r5_cg_r5.npz\",\n \"status\": \"PASS\",\n \"reason\": null,\n \"D\": 10000,\n \"slack_units\": 249510080291,\n \"n_edges_tight\": 1402771,\n \"n_cycles\": 3710498,\n \"n_cycle_edge_entries\": 12486213,\n \"max_cycle_len\": 17,\n \"n_pieces\": 0,\n \"n_piece_edge_entries\": 0,\n \"max_piece_nodes\": 0,\n \"sum_y\": 58554284537,\n \"sum_claim\": 0,\n \"LB\": 5855428,\n \"W\": 41912141,\n \"ceiling_pct_fraction\": \"3605671300/41912141\",\n \"ceiling_pct\": 86.02928,\n \"seconds\": 2.29\n}\nPASS\n",
+ "runtime_cert_s": 44.0,
+ "runtime_total_s": 60.5
+}

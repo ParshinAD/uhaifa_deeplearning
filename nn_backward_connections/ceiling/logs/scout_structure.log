@@ -1,0 +1,48 @@
+n 136648 m 5657719 W 41912141
+== duplicates / self loops
+self_loops 0 duplicate_edges 0
+weight min 2 weight percentiles [0,50,90,99,99.9,100] [2, 4, 15, 54, 147, 2405]
+edges with w=1 0 share 0.0
+outdeg pct [0, 27, 85, 256, 893, 8064] indeg pct [0, 25, 87, 293, 948, 8840]
+out-strength pct [0, 162, 620, 2522, 8398, 98124] in-strength pct [0, 141, 601, 2954, 9640, 68390]
+sources (indeg 0) 6651 sinks (outdeg 0) 2447
+== reciprocal pairs
+reciprocal pairs 519895 edges in pairs 1039790
+weight on reciprocal edges 10419331 share of W 0.2486
+2-cycle floor LB 2815303 ceiling 93.2828
+balanced pairs (w_uv == w_vu) 67860
+== SCC
+scc count 9626 giant size 126840 size>1 count 123 second largest 8 singletons 9503
+weight inside SCCs 41281996 between SCCs (free FF) 630145
+giant SCC: edges 5606125 weight 41278263
+giant SCC residual after 2-cycle packing: weight 35648499 edges with cap>0 5018557
+SCC of residual graph (cap>0 edges): count 11661 giant 124984 residual weight inside SCCs 35392744 residual between (no more cycles) 888791
+trivial max: LB can never exceed 2-cycle LB + residual-in-SCC weight = 38208047 (=> ceiling >= 8.8378 )
+== champion feedback
+champion ff% 84.25818 FF weight 35314407 backward weight 6597734 backward edges 1173245
+(a) backward weight on reciprocal edges 3398872 (b) on non-reciprocal edges 3198862
+2-cycle floor part: sum over pairs of min(w) = 2815303 ; excess paid on reciprocal pairs above min: 583569
+reciprocal pairs with both edges backward (impossible in strict order): 0
+reciprocal pairs where the heavier side is backward: 99871 extra weight 583569
+backward weight inside giant SCC 6597309 outside giant 425
+rank span of backward edges pct [0,50,90,99,99.9,100] [1, 18156, 61014, 113129, 122688, 126429]
+  span 1 - 10 edges 38703 weight 262617
+  span 11 - 100 edges 24180 weight 205999
+  span 101 - 1000 edges 60757 weight 481675
+  span 1001 - 10000 edges 264480 weight 1577670
+  span 10001 - 100000 edges 749642 weight 3751842
+  span 100001 - 136648 edges 35483 weight 317931
+backward weight percentiles [2, 3, 11, 37, 105, 1297] backward edges w=1 0
+== per super_class lane (both endpoints in same class)
+class | within-class W | within backward | within 2-cycle floor | floor/backward
+  ascending 27553 1595 753 0.472
+  central 12523698 2167029 876100 0.404
+  descending 206442 20598 5898 0.286
+  motor 3542 206 145 0.704
+  optic 17120781 3117142 1505589 0.483
+  sensory 13338 2973 2667 0.897
+  sensory_ascending 1064 171 146 0.854
+  visual_centrifugal 29239 5266 2811 0.534
+  visual_projection 482246 66096 26544 0.402
+  cross-class: W 11504238 backward 1216658 2-cycle floor 394650
+elapsed s 36.3

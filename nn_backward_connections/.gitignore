@@ -63,3 +63,5 @@ autoresearch/.lock/
 # Watchdog scratch (runtime state, never committed)
 autoresearch/ALERT
 autoresearch/ALERTS.log
+ceiling/certs/*.npz
+ceiling/results/state/

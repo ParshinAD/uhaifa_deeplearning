@@ -1,0 +1,36 @@
+{'stage': 'dag', 'alpha': '1/4', 'H': 1, 'tried': 1173245, 'seconds': 5.7, 'routed_total': 1189307, 'records': 391262, 'edge_entries': 782524, 'searches': 1469912, 'work': 63510137, 'work_limit_hits': 0, 'routed': 1189307}
+{'stage': 'dag', 'alpha': '1/4', 'H': 2, 'tried': 1078650, 'seconds': 24.7, 'routed_total': 1629995, 'records': 295926, 'edge_entries': 887778, 'searches': 1321190, 'work': 300462544, 'work_limit_hits': 0, 'routed': 440688}
+{'stage': 'dag', 'alpha': '1/4', 'H': 3, 'tried': 1025264, 'seconds': 56.4, 'routed_total': 1799198, 'records': 132419, 'edge_entries': 529676, 'searches': 1138384, 'work': 804832643, 'work_limit_hits': 0, 'routed': 169203}
+{'stage': 'dag', 'alpha': '1/4', 'H': 4, 'tried': 1005965, 'seconds': 18.8, 'routed_total': 1852697, 'records': 46834, 'edge_entries': 234170, 'searches': 1047057, 'work': 1389819154, 'work_limit_hits': 0, 'routed': 53499}
+{'stage': 'dag', 'alpha': '1/4', 'H': 5, 'tried': 1000223, 'seconds': 22.5, 'routed_total': 1869179, 'records': 15254, 'edge_entries': 91524, 'searches': 1013721, 'work': 1967207103, 'work_limit_hits': 0, 'routed': 16482}
+{'stage': 'dag', 'alpha': '1/4', 'H': 6, 'tried': 998467, 'seconds': 29.4, 'routed_total': 1874382, 'records': 4963, 'edge_entries': 34741, 'searches': 1002923, 'work': 2491133919, 'work_limit_hits': 0, 'routed': 5203}
+{'stage': 'dag', 'alpha': '1/4', 'H': 8, 'tried': 997960, 'seconds': 49.3, 'routed_total': 1876739, 'records': 2304, 'edge_entries': 19548, 'searches': 1000001, 'work': 3632881907, 'work_limit_hits': 0, 'routed': 2357}
+{'stage': 'dag', 'alpha': '1/4', 'H': 10, 'tried': 997697, 'seconds': 56.2, 'routed_total': 1876989, 'records': 247, 'edge_entries': 2573, 'searches': 997923, 'work': 3890753442, 'work_limit_hits': 0, 'routed': 250}
+{'stage': 'dag', 'alpha': '1/2', 'H': 1, 'tried': 997676, 'seconds': 1.3, 'routed_total': 2681166, 'records': 389464, 'edge_entries': 778928, 'searches': 1257813, 'work': 50532847, 'work_limit_hits': 0, 'routed': 804177}
+{'stage': 'dag', 'alpha': '1/2', 'H': 2, 'tried': 868349, 'seconds': 4.3, 'routed_total': 3351034, 'records': 511569, 'edge_entries': 1534707, 'searches': 1239331, 'work': 300030084, 'work_limit_hits': 0, 'routed': 669868}
+{'stage': 'dag', 'alpha': '1/2', 'H': 3, 'tried': 727762, 'seconds': 13.7, 'routed_total': 3617346, 'records': 211422, 'edge_entries': 845688, 'searches': 888023, 'work': 908210005, 'work_limit_hits': 0, 'routed': 266312}
+{'stage': 'dag', 'alpha': '1/2', 'H': 4, 'tried': 676601, 'seconds': 31.9, 'routed_total': 3693063, 'records': 62613, 'edge_entries': 313065, 'searches': 726463, 'work': 1646558676, 'work_limit_hits': 0, 'routed': 75717}
+{'stage': 'dag', 'alpha': '1/2', 'H': 5, 'tried': 663850, 'seconds': 47.2, 'routed_total': 3714050, 'records': 18154, 'edge_entries': 108924, 'searches': 678870, 'work': 2576615756, 'work_limit_hits': 0, 'routed': 20987}
+{'stage': 'dag', 'alpha': '1/2', 'H': 6, 'tried': 660716, 'seconds': 86.2, 'routed_total': 3720063, 'records': 5289, 'edge_entries': 37023, 'searches': 665163, 'work': 3767948287, 'work_limit_hits': 0, 'routed': 6013}
+{'stage': 'dag', 'alpha': '1/2', 'H': 8, 'tried': 659874, 'seconds': 100.1, 'routed_total': 3722613, 'records': 2355, 'edge_entries': 19811, 'searches': 661880, 'work': 5951047904, 'work_limit_hits': 0, 'routed': 2550}
+{'stage': 'dag', 'alpha': '1/2', 'H': 10, 'tried': 659525, 'seconds': 227.1, 'routed_total': 3722944, 'records': 308, 'edge_entries': 3196, 'searches': 659791, 'work': 6459544992, 'work_limit_hits': 0, 'routed': 331}
+{'stage': 'dag', 'alpha': '3/4', 'H': 1, 'tried': 659483, 'seconds': 1.3, 'routed_total': 4030886, 'records': 149586, 'edge_entries': 299172, 'searches': 743979, 'work': 30389209, 'work_limit_hits': 0, 'routed': 307942}
+{'stage': 'dag', 'alpha': '3/4', 'H': 2, 'tried': 594393, 'seconds': 5.0, 'routed_total': 4365243, 'records': 229735, 'edge_entries': 689205, 'searches': 752343, 'work': 168476380, 'work_limit_hits': 0, 'routed': 334357}
+{'stage': 'dag', 'alpha': '3/4', 'H': 3, 'tried': 522608, 'seconds': 12.7, 'routed_total': 4573145, 'records': 160486, 'edge_entries': 641944, 'searches': 640763, 'work': 635655518, 'work_limit_hits': 0, 'routed': 207902}
+{'stage': 'dag', 'alpha': '3/4', 'H': 4, 'tried': 480277, 'seconds': 65.2, 'routed_total': 4639814, 'records': 53277, 'edge_entries': 266385, 'searches': 521924, 'work': 1280353117, 'work_limit_hits': 0, 'routed': 66669}
+{'stage': 'dag', 'alpha': '3/4', 'H': 5, 'tried': 468647, 'seconds': 58.0, 'routed_total': 4660365, 'records': 17037, 'edge_entries': 102222, 'searches': 482552, 'work': 2120755677, 'work_limit_hits': 0, 'routed': 20551}
+{'stage': 'dag', 'alpha': '3/4', 'H': 6, 'tried': 465515, 'seconds': 75.7, 'routed_total': 4666803, 'records': 5546, 'edge_entries': 38822, 'searches': 470091, 'work': 3090618161, 'work_limit_hits': 0, 'routed': 6438}
+{'stage': 'dag', 'alpha': '3/4', 'H': 8, 'tried': 464545, 'seconds': 104.6, 'routed_total': 4669971, 'records': 2849, 'edge_entries': 24120, 'searches': 466949, 'work': 4845511680, 'work_limit_hits': 0, 'routed': 3168}
+{'stage': 'dag', 'alpha': '3/4', 'H': 10, 'tried': 464100, 'seconds': 108.1, 'routed_total': 4670500, 'records': 488, 'edge_entries': 5094, 'searches': 464536, 'work': 5211585133, 'work_limit_hits': 0, 'routed': 529}
+{'stage': 'dag', 'alpha': '1', 'H': 1, 'tried': 464048, 'seconds': 0.5, 'routed_total': 4845968, 'records': 101315, 'edge_entries': 202630, 'searches': 511417, 'work': 20481798, 'work_limit_hits': 0, 'routed': 175468}
+{'stage': 'dag', 'alpha': '1', 'H': 2, 'tried': 410102, 'seconds': 2.0, 'routed_total': 5178110, 'records': 241542, 'edge_entries': 724626, 'searches': 566103, 'work': 128261407, 'work_limit_hits': 0, 'routed': 332142}
+{'stage': 'dag', 'alpha': '1', 'H': 3, 'tried': 324561, 'seconds': 7.9, 'routed_total': 5431555, 'records': 194568, 'edge_entries': 778272, 'searches': 459423, 'work': 506977649, 'work_limit_hits': 0, 'routed': 253445}
+{'stage': 'dag', 'alpha': '1', 'H': 4, 'tried': 264855, 'seconds': 14.6, 'routed_total': 5513358, 'records': 62374, 'edge_entries': 311870, 'searches': 311352, 'work': 920601709, 'work_limit_hits': 0, 'routed': 81803}
+{'stage': 'dag', 'alpha': '1', 'H': 5, 'tried': 248978, 'seconds': 23.2, 'routed_total': 5538624, 'records': 20009, 'edge_entries': 120054, 'searches': 264567, 'work': 1430320312, 'work_limit_hits': 0, 'routed': 25266}
+{'stage': 'dag', 'alpha': '1', 'H': 6, 'tried': 244558, 'seconds': 37.3, 'routed_total': 5546680, 'records': 6770, 'edge_entries': 47390, 'searches': 249929, 'work': 2103994283, 'work_limit_hits': 0, 'routed': 8056}
+{'stage': 'dag', 'alpha': '1', 'H': 8, 'tried': 243159, 'seconds': 63.8, 'routed_total': 5551184, 'records': 3901, 'edge_entries': 33080, 'searches': 246346, 'work': 3348652167, 'work_limit_hits': 0, 'routed': 4504}
+{'stage': 'dag', 'alpha': '1', 'H': 10, 'tried': 242445, 'seconds': 132.4, 'routed_total': 5551943, 'records': 680, 'edge_entries': 7114, 'searches': 243030, 'work': 3587082966, 'work_limit_hits': 0, 'routed': 759}
+dag routed 5551943 share 0.8415
+LB 5551943 ceiling 86.7534 time 1530.8
+verify PASS 24.2 s
+wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_route_improve_i1.json

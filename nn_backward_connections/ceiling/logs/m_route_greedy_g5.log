@@ -1,0 +1,12 @@
+loaded 22.2 s; backward edges 1230303 feedback 7268303 guide ff_pct 82.6582
+phase {'H': 1, 'commodities_tried': 1230303, 'seconds': 1.6, 'routed_total': 2815303, 'records': 519895, 'edge_entries': 1039790, 'searches': 1355042, 'work': 52116408, 'work_limit_hits': 0, 'routed': 2815303}
+phase {'H': 2, 'commodities_tried': 835147, 'seconds': 4.9, 'routed_total': 4403625, 'records': 572294, 'edge_entries': 1716882, 'searches': 1096774, 'work': 229207898, 'work_limit_hits': 0, 'routed': 1588322}
+phase {'H': 3, 'commodities_tried': 524480, 'seconds': 18.4, 'routed_total': 5117866, 'records': 310672, 'edge_entries': 1242688, 'searches': 701806, 'work': 693375741, 'work_limit_hits': 0, 'routed': 714241}
+phase {'H': 4, 'commodities_tried': 391134, 'seconds': 57.6, 'routed_total': 5316507, 'records': 94061, 'edge_entries': 470305, 'searches': 452964, 'work': 1062197361, 'work_limit_hits': 0, 'routed': 198641}
+phase {'H': 5, 'commodities_tried': 358903, 'seconds': 39.6, 'routed_total': 5373967, 'records': 29698, 'edge_entries': 178188, 'searches': 380072, 'work': 1393479411, 'work_limit_hits': 0, 'routed': 57460}
+phase {'H': 6, 'commodities_tried': 350374, 'seconds': 53.6, 'routed_total': 5391043, 'records': 9760, 'edge_entries': 68320, 'searches': 357649, 'work': 1896026640, 'work_limit_hits': 0, 'routed': 17076}
+phase {'H': 8, 'commodities_tried': 347889, 'seconds': 103.3, 'routed_total': 5399301, 'records': 5258, 'edge_entries': 44502, 'searches': 351983, 'work': 3036099144, 'work_limit_hits': 0, 'routed': 8258}
+phase {'H': 10, 'commodities_tried': 346725, 'seconds': 102.3, 'routed_total': 5400404, 'records': 770, 'edge_entries': 8021, 'searches': 347357, 'work': 3199057285, 'work_limit_hits': 0, 'routed': 1103}
+routed 5400404 of 7268303 share 0.743 LB 5400404 ceiling 87.1149 time 407.5
+verify PASS 24.4 s
+wrote /Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/results/m_route_greedy_g5.json

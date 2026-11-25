@@ -1,0 +1,9 @@
+pass 0 sources 0 new cycles 10130 gain/D 11663.0 s 110.4
+pass 0 done gain/D 23279.8
+{
+}
+PASS
+
+LB 4910614 ceiling 88.2836 rc 0
+
+[exited with code 0]

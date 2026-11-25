@@ -1,0 +1,76 @@
+{
+ "command": "python ceiling/src/m_short_cert.py /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mshort/pool_r4.npz /private/tmp/claude-501/-Users-abed359-IdeaProjects-university/380c1a69-674f-4f4c-be10-ecf084bbd9db/scratchpad/mshort/pdhg_r4.npz 10000 c1r4_cg_r4.npz ceiling/results/m_short_cg_r4.json 1",
+ "git_commit": "657786fb8c6b97a591aab1e9c6c3295a4d159ace",
+ "seed": null,
+ "D": 10000,
+ "columns_by_length": {
+  "2": 519895,
+  "3": 7435509,
+  "4": 44031,
+  "5": 161138,
+  "6": 232480,
+  "7": 102004,
+  "8": 21753,
+  "9": 6757,
+  "10": 1399,
+  "11": 253,
+  "12": 67,
+  "13": 18
+ },
+ "cycles_in_cert": 3671401,
+ "LB": 5784581,
+ "ceiling_pct": 86.1983,
+ "lb_before_refill": 5783825,
+ "fractional_input": 5783995.8526394265,
+ "dual_estimate": 5787721.558394999,
+ "solver_info": {
+  "config": {
+   "omega": 1.0,
+   "iters": 1000,
+   "check_every": 200,
+   "time_limit_s": 3300
+  },
+  "columns": 9793845,
+  "best_primal": 5783995.8526394265,
+  "best_dual": 5787721.558394999,
+  "runtime_s": 212.2,
+  "hist": [
+   [
+    200,
+    53.0,
+    5766900.149617691,
+    5795141.448781787
+   ],
+   [
+    400,
+    92.7,
+    5780631.696558284,
+    5789261.630525723
+   ],
+   [
+    600,
+    132.6,
+    5782551.288297257,
+    5788413.970730871
+   ],
+   [
+    800,
+    172.4,
+    5783438.709178617,
+    5787991.240363556
+   ],
+   [
+    1000,
+    212.1,
+    5783995.8526394265,
+    5787721.558394999
+   ]
+  ]
+ },
+ "cert": "ceiling/certs/c1r4_cg_r4.npz",
+ "verifier_returncode": 0,
+ "verifier_stdout": "{\n \"cert\": \"/Users/abed359/IdeaProjects/university/deeplearning_thesis_ceiling/nn_backward_connections/ceiling/certs/c20_cg_r4.npz\",\n \"status\": \"PASS\",\n \"reason\": null,\n \"D\": 10000,\n \"slack_units\": 253557962364,\n \"n_edges_tight\": 1381915,\n \"n_cycles\": 3671401,\n \"n_cycle_edge_entries\": 12033864,\n \"max_cycle_len\": 12,\n \"n_pieces\": 0,\n \"n_piece_edge_entries\": 0,\n \"max_piece_nodes\": 0,\n \"sum_y\": 57845815703,\n \"sum_claim\": 0,\n \"LB\": 5784581,\n \"W\": 41912141,\n \"ceiling_pct_fraction\": \"3612756000/41912141\",\n \"ceiling_pct\": 86.198317,\n \"seconds\": 2.48\n}\nPASS\n",
+ "runtime_cert_s": 51.2,
+ "runtime_total_s": 69.5,
+ "note": "cert renamed from c20_cg_r4.npz to c1r4_cg_r4.npz after writing (c2* names belong to another method); verifier re-run on the renamed file"
+}
